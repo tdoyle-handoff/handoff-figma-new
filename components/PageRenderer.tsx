@@ -15,6 +15,9 @@ const Communications = React.lazy(() => import('./Communications'));
 const Settings = React.lazy(() => import('./Settings'));
 const VendorMarketplace = React.lazy(() => import('./VendorMarketplace'));
 
+// Property Search panel (SearchPanel) shim
+const PropertySearchPanel = React.lazy(() => import('./search-panel-impl'));
+
 // MLS Demo components - these are named exports, so we need to import them correctly
 const AddressValidationDemo = React.lazy(async () => {
   const module = await import('./AddressValidationDemo');
@@ -76,7 +79,11 @@ export function PageRenderer({
         return <Dashboard setupData={setupData} />;
       
       case 'property':
-        return <Dashboard setupData={setupData} />;
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <PropertySearchPanel />
+          </Suspense>
+        );
       
       case 'tasks':
         return (
