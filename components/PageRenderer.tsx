@@ -15,8 +15,8 @@ const Communications = React.lazy(() => import('./Communications'));
 const Settings = React.lazy(() => import('./Settings'));
 const VendorMarketplace = React.lazy(() => import('./VendorMarketplace'));
 
-// Property Search panel (SearchPanel) shim
-const PropertySearchPanel = React.lazy(() => import('./search-panel-impl'));
+// Property Search page with tabs (Home Search, ATTOM Summary, Onboarding)
+const PropertySearchTabs = React.lazy(() => import('./PropertySearchTabs'));
 
 // MLS Demo components - these are named exports, so we need to import them correctly
 const AddressValidationDemo = React.lazy(async () => {
@@ -81,7 +81,7 @@ export function PageRenderer({
       case 'property':
         return (
           <Suspense fallback={<LoadingSpinner />}>
-            <PropertySearchPanel />
+            <PropertySearchTabs />
           </Suspense>
         );
       
