@@ -1,0 +1,41 @@
+# NOTE: This workflow is disabled because the project uses Vercel's native GitHub integration.
+# It is kept for reference. You can re-enable by restoring the push trigger and removing the job-level condition.
+name: Deploy to Vercel (disabled)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    if: ${{ false }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          ATTOM_API_KEY: ${{ secrets.ATTOM_API_KEY }}
+          GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
+
+      - name: Install Vercel CLI
+        run: npm i -g vercel@latest
+
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy to Vercel
+        run: vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }} --scope=${{ secrets.VERCEL_ORG_ID }} --env VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }} --env VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }} --env ATTOM_API_KEY=${{ secrets.ATTOM_API_KEY }} --env GOOGLE_PLACES_API_KEY=${{ secrets.GOOGLE_PLACES_API_KEY }}
+

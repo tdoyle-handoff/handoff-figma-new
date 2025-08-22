@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#1e40af" />
+  <title>Handoff - Real Estate Transaction Management</title>
+  
+  <!-- Favicons for different browsers and devices -->
+  <link rel="icon" type="image/svg+xml" href="/handoff-logo.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/handoff-logo.svg" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/handoff-logo.svg" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/handoff-logo.svg" />
+  <link rel="manifest" href="/site.webmanifest" />
+  
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Product+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- iOS specific meta tags -->
+  <meta name="apple-mobile-web-app-title" content="Handoff">
+  <meta name="format-detection" content="telephone=no">
+  
+  <!-- Prevent iOS from changing number-like text to links -->
+  <meta name="format-detection" content="telephone=no, date=no, email=no, address=no">
+  
+  <!-- iOS status bar appearance -->
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
+  <!-- SEO and social sharing -->
+  <meta name="description" content="Handoff - Streamline your real estate transactions with our comprehensive management platform. Track tasks, manage documents, and collaborate with your team.">
+  <meta name="keywords" content="real estate, transaction management, property, home buying, real estate platform">
+  <meta name="author" content="Handoff">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://handoff.com/">
+  <meta property="og:title" content="Handoff - Real Estate Transaction Management">
+  <meta property="og:description" content="Streamline your real estate transactions with our comprehensive management platform.">
+  <meta property="og:image" content="/handoff-logo.svg">
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://handoff.com/">
+  <meta property="twitter:title" content="Handoff - Real Estate Transaction Management">
+  <meta property="twitter:description" content="Streamline your real estate transactions with our comprehensive management platform.">
+  <meta property="twitter:image" content="/handoff-logo.svg">
+  
+  <style>
+    /* Critical CSS for faster loading */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    
+    /* Prevent flicker on mobile */
+    * {
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+    }
+    
+    /* Mobile specific */
+    @media (max-width: 767px) {
+      html {
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
+      }
+      
+      body {
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
+        font-size: 16px !important;
+        position: fixed;
+        width: 100%;
+      }
+      
+      #root {
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
+      }
+    }
+    
+    /* iOS Safari specific fixes */
+    @supports (-webkit-touch-callout: none) {
+      body {
+        min-height: -webkit-fill-available;
+      }
+      
+      #root {
+        min-height: -webkit-fill-available;
+      }
+    }
+    
+    /* Loading state */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .loading-logo {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #3b82f6, #1e40af);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.5rem;
+    }
+    
+    .loading-text {
+      color: #1e40af;
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    
+    .loading-spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid #f3f4f6;
+      border-top: 3px solid #1e40af;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div id="root">
+    <div class="loading">
+      <div class="loading-logo" style="background:none">
+        <img src="/handoff-logo.svg" alt="Handoff" style="height:40px;width:auto" />
+      </div>
+      <div class="loading-text">Handoff</div>
+      <div class="loading-spinner"></div>
+    </div>
+  </div>
+  
+  <script>
+    // Detect mobile and add class immediately
+    (function() {
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+        || window.innerWidth < 768 
+        || ('ontouchstart' in window);
+      
+      if (isMobile) {
+        document.documentElement.classList.add('mobile-device');
+        document.body.classList.add('mobile-device');
+      }
+      
+      // Prevent zoom on iOS
+      document.addEventListener('gesturestart', function (e) {
+        e.preventDefault();
+      });
+      
+      // Prevent double-tap zoom on iOS
+      let lastTouchEnd = 0;
+      document.addEventListener('touchend', function (event) {
+        const now = (new Date()).getTime();
+        if (now - lastTouchEnd <= 300) {
+          event.preventDefault();
+        }
+        lastTouchEnd = now;
+      }, false);
+      
+      // Handle viewport height changes on mobile (keyboard)
+      if (isMobile) {
+        const setVH = () => {
+          let vh = window.innerHeight * 0.01;
+          document.documentElement.style.setProperty('--vh', `${vh}px`);
+        };
+        
+        setVH();
+        window.addEventListener('resize', setVH);
+        window.addEventListener('orientationchange', setVH);
+      }
+    })();
+  </script>
+  
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>

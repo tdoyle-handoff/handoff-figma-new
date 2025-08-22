@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/health", "dest": "/health.html" },
+    { "src": "/.*", "dest": "/index.html" }
+  ]
+}

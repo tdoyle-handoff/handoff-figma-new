@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+if git grep -n '^[<=>]\{7\}' -- . >/dev/null; then
+  echo 'Conflict markers present';
+  exit 1;
+fi
