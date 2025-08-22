@@ -40,7 +40,8 @@ app.get('/make-server-a24396d5/health', (c) => {
 
 // Mount route modules
 app.route('/make-server-a24396d5', userRoutes);
-app.route('/make-server-a24396d5', attomRoutes);
+// Mount ATTOM routes under /attom prefix to match client expectations
+app.route('/make-server-a24396d5/attom', attomRoutes);
 app.route('/make-server-a24396d5', placesRoutes);
 app.route('/make-server-a24396d5', mlsRoutes);
 app.route('/make-server-a24396d5', attomAdminRoutes);
