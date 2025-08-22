@@ -373,6 +373,8 @@ attom.get('/debug', async (c) => {
         test: '/test',
         basic_profile: '/property-basic-profile',
         search: '/search-by-address',
+        search_by_id: '/search-by-id',
+        test_endpoint: '/test-endpoint',
         debug: '/debug'
       },
       sample_requests: {
@@ -393,6 +395,106 @@ attom.get('/debug', async (c) => {
       error: error instanceof Error ? error.message : 'Debug failed',
       timestamp: new Date().toISOString()
     }, 500);
+  }
+});
+
+// Proxy to test arbitrary ATTOM endpoints used by client summary component
+attom.post('/test-endpoint', async (c) => {
+  try {
+    const body = await c.req.json();
+    const { endpoint, address1, address2, attomid, params } = body || {};
+
+    if (!endpoint || typeof endpoint !== 'string') {
+      return c.json({ success: false, error: 'Missing or invalid endpoint' }, 400);
+    }
+
+    const attomApiKey = Deno.env.get('ATTOM_API_KEY');
+    if (!attomApiKey) {
+      return c.json({ success: false, error: 'ATTOM API key not configured on server' }, 500);
+    }
+
+    // Build target URL
+    const normalizedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+    let apiUrl = `https://api.gateway.attomdata.com${normalizedEndpoint}`;
+    const qs = new URLSearchParams();
+
+    if (attomid) qs.append('attomid', String(attomid));
+    if (address1) qs.append('address1', String(address1));
+    if (address2) qs.append('address2', String(address2));
+
+    // Pass-through any additional params
+    if (params && typeof params === 'object') {
+      for (const [k, v] of Object.entries(params)) {
+        if (v !== undefined && v !== null) qs.append(k, String(v));
+      }
+    }
+
+    if (qs.toString()) {
+      apiUrl += `?${qs.toString()}`;
+    }
+
+    console.log('🔧 Testing ATTOM endpoint:', apiUrl);
+
+    const resp = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'accept': 'application/json',
+        'User-Agent': 'Handoff-RealEstate/1.0',
+        'apikey': attomApiKey
+      }
+    });
+
+    const text = await resp.text();
+    let data: any;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      data = { raw: text.slice(0, 500) + (text.length > 500 ? '...' : '') };
+    }
+
+    if (!resp.ok) {
+      return c.json({ success: false, status: resp.status, statusText: resp.statusText, data }, resp.status);
+    }
+
+    return c.json(data);
+  } catch (error) {
+    console.error('❌ test-endpoint error:', error);
+    return c.json({ success: false, error: error instanceof Error ? error.message : 'Unknown error' }, 500);
+  }
+});
+
+// Search by ATTOM ID - convenience wrapper
+attom.get('/search-by-id', async (c) => {
+  try {
+    const urlObj = new URL(c.req.url);
+    const attomId = urlObj.searchParams.get('attom_id') || urlObj.searchParams.get('attomid');
+    if (!attomId) {
+      return c.json({ success: false, error: 'attom_id (or attomid) is required' }, 400);
+    }
+
+    // Reuse property-basic-profile logic by calling ATTOM directly
+    const attomApiKey = Deno.env.get('ATTOM_API_KEY');
+    let apiUrl = 'https://api.gateway.attomdata.com/propertyapi/v1.0.0/property/basicprofile?';
+    apiUrl += new URLSearchParams({ attomid: attomId }).toString();
+
+    const resp = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'accept': 'application/json',
+        'User-Agent': 'Handoff-RealEstate/1.0',
+        'apikey': attomApiKey || ''
+      }
+    });
+
+    const data = await resp.json();
+    if (!resp.ok) {
+      return c.json({ success: false, error: 'ATTOM error', status: resp.status, data }, resp.status);
+    }
+
+    return c.json({ success: true, data });
+  } catch (error) {
+    console.error('❌ search-by-id error:', error);
+    return c.json({ success: false, error: error instanceof Error ? error.message : 'Unknown error' }, 500);
   }
 });
 

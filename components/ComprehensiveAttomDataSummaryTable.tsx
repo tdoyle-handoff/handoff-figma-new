@@ -38,7 +38,7 @@ import {
   type ComprehensivePropertyData,
   type DataSourceInfo
 } from '../utils/comprehensiveAttomDataExtractor';
-import { projectId, publicAnonKey } from '../utils/supabase/info';
+import { projectId, publicAnonKey, projectUrl } from '../utils/supabase/info';
 
 interface ComprehensiveAttomDataSummaryTableProps {
   className?: string;
@@ -281,7 +281,8 @@ export function ComprehensiveAttomDataSummaryTable({
       // Test each endpoint
       for (const endpoint of endpoints) {
         try {
-          const url = `https://${projectId}.supabase.co/functions/v1/make-server-a24396d5/attom/test-endpoint`;
+          const baseUrl = projectId ? `https://${projectId}.supabase.co` : (projectUrl || '');
+          const url = `${baseUrl}/functions/v1/make-server-a24396d5/attom/test-endpoint`;
           const response = await fetch(url, {
             method: 'POST',
             headers: {
