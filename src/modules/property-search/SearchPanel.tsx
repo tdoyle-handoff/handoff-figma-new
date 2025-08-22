@@ -1,10 +1,14 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { Filters, ResultsList, ListingInformation } from './components'
 
 export function SearchPanel() {
   const [query, setQuery] = useState({ location: '', minPrice: '', maxPrice: '', beds: '', baths: '', type: '', dom: '' })
   const [selectedProperty, setSelectedProperty] = useState<any>(null)
   const [activeTab, setActiveTab] = useState<'attom' | 'mls'>('attom')
+
+  const onSearch = useCallback(() => {
+    // no-op for now; wire to server later
+  }, [])
 
   return (
     <div className="grid gap-4">
@@ -26,9 +30,11 @@ export function SearchPanel() {
 
       {activeTab === 'attom' ? (
         <>
-          <Filters value={query} onChange={setQuery} onSearch={() => { /* wire to server */ }} />
+          <Filters value={query} onChange={setQuery} onSearch={onSearch} />
           <ResultsList onSelect={setSelectedProperty} />
-          <ListingInformation property={selectedProperty} />
+          {selectedProperty && (
+            <ListingInformation property={selectedProperty} />
+          )}
         </>
       ) : (
         <div className="border rounded p-4">

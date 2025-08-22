@@ -5,6 +5,18 @@ import { LeftSidebar } from '../layout/LeftSidebar'
 import { RightSidebar } from '../layout/RightSidebar'
 import { SearchPanel } from '../modules/property-search/SearchPanel'
 
+function DeferredRightSidebar() {
+  const [ready, setReady] = React.useState(false)
+  React.useEffect(() => {
+    const id = window.requestIdleCallback ? window.requestIdleCallback(() => setReady(true)) : window.setTimeout(() => setReady(true), 0)
+    return () => {
+      if ((window as any).cancelIdleCallback) (window as any).cancelIdleCallback(id)
+      else clearTimeout(id as unknown as number)
+    }
+  }, [])
+  return ready ? <RightSidebar /> : null
+}
+
 export default function Dashboard() {
   const Progress = () => (
     <div className="w-full h-2 bg-muted rounded">
@@ -24,7 +36,7 @@ export default function Dashboard() {
     <AppLayout
       topNav={<TopNav />}
       leftSidebar={<LeftSidebar />}
-      rightSidebar={<RightSidebar />}
+      rightSidebar={<DeferredRightSidebar />}
       progressTracker={<Progress />}
       actions={<Actions />}
     >

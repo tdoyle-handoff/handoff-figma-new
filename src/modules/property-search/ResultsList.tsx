@@ -6,7 +6,7 @@ interface ResultsListProps {
 
 type ResultItem = { id: string; title: string }
 
-export function ResultsList({ onSelect }: ResultsListProps) {
+export const ResultsList = React.memo(function ResultsList({ onSelect }: ResultsListProps) {
   const items: ResultItem[] = [] // wire with real results later
   return (
     <div className="border rounded p-4">
@@ -24,4 +24,4 @@ export function ResultsList({ onSelect }: ResultsListProps) {
       )}
     </div>
   )
-}
+})
