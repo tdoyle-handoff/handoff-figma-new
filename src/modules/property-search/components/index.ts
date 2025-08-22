@@ -1,3 +1,3 @@
-export { default as Filters } from './Filters'
-export { default as ResultsList } from './ResultsList'
-export { default as ListingInformation } from './ListingInformation'
+export { Filters } from '../filters'
+export { ResultsList } from '../ResultsList'
+export { ListingInformation } from '../ListingInformation'
