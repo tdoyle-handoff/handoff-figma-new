@@ -393,6 +393,8 @@ export function extractFromPropertyDetail(response: any): Partial<ComprehensiveP
   const lot = property.lot || {};
   const area = property.area || {};
   const school = property.school || {};
+  const construction = building.construction || {};
+  const utilities = property.utilities || {};
   
   return {
     ...expandedData,
@@ -414,6 +416,19 @@ export function extractFromPropertyDetail(response: any): Partial<ComprehensiveP
       garageAreaSqFt: buildingSize.garageAreaSqFt ?? (building.parking?.prkgSize as any),
       architecturalStyle: building.summary?.archStyle,
       buildingStyle: building.summary?.bldgStyle,
+      // Enrich construction from detail when available
+      constructionType: construction.constructionType ?? expandedData.building?.constructionType,
+      wallType: construction.wallType ?? expandedData.building?.wallType,
+      roofType: construction.roofType ?? expandedData.building?.roofType,
+      foundationType: construction.foundationType ?? expandedData.building?.foundationType,
+      exteriorWalls: construction.exteriorWalls ?? expandedData.building?.exteriorWalls,
+      condition: building.summary?.condition ?? expandedData.building?.condition,
+      quality: building.summary?.quality ?? expandedData.building?.quality,
+      // Utilities fallback from detail payload if present
+      heating: expandedData.building?.heating ?? (utilities as any).heatingType,
+      fuel: expandedData.building?.fuel ?? (utilities as any).heatingFuel,
+      water: expandedData.building?.water ?? (utilities as any).water,
+      sewer: expandedData.building?.sewer ?? (utilities as any).sewer,
     },
     
     location: {

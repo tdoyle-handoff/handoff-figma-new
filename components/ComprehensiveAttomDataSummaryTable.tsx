@@ -424,6 +424,13 @@ export function ComprehensiveAttomDataSummaryTable({
     fields: section.fields.filter(field => {
       const value = getNestedValue(mergedData, field.key);
       const sourceInfo = getSourceInfo(field.key);
+      const hasValue = !(value === null || value === undefined || value === '');
+      
+      // Hide fields with no data when not actively filtering/searching
+      const noActiveFilters = !searchTerm && filterBySource === 'all' && filterByConfidence === 'all';
+      if (!hasValue && !sourceInfo && noActiveFilters) {
+        return false;
+      }
       
       // Search filter
       if (searchTerm && !field.label.toLowerCase().includes(searchTerm.toLowerCase()) && 
@@ -441,7 +448,7 @@ export function ComprehensiveAttomDataSummaryTable({
         return false;
       }
       
-      return true;
+      return hasValue || !!sourceInfo;
     })
   })).filter(section => section.fields.length > 0);
 
