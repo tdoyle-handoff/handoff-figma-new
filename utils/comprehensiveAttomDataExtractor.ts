@@ -224,9 +224,9 @@ export interface DataSourceInfo {
  * Extract data from Basic Profile API response
  */
 export function extractFromBasicProfile(response: any): Partial<ComprehensivePropertyData> {
-  if (!response?.data?.property?.[0]) return {};
-  
-  const property = response.data.property[0];
+  const root = response?.data ?? response;
+  const property = root?.property?.[0];
+  if (!property) return {};
   const identifier = property.identifier || {};
   const address = property.address || {};
   const location = property.location || {};
@@ -304,10 +304,11 @@ export function extractFromBasicProfile(response: any): Partial<ComprehensivePro
  * Extract data from Expanded Profile API response
  */
 export function extractFromExpandedProfile(response: any): Partial<ComprehensivePropertyData> {
-  if (!response?.data?.property?.[0]) return {};
+  const root = response?.data ?? response;
+  const property = root?.property?.[0];
+  if (!property) return {};
   
   const basicData = extractFromBasicProfile(response);
-  const property = response.data.property[0];
   const building = property.building || {};
   const construction = building.construction || {};
   const interior = building.interior || {};
@@ -370,10 +371,11 @@ export function extractFromExpandedProfile(response: any): Partial<Comprehensive
  * Extract data from Property Detail API response
  */
 export function extractFromPropertyDetail(response: any): Partial<ComprehensivePropertyData> {
-  if (!response?.data?.property?.[0]) return {};
+  const root = response?.data ?? response;
+  const property = root?.property?.[0];
+  if (!property) return {};
   
   const expandedData = extractFromExpandedProfile(response);
-  const property = response.data.property[0];
   const building = property.building || {};
   const buildingSize = building.size || {};
   const lot = property.lot || {};
@@ -434,9 +436,9 @@ export function extractFromPropertyDetail(response: any): Partial<ComprehensiveP
  * Extract data from Sale Details API response
  */
 export function extractFromSaleDetails(response: any): Partial<ComprehensivePropertyData> {
-  if (!response?.data?.property?.[0]) return {};
-  
-  const property = response.data.property[0];
+  const root = response?.data ?? response;
+  const property = root?.property?.[0];
+  if (!property) return {};
   const saleHistory = property.saleHistory || [];
   
   const latestSale = saleHistory[0] || {};
