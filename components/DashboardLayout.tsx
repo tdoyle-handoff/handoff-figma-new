@@ -229,9 +229,9 @@ export default function DashboardLayout({
         )}
 
         {/* Navigation */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-1">
-          {Object.entries(groupedNavigation).map(([category, items]) => (
-            <div key={category}>
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {Object.entries(groupedNavigation).map(([category, items], categoryIndex) => (
+            <div key={category} className={categoryIndex > 0 ? "pt-3" : ""}>
               {sidebarOpen && (
                 <div className="px-3 py-2 text-xs font-medium text-blue-300 uppercase tracking-wide">
                   {category}
@@ -280,6 +280,11 @@ export default function DashboardLayout({
                   );
                 })}
               </div>
+
+              {/* Add separator between groups except for the last one */}
+              {sidebarOpen && categoryIndex < Object.keys(groupedNavigation).length - 1 && (
+                <div className="mt-4 mx-3 border-t border-blue-700/30"></div>
+              )}
             </div>
           ))}
         </div>
