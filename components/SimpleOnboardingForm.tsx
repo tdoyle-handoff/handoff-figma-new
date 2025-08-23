@@ -101,7 +101,6 @@ export function SimpleOnboardingForm({ onComplete, onSkip }: SimpleOnboardingFor
     phone: '',
     preferredContact: 'email',
     madeOffersBefore: 'no',
-    tourTimeWindow: '',
     cobuyers: [],
 
     // Goals & Timeline + Budget & Financing
