@@ -281,13 +281,26 @@ export function ComprehensiveAttomDataSummaryTable({
       // Test each endpoint
       for (const endpoint of endpoints) {
         try {
-          const url = `https://${projectId}.supabase.co/functions/v1/make-server-a24396d5/attom/test-endpoint`;
+          // Resolve proxy base prioritizing explicit env, then Supabase (if configured), then local fallback
+          const envBase = (import.meta as any).env?.VITE_ATTOM_PROXY_BASE as string | undefined;
+          let proxyBase = envBase && envBase.trim() ? envBase.trim() : '';
+          if (!proxyBase) {
+            if (projectId && publicAnonKey) {
+              proxyBase = `https://${projectId}.supabase.co/functions/v1/make-server-a24396d5/attom`;
+            } else {
+              proxyBase = '/api/attom';
+            }
+          }
+          const url = `${proxyBase.replace(/\/$/, '')}/test-endpoint`;
+
+          const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+          if (url.includes('.supabase.co') && publicAnonKey) {
+            headers['Authorization'] = `Bearer ${publicAnonKey}`;
+          }
+
           const response = await fetch(url, {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${publicAnonKey}`,
-            },
+            headers,
             body: JSON.stringify({
               endpoint: endpoint.path,
               address1,
