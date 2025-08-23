@@ -403,101 +403,173 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
       }
     });
 
-    // DUE DILIGENCE PHASE - INSPECTION
+    // DUE DILIGENCE PHASE - INSPECTIONS
     tasks.push({
       id: 'diligence-inspection-shop-inspectors',
-      title: 'Shop for inspectors',
-      description: 'Research and contact qualified home inspectors',
+      title: '🔍 Find Qualified Home Inspector',
+      description: '⭐ CHOOSE WISELY: Your inspector is your property detective. Get referrals, check licenses, read reviews. A good inspector can save you thousands by finding hidden issues.',
       category: 'diligence',
       subcategory: 'inspections',
       priority: 'high',
       status: 'active',
       dueDate: getDateFromClosing(12),
-      estimatedTime: '1-2 hours',
-      assignedTo: 'You',
+      estimatedTime: '3-4 hours research + calls',
+      assignedTo: 'You + Real Estate Agent + References',
       linkedPage: 'inspections',
       actionLabel: 'Find Inspectors',
-      propertySpecific: true
+      propertySpecific: true,
+      instructions: {
+        overview: 'The home inspection is your primary defense against costly surprises. Choose an experienced, thorough inspector.',
+        tips: [
+          '📋 VERIFY: Licensed, insured, certified (ASHI, InterNACHI)',
+          '💬 ASK AGENT: Get 3+ referrals from your real estate agent',
+          '⭐ CHECK REVIEWS: Look for detailed, recent reviews',
+          '💰 COMPARE: $400-800 typical cost, don\'t just choose cheapest',
+          '📱 AVAILABILITY: Book ASAP, good inspectors fill up quickly'
+        ],
+        timeline: 'Research and book within 48 hours of offer acceptance',
+        nextSteps: ['Schedule within inspection period', 'Plan to attend inspection', 'Understand what\'s included']
+      }
     });
 
     tasks.push({
       id: 'diligence-inspection-general-scheduled',
-      title: 'General scheduled',
-      description: 'Schedule and complete general home inspection',
+      title: '🏠 General Home Inspection',
+      description: '🚨 MUST ATTEND: Be present for 3-4 hour inspection. Ask questions, take notes. Inspector checks 400+ items: structure, electrical, plumbing, HVAC, roof, foundation.',
       category: 'diligence',
       subcategory: 'inspections',
       priority: 'high',
       status: 'active',
       dueDate: getDateFromClosing(10),
-      estimatedTime: '3-4 hours',
-      assignedTo: 'You & Inspector',
+      estimatedTime: '4-5 hours (attend full inspection)',
+      assignedTo: 'Licensed Inspector + You + Agent',
       linkedPage: 'inspections',
       actionLabel: 'Schedule Inspection',
-      propertySpecific: true
+      propertySpecific: true,
+      instructions: {
+        overview: 'The general inspection covers all major home systems and structure. This is your comprehensive property health check.',
+        tips: [
+          '👥 ATTEND: Be present for entire inspection to ask questions',
+          '📸 DOCUMENT: Take photos of issues inspector points out',
+          '🔌 UTILITIES ON: Ensure all utilities are connected and working',
+          '🧰 WHAT\'S CHECKED: Structure, electrical, plumbing, HVAC, roof, windows',
+          '📋 REPORT: Detailed written report within 24-48 hours'
+        ],
+        timeline: 'Schedule within 5-7 days of offer acceptance',
+        nextSteps: ['Receive detailed report', 'Review with agent', 'Decide on repair requests']
+      }
     });
 
     tasks.push({
-      id: 'diligence-inspection-additional',
-      title: 'Additional: bug, septic, lead, radon, roof, structural',
-      description: 'Schedule specialized inspections as needed based on property type and general inspection results',
+      id: 'diligence-inspection-specialized',
+      title: '🔬 Specialized Inspections (If Needed)',
+      description: '📋 PROPERTY-SPECIFIC: Based on age, type, location, and general inspection findings. May include: Pest, Radon, Lead, Asbestos, Septic, Well, Roof, Foundation.',
       category: 'diligence',
       subcategory: 'inspections',
       priority: 'medium',
       status: 'upcoming',
       dueDate: getDateFromClosing(8),
-      estimatedTime: 'Variable',
-      assignedTo: 'You & Specialists',
+      estimatedTime: '1-3 hours each + 1-3 days reports',
+      assignedTo: 'Specialized Inspectors + You',
       linkedPage: 'inspections',
       actionLabel: 'Schedule Additional',
-      propertySpecific: true
+      propertySpecific: true,
+      instructions: {
+        overview: 'Specialized inspections focus on specific systems or hazards based on property characteristics and general inspection findings.',
+        tips: [
+          '🐛 PEST: Required in many areas, checks for termites/wood-destroying insects',
+          '☢️ RADON: Colorless gas, common in basements, 2-4 day test',
+          '🎨 LEAD PAINT: Required for homes built before 1978',
+          '🚽 SEPTIC: If no city sewer, test system and tank',
+          '💧 WELL WATER: Test quality and flow rate if private well'
+        ],
+        timeline: 'Schedule within 7 days of general inspection',
+        nextSteps: ['Review specialist reports', 'Factor into repair requests', 'Consider cost implications']
+      }
     });
 
     tasks.push({
       id: 'diligence-inspection-review-results',
-      title: 'Review inspection results',
-      description: 'Carefully review all inspection reports and identify any issues',
+      title: '📊 Review All Inspection Reports',
+      description: '🎯 STRATEGIC REVIEW: Categorize issues by severity and cost. Focus on safety, major systems, and expensive repairs. Cosmetic issues typically not worth negotiating.',
       category: 'diligence',
       subcategory: 'inspections',
       priority: 'high',
       status: 'upcoming',
       dueDate: getDateFromClosing(6),
-      estimatedTime: '1-2 hours',
-      assignedTo: 'You & Agent',
+      estimatedTime: '2-3 hours analysis + agent consultation',
+      assignedTo: 'You + Real Estate Agent + Contractors (estimates)',
       linkedPage: 'inspections',
       actionLabel: 'Review Reports',
-      propertySpecific: true
+      propertySpecific: true,
+      instructions: {
+        overview: 'Review inspection reports strategically to prioritize repair requests and understand true property condition.',
+        tips: [
+          '🚨 PRIORITIZE: Safety issues first, then major systems, then cosmetic',
+          '💰 GET ESTIMATES: For major repairs, get contractor quotes',
+          '📋 CATEGORIZE: Deal-breakers vs. negotiable vs. acceptable',
+          '🤝 CONSULT AGENT: Experienced agents know what to negotiate',
+          '⏰ DEADLINE: You have limited time to respond (typically 3-5 days)'
+        ],
+        timeline: 'Complete within 24-48 hours of receiving reports',
+        nextSteps: ['Decide negotiation strategy', 'Prepare repair request list', 'Submit formal response']
+      }
     });
 
     tasks.push({
-      id: 'diligence-inspection-submit-items',
-      title: 'Submit items to address/begin negotiations',
-      description: 'Submit repair requests or negotiate credits for inspection issues',
+      id: 'diligence-inspection-negotiate-repairs',
+      title: '🤝 Negotiate Repairs & Credits',
+      description: '💼 FORMAL REQUEST: Submit prioritized repair list or credit requests to seller. Be reasonable - focus on safety and major systems. Expect back-and-forth negotiation.',
       category: 'diligence',
       subcategory: 'inspections',
       priority: 'high',
       status: 'upcoming',
-      dueDate: getDateFromClosing(5),
-      estimatedTime: '2-3 hours',
-      assignedTo: 'You & Agent',
+      dueDate: getDateFromClosing(4),
+      estimatedTime: '1-2 days negotiation + documentation',
+      assignedTo: 'You + Real Estate Agent + Seller\'s Agent',
       linkedPage: 'inspections',
       actionLabel: 'Submit Requests',
-      propertySpecific: true
+      propertySpecific: true,
+      instructions: {
+        overview: 'Negotiate inspection items strategically to address major concerns while maintaining deal momentum.',
+        tips: [
+          '📋 BE SPECIFIC: Detailed repair descriptions and preferred contractors',
+          '💰 CREDIT OPTION: Sometimes cash credit easier than actual repairs',
+          '🎯 PICK BATTLES: Don\'t nitpick cosmetic issues',
+          '⚖️ BE REASONABLE: Consider market conditions and contract terms',
+          '📄 GET WRITTEN: All agreements must be in writing via addendum'
+        ],
+        timeline: 'Submit within inspection contingency period',
+        nextSteps: ['Await seller response', 'Counter-negotiate if needed', 'Finalize repair addendum']
+      }
     });
 
     tasks.push({
-      id: 'diligence-inspection-finalize-remedies',
-      title: 'Finalize inspection remedies and timelines (extended)',
-      description: 'Complete negotiations and finalize repair agreements with seller',
+      id: 'diligence-inspection-finalize-agreement',
+      title: '✅ Finalize Repair Agreement',
+      description: '📑 CLOSE THE LOOP: Finalize which repairs will be completed vs. credits given. Get specific timeline and contractor requirements in writing. Remove inspection contingency.',
       category: 'diligence',
       subcategory: 'inspections',
       priority: 'high',
       status: 'upcoming',
-      dueDate: getDateFromClosing(3),
-      estimatedTime: '1-2 hours',
-      assignedTo: 'You & Agent',
+      dueDate: getDateFromClosing(2),
+      estimatedTime: '2-4 hours documentation + review',
+      assignedTo: 'You + Agent + Attorney + Seller',
       linkedPage: 'inspections',
       actionLabel: 'Finalize Agreement',
-      propertySpecific: true
+      propertySpecific: true,
+      instructions: {
+        overview: 'Finalize the inspection resolution and remove your inspection contingency to proceed to closing.',
+        tips: [
+          '📋 DOCUMENT EVERYTHING: Specific repairs, timeline, licensed contractors',
+          '💰 CREDIT AMOUNTS: Exact dollar amounts if credits negotiated',
+          '⏰ COMPLETION TIMELINE: When repairs must be done (usually before closing)',
+          '🔍 FINAL WALKTHROUGH: Plan to verify completion at walkthrough',
+          '✅ REMOVE CONTINGENCY: Formally remove inspection contingency'
+        ],
+        timeline: 'Complete within inspection contingency period',
+        nextSteps: ['Plan final walkthrough verification', 'Proceed to other contingencies', 'Focus on closing prep']
+      }
     });
 
     // DUE DILIGENCE PHASE - LEGAL
