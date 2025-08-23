@@ -76,9 +76,15 @@ export default function Documents({ setupData }: DocumentsProps) {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showUpload, setShowUpload] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
+  const [showManageAccessDialog, setShowManageAccessDialog] = useState(false);
   const [shareDocument, setShareDocument] = useState<Document | null>(null);
   const [shareEmail, setShareEmail] = useState('');
   const [shareMessage, setShareMessage] = useState('');
+  const [shareRole, setShareRole] = useState<'viewer' | 'editor'>('viewer');
+  const [shareExpiration, setShareExpiration] = useState<string>('never');
+  const [allowDownload, setAllowDownload] = useState(true);
+  const [publicLink, setPublicLink] = useState('');
+  const [linkExpiration, setLinkExpiration] = useState<string>('7days');
   const isMobile = useIsMobile();
 
   const formatFileSize = (bytes: number): string => {
@@ -111,7 +117,25 @@ export default function Documents({ setupData }: DocumentsProps) {
       type: 'pdf',
       description: 'Main purchase contract for 123 Oak Street',
       shared: true,
-      required: true
+      required: true,
+      sharedWith: [
+        {
+          id: '1',
+          name: 'Sarah Johnson',
+          email: 'sarah.johnson@realty.com',
+          role: 'editor',
+          avatar: 'https://images.unsplash.com/photo-1494790108755-2616c56495e2?w=32&h=32&fit=crop&crop=face',
+          addedDate: '2025-01-10',
+          lastAccessed: '2025-01-14'
+        },
+        {
+          id: '2',
+          name: 'Michael Torres',
+          email: 'michael@torres.com',
+          role: 'viewer',
+          addedDate: '2025-01-12'
+        }
+      ]
     },
     {
       id: '2',
@@ -123,7 +147,16 @@ export default function Documents({ setupData }: DocumentsProps) {
       status: 'approved',
       type: 'pdf',
       shared: true,
-      required: true
+      required: true,
+      sharedWith: [
+        {
+          id: '3',
+          name: 'Property Seller',
+          email: 'seller@property.com',
+          role: 'viewer',
+          addedDate: '2025-01-14'
+        }
+      ]
     },
     {
       id: '3',
@@ -136,7 +169,16 @@ export default function Documents({ setupData }: DocumentsProps) {
       type: 'pdf',
       description: 'General home inspection completed 2/10/2025',
       shared: true,
-      required: false
+      required: false,
+      sharedWith: [
+        {
+          id: '4',
+          name: 'Mike Thompson',
+          email: 'mike@inspections.com',
+          role: 'editor',
+          addedDate: '2025-02-10'
+        }
+      ]
     },
     {
       id: '4',
@@ -173,7 +215,16 @@ export default function Documents({ setupData }: DocumentsProps) {
       type: 'pdf',
       description: 'Preliminary title report',
       shared: true,
-      required: true
+      required: true,
+      sharedWith: [
+        {
+          id: '5',
+          name: 'First Title Company',
+          email: 'title@firsttitle.com',
+          role: 'editor',
+          addedDate: '2025-02-12'
+        }
+      ]
     }
   ];
 
