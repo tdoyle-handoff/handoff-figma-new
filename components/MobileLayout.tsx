@@ -225,11 +225,10 @@ export default function MobileLayout({
                 <div className="flex flex-col h-full">
                   <SheetHeader className="p-6 border-b border-border text-left">
                     <div className="flex items-center gap-3">
-                      <img 
-                        src={handoffLogo} 
-                        alt="Handoff" 
+                      <img
+                        src={handoffLogo}
+                        alt="Handoff"
                         className="h-10 w-auto"
-                        onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/handoff-logo.svg'; }}
                       />
                       <div>
                         <SheetDescription className="flex items-center gap-1 text-xs">
