@@ -77,7 +77,7 @@ export function SimpleOnboardingForm({ onComplete, onSkip }: SimpleOnboardingFor
 
     if (currentStep === 1) {
       if (!formData.fullName.trim()) {
-        newErrors.fullName = 'Nome completo é obrigatório';
+        newErrors.fullName = 'Full name is required';
       }
       if (!formData.email.trim()) {
         newErrors.email = 'E-mail é obrigatório';
