@@ -323,6 +323,9 @@ export function extractFromExpandedProfile(response: any): Partial<Comprehensive
   const owner = property.owner || {};
   const utilities = property.utilities || {};
   const area = property.area || {};
+  const assessment = property.assessment || {};
+  const summary = property.summary || {};
+  const lot = property.lot || {};
   
   return {
     ...basicData,
@@ -395,8 +398,30 @@ export function extractFromPropertyDetail(response: any): Partial<ComprehensiveP
   const school = property.school || {};
   const construction = building.construction || {};
   const utilities = property.utilities || {};
+
+  // Compute schools data only if present
+  const hasSchoolData = Boolean(
+    school?.elementary?.schoolName || school?.elementary?.district ||
+    school?.middle?.schoolName || school?.middle?.district ||
+    school?.high?.schoolName || school?.high?.district
+  );
+
+  const schoolsData = hasSchoolData ? {
+    elementary: {
+      name: school.elementary?.schoolName,
+      district: school.elementary?.district,
+    },
+    middle: {
+      name: school.middle?.schoolName,
+      district: school.middle?.district,
+    },
+    high: {
+      name: school.high?.schoolName,
+      district: school.high?.district,
+    },
+  } : undefined;
   
-  return {
+  const detailData: Partial<ComprehensivePropertyData> = {
     ...expandedData,
     
     lot: {
@@ -437,26 +462,17 @@ export function extractFromPropertyDetail(response: any): Partial<ComprehensiveP
       censusBlock: area.censusBlock,
     },
     
-    schools: {
-      elementary: {
-        name: school.elementary?.schoolName,
-        district: school.elementary?.district,
-      },
-      middle: {
-        name: school.middle?.schoolName,
-        district: school.middle?.district,
-      },
-      high: {
-        name: school.high?.schoolName,
-        district: school.high?.district,
-      },
-    },
-    
     dataSources: {
       ...expandedData.dataSources,
       propertyDetail: true,
     },
   };
+
+  if (schoolsData) {
+    (detailData as any).schools = schoolsData;
+  }
+
+  return detailData;
 }
 
 /**

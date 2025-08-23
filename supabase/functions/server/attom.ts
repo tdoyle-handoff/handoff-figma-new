@@ -465,7 +465,8 @@ attom.post('/test-endpoint', async (c) => {
       return c.json({ success: false, status: resp.status, statusText: resp.statusText, data }, resp.status);
     }
 
-    return c.json(data);
+    // Wrap response to match frontend extractor expectations
+    return c.json({ data });
   } catch (error) {
     console.error('❌ test-endpoint error:', error);
     return c.json({ success: false, error: error instanceof Error ? error.message : 'Unknown error' }, 500);

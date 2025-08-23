@@ -281,19 +281,13 @@ export function ComprehensiveAttomDataSummaryTable({
       // Test each endpoint
       for (const endpoint of endpoints) {
         try {
-          const vercelBase = (import.meta as any).env?.VITE_ATTOM_PROXY_BASE || '/api/attom';
-          const proxyBase = vercelBase || '/api/attom';
-          const url = `${proxyBase.replace(/\/$/, '')}/test-endpoint`;
-          
-          const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-          // Only send Supabase auth if we are calling Supabase, not Vercel relative API
-          if (url.includes('.supabase.co')) {
-            headers['Authorization'] = `Bearer ${publicAnonKey}`;
-          }
-          
+          const url = `https://${projectId}.supabase.co/functions/v1/make-server-a24396d5/attom/test-endpoint`;
           const response = await fetch(url, {
             method: 'POST',
-            headers,
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${publicAnonKey}`,
+            },
             body: JSON.stringify({
               endpoint: endpoint.path,
               address1,
