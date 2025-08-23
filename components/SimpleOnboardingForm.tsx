@@ -191,8 +191,8 @@ export function SimpleOnboardingForm({ onComplete, onSkip }: SimpleOnboardingFor
       } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
         newErrors.email = 'Invalid email address';
       }
-      if (!formData.gender) {
-        newErrors.gender = 'Gender is required';
+      if (!formData.phone.trim()) {
+        newErrors.phone = 'Phone number is required';
       }
     }
 
@@ -254,208 +254,127 @@ export function SimpleOnboardingForm({ onComplete, onSkip }: SimpleOnboardingFor
   const renderStep1 = () => (
     <div className="space-y-6">
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-semibold text-slate-700 mb-2">Personal Information</h2>
-        <p className="text-slate-600">Enter your personal information below</p>
+        <h2 className="text-2xl font-semibold text-slate-700 mb-2">Contact & Decision Makers</h2>
+        <p className="text-slate-600">Tell us about yourself and who's involved in the purchase</p>
       </div>
 
-      <div className="space-y-4">
-        <div>
-          <Label htmlFor="fullName" className="text-sm font-medium text-slate-700 mb-2 block">
-            FULL NAME
-          </Label>
-          <Input
-            id="fullName"
-            type="text"
-            placeholder="Enter your full name"
-            value={formData.fullName}
-            onChange={(e) => updateFormData({ fullName: e.target.value })}
-            className={`h-12 ${errors.fullName ? 'border-red-500' : 'border-gray-300'}`}
-          />
-          {errors.fullName && (
-            <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>
-          )}
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <Label htmlFor="fullName" className="text-sm font-medium text-slate-700 mb-2 block">
+              Full name *
+            </Label>
+            <Input
+              id="fullName"
+              type="text"
+              placeholder="Jane Doe"
+              value={formData.fullName}
+              onChange={(e) => updateFormData({ fullName: e.target.value })}
+              className={`h-10 ${errors.fullName ? 'border-red-500' : 'border-gray-300'}`}
+            />
+            {errors.fullName && (
+              <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>
+            )}
+          </div>
+          <div>
+            <Label htmlFor="email" className="text-sm font-medium text-slate-700 mb-2 block">
+              Email *
+            </Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="jane@acme.com"
+              value={formData.email}
+              onChange={(e) => updateFormData({ email: e.target.value })}
+              className={`h-10 ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+            />
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+            )}
+          </div>
+          <div>
+            <Label htmlFor="phone" className="text-sm font-medium text-slate-700 mb-2 block">
+              Phone *
+            </Label>
+            <Input
+              id="phone"
+              type="tel"
+              placeholder="(555) 555-5555"
+              value={formData.phone}
+              onChange={(e) => updateFormData({ phone: e.target.value })}
+              className={`h-10 ${errors.phone ? 'border-red-500' : 'border-gray-300'}`}
+            />
+            {errors.phone && (
+              <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+            )}
+          </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <Label className="text-sm font-medium text-slate-700 mb-2 block">
-              DATE OF BIRTH
+              Preferred contact
             </Label>
-            <Select 
-              value={formData.birthDay} 
-              onValueChange={(value) => updateFormData({ birthDay: value })}
+            <Select
+              value={formData.preferredContact}
+              onValueChange={(value) => updateFormData({ preferredContact: value })}
             >
-              <SelectTrigger className="h-12 border-gray-300">
-                <SelectValue placeholder="DD" />
+              <SelectTrigger className="h-10 border-gray-300">
+                <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {Array.from({ length: 31 }, (_, i) => (
-                  <SelectItem key={i + 1} value={String(i + 1).padStart(2, '0')}>
-                    {String(i + 1).padStart(2, '0')}
-                  </SelectItem>
-                ))}
+                <SelectItem value="email">Email</SelectItem>
+                <SelectItem value="phone">Phone</SelectItem>
+                <SelectItem value="text">Text</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div>
             <Label className="text-sm font-medium text-slate-700 mb-2 block">
-              &nbsp;
+              Have you made offers before?
             </Label>
-            <Select 
-              value={formData.birthMonth} 
-              onValueChange={(value) => updateFormData({ birthMonth: value })}
+            <Select
+              value={formData.madeOffersBefore}
+              onValueChange={(value) => updateFormData({ madeOffersBefore: value })}
             >
-              <SelectTrigger className="h-12 border-gray-300">
-                <SelectValue placeholder="MM" />
+              <SelectTrigger className="h-10 border-gray-300">
+                <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {Array.from({ length: 12 }, (_, i) => (
-                  <SelectItem key={i + 1} value={String(i + 1).padStart(2, '0')}>
-                    {String(i + 1).padStart(2, '0')}
-                  </SelectItem>
-                ))}
+                <SelectItem value="no">No</SelectItem>
+                <SelectItem value="yes">Yes</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div>
             <Label className="text-sm font-medium text-slate-700 mb-2 block">
-              GENDER
+              Tour time window
             </Label>
-            <Select 
-              value={formData.gender} 
-              onValueChange={(value) => updateFormData({ gender: value })}
+            <Select
+              value={formData.tourTimeWindow}
+              onValueChange={(value) => updateFormData({ tourTimeWindow: value })}
             >
-              <SelectTrigger className={`h-12 ${errors.gender ? 'border-red-500' : 'border-gray-300'}`}>
-                <SelectValue placeholder="Select" />
+              <SelectTrigger className="h-10 border-gray-300">
+                <SelectValue placeholder="Select..." />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="male">Male</SelectItem>
-                <SelectItem value="female">Female</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
-                <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
+                <SelectItem value="weekdays">Weekdays</SelectItem>
+                <SelectItem value="evenings">Evenings</SelectItem>
+                <SelectItem value="weekends">Weekends</SelectItem>
+                <SelectItem value="flexible">Flexible</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
-        {errors.gender && (
-          <p className="text-red-500 text-sm">{errors.gender}</p>
-        )}
 
         <div>
-          <Label className="text-sm font-medium text-slate-700 mb-2 block">
-            NATIONALITY
-          </Label>
-          <Select 
-            value={formData.nationality} 
-            onValueChange={(value) => updateFormData({ nationality: value })}
-          >
-            <SelectTrigger className="h-12 border-gray-300">
-              <SelectValue placeholder="Select nationality" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="us">United States</SelectItem>
-              <SelectItem value="ca">Canada</SelectItem>
-              <SelectItem value="mx">Mexico</SelectItem>
-              <SelectItem value="other">Other</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label className="text-sm font-medium text-slate-700 mb-2 block">
-              SSN (Last 4 digits)
-            </Label>
-            <Input
-              type="text"
-              placeholder="1234"
-              value={formData.cpf}
-              onChange={(e) => updateFormData({ cpf: e.target.value })}
-              className="h-12 border-gray-300"
-              maxLength={4}
-            />
+          <div className="flex items-center justify-between mb-2">
+            <Label className="text-sm font-medium text-slate-700">Co-buyers</Label>
+            <Button type="button" variant="outline" size="sm" className="text-xs">
+              Add co-buyer
+            </Button>
           </div>
-          <div>
-            <Label className="text-sm font-medium text-slate-700 mb-2 block">
-              ID NUMBER
-            </Label>
-            <Input
-              type="text"
-              placeholder="Enter ID"
-              value={formData.rg}
-              onChange={(e) => updateFormData({ rg: e.target.value })}
-              className="h-12 border-gray-300"
-            />
-          </div>
-        </div>
-
-        <div>
-          <Label className="text-sm font-medium text-slate-700 mb-2 block">
-            ZIP CODE
-          </Label>
-          <Input
-            type="text"
-            placeholder="Enter zip code"
-            value={formData.zipCode}
-            onChange={(e) => updateFormData({ zipCode: e.target.value })}
-            className="h-12 border-gray-300"
-          />
-        </div>
-
-        <div>
-          <Label className="text-sm font-medium text-slate-700 mb-2 block">
-            ADDRESS
-          </Label>
-          <Input
-            type="text"
-            placeholder="Enter your address"
-            value={formData.address}
-            onChange={(e) => updateFormData({ address: e.target.value })}
-            className="h-12 border-gray-300"
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label className="text-sm font-medium text-slate-700 mb-2 block">
-              NEIGHBORHOOD
-            </Label>
-            <Input
-              type="text"
-              placeholder="Enter neighborhood"
-              value={formData.neighborhood}
-              onChange={(e) => updateFormData({ neighborhood: e.target.value })}
-              className="h-12 border-gray-300"
-            />
-          </div>
-          <div>
-            <Label className="text-sm font-medium text-slate-700 mb-2 block">
-              APARTMENT/SUITE
-            </Label>
-            <Input
-              type="text"
-              placeholder="Enter apartment"
-              value={formData.complement}
-              onChange={(e) => updateFormData({ complement: e.target.value })}
-              className="h-12 border-gray-300"
-            />
-          </div>
-        </div>
-
-        <div>
-          <Label className="text-sm font-medium text-slate-700 mb-2 block">
-            E-MAIL
-          </Label>
-          <Input
-            type="email"
-            placeholder="Enter your email"
-            value={formData.email}
-            onChange={(e) => updateFormData({ email: e.target.value })}
-            className={`h-12 ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
-          />
-          {errors.email && (
-            <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-          )}
+          <p className="text-sm text-gray-500">No co-buyers added yet</p>
         </div>
       </div>
     </div>
