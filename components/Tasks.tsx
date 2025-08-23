@@ -348,6 +348,7 @@ export default function Tasks({ onNavigate }: TasksProps) {
                 selectedTaskId={selectedTaskId}
                 onSelectPhase={(id) => setSelectedPhaseId(id)}
                 onSelectTask={(taskId) => setSelectedTaskId(taskId)}
+                onUpdateTask={handleUpdateTask}
               />
             </div>
             <div className="lg:col-span-9">
@@ -357,6 +358,7 @@ export default function Tasks({ onNavigate }: TasksProps) {
                   const t = flatTasks.find(t => t.id === selectedTaskId) || firstActiveTask;
                   if (t?.linkedPage) onNavigate(t.linkedPage);
                 }}
+                onUpdateTask={handleUpdateTask}
               />
             </div>
           </div>
