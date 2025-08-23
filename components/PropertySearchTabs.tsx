@@ -39,11 +39,17 @@ export default function PropertySearchTabs() {
         <TabsContent value="get-started" className="space-y-6 mt-8">
           <SimpleOnboardingForm
             onComplete={(data) => {
-              console.log('Onboarding completed:', data);
-              // You can handle the completion here
+              // Handle onboarding completion
+              alert(`Welcome! Your onboarding is complete. Budget: ${data.budget}, Location: ${data.location}`);
+              // In a real app, this would save the data and navigate to next step
+              localStorage.setItem('onboarding-complete', JSON.stringify(data));
             }}
             onSkip={() => {
-              console.log('Onboarding skipped');
+              // Handle onboarding skip
+              if (confirm('Are you sure you want to skip the onboarding? You can complete it later in Settings.')) {
+                localStorage.setItem('onboarding-skipped', 'true');
+                alert('Onboarding skipped. You can complete it anytime in Settings.');
+              }
             }}
           />
         </TabsContent>

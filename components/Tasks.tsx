@@ -176,10 +176,15 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask }: {
                     {task.actionLabel || 'Take Action'}
                   </Button>
                 )}
-                <Button 
-                  size="sm" 
+                <Button
+                  size="sm"
                   variant="outline"
                   className="mobile-button-sm"
+                  onClick={() => {
+                    // Show task details modal or expand task information
+                    alert(`Task Details: ${task.title}\n\nDescription: ${task.description || 'No additional details available.'}\n\nCategory: ${task.category}\nPriority: ${task.priority}`);
+                    // In a real app, this would open a detailed view modal
+                  }}
                 >
                   View Details
                 </Button>
