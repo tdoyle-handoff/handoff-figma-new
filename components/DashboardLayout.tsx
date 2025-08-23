@@ -91,12 +91,6 @@ export default function DashboardLayout({
       icon: FileText,
       category: 'Purchasing Your Home'
     },
-    {
-      id: 'offer-builder',
-      label: 'Offer Builder',
-      icon: FileText,
-      category: 'Purchasing Your Home'
-    },
 
     // Support
     {
