@@ -935,7 +935,7 @@ export function AttomDebugTool() {
         </TabsContent>
 
         {/* Property Analysis Tab */}
-        <TabsContent value="property-analysis" className="space-y-6">
+        <TabsContent value="property-analysis" className="space-y-6 bg-white">
           {selectedProperty ? (
             <PropertyFieldAnalyzer property={selectedProperty} />
           ) : (
@@ -952,7 +952,7 @@ export function AttomDebugTool() {
         </TabsContent>
 
         {/* Raw Data Tab */}
-        <TabsContent value="raw-data" className="space-y-6">
+        <TabsContent value="raw-data" className="space-y-6 bg-white">
           {selectedProperty ? (
             <Card>
               <CardHeader>
@@ -1038,7 +1038,7 @@ export function AttomDebugTool() {
         </TabsContent>
 
         {/* Connectivity Tab */}
-        <TabsContent value="connectivity" className="space-y-6">
+        <TabsContent value="connectivity" className="space-y-6 bg-white">
           <Card>
             <CardHeader>
               <CardTitle>Network & Server Connectivity</CardTitle>
@@ -1069,7 +1069,7 @@ export function AttomDebugTool() {
         </TabsContent>
 
         {/* Storage Tab */}
-        <TabsContent value="storage" className="space-y-6">
+        <TabsContent value="storage" className="space-y-6 bg-white">
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -1108,7 +1108,7 @@ export function AttomDebugTool() {
         </TabsContent>
 
         {/* Logs Tab */}
-        <TabsContent value="logs" className="space-y-6">
+        <TabsContent value="logs" className="space-y-6 bg-white">
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
