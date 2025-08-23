@@ -615,8 +615,8 @@ export default function BuyerIntakeForm({
         </section>
 
         {/* Budget & financing */}
-        <section className="rounded-2xl border bg-white p-6 shadow-sm">
-          <h2 className="mb-2 text-lg font-semibold">Budget & Financing</h2>
+        <section className="modern-card-elevated">
+          <h2 className="mb-2 text-lg font-semibold text-primary">Budget & Financing</h2>
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="flex flex-col gap-4">
@@ -649,7 +649,7 @@ export default function BuyerIntakeForm({
               </div>
 
               {/* Down payment controls */}
-              <div className="rounded-xl border p-3">
+              <div className="rounded-xl border border-slate-200/60 bg-slate-50/30 p-4">
                 <div className="flex items-center gap-3">
                   <label className="text-sm font-medium">Down payment input</label>
                   <select
