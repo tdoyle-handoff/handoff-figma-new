@@ -57,10 +57,10 @@ export default function PropertySearchTabs() {
             </div>
           </TabsTrigger>
           <TabsTrigger value="find-home" className="gap-2 data-[state=active]:bg-emerald-500 data-[state=active]:text-white">
-            <SearchIcon className="h-4 w-4" />
+            <ListChecks className="h-4 w-4" />
             <div className="text-left">
               <div className="font-medium">Phase 2</div>
-              <div className="text-xs opacity-80">Let's Find a Home</div>
+              <div className="text-xs opacity-80">Track & Compare</div>
             </div>
           </TabsTrigger>
           <TabsTrigger value="found-home" className="gap-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white">
