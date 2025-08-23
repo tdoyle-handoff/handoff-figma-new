@@ -421,11 +421,11 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
       instructions: {
         overview: 'The home inspection is your primary defense against costly surprises. Choose an experienced, thorough inspector.',
         tips: [
-          '📋 VERIFY: Licensed, insured, certified (ASHI, InterNACHI)',
-          '💬 ASK AGENT: Get 3+ referrals from your real estate agent',
-          '⭐ CHECK REVIEWS: Look for detailed, recent reviews',
-          '💰 COMPARE: $400-800 typical cost, don\'t just choose cheapest',
-          '📱 AVAILABILITY: Book ASAP, good inspectors fill up quickly'
+          'VERIFY: Licensed, insured, certified (ASHI, InterNACHI)',
+          'ASK AGENT: Get 3+ referrals from your real estate agent',
+          'CHECK REVIEWS: Look for detailed, recent reviews',
+          'COMPARE: $400-800 typical cost, don\'t just choose cheapest',
+          'AVAILABILITY: Book ASAP, good inspectors fill up quickly'
         ],
         timeline: 'Research and book within 48 hours of offer acceptance',
         nextSteps: ['Schedule within inspection period', 'Plan to attend inspection', 'Understand what\'s included']
@@ -452,8 +452,8 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
           '👥 ATTEND: Be present for entire inspection to ask questions',
           '📸 DOCUMENT: Take photos of issues inspector points out',
           '🔌 UTILITIES ON: Ensure all utilities are connected and working',
-          '🧰 WHAT\'S CHECKED: Structure, electrical, plumbing, HVAC, roof, windows',
-          '📋 REPORT: Detailed written report within 24-48 hours'
+          'WHAT\'S CHECKED: Structure, electrical, plumbing, HVAC, roof, windows',
+          'REPORT: Detailed written report within 24-48 hours'
         ],
         timeline: 'Schedule within 5-7 days of offer acceptance',
         nextSteps: ['Receive detailed report', 'Review with agent', 'Decide on repair requests']
@@ -478,9 +478,9 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
         overview: 'Specialized inspections focus on specific systems or hazards based on property characteristics and general inspection findings.',
         tips: [
           '🐛 PEST: Required in many areas, checks for termites/wood-destroying insects',
-          '☢️ RADON: Colorless gas, common in basements, 2-4 day test',
-          '🎨 LEAD PAINT: Required for homes built before 1978',
-          '🚽 SEPTIC: If no city sewer, test system and tank',
+          'RADON: Colorless gas, common in basements, 2-4 day test',
+          'LEAD PAINT: Required for homes built before 1978',
+          'SEPTIC: If no city sewer, test system and tank',
           '💧 WELL WATER: Test quality and flow rate if private well'
         ],
         timeline: 'Schedule within 7 days of general inspection',
@@ -505,10 +505,10 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
       instructions: {
         overview: 'Review inspection reports strategically to prioritize repair requests and understand true property condition.',
         tips: [
-          '🚨 PRIORITIZE: Safety issues first, then major systems, then cosmetic',
-          '💰 GET ESTIMATES: For major repairs, get contractor quotes',
-          '📋 CATEGORIZE: Deal-breakers vs. negotiable vs. acceptable',
-          '🤝 CONSULT AGENT: Experienced agents know what to negotiate',
+          'PRIORITIZE: Safety issues first, then major systems, then cosmetic',
+          'GET ESTIMATES: For major repairs, get contractor quotes',
+          'CATEGORIZE: Deal-breakers vs. negotiable vs. acceptable',
+          'CONSULT AGENT: Experienced agents know what to negotiate',
           '⏰ DEADLINE: You have limited time to respond (typically 3-5 days)'
         ],
         timeline: 'Complete within 24-48 hours of receiving reports',
@@ -533,11 +533,11 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
       instructions: {
         overview: 'Negotiate inspection items strategically to address major concerns while maintaining deal momentum.',
         tips: [
-          '📋 BE SPECIFIC: Detailed repair descriptions and preferred contractors',
-          '💰 CREDIT OPTION: Sometimes cash credit easier than actual repairs',
-          '🎯 PICK BATTLES: Don\'t nitpick cosmetic issues',
-          '⚖️ BE REASONABLE: Consider market conditions and contract terms',
-          '📄 GET WRITTEN: All agreements must be in writing via addendum'
+          'BE SPECIFIC: Detailed repair descriptions and preferred contractors',
+          'CREDIT OPTION: Sometimes cash credit easier than actual repairs',
+          'PICK BATTLES: Don\'t nitpick cosmetic issues',
+          'BE REASONABLE: Consider market conditions and contract terms',
+          'GET WRITTEN: All agreements must be in writing via addendum'
         ],
         timeline: 'Submit within inspection contingency period',
         nextSteps: ['Await seller response', 'Counter-negotiate if needed', 'Finalize repair addendum']
@@ -621,7 +621,7 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
           '💰 LIENS: Must be paid off at closing (seller responsibility)',
           '🚧 EASEMENTS: Rights others have to use your property (utilities, access)',
           '📏 ENCROACHMENTS: Structures crossing property lines',
-          '��� RESTRICTIONS: HOA rules, building restrictions, deed covenants',
+          '📜 RESTRICTIONS: HOA rules, building restrictions, deed covenants',
           '⚖️ ATTORNEY ADVICE: Essential for understanding legal implications'
         ],
         timeline: 'Review within 2-3 days of receiving title report',
@@ -703,7 +703,7 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
         overview: 'Wire transfer instructions must be verified to prevent wire fraud, which is extremely common in real estate.',
         tips: [
           '🚨 FRAUD WARNING: Always verify wire instructions by phone',
-          '��️ CALL DIRECTLY: Use known number, not number in email',
+          '☎️ CALL DIRECTLY: Use known number, not number in email',
           '📧 EMAIL RISK: Never trust wire instructions received only by email',
           '🏦 BANK TIMING: Arrange wire 1-2 days before closing',
           '💰 BACKUP PLAN: Certified check as backup if wire issues'
