@@ -290,20 +290,6 @@ export default function DashboardLayout({
 
         {/* Footer */}
         <div className="p-4 border-t border-blue-700/50 mt-auto">
-          {sidebarOpen && (
-            <div className="mb-4">
-              <div className="text-xs text-blue-300 mb-2">Support 24/7</div>
-              <div className="text-xs text-blue-200">Contact us anytime</div>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="mt-2 text-blue-200 hover:text-white hover:bg-blue-800/50 text-xs h-8"
-              >
-                Help
-              </Button>
-            </div>
-          )}
-
           <div className="space-y-1">
             <button
               className={cn(
