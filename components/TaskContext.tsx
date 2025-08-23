@@ -434,8 +434,8 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
 
     tasks.push({
       id: 'diligence-inspection-general-scheduled',
-      title: '🏠 General Home Inspection',
-      description: '🚨 MUST ATTEND: Be present for 3-4 hour inspection. Ask questions, take notes. Inspector checks 400+ items: structure, electrical, plumbing, HVAC, roof, foundation.',
+      title: 'General Home Inspection',
+      description: 'MUST ATTEND: Be present for 3-4 hour inspection. Ask questions, take notes. Inspector checks 400+ items: structure, electrical, plumbing, HVAC, roof, foundation.',
       category: 'diligence',
       subcategory: 'inspections',
       priority: 'high',
