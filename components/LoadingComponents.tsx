@@ -49,10 +49,10 @@ export function AuthLoader() {
         <CardContent className="p-8 text-center space-y-6">
           {/* Logo */}
           <div className="flex justify-center mb-6">
-            <img 
-              src={handoffLogo} 
-              alt="Handoff" 
-              className="h-16 w-auto animate-pulse"
+            <img
+              src={handoffLogo}
+              alt="Handoff"
+              className="h-24 w-auto animate-pulse"
             />
           </div>
 
@@ -109,10 +109,10 @@ export function QuickLoader() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
       <div className="text-center space-y-4">
-        <img 
-          src={handoffLogo} 
-          alt="Handoff" 
-          className="h-20 w-auto mx-auto animate-pulse"
+        <img
+          src={handoffLogo}
+          alt="Handoff"
+          className="h-32 w-auto mx-auto animate-pulse"
         />
         <div className="flex justify-center">
           <Loader2 className="h-6 w-6 text-primary animate-spin" />
@@ -195,10 +195,10 @@ export function ProgressLoader({ progress, message }: { progress: number; messag
       <Card className="w-full max-w-md mx-4">
         <CardContent className="p-6 text-center space-y-4">
           <div className="flex justify-center mb-4">
-            <img 
-              src={handoffLogo} 
-              alt="Handoff" 
-              className="h-12 w-auto"
+            <img
+              src={handoffLogo}
+              alt="Handoff"
+              className="h-20 w-auto"
             />
           </div>
           
