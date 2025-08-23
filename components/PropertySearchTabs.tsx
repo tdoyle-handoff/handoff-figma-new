@@ -90,18 +90,18 @@ export default function PropertySearchTabs() {
           <Card className="border-emerald-200 bg-emerald-50/30">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-emerald-700">
-                <SearchIcon className="h-5 w-5" />
-                Phase 2: Let's Find a Home
-                <Badge className="bg-emerald-600">Home Search</Badge>
+                <ListChecks className="h-5 w-5" />
+                Phase 2: Track & Compare Homes
+                <Badge className="bg-emerald-600">Home Tracker</Badge>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-emerald-700 mb-4">
-                Search for properties that match your criteria and explore available listings in your target areas.
+                Keep track of homes you're interested in, add notes about each property, and rank them by preference to help make your decision.
               </p>
             </CardContent>
           </Card>
-          <PropertySearchPanel />
+          <HomeTracker />
         </TabsContent>
 
         {/* Phase 3: I've Found a Home */}
