@@ -1,5 +1,6 @@
 import React, { useState, Suspense } from 'react';
 import { FileText, Upload, Download, Share, Eye, Trash2, Plus, Search, Filter, Calendar, User, CheckCircle, Clock, AlertCircle, Folder, Users, Copy, Mail, Link, Globe, Lock, Settings, UserPlus, UserMinus, Shield } from 'lucide-react';
+import { DownloadButton, DarkDownloadButton } from './ui/download-button';
 import ContractAnalysis from './ContractAnalysis';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';

@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { FileText, Upload, Eye, Download, Bot, AlertTriangle, CheckCircle, Clock, Calendar, DollarSign, AlertCircle, FileCheck, Search, Filter, Trash2, Share, User, MapPin, Info, Zap, Shield } from 'lucide-react';
+import { DarkDownloadButton } from './ui/download-button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -436,9 +437,12 @@ export default function ContractAnalysis({ onNavigate }: ContractAnalysisProps) 
                         <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); setShowDocumentViewer(true); }}>
                           <Eye className="w-4 h-4" />
                         </Button>
-                        <Button variant="outline" size="sm">
-                          <Download className="w-4 h-4" />
-                        </Button>
+                        <DarkDownloadButton
+                          size="sm"
+                          onDownload={() => {
+                            console.log('Downloading contract:', contract.name);
+                          }}
+                        />
                       </div>
                     </div>
                   </CardContent>
@@ -849,10 +853,15 @@ export default function ContractAnalysis({ onNavigate }: ContractAnalysisProps) 
               <p className="text-sm text-muted-foreground mb-4">
                 Full document viewer would be implemented here
               </p>
-              <Button variant="outline">
-                <Download className="w-4 h-4 mr-2" />
+              <DarkDownloadButton
+                showText={true}
+                variant="dark-rect"
+                onDownload={() => {
+                  console.log('Downloading PDF');
+                }}
+              >
                 Download PDF
-              </Button>
+              </DarkDownloadButton>
             </div>
           </div>
         </DialogContent>
