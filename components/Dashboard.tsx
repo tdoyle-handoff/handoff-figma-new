@@ -119,11 +119,123 @@ export default function Dashboard({ setupData }: DashboardProps) {
 
   return (
     <div className="mx-auto max-w-7xl p-6">
-      {setupData?.buyerName && (
-        <div className="mb-2 text-sm text-muted-foreground">
-          Welcome back, {setupData.buyerName.split(' ')[0]}!
-        </div>
-      )}
+      {/* Property Input Form */}
+      <Card className="shadow-sm mb-6">
+        <CardHeader>
+          <CardTitle>Property Information</CardTitle>
+          <CardDescription>Enter your property details to calculate costs and payments.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div>
+              <Label className="text-sm font-medium">Home Price</Label>
+              <Input
+                type="number"
+                value={homePrice}
+                onChange={(e) => setHomePrice(Number(e.target.value || 0))}
+                placeholder="750000"
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <Label className="text-sm font-medium">Down Payment %</Label>
+              <Input
+                type="number"
+                value={downPercent}
+                onChange={(e) => setDownPercent(Number(e.target.value || 0))}
+                placeholder="20"
+                className="mt-1"
+                min="0"
+                max="100"
+              />
+            </div>
+            <div>
+              <Label className="text-sm font-medium">Interest Rate %</Label>
+              <Input
+                type="number"
+                value={rate}
+                onChange={(e) => setRate(Number(e.target.value || 0))}
+                placeholder="6.25"
+                className="mt-1"
+                step="0.01"
+              />
+            </div>
+            <div>
+              <Label className="text-sm font-medium">Loan Term (Years)</Label>
+              <Input
+                type="number"
+                value={term}
+                onChange={(e) => setTerm(Number(e.target.value || 0))}
+                placeholder="30"
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <Label className="text-sm font-medium">Property Taxes (Annual)</Label>
+              <Input
+                type="number"
+                value={taxesAnnual}
+                onChange={(e) => setTaxesAnnual(Number(e.target.value || 0))}
+                placeholder="10500"
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <Label className="text-sm font-medium">Home Insurance (Annual)</Label>
+              <Input
+                type="number"
+                value={insuranceAnnual}
+                onChange={(e) => setInsuranceAnnual(Number(e.target.value || 0))}
+                placeholder="1800"
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <Label className="text-sm font-medium">HOA (Monthly)</Label>
+              <Input
+                type="number"
+                value={hoaMonthly}
+                onChange={(e) => setHoaMonthly(Number(e.target.value || 0))}
+                placeholder="0"
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <Label className="text-sm font-medium">Maintenance (Monthly)</Label>
+              <Input
+                type="number"
+                value={maintenanceMonthly}
+                onChange={(e) => setMaintenanceMonthly(Number(e.target.value || 0))}
+                placeholder="250"
+                className="mt-1"
+              />
+            </div>
+          </div>
+          <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div>
+              <Label className="text-sm font-medium">Monthly Income</Label>
+              <Input
+                type="number"
+                value={monthlyIncome}
+                onChange={(e) => setMonthlyIncome(Number(e.target.value || 0))}
+                placeholder="12000"
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <Label className="text-sm font-medium">Current Rent</Label>
+              <Input
+                type="number"
+                value={currentRent}
+                onChange={(e) => setCurrentRent(Number(e.target.value || 0))}
+                placeholder="4200"
+                className="mt-1"
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       <Tabs defaultValue="analytics" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="analytics" className="gap-2"><FileBarChart2 className="h-4 w-4"/>Analytics</TabsTrigger>
