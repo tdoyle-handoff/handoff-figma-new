@@ -342,7 +342,9 @@ export default function HomeTracker() {
         </Card>
       ) : (
         <div className="space-y-4">
-          {homes.map((home, index) => (
+          {homes
+            .filter(home => labelFilter === 'all' || home.label === labelFilter)
+            .map((home, index) => (
             <Card key={home.id} className="relative">
               <CardContent className="p-6">
                 <div className="flex items-start gap-4">
