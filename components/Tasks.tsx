@@ -516,15 +516,15 @@ export default function Tasks({ onNavigate }: TasksProps) {
           </Card>
         </TabsContent>
 
-        <TabsContent value="legal" className="space-y-6">
+        <TabsContent value="legal" className="space-y-6 mt-6">
           <ChecklistLegalTabs />
         </TabsContent>
 
-        <TabsContent value="inspections" className="space-y-6">
+        <TabsContent value="inspections" className="space-y-6 mt-6">
           <ChecklistInspectionTabs />
         </TabsContent>
 
-        <TabsContent value="insurance" className="space-y-6">
+        <TabsContent value="insurance" className="space-y-6 mt-6">
           <ChecklistInsuranceTabs />
         </TabsContent>
       </Tabs>
