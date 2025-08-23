@@ -108,12 +108,6 @@ export default function MobileLayout({
       category: 'Services'
     },
     {
-      id: 'offer-builder',
-      label: 'Offer Builder',
-      icon: FileText,
-      category: 'Services'
-    },
-    {
       id: 'resources',
       label: 'Education Hub',
       icon: BookOpen,

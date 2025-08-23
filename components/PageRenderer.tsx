@@ -99,11 +99,11 @@ export function PageRenderer({
           </Suspense>
         );
       
-      // Temporary route to access Offer Builder until it has its own nav item
+      // Route legacy 'offer-builder' to Documents hub with Offer tab selected
       case 'offer-builder':
         return (
           <Suspense fallback={<LoadingSpinner />}>
-            <OfferBuilder />
+            <Documents defaultTab="offer" />
           </Suspense>
         );
       

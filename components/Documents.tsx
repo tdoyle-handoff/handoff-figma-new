@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Progress } from './ui/progress';
 import { Alert, AlertDescription } from './ui/alert';
 import { useIsMobile } from './ui/use-mobile';
+import OfferBuilder from './OfferBuilder';
 
 interface Document {
   id: string;
@@ -39,14 +40,18 @@ interface SetupData {
   buyerName: string;
 }
 
+type DocumentsTab = 'all' | 'shared' | 'signatures' | 'archive' | 'offer' | 'templates' | 'esign';
+
 interface DocumentsProps {
   setupData?: SetupData | null;
+  defaultTab?: DocumentsTab;
 }
 
-export default function Documents({ setupData }: DocumentsProps) {
+export default function Documents({ setupData, defaultTab = 'all' }: DocumentsProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showUpload, setShowUpload] = useState(false);
+  const [tab, setTab] = useState<DocumentsTab>(defaultTab);
   const isMobile = useIsMobile();
 
   const formatFileSize = (bytes: number): string => {
@@ -296,15 +301,15 @@ export default function Documents({ setupData }: DocumentsProps) {
         </Alert>
       )}
 
-      <Tabs defaultValue="all" className="w-full">
-        <TabsList className={`grid w-full ${isMobile ? 'grid-cols-2 tab-container-multiline' : 'grid-cols-7'}`}>
+      <Tabs value={tab} onValueChange={(v) => setTab(v as DocumentsTab)} className="w-full">
+        <TabsList className={`grid w-full ${isMobile ? 'grid-cols-3 tab-container-multiline' : 'grid-cols-7'}`}>
           <TabsTrigger value="all" className={isMobile ? 'tab-multiline' : ''}>All Documents</TabsTrigger>
           <TabsTrigger value="shared" className={isMobile ? 'tab-multiline' : ''}>Shared</TabsTrigger>
           <TabsTrigger value="signatures" className={isMobile ? 'tab-multiline' : ''}>Signatures Needed</TabsTrigger>
           <TabsTrigger value="archive" className={isMobile ? 'tab-multiline' : ''}>Archive</TabsTrigger>
+          <TabsTrigger value="offer" className={isMobile ? 'tab-multiline' : ''}>Offer Builder</TabsTrigger>
           {!isMobile && (
             <>
-              <TabsTrigger value="offer">Offer Builder</TabsTrigger>
               <TabsTrigger value="templates">Templates</TabsTrigger>
               <TabsTrigger value="esign">E-Sign</TabsTrigger>
             </>
@@ -507,21 +512,11 @@ export default function Documents({ setupData }: DocumentsProps) {
           </Card>
         </TabsContent>
 
+        <TabsContent value="offer" className="space-y-6">
+          <OfferBuilder />
+        </TabsContent>
         {!isMobile && (
           <>
-            <TabsContent value="offer" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Smart Offer Builder</CardTitle>
-                  <CardDescription>Draft offers with templates, contingencies, and auto-filled details</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="p-4 border rounded-lg text-sm text-muted-foreground">
-                    Offer builder coming soon — create offers faster with reusable templates and e-sign support.
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
 
             <TabsContent value="templates" className="space-y-6">
               <Card>
