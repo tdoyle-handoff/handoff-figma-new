@@ -110,35 +110,37 @@ export function SimpleOnboardingForm({ onComplete, onSkip }: SimpleOnboardingFor
   };
 
   const renderProgressIndicator = () => (
-    <div className="flex items-center justify-center space-x-4 mb-8">
-      {Array.from({ length: TOTAL_STEPS }, (_, index) => {
-        const stepNumber = index + 1;
-        const isActive = stepNumber === currentStep;
-        const isCompleted = stepNumber < currentStep;
-        const isUpcoming = stepNumber > currentStep;
+    <div className="mb-12 pb-8 border-b border-gray-200">
+      <div className="flex items-center justify-center space-x-4">
+        {Array.from({ length: TOTAL_STEPS }, (_, index) => {
+          const stepNumber = index + 1;
+          const isActive = stepNumber === currentStep;
+          const isCompleted = stepNumber < currentStep;
+          const isUpcoming = stepNumber > currentStep;
 
-        return (
-          <React.Fragment key={stepNumber}>
-            <div
-              className={`
-                w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium
-                ${isActive ? 'bg-blue-600 text-white' : 
-                  isCompleted ? 'bg-blue-600 text-white' :
-                  'bg-gray-300 text-gray-600'}
-              `}
-            >
-              {stepNumber}
-            </div>
-            {stepNumber < TOTAL_STEPS && (
-              <div 
-                className={`w-16 h-0.5 ${
-                  isCompleted ? 'bg-blue-600' : 'bg-gray-300'
-                }`}
-              />
-            )}
-          </React.Fragment>
-        );
-      })}
+          return (
+            <React.Fragment key={stepNumber}>
+              <div
+                className={`
+                  w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium
+                  ${isActive ? 'bg-blue-600 text-white' :
+                    isCompleted ? 'bg-blue-600 text-white' :
+                    'bg-gray-300 text-gray-600'}
+                `}
+              >
+                {stepNumber}
+              </div>
+              {stepNumber < TOTAL_STEPS && (
+                <div
+                  className={`w-16 h-0.5 ${
+                    isCompleted ? 'bg-blue-600' : 'bg-gray-300'
+                  }`}
+                />
+              )}
+            </React.Fragment>
+          );
+        })}
+      </div>
     </div>
   );
 
