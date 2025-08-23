@@ -1359,6 +1359,231 @@ export default function Documents({ setupData }: DocumentsProps) {
         )}
       </Tabs>
 
+      {/* Manage Access Dialog */}
+      <Dialog open={showManageAccessDialog} onOpenChange={setShowManageAccessDialog}>
+        <DialogContent className="max-w-2xl bg-white shadow-xl border border-gray-200">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Users className="w-5 h-5" />
+              Manage Document Access
+            </DialogTitle>
+            <DialogDescription>
+              {shareDocument ? `Manage access and permissions for "${shareDocument.name}"` : 'Manage document access'}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-6">
+            {/* Current Users */}
+            {shareDocument?.sharedWith && shareDocument.sharedWith.length > 0 && (
+              <div>
+                <h4 className="font-medium mb-3 flex items-center gap-2">
+                  <Shield className="w-4 h-4" />
+                  People with access ({shareDocument.sharedWith.length})
+                </h4>
+                <div className="space-y-3">
+                  {shareDocument.sharedWith.map((user) => (
+                    <div key={user.id} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="w-8 h-8">
+                          {user.avatar ? (
+                            <AvatarImage src={user.avatar} alt={user.name} />
+                          ) : (
+                            <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                          )}
+                        </Avatar>
+                        <div>
+                          <p className="font-medium text-sm">{user.name}</p>
+                          <p className="text-xs text-muted-foreground">{user.email}</p>
+                          <p className="text-xs text-muted-foreground">
+                            Added {user.addedDate}
+                            {user.lastAccessed && ` • Last accessed ${user.lastAccessed}`}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Select
+                          value={user.role}
+                          onValueChange={(newRole: 'viewer' | 'editor') => changeUserRole(user.id, newRole)}
+                        >
+                          <SelectTrigger className="w-24">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="viewer">Viewer</SelectItem>
+                            <SelectItem value="editor">Editor</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => removeUserAccess(user.id, user.name)}
+                              >
+                                <UserMinus className="w-4 h-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Remove access</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <Separator />
+
+            {/* Add New User */}
+            <div>
+              <h4 className="font-medium mb-3 flex items-center gap-2">
+                <UserPlus className="w-4 h-4" />
+                Add People
+              </h4>
+              <div className="space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <Input
+                    type="email"
+                    placeholder="Email address"
+                    value={shareEmail}
+                    onChange={(e) => setShareEmail(e.target.value)}
+                    className="md:col-span-2"
+                  />
+                  <Select value={shareRole} onValueChange={(value: 'viewer' | 'editor') => setShareRole(value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="viewer">Viewer</SelectItem>
+                      <SelectItem value="editor">Editor</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      id="allow-download"
+                      checked={allowDownload}
+                      onCheckedChange={setAllowDownload}
+                    />
+                    <label htmlFor="allow-download" className="text-sm">Allow download</label>
+                  </div>
+                  <Select value={shareExpiration} onValueChange={setShareExpiration}>
+                    <SelectTrigger className="w-32">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="never">No expiry</SelectItem>
+                      <SelectItem value="7days">7 days</SelectItem>
+                      <SelectItem value="30days">30 days</SelectItem>
+                      <SelectItem value="90days">90 days</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button
+                  onClick={addUserToDocument}
+                  disabled={!shareEmail}
+                  className="w-full"
+                >
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  Add Person
+                </Button>
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* Public Link Sharing */}
+            <div>
+              <h4 className="font-medium mb-3 flex items-center gap-2">
+                <Link className="w-4 h-4" />
+                Share with Link
+              </h4>
+              <div className="space-y-3">
+                <div className="flex gap-2">
+                  <Input
+                    value={publicLink}
+                    placeholder="Generate a shareable link"
+                    readOnly
+                    className="flex-1"
+                  />
+                  <Button
+                    variant="outline"
+                    onClick={() => generatePublicLink()}
+                  >
+                    <Globe className="w-4 h-4 mr-2" />
+                    Generate
+                  </Button>
+                </div>
+                {publicLink && (
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => copyToClipboard(publicLink)}
+                      className="flex-1"
+                    >
+                      <Copy className="w-4 h-4 mr-2" />
+                      Copy Link
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const mailtoLink = `mailto:?subject=Shared Document: ${shareDocument?.name}&body=${encodeURIComponent(`View document: ${publicLink}`)}`;
+                        window.location.href = mailtoLink;
+                      }}
+                      className="flex-1"
+                    >
+                      <Mail className="w-4 h-4 mr-2" />
+                      Email Link
+                    </Button>
+                  </div>
+                )}
+                <div className="flex items-center gap-4 text-sm">
+                  <Select value={linkExpiration} onValueChange={setLinkExpiration}>
+                    <SelectTrigger className="w-32">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="7days">7 days</SelectItem>
+                      <SelectItem value="30days">30 days</SelectItem>
+                      <SelectItem value="never">No expiry</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <span className="text-muted-foreground">Link expires in {linkExpiration === 'never' ? 'no time limit' : linkExpiration}</span>
+                </div>
+                <Alert>
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription className="text-xs">
+                    Anyone with this link can access the document. Only share with trusted recipients.
+                  </AlertDescription>
+                </Alert>
+              </div>
+            </div>
+
+            {/* Dialog Actions */}
+            <div className="flex gap-2 pt-4 border-t">
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => {
+                  setShowManageAccessDialog(false);
+                  setShareDocument(null);
+                  setShareEmail('');
+                  setPublicLink('');
+                }}
+              >
+                Done
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Share Dialog */}
       <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
         <DialogContent className="bg-white shadow-xl border border-gray-200">
@@ -1379,6 +1604,18 @@ export default function Documents({ setupData }: DocumentsProps) {
               />
             </div>
             <div>
+              <label className="text-sm font-medium mb-2 block">Role</label>
+              <Select value={shareRole} onValueChange={(value: 'viewer' | 'editor') => setShareRole(value)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="viewer">Viewer - Can view only</SelectItem>
+                  <SelectItem value="editor">Editor - Can view and edit</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
               <label className="text-sm font-medium mb-2 block">Message (Optional)</label>
               <Textarea
                 placeholder="Add a message to include with the shared document..."
@@ -1390,11 +1627,11 @@ export default function Documents({ setupData }: DocumentsProps) {
             <div className="flex gap-2">
               <Button
                 className="flex-1"
-                onClick={sendShare}
+                onClick={addUserToDocument}
                 disabled={!shareEmail}
               >
                 <Share className="w-4 h-4 mr-2" />
-                Send Share Link
+                Share Document
               </Button>
               <Button
                 variant="outline"
@@ -1409,7 +1646,7 @@ export default function Documents({ setupData }: DocumentsProps) {
               </Button>
             </div>
             <div className="text-xs text-muted-foreground">
-              A secure link will be sent to the recipient allowing them to view this document.
+              The recipient will receive an email with access to view this document.
             </div>
           </div>
         </DialogContent>
