@@ -512,21 +512,21 @@ export default function Documents({ setupData }: DocumentsProps) {
           </Card>
         </TabsContent>
 
+        <TabsContent value="offer" className="space-y-6">
+          <Suspense fallback={
+            <Card>
+              <CardContent className="p-8 text-center">
+                <div className="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+                <p className="text-muted-foreground">Loading Offer Builder...</p>
+              </CardContent>
+            </Card>
+          }>
+            <OfferBuilder />
+          </Suspense>
+        </TabsContent>
+
         {!isMobile && (
           <>
-            <TabsContent value="offer" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Smart Offer Builder</CardTitle>
-                  <CardDescription>Draft offers with templates, contingencies, and auto-filled details</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="p-4 border rounded-lg text-sm text-muted-foreground">
-                    Offer builder coming soon — create offers faster with reusable templates and e-sign support.
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
 
             <TabsContent value="templates" className="space-y-6">
               <Card>
