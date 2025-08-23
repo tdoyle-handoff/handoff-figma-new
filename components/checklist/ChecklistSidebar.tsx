@@ -11,6 +11,7 @@ interface SidebarProps {
   onSelectTask: (taskId: string) => void;
   selectedPhaseId?: string;
   selectedTaskId?: string;
+  onUpdateTask?: (taskId: string, status: 'completed' | 'active' | 'pending' | 'overdue' | 'in-progress' | 'upcoming') => void;
 }
 
 const getPhaseIcon = (phaseId: string) => {
