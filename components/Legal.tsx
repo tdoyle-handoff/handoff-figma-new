@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Search, FileText, AlertTriangle, CheckCircle, Download, Upload, Eye, Bot, Star, MapPin, Phone, Mail, ExternalLink, DollarSign, Calendar, Clock, Shield, FileX, AlertCircle, TrendingUp, Users, Scale, ChevronRight, User, HelpCircle } from 'lucide-react';
+import ContractAnalysis from './ContractAnalysis';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -671,157 +672,6 @@ export const LawyerSearch = () => {
   );
 };
 
-export const ContractReview = () => {
-  const [contractUploaded, setContractUploaded] = useState(true);
-  const [aiSummaryComplete, setAiSummaryComplete] = useState(false);
-
-  return (
-    <div className="space-y-6">
-      <div>
-        <h3 className="text-lg font-semibold mb-2">Purchase Contract Review</h3>
-        <p className="text-sm text-muted-foreground mb-4">
-          Upload and review your purchase contract with AI-powered analysis.
-        </p>
-      </div>
-
-      {!contractUploaded ? (
-        <Card className="border-dashed border-2 border-muted-foreground/25">
-          <CardContent className="p-8 text-center">
-            <Upload className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <h4 className="font-medium mb-2">Upload Purchase Contract</h4>
-            <p className="text-sm text-muted-foreground mb-4">
-              Upload your signed purchase agreement for AI analysis and review
-            </p>
-            <Button onClick={() => setContractUploaded(true)}>
-              <Upload className="w-4 h-4 mr-2" />
-              Upload Contract
-            </Button>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="space-y-4">
-          {/* Contract File */}
-          <Card className="shadow-sm">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <FileText className="w-8 h-8 text-primary" />
-                <div className="flex-1">
-                  <h4 className="font-medium">Purchase_Agreement_123_Oak_Street.pdf</h4>
-                  <p className="text-sm text-muted-foreground">Uploaded on Jan 12, 2025 • 1.2 MB</p>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm">
-                    <Eye className="w-4 h-4 mr-1" />
-                    View
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    <Download className="w-4 h-4 mr-1" />
-                    Download
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* AI Analysis */}
-          <Card className="shadow-sm">
-            <CardHeader className="pb-3">
-              <div className="flex items-center gap-2">
-                <Bot className="w-5 h-5 text-primary" />
-                <CardTitle className="text-base">AI Contract Analysis</CardTitle>
-                {aiSummaryComplete && (
-                  <Badge variant="secondary" className="bg-green-100 text-green-800">
-                    <CheckCircle className="w-3 h-3 mr-1" />
-                    Complete
-                  </Badge>
-                )}
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {!aiSummaryComplete ? (
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <div className="animate-spin w-4 h-4 border-2 border-primary border-t-transparent rounded-full"></div>
-                    <span className="text-sm">Analyzing contract terms and conditions...</span>
-                  </div>
-                  <Progress value={75} className="h-2" />
-                  <Button onClick={() => setAiSummaryComplete(true)} size="sm" variant="outline">
-                    View Analysis (Demo)
-                  </Button>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <Alert>
-                    <AlertTriangle className="h-4 w-4" />
-                    <AlertDescription>
-                      <strong>2 items require attention:</strong> Review the contingencies and closing date terms below.
-                    </AlertDescription>
-                  </Alert>
-
-                  <div className="grid gap-4">
-                    <div className="p-4 border rounded-lg">
-                      <h5 className="font-medium mb-2 flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-green-600" />
-                        Key Terms Summary
-                      </h5>
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <span className="text-muted-foreground">Purchase Price:</span>
-                          <span className="font-medium ml-2">$750,000</span>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">Earnest Money:</span>
-                          <span className="font-medium ml-2">$15,000 (2%)</span>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">Closing Date:</span>
-                          <span className="font-medium ml-2">January 31, 2025</span>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">Inspection Period:</span>
-                          <span className="font-medium ml-2">7 days</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="p-4 border rounded-lg border-orange-200 bg-orange-50">
-                      <h5 className="font-medium mb-2 flex items-center gap-2">
-                        <AlertTriangle className="w-4 h-4 text-orange-600" />
-                        Attention Required
-                      </h5>
-                      <ul className="text-sm space-y-1 text-orange-800">
-                        <li>• Financing contingency expires in 10 days (Jan 22, 2025)</li>
-                        <li>• Appraisal contingency has strict waiver terms</li>
-                      </ul>
-                    </div>
-
-                    <div className="p-4 border rounded-lg">
-                      <h5 className="font-medium mb-2">Contingencies</h5>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
-                          <span>Inspection Contingency</span>
-                          <Badge variant="softSuccess">Active</Badge>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Financing Contingency</span>
-                          <Badge variant="softWarning">10 days left</Badge>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Appraisal Contingency</span>
-                          <Badge variant="softInfo">15 days left</Badge>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      )}
-    </div>
-  );
-};
 
 export const TitleSearch = () => {
   const [titleSearchComplete, setTitleSearchComplete] = useState(true);
@@ -1153,7 +1003,7 @@ export default function Legal() {
         </TabsContent>
 
         <TabsContent value="contract" className="space-y-6">
-          <ContractReview />
+          <ContractAnalysis />
         </TabsContent>
 
         <TabsContent value="title" className="space-y-6">
