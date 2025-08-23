@@ -51,6 +51,14 @@ interface MyTeamProps {
 export default function MyTeam({ setupData }: MyTeamProps) {
   const [showAddMember, setShowAddMember] = useState(false);
   const [selectedRole, setSelectedRole] = useState('all');
+  const [newMemberData, setNewMemberData] = useState({
+    firstName: '',
+    lastName: '',
+    role: 'Real Estate Agent',
+    company: '',
+    phone: '',
+    email: ''
+  });
   const isMobile = useIsMobile();
 
   // Base team members (mock data)
@@ -231,16 +239,28 @@ export default function MyTeam({ setupData }: MyTeamProps) {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-sm font-medium mb-2 block">First Name</label>
-                    <Input placeholder="John" />
+                    <Input
+                      placeholder="John"
+                      value={newMemberData.firstName}
+                      onChange={(e) => setNewMemberData({...newMemberData, firstName: e.target.value})}
+                    />
                   </div>
                   <div>
                     <label className="text-sm font-medium mb-2 block">Last Name</label>
-                    <Input placeholder="Smith" />
+                    <Input
+                      placeholder="Smith"
+                      value={newMemberData.lastName}
+                      onChange={(e) => setNewMemberData({...newMemberData, lastName: e.target.value})}
+                    />
                   </div>
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-2 block">Role</label>
-                  <select className="w-full p-2 border rounded-md">
+                  <select
+                    className="w-full p-2 border rounded-md"
+                    value={newMemberData.role}
+                    onChange={(e) => setNewMemberData({...newMemberData, role: e.target.value})}
+                  >
                     <option>Real Estate Agent</option>
                     <option>Loan Officer</option>
                     <option>Home Inspector</option>
@@ -252,23 +272,76 @@ export default function MyTeam({ setupData }: MyTeamProps) {
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-2 block">Company</label>
-                  <Input placeholder="Company name" />
+                  <Input
+                    placeholder="Company name"
+                    value={newMemberData.company}
+                    onChange={(e) => setNewMemberData({...newMemberData, company: e.target.value})}
+                  />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-sm font-medium mb-2 block">Phone</label>
-                    <Input placeholder="(555) 123-4567" />
+                    <Input
+                      placeholder="(555) 123-4567"
+                      value={newMemberData.phone}
+                      onChange={(e) => setNewMemberData({...newMemberData, phone: e.target.value})}
+                    />
                   </div>
                   <div>
                     <label className="text-sm font-medium mb-2 block">Email</label>
-                    <Input placeholder="john@company.com" />
+                    <Input
+                      placeholder="john@company.com"
+                      value={newMemberData.email}
+                      onChange={(e) => setNewMemberData({...newMemberData, email: e.target.value})}
+                    />
                   </div>
                 </div>
                 <div className="flex gap-2 mobile-device:mobile-stack-buttons">
-                  <Button className="flex-1 mobile-button" onClick={() => setShowAddMember(false)}>
+                  <Button
+                    className="flex-1 mobile-button"
+                    onClick={() => {
+                      // Validate required fields
+                      if (!newMemberData.firstName || !newMemberData.lastName || !newMemberData.email) {
+                        alert('Please fill in all required fields (First Name, Last Name, Email)');
+                        return;
+                      }
+
+                      // In a real app, this would call an API to save the team member
+                      console.log('Adding team member:', newMemberData);
+
+                      // Show success message
+                      alert(`Successfully added ${newMemberData.firstName} ${newMemberData.lastName} to your team!`);
+
+                      // Reset form and close dialog
+                      setNewMemberData({
+                        firstName: '',
+                        lastName: '',
+                        role: 'Real Estate Agent',
+                        company: '',
+                        phone: '',
+                        email: ''
+                      });
+                      setShowAddMember(false);
+                    }}
+                    disabled={!newMemberData.firstName || !newMemberData.lastName || !newMemberData.email}
+                  >
                     Add Team Member
                   </Button>
-                  <Button variant="outline" onClick={() => setShowAddMember(false)} className="mobile-button">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setNewMemberData({
+                        firstName: '',
+                        lastName: '',
+                        role: 'Real Estate Agent',
+                        company: '',
+                        phone: '',
+                        email: ''
+                      });
+                      setShowAddMember(false);
+                    }}
+                    className="mobile-button"
+                  >
                     Cancel
                   </Button>
                 </div>
@@ -383,9 +456,22 @@ export default function MyTeam({ setupData }: MyTeamProps) {
                           <Phone className="w-4 h-4 mr-2" />
                           Contact
                         </Button>
-                        <Button 
+                        <Button
                           size="sm"
-                          onClick={() => alert(`Taking action for ${member.name}`)}
+                          onClick={() => {
+                            // Open action dialog or navigate to task specific to this member
+                            const actions = {
+                              'David Chen': 'Schedule inspection appointment',
+                              'Jennifer Kim': 'Review insurance quotes',
+                              'Mike Johnson': 'Submit additional documents'
+                            };
+                            const action = actions[member.name as keyof typeof actions] || 'Follow up with team member';
+
+                            if (confirm(`Ready to: ${action}?`)) {
+                              // In a real app, this would navigate or open a task-specific interface
+                              window.open(`mailto:${member.email}?subject=Action Required: ${action}&body=Hi ${member.name},%0A%0AI wanted to follow up regarding: ${action}%0A%0APlease let me know if you need any additional information.%0A%0AThank you!`, '_blank');
+                            }
+                          }}
                           className="mobile-button-sm"
                         >
                           Take Action
