@@ -572,85 +572,145 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
       }
     });
 
-    // DUE DILIGENCE PHASE - LEGAL
+    // DUE DILIGENCE PHASE - LEGAL & TITLE
     tasks.push({
       id: 'diligence-legal-title-search',
-      title: 'Title search',
-      description: 'Attorney conducts comprehensive title search for property',
+      title: '🔍 Comprehensive Title Search',
+      description: '⚖️ LEGAL PROTECTION: Attorney searches public records for liens, judgments, ownership disputes. Ensures you get clear, marketable title. Title insurance protects against unknown issues.',
       category: 'diligence',
       subcategory: 'legal',
       priority: 'high',
       status: 'upcoming',
       dueDate: getDateFromClosing(10),
-      estimatedTime: '1-2 days',
-      assignedTo: 'Your Attorney',
+      estimatedTime: '2-3 business days',
+      assignedTo: 'Real Estate Attorney + Title Company',
       linkedPage: 'legal',
       actionLabel: 'Monitor Progress',
-      propertySpecific: true
+      propertySpecific: true,
+      instructions: {
+        overview: 'The title search ensures you receive clear ownership and identifies any legal issues that could affect your ownership.',
+        tips: [
+          '🔍 WHAT\'S SEARCHED: Public records for 30+ years of ownership history',
+          '⚠️ POTENTIAL ISSUES: Liens, judgments, easements, boundary disputes',
+          '🛡️ TITLE INSURANCE: Protects against undiscovered title defects',
+          '📋 TITLE REPORT: Detailed report of findings and any exceptions',
+          '⏰ TIMING: Started immediately after attorney retained'
+        ],
+        timeline: 'Initiated within days of contract, completed 10+ days before closing',
+        nextSteps: ['Review title report', 'Address any title issues', 'Purchase title insurance']
+      }
     });
 
     tasks.push({
-      id: 'diligence-legal-review-liens',
-      title: 'Review liens, parcel nuances (easements, encroachments)',
-      description: 'Review title report for any liens, easements, or encroachments',
+      id: 'diligence-legal-review-title-issues',
+      title: '📋 Review Title Issues & Exceptions',
+      description: '🚨 DETAILED REVIEW: Examine liens, easements, encroachments, restrictions. Some issues can be resolved, others may be deal-breakers. Attorney advises on significance.',
       category: 'diligence',
       subcategory: 'legal',
-      priority: 'medium',
+      priority: 'high',
       status: 'upcoming',
       dueDate: getDateFromClosing(8),
-      estimatedTime: '1-2 hours',
-      assignedTo: 'Your Attorney',
+      estimatedTime: '1-3 hours + resolution time',
+      assignedTo: 'Your Attorney + Title Company + You',
       linkedPage: 'legal',
       actionLabel: 'Review Title',
-      propertySpecific: true
+      propertySpecific: true,
+      instructions: {
+        overview: 'Review and address any title issues discovered during the search to ensure clear ownership transfer.',
+        tips: [
+          '💰 LIENS: Must be paid off at closing (seller responsibility)',
+          '🚧 EASEMENTS: Rights others have to use your property (utilities, access)',
+          '📏 ENCROACHMENTS: Structures crossing property lines',
+          '📜 RESTRICTIONS: HOA rules, building restrictions, deed covenants',
+          '⚖️ ATTORNEY ADVICE: Essential for understanding legal implications'
+        ],
+        timeline: 'Review within 2-3 days of receiving title report',
+        nextSteps: ['Determine which issues need resolution', 'Negotiate resolution', 'Proceed with clear title']
+      }
     });
 
     tasks.push({
-      id: 'diligence-legal-confirm-clear',
-      title: 'Confirm clear to close',
-      description: 'Attorney confirms title is clear and ready for closing',
+      id: 'diligence-legal-closing-disclosure',
+      title: '💰 Review Closing Disclosure (CD)',
+      description: '📊 FINAL NUMBERS: Lender provides exact closing costs 3+ days before closing. Compare to Loan Estimate. No surprises allowed. Review every line item carefully.',
       category: 'diligence',
       subcategory: 'legal',
       priority: 'high',
       status: 'upcoming',
       dueDate: getDateFromClosing(5),
-      estimatedTime: '30 minutes',
-      assignedTo: 'Your Attorney',
+      estimatedTime: '2-3 hours detailed review',
+      assignedTo: 'You + Attorney + Lender + Agent',
       linkedPage: 'legal',
-      actionLabel: 'Confirm Status',
-      propertySpecific: true
+      actionLabel: 'Review CD',
+      propertySpecific: true,
+      instructions: {
+        overview: 'The Closing Disclosure is your final loan terms and closing costs. Federal law requires 3+ day review period.',
+        tips: [
+          '📋 COMPARE: Line by line vs. original Loan Estimate',
+          '🚫 RED FLAGS: Unexpected fees, rate changes, cost increases',
+          '💰 CASH TO CLOSE: Exact amount you need to bring',
+          '⏰ MANDATORY WAIT: Cannot close for 3+ business days after receipt',
+          '❓ ASK QUESTIONS: Get explanations for any changes or unclear items'
+        ],
+        timeline: 'Received 3+ business days before closing',
+        nextSteps: ['Question any discrepancies', 'Prepare closing funds', 'Schedule final walkthrough']
+      }
     });
 
     tasks.push({
-      id: 'diligence-legal-settlement-statement',
-      title: 'Produce settlement statement (general proration)',
-      description: 'Attorney prepares settlement statement with all closing costs and prorations',
+      id: 'diligence-legal-closing-documents',
+      title: '📑 Prepare Closing Documents',
+      description: '📋 LEGAL PAPERWORK: Attorney prepares deed, settlement statement, affidavits, and all closing documents. Review key docs in advance to avoid closing delays.',
       category: 'diligence',
       subcategory: 'legal',
       priority: 'high',
       status: 'upcoming',
       dueDate: getDateFromClosing(3),
-      estimatedTime: '1-2 hours',
-      assignedTo: 'Your Attorney',
+      estimatedTime: '1-2 hours prep + review',
+      assignedTo: 'Your Attorney + Title Company',
       linkedPage: 'legal',
-      actionLabel: 'Review Statement',
-      propertySpecific: true
+      actionLabel: 'Review Documents',
+      propertySpecific: true,
+      instructions: {
+        overview: 'All legal documents must be prepared and reviewed before closing to ensure accuracy and prevent delays.',
+        tips: [
+          '📜 KEY DOCUMENTS: Deed, settlement statement, loan documents, affidavits',
+          '✅ VERIFY ACCURACY: Names, property description, amounts, dates',
+          '🔍 PREVIEW: Review key documents before closing day',
+          '📋 SETTLEMENT STATEMENT: Detailed breakdown of all costs',
+          '🆔 REQUIRED ID: Bring government-issued photo ID to closing'
+        ],
+        timeline: 'Documents prepared 2-3 days before closing',
+        nextSteps: ['Review document package', 'Prepare for closing', 'Arrange closing funds']
+      }
     });
 
     tasks.push({
-      id: 'diligence-legal-escrow-wire',
-      title: 'Escrow account for deposit / wire instructions prep',
-      description: 'Set up escrow account and prepare wire transfer instructions for closing',
+      id: 'diligence-legal-wire-instructions',
+      title: '💸 Secure Wire Transfer Instructions',
+      description: '🔒 FRAUD ALERT: Get wire instructions directly from attorney/title company. Verify by phone. Wire fraud is common - criminals change banking info in emails.',
       category: 'diligence',
       subcategory: 'legal',
       priority: 'high',
       status: 'upcoming',
       dueDate: getDateFromClosing(2),
-      estimatedTime: '1 hour',
-      assignedTo: 'Your Attorney',
+      estimatedTime: '30 min + bank time',
+      assignedTo: 'Your Attorney + Your Bank + You',
       linkedPage: 'legal',
-      actionLabel: 'Setup Escrow',
-      propertySpecific: true
+      actionLabel: 'Setup Wire',
+      propertySpecific: true,
+      instructions: {
+        overview: 'Wire transfer instructions must be verified to prevent wire fraud, which is extremely common in real estate.',
+        tips: [
+          '🚨 FRAUD WARNING: Always verify wire instructions by phone',
+          '☎️ CALL DIRECTLY: Use known number, not number in email',
+          '📧 EMAIL RISK: Never trust wire instructions received only by email',
+          '🏦 BANK TIMING: Arrange wire 1-2 days before closing',
+          '💰 BACKUP PLAN: Certified check as backup if wire issues'
+        ],
+        timeline: 'Arrange 1-2 days before closing',
+        nextSteps: ['Execute wire transfer', 'Confirm receipt', 'Proceed to closing']
+      }
     });
 
     // PRE-CLOSING PREPARATION - FINAL WALKTHROUGH
