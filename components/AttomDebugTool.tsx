@@ -810,7 +810,7 @@ export function AttomDebugTool() {
         </TabsList>
 
         {/* API Test Tab */}
-        <TabsContent value="api-test" className="space-y-6">
+        <TabsContent value="api-test" className="space-y-6 bg-white">
           <Card>
             <CardHeader>
               <CardTitle>API Testing with Complete Field Analysis</CardTitle>
