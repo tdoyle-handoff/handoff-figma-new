@@ -96,7 +96,13 @@ const Dashboard = () => {
             <h2 className="text-lg font-semibold text-slate-900">Integrations</h2>
             <p className="text-sm text-slate-600">Connect your essential real estate tools</p>
           </div>
-          <Button className="bg-blue-600 hover:bg-blue-700">
+          <Button
+            className="bg-blue-600 hover:bg-blue-700"
+            onClick={() => {
+              // Navigate to integrations setup or show integration modal
+              window.open('https://builder.io/c/docs/integrations', '_blank');
+            }}
+          >
             <Plus className="w-4 h-4 mr-2" />
             Add Integration
           </Button>
@@ -254,19 +260,57 @@ const Dashboard = () => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Button variant="outline" className="h-20 flex-col gap-2">
+            <Button
+              variant="outline"
+              className="h-20 flex-col gap-2"
+              onClick={() => {
+                // Navigate to property search/listing page
+                if (window.location.pathname !== '/property-search') {
+                  window.history.pushState(null, '', '/property-search');
+                  window.location.reload();
+                }
+              }}
+            >
               <Home className="w-5 h-5" />
               <span className="text-xs">New Listing</span>
             </Button>
-            <Button variant="outline" className="h-20 flex-col gap-2">
+            <Button
+              variant="outline"
+              className="h-20 flex-col gap-2"
+              onClick={() => {
+                // Navigate to team management
+                if (window.location.pathname !== '/team') {
+                  window.history.pushState(null, '', '/team');
+                  window.location.reload();
+                }
+              }}
+            >
               <Users className="w-5 h-5" />
               <span className="text-xs">Add Client</span>
             </Button>
-            <Button variant="outline" className="h-20 flex-col gap-2">
+            <Button
+              variant="outline"
+              className="h-20 flex-col gap-2"
+              onClick={() => {
+                // Create calendar event or navigate to calendar
+                const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=Property%20Tour&dates=${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}Z/${new Date(Date.now() + 3600000).toISOString().replace(/[-:]/g, '').split('.')[0]}Z`;
+                window.open(calendarUrl, '_blank');
+              }}
+            >
               <Calendar className="w-5 h-5" />
               <span className="text-xs">Schedule Tour</span>
             </Button>
-            <Button variant="outline" className="h-20 flex-col gap-2">
+            <Button
+              variant="outline"
+              className="h-20 flex-col gap-2"
+              onClick={() => {
+                // Navigate to documents/offer builder
+                if (window.location.pathname !== '/documents') {
+                  window.history.pushState(null, '', '/documents');
+                  window.location.reload();
+                }
+              }}
+            >
               <FileText className="w-5 h-5" />
               <span className="text-xs">Generate Contract</span>
             </Button>
