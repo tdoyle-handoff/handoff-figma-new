@@ -299,14 +299,17 @@ export default function Documents({ setupData }: DocumentsProps) {
       )}
 
       <Tabs defaultValue="all" className="w-full">
-        <TabsList className={`grid w-full ${isMobile ? 'grid-cols-2 tab-container-multiline' : 'grid-cols-7'}`}>
-          <TabsTrigger value="all" className={isMobile ? 'tab-multiline' : ''}>All Documents</TabsTrigger>
+        <TabsList className={`grid w-full ${isMobile ? 'grid-cols-3 tab-container-multiline' : 'grid-cols-6'}`}>
+          <TabsTrigger value="all" className={isMobile ? 'tab-multiline' : ''}>
+            {isMobile ? 'Documents' : 'All Documents'}
+          </TabsTrigger>
+          <TabsTrigger value="offer" className={isMobile ? 'tab-multiline' : ''}>
+            Offer Builder
+          </TabsTrigger>
           <TabsTrigger value="shared" className={isMobile ? 'tab-multiline' : ''}>Shared</TabsTrigger>
-          <TabsTrigger value="signatures" className={isMobile ? 'tab-multiline' : ''}>Signatures Needed</TabsTrigger>
-          <TabsTrigger value="archive" className={isMobile ? 'tab-multiline' : ''}>Archive</TabsTrigger>
           {!isMobile && (
             <>
-              <TabsTrigger value="offer">Offer Builder</TabsTrigger>
+              <TabsTrigger value="signatures" className="tab-multiline">Signatures Needed</TabsTrigger>
               <TabsTrigger value="templates">Templates</TabsTrigger>
               <TabsTrigger value="esign">E-Sign</TabsTrigger>
             </>
