@@ -88,15 +88,21 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask }: {
         <CollapsibleTrigger className="w-full p-4 text-left">
           <div className="flex items-center gap-3">
             <div className="flex-shrink-0">
-              {isCompleted ? (
-                <CheckCircle className="w-5 h-5 text-green-600" />
-              ) : isOverdue ? (
-                <AlertTriangle className="w-5 h-5 text-red-600" />
-              ) : isActive ? (
-                <Clock className="w-5 h-5 text-blue-600" />
-              ) : (
-                <Circle className="w-5 h-5 text-gray-400" />
-              )}
+              <button
+                onClick={handleToggleCompletion}
+                className="p-1 -m-1 rounded hover:bg-gray-100 transition-colors"
+                title={isCompleted ? "Mark as incomplete" : "Mark as complete"}
+              >
+                {isCompleted ? (
+                  <CheckCircle className="w-5 h-5 text-green-600" />
+                ) : isOverdue ? (
+                  <AlertTriangle className="w-5 h-5 text-red-600" />
+                ) : isActive ? (
+                  <Clock className="w-5 h-5 text-blue-600" />
+                ) : (
+                  <Circle className="w-5 h-5 text-gray-400" />
+                )}
+              </button>
             </div>
             
             <div className="flex-1 min-w-0">
