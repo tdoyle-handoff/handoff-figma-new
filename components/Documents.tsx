@@ -49,6 +49,10 @@ export default function Documents({ setupData }: DocumentsProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showUpload, setShowUpload] = useState(false);
+  const [showShareDialog, setShowShareDialog] = useState(false);
+  const [shareDocument, setShareDocument] = useState<Document | null>(null);
+  const [shareEmail, setShareEmail] = useState('');
+  const [shareMessage, setShareMessage] = useState('');
   const isMobile = useIsMobile();
 
   const formatFileSize = (bytes: number): string => {
@@ -202,6 +206,603 @@ export default function Documents({ setupData }: DocumentsProps) {
   const requiredDocs = documents.filter(doc => doc.required);
   const completedRequired = requiredDocs.filter(doc => doc.status === 'approved' || doc.status === 'signed');
   const completionPercentage = requiredDocs.length > 0 ? (completedRequired.length / requiredDocs.length) * 100 : 100;
+
+  // Document templates with real content
+  const documentTemplates = [
+    {
+      id: 'purchase-agreement',
+      name: 'Purchase Agreement',
+      description: 'Standard residential purchase agreement template',
+      category: 'contracts',
+      content: generatePurchaseAgreementTemplate
+    },
+    {
+      id: 'counter-offer',
+      name: 'Counter Offer',
+      description: 'Counter offer form for purchase negotiations',
+      category: 'contracts',
+      content: generateCounterOfferTemplate
+    },
+    {
+      id: 'inspection-addendum',
+      name: 'Inspection Addendum',
+      description: 'Property inspection addendum form',
+      category: 'inspections',
+      content: generateInspectionAddendumTemplate
+    },
+    {
+      id: 'repair-request',
+      name: 'Repair Request',
+      description: 'Request for repairs based on inspection findings',
+      category: 'inspections',
+      content: generateRepairRequestTemplate
+    },
+    {
+      id: 'disclosure-statement',
+      name: 'Property Disclosure Statement',
+      description: 'Seller property disclosure form',
+      category: 'disclosures',
+      content: generateDisclosureStatementTemplate
+    },
+    {
+      id: 'financing-contingency',
+      name: 'Financing Contingency Addendum',
+      description: 'Addendum for financing contingency terms',
+      category: 'financing',
+      content: generateFinancingContingencyTemplate
+    }
+  ];
+
+  // Template generation functions
+  function generatePurchaseAgreementTemplate() {
+    const buyerName = setupData?.buyerName || '[BUYER NAME]';
+    const buyerEmail = setupData?.buyerEmail || '[BUYER EMAIL]';
+
+    return `
+      <div style="font-family: 'Times New Roman', serif; padding: 40px; max-width: 800px; margin: 0 auto; line-height: 1.6;">
+        <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #000; padding-bottom: 20px;">
+          <h1 style="margin: 0; font-size: 24px; font-weight: bold;">RESIDENTIAL PURCHASE AGREEMENT</h1>
+          <p style="margin: 10px 0 0 0; font-size: 12px;">This document constitutes a legally binding agreement</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">PROPERTY INFORMATION</h3>
+          <p><strong>Property Address:</strong> _________________________________</p>
+          <p><strong>Legal Description:</strong> To be inserted from title report</p>
+          <p><strong>Assessor's Parcel Number (APN):</strong> _________________</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">BUYER INFORMATION</h3>
+          <p><strong>Buyer Name:</strong> ${buyerName}</p>
+          <p><strong>Email:</strong> ${buyerEmail}</p>
+          <p><strong>Phone:</strong> _________________________________</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">PURCHASE TERMS</h3>
+          <p><strong>Purchase Price:</strong> $ _________________________</p>
+          <p><strong>Earnest Money Deposit:</strong> $ _________________ to be deposited within _____ business days</p>
+          <p><strong>Down Payment:</strong> $ _________________________</p>
+          <p><strong>Loan Amount:</strong> $ _________________________</p>
+          <p><strong>Financing Type:</strong> _________________________</p>
+          <p><strong>Closing Date:</strong> _________________________</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">CONTINGENCIES</h3>
+          <p>☐ <strong>Inspection Contingency:</strong> Buyer has _____ days to complete inspections</p>
+          <p>☐ <strong>Appraisal Contingency:</strong> Property must appraise for at least the purchase price</p>
+          <p>☐ <strong>Financing Contingency:</strong> Buyer has _____ days to obtain loan approval</p>
+          <p>☐ <strong>Home Sale Contingency:</strong> Sale contingent upon buyer's existing home sale</p>
+        </div>
+
+        <div style="margin-bottom: 40px; border: 2px solid #000; padding: 15px;">
+          <p style="font-weight: bold; font-size: 14px; margin-bottom: 10px;">LEGAL NOTICE:</p>
+          <p style="font-size: 12px; margin-bottom: 8px;">This is a legally binding contract. If not understood, seek competent legal advice before signing.</p>
+          <p style="font-size: 12px;">Time is of the essence. All deadlines in this agreement are strictly enforced.</p>
+        </div>
+
+        <div style="margin-bottom: 30px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 15px;">SIGNATURES</h3>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 40px;">
+            <div style="width: 45%;">
+              <p><strong>BUYER:</strong></p>
+              <div style="border-bottom: 1px solid #000; height: 30px; margin-bottom: 5px;"></div>
+              <p style="font-size: 12px;">${buyerName}</p>
+              <p style="font-size: 12px;">Date: _______________</p>
+            </div>
+            <div style="width: 45%;">
+              <p><strong>SELLER:</strong></p>
+              <div style="border-bottom: 1px solid #000; height: 30px; margin-bottom: 5px;"></div>
+              <p style="font-size: 12px;">[Seller Name]</p>
+              <p style="font-size: 12px;">Date: _______________</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align: center; font-size: 10px; color: #666; border-top: 1px solid #ccc; padding-top: 15px;">
+          <p>Document generated on ${new Date().toLocaleDateString()} • Handoff Real Estate Platform</p>
+        </div>
+      </div>
+    `;
+  }
+
+  function generateCounterOfferTemplate() {
+    const buyerName = setupData?.buyerName || '[BUYER NAME]';
+
+    return `
+      <div style="font-family: 'Times New Roman', serif; padding: 40px; max-width: 800px; margin: 0 auto; line-height: 1.6;">
+        <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #000; padding-bottom: 20px;">
+          <h1 style="margin: 0; font-size: 24px; font-weight: bold;">COUNTER OFFER</h1>
+          <p style="margin: 10px 0 0 0; font-size: 12px;">Addendum to Purchase Agreement</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">REFERENCE INFORMATION</h3>
+          <p><strong>Original Offer Date:</strong> _________________________</p>
+          <p><strong>Property Address:</strong> _________________________________</p>
+          <p><strong>Buyer:</strong> ${buyerName}</p>
+          <p><strong>Seller:</strong> _________________________________</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">COUNTER OFFER TERMS</h3>
+          <p>The undersigned hereby submits the following counter offer to the original purchase agreement:</p>
+          <br>
+          <p>☐ <strong>Purchase Price:</strong> $ _________________________</p>
+          <p>☐ <strong>Closing Date:</strong> _________________________</p>
+          <p>☐ <strong>Earnest Money:</strong> $ _________________________</p>
+          <p>☐ <strong>Inspection Period:</strong> _____ days</p>
+          <p>☐ <strong>Financing Contingency:</strong> _____ days</p>
+          <br>
+          <p><strong>Additional Terms:</strong></p>
+          <div style="border: 1px solid #ccc; min-height: 100px; padding: 10px; margin: 10px 0;">
+            _________________________________________________________________<br>
+            _________________________________________________________________<br>
+            _________________________________________________________________<br>
+            _________________________________________________________________<br>
+            _________________________________________________________________
+          </div>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">ACCEPTANCE DEADLINE</h3>
+          <p>This counter offer must be accepted by: <strong>_________________ at _______ AM/PM</strong></p>
+          <p>If not accepted by the deadline, this counter offer is automatically withdrawn.</p>
+        </div>
+
+        <div style="margin-bottom: 30px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 15px;">SIGNATURES</h3>
+          <div style="margin-bottom: 30px;">
+            <p><strong>COUNTER OFFER SUBMITTED BY:</strong></p>
+            <div style="border-bottom: 1px solid #000; height: 30px; margin: 10px 0 5px 0;"></div>
+            <p style="font-size: 12px;">Signature</p>
+            <p style="font-size: 12px;">Date: _______________ Time: _______________</p>
+          </div>
+
+          <div style="margin-bottom: 30px;">
+            <p><strong>COUNTER OFFER ACCEPTED BY:</strong></p>
+            <div style="border-bottom: 1px solid #000; height: 30px; margin: 10px 0 5px 0;"></div>
+            <p style="font-size: 12px;">Signature</p>
+            <p style="font-size: 12px;">Date: _______________ Time: _______________</p>
+          </div>
+        </div>
+
+        <div style="text-align: center; font-size: 10px; color: #666; border-top: 1px solid #ccc; padding-top: 15px;">
+          <p>Document generated on ${new Date().toLocaleDateString()} • Handoff Real Estate Platform</p>
+        </div>
+      </div>
+    `;
+  }
+
+  function generateInspectionAddendumTemplate() {
+    const buyerName = setupData?.buyerName || '[BUYER NAME]';
+
+    return `
+      <div style="font-family: 'Times New Roman', serif; padding: 40px; max-width: 800px; margin: 0 auto; line-height: 1.6;">
+        <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #000; padding-bottom: 20px;">
+          <h1 style="margin: 0; font-size: 24px; font-weight: bold;">INSPECTION ADDENDUM</h1>
+          <p style="margin: 10px 0 0 0; font-size: 12px;">Property Inspection Terms and Conditions</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">PROPERTY INFORMATION</h3>
+          <p><strong>Property Address:</strong> _________________________________</p>
+          <p><strong>Buyer:</strong> ${buyerName}</p>
+          <p><strong>Seller:</strong> _________________________________</p>
+          <p><strong>Purchase Agreement Date:</strong> _________________________</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">INSPECTION TERMS</h3>
+          <p><strong>Inspection Period:</strong> _____ days from acceptance of this agreement</p>
+          <p><strong>Inspection Deadline:</strong> _________________ at 11:59 PM</p>
+          <p><strong>Inspector Access:</strong> Seller shall provide reasonable access to the property</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">TYPES OF INSPECTIONS</h3>
+          <p>Buyer may conduct the following inspections at Buyer's expense:</p>
+          <p>☐ General Home Inspection</p>
+          <p>☐ Pest/Termite Inspection</p>
+          <p>☐ Roof Inspection</p>
+          <p>☐ HVAC System Inspection</p>
+          <p>☐ Electrical System Inspection</p>
+          <p>☐ Plumbing Inspection</p>
+          <p>☐ Foundation/Structural Inspection</p>
+          <p>☐ Environmental Testing (Radon, Mold, etc.)</p>
+          <p>☐ Well/Septic Inspection (if applicable)</p>
+          <p>☐ Other: _________________________________</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">BUYER'S OPTIONS</h3>
+          <p>Upon completion of inspections, Buyer may:</p>
+          <p>1. Accept the property in its current condition and proceed with the purchase</p>
+          <p>2. Request repairs or credits from Seller (see Repair Request form)</p>
+          <p>3. Cancel this agreement and receive a full refund of earnest money</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">NOTICE REQUIREMENTS</h3>
+          <p>Any notice of inspection objections or cancellation must be delivered to Seller in writing by the inspection deadline.</p>
+          <p>Failure to provide notice by the deadline constitutes acceptance of the property condition.</p>
+        </div>
+
+        <div style="margin-bottom: 30px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 15px;">SIGNATURES</h3>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 40px;">
+            <div style="width: 45%;">
+              <p><strong>BUYER:</strong></p>
+              <div style="border-bottom: 1px solid #000; height: 30px; margin-bottom: 5px;"></div>
+              <p style="font-size: 12px;">${buyerName}</p>
+              <p style="font-size: 12px;">Date: _______________</p>
+            </div>
+            <div style="width: 45%;">
+              <p><strong>SELLER:</strong></p>
+              <div style="border-bottom: 1px solid #000; height: 30px; margin-bottom: 5px;"></div>
+              <p style="font-size: 12px;">[Seller Name]</p>
+              <p style="font-size: 12px;">Date: _______________</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align: center; font-size: 10px; color: #666; border-top: 1px solid #ccc; padding-top: 15px;">
+          <p>Document generated on ${new Date().toLocaleDateString()} • Handoff Real Estate Platform</p>
+        </div>
+      </div>
+    `;
+  }
+
+  function generateRepairRequestTemplate() {
+    const buyerName = setupData?.buyerName || '[BUYER NAME]';
+
+    return `
+      <div style="font-family: 'Times New Roman', serif; padding: 40px; max-width: 800px; margin: 0 auto; line-height: 1.6;">
+        <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #000; padding-bottom: 20px;">
+          <h1 style="margin: 0; font-size: 24px; font-weight: bold;">REPAIR REQUEST</h1>
+          <p style="margin: 10px 0 0 0; font-size: 12px;">Based on Property Inspection Findings</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">PROPERTY INFORMATION</h3>
+          <p><strong>Property Address:</strong> _________________________________</p>
+          <p><strong>Buyer:</strong> ${buyerName}</p>
+          <p><strong>Seller:</strong> _________________________________</p>
+          <p><strong>Inspection Date:</strong> _________________________</p>
+          <p><strong>Inspector:</strong> _________________________________</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">REQUESTED REPAIRS</h3>
+          <p>Based on the inspection report, Buyer requests the following repairs be completed prior to closing:</p>
+          <br>
+          <table style="width: 100%; border-collapse: collapse; border: 1px solid #000;">
+            <tr style="background-color: #f0f0f0;">
+              <th style="border: 1px solid #000; padding: 8px; text-align: left;">Item #</th>
+              <th style="border: 1px solid #000; padding: 8px; text-align: left;">Location</th>
+              <th style="border: 1px solid #000; padding: 8px; text-align: left;">Issue Description</th>
+              <th style="border: 1px solid #000; padding: 8px; text-align: left;">Requested Action</th>
+            </tr>
+            <tr>
+              <td style="border: 1px solid #000; padding: 8px;">1</td>
+              <td style="border: 1px solid #000; padding: 8px;">_______________</td>
+              <td style="border: 1px solid #000; padding: 8px;">_______________</td>
+              <td style="border: 1px solid #000; padding: 8px;">_______________</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid #000; padding: 8px;">2</td>
+              <td style="border: 1px solid #000; padding: 8px;">_______________</td>
+              <td style="border: 1px solid #000; padding: 8px;">_______________</td>
+              <td style="border: 1px solid #000; padding: 8px;">_______________</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid #000; padding: 8px;">3</td>
+              <td style="border: 1px solid #000; padding: 8px;">_______________</td>
+              <td style="border: 1px solid #000; padding: 8px;">_______________</td>
+              <td style="border: 1px solid #000; padding: 8px;">_______________</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid #000; padding: 8px;">4</td>
+              <td style="border: 1px solid #000; padding: 8px;">_______________</td>
+              <td style="border: 1px solid #000; padding: 8px;">_______________</td>
+              <td style="border: 1px solid #000; padding: 8px;">_______________</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid #000; padding: 8px;">5</td>
+              <td style="border: 1px solid #000; padding: 8px;">_______________</td>
+              <td style="border: 1px solid #000; padding: 8px;">_______________</td>
+              <td style="border: 1px solid #000; padding: 8px;">_______________</td>
+            </tr>
+          </table>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">ALTERNATIVE OPTIONS</h3>
+          <p>In lieu of completing the above repairs, Buyer will accept:</p>
+          <p>☐ Credit at closing in the amount of $ _________________________</p>
+          <p>☐ Reduction in purchase price of $ _________________________</p>
+          <p>☐ Escrow holdback of $ _________________________ for completion of repairs after closing</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">RESPONSE DEADLINE</h3>
+          <p>Seller must respond to this repair request by: <strong>_________________ at _______ AM/PM</strong></p>
+          <p>If Seller does not respond by the deadline, Buyer may cancel the agreement and receive a full refund of earnest money.</p>
+        </div>
+
+        <div style="margin-bottom: 30px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 15px;">SIGNATURES</h3>
+          <div style="margin-bottom: 30px;">
+            <p><strong>BUYER REQUEST:</strong></p>
+            <div style="border-bottom: 1px solid #000; height: 30px; margin: 10px 0 5px 0;"></div>
+            <p style="font-size: 12px;">${buyerName}</p>
+            <p style="font-size: 12px;">Date: _______________ Time: _______________</p>
+          </div>
+
+          <div style="margin-bottom: 30px;">
+            <p><strong>SELLER RESPONSE:</strong></p>
+            <p>☐ Agree to complete all requested repairs</p>
+            <p>☐ Agree to alternative option (specify): ___________________________</p>
+            <p>�� Counter with different terms (attach separate document)</p>
+            <p>☐ Decline repair request</p>
+            <br>
+            <div style="border-bottom: 1px solid #000; height: 30px; margin: 10px 0 5px 0;"></div>
+            <p style="font-size: 12px;">[Seller Name]</p>
+            <p style="font-size: 12px;">Date: _______________ Time: _______________</p>
+          </div>
+        </div>
+
+        <div style="text-align: center; font-size: 10px; color: #666; border-top: 1px solid #ccc; padding-top: 15px;">
+          <p>Document generated on ${new Date().toLocaleDateString()} • Handoff Real Estate Platform</p>
+        </div>
+      </div>
+    `;
+  }
+
+  function generateDisclosureStatementTemplate() {
+    return `
+      <div style="font-family: 'Times New Roman', serif; padding: 40px; max-width: 800px; margin: 0 auto; line-height: 1.6;">
+        <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #000; padding-bottom: 20px;">
+          <h1 style="margin: 0; font-size: 24px; font-weight: bold;">PROPERTY DISCLOSURE STATEMENT</h1>
+          <p style="margin: 10px 0 0 0; font-size: 12px;">Seller's Disclosure of Property Condition</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">PROPERTY INFORMATION</h3>
+          <p><strong>Property Address:</strong> _________________________________</p>
+          <p><strong>Seller(s):</strong> _________________________________</p>
+          <p><strong>Date of Disclosure:</strong> _________________________</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">SELLER'S KNOWLEDGE</h3>
+          <p>The following disclosures are made based on Seller's actual knowledge of the property as of the date of this disclosure:</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">STRUCTURAL CONDITIONS</h3>
+          <p>Has the property ever had any issues with:</p>
+          <p>Foundation: ☐ Yes ☐ No ☐ Unknown   If yes, describe: _________________________</p>
+          <p>Roof: ☐ Yes ☐ No ☐ Unknown   If yes, describe: _________________________</p>
+          <p>Walls/Ceilings: ☐ Yes ☐ No ☐ Unknown   If yes, describe: _________________________</p>
+          <p>Windows/Doors: ☐ Yes ☐ No ☐ Unknown   If yes, describe: _________________________</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">SYSTEMS</h3>
+          <p>Electrical System: ☐ Yes ☐ No ☐ Unknown   Issues: _________________________</p>
+          <p>Plumbing System: ☐ Yes ☐ No ☐ Unknown   Issues: _________________________</p>
+          <p>HVAC System: ☐ Yes ☐ No ☐ Unknown   Issues: _________________________</p>
+          <p>Security System: ☐ Yes ☐ No ☐ Unknown   Issues: _________________________</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">ENVIRONMENTAL CONDITIONS</h3>
+          <p>Water Damage: ☐ Yes ☐ No ☐ Unknown   Details: _________________________</p>
+          <p>Mold/Mildew: ☐ Yes ☐ No ☐ Unknown   Details: _________________________</p>
+          <p>Pest Infestation: ☐ Yes ☐ No ☐ Unknown   Details: _________________________</p>
+          <p>Asbestos: ☐ Yes ☐ No ☐ Unknown   Details: _________________________</p>
+          <p>Lead Paint: ☐ Yes ☐ No ☐ Unknown   Details: _________________________</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">ADDITIONAL DISCLOSURES</h3>
+          <div style="border: 1px solid #ccc; min-height: 100px; padding: 10px; margin: 10px 0;">
+            Please describe any other material facts about the property that a buyer should know:
+            <br><br>
+            _________________________________________________________________<br>
+            _________________________________________________________________<br>
+            _________________________________________________________________<br>
+            _________________________________________________________________
+          </div>
+        </div>
+
+        <div style="margin-bottom: 30px; border: 2px solid #000; padding: 15px;">
+          <p style="font-weight: bold; font-size: 14px; margin-bottom: 10px;">SELLER CERTIFICATION:</p>
+          <p style="font-size: 12px;">I certify that the information provided in this disclosure is true and complete to the best of my knowledge as of the date signed. I understand that this disclosure is not a warranty and that buyers should conduct their own inspections.</p>
+        </div>
+
+        <div style="margin-bottom: 30px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 15px;">SIGNATURES</h3>
+          <div style="margin-bottom: 30px;">
+            <p><strong>SELLER:</strong></p>
+            <div style="border-bottom: 1px solid #000; height: 30px; margin: 10px 0 5px 0;"></div>
+            <p style="font-size: 12px;">[Seller Name]</p>
+            <p style="font-size: 12px;">Date: _______________</p>
+          </div>
+        </div>
+
+        <div style="text-align: center; font-size: 10px; color: #666; border-top: 1px solid #ccc; padding-top: 15px;">
+          <p>Document generated on ${new Date().toLocaleDateString()} • Handoff Real Estate Platform</p>
+        </div>
+      </div>
+    `;
+  }
+
+  function generateFinancingContingencyTemplate() {
+    const buyerName = setupData?.buyerName || '[BUYER NAME]';
+
+    return `
+      <div style="font-family: 'Times New Roman', serif; padding: 40px; max-width: 800px; margin: 0 auto; line-height: 1.6;">
+        <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #000; padding-bottom: 20px;">
+          <h1 style="margin: 0; font-size: 24px; font-weight: bold;">FINANCING CONTINGENCY ADDENDUM</h1>
+          <p style="margin: 10px 0 0 0; font-size: 12px;">Addendum to Purchase Agreement</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">PROPERTY INFORMATION</h3>
+          <p><strong>Property Address:</strong> _________________________________</p>
+          <p><strong>Buyer:</strong> ${buyerName}</p>
+          <p><strong>Seller:</strong> _________________________________</p>
+          <p><strong>Purchase Price:</strong> $ _________________________</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">FINANCING TERMS</h3>
+          <p><strong>Loan Amount:</strong> $ _________________________</p>
+          <p><strong>Loan Type:</strong> ☐ Conventional ☐ FHA ☐ VA ☐ USDA ☐ Other: ___________</p>
+          <p><strong>Down Payment:</strong> $ _________________________ (_____% of purchase price)</p>
+          <p><strong>Maximum Interest Rate:</strong> _____% (if applicable)</p>
+          <p><strong>Loan Term:</strong> _____ years</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">CONTINGENCY DEADLINES</h3>
+          <p><strong>Loan Application Deadline:</strong> _____ days from acceptance</p>
+          <p><strong>Loan Approval Deadline:</strong> _____ days from acceptance</p>
+          <p><strong>Final Loan Commitment Deadline:</strong> _____ days prior to closing</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">BUYER OBLIGATIONS</h3>
+          <p>Buyer agrees to:</p>
+          <p>• Submit complete loan application within _____ days</p>
+          <p>• Provide all requested documentation to lender promptly</p>
+          <p>• Not make any major purchases or changes to credit without lender approval</p>
+          <p>• Maintain employment and income as represented in loan application</p>
+          <p>• Pay all loan-related fees and costs</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">CONTINGENCY REMOVAL</h3>
+          <p>This financing contingency will be considered satisfied when:</p>
+          <p>☐ Buyer receives written loan commitment from lender</p>
+          <p>☐ Buyer provides written notice of loan approval to Seller</p>
+          <p>☐ Buyer fails to notify Seller of loan denial by the deadline</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">LOAN DENIAL</h3>
+          <p>If Buyer's loan is denied and Buyer provides written notice to Seller within the deadline, Buyer may cancel this agreement and receive a full refund of earnest money.</p>
+        </div>
+
+        <div style="margin-bottom: 30px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 15px;">SIGNATURES</h3>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 40px;">
+            <div style="width: 45%;">
+              <p><strong>BUYER:</strong></p>
+              <div style="border-bottom: 1px solid #000; height: 30px; margin-bottom: 5px;"></div>
+              <p style="font-size: 12px;">${buyerName}</p>
+              <p style="font-size: 12px;">Date: _______________</p>
+            </div>
+            <div style="width: 45%;">
+              <p><strong>SELLER:</strong></p>
+              <div style="border-bottom: 1px solid #000; height: 30px; margin-bottom: 5px;"></div>
+              <p style="font-size: 12px;">[Seller Name]</p>
+              <p style="font-size: 12px;">Date: _______________</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align: center; font-size: 10px; color: #666; border-top: 1px solid #ccc; padding-top: 15px;">
+          <p>Document generated on ${new Date().toLocaleDateString()} • Handoff Real Estate Platform</p>
+        </div>
+      </div>
+    `;
+  }
+
+  // Function to download template
+  const downloadTemplate = (template: any) => {
+    const htmlContent = template.content();
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>${template.name}</title>
+            <style>
+              @page { margin: 0.5in; }
+              body { margin: 0; }
+              @media print {
+                body { -webkit-print-color-adjust: exact; }
+                .no-print { display: none; }
+              }
+            </style>
+          </head>
+          <body>
+            ${htmlContent}
+            <div class="no-print" style="text-align: center; margin: 20px; page-break-before: always;">
+              <button onclick="window.print()" style="background: #2563eb; color: white; padding: 12px 24px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer;">Print/Save as PDF</button>
+              <p style="margin-top: 10px; font-size: 14px; color: #666;">Use your browser's print function to save as PDF</p>
+            </div>
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+    }
+  };
+
+  // Function to handle sharing
+  const handleShare = (doc: Document) => {
+    setShareDocument(doc);
+    setShowShareDialog(true);
+  };
+
+  // Function to send share
+  const sendShare = () => {
+    if (shareDocument && shareEmail) {
+      // Simulate sharing functionality
+      const shareLink = `https://handoff.app/share/${shareDocument.id}`;
+      const emailBody = shareMessage || `I'm sharing a document with you: ${shareDocument.name}`;
+
+      // Create mailto link
+      const mailtoLink = `mailto:${shareEmail}?subject=Shared Document: ${shareDocument.name}&body=${encodeURIComponent(emailBody + '\n\nView document: ' + shareLink)}`;
+
+      // Open mail client
+      window.location.href = mailtoLink;
+
+      // Reset form
+      setShareEmail('');
+      setShareMessage('');
+      setShowShareDialog(false);
+      setShareDocument(null);
+
+      // Show success message (in a real app, you'd use a toast notification)
+      alert('Share link has been prepared in your email client!');
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -401,11 +1002,12 @@ export default function Documents({ setupData }: DocumentsProps) {
                         <Download className="w-4 h-4" />
                         {!isMobile && <span className="ml-2">Download</span>}
                       </Button>
-                      <Button 
-                        variant="outline" 
-                        size={isMobile ? "icon" : "sm"} 
+                      <Button
+                        variant="outline"
+                        size={isMobile ? "icon" : "sm"}
                         className={`${isMobile ? 'mobile-button-sm w-9 h-9' : 'mobile-button-sm'}`}
                         title="Share Document"
+                        onClick={() => handleShare(doc)}
                       >
                         <Share className="w-4 h-4" />
                         {!isMobile && <span className="ml-2">Share</span>}
@@ -441,11 +1043,12 @@ export default function Documents({ setupData }: DocumentsProps) {
                       >
                         {isMobile ? 'Manage' : 'Manage Access'}
                       </Button>
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         size={isMobile ? "icon" : "sm"}
                         className={`${isMobile ? 'mobile-button-sm w-9 h-9' : 'mobile-button-sm'}`}
                         title="Share Document"
+                        onClick={() => handleShare(doc)}
                       >
                         <Share className="w-4 h-4" />
                       </Button>
@@ -529,22 +1132,73 @@ export default function Documents({ setupData }: DocumentsProps) {
             <TabsContent value="templates" className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Templates</CardTitle>
-                  <CardDescription>Standard forms and reusable documents</CardDescription>
+                  <CardTitle>Document Templates</CardTitle>
+                  <CardDescription>Professional real estate forms ready for download and customization</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {['Purchase Agreement', 'Counter Offer', 'Inspection Addendum', 'Repair Request'].map((tpl, idx) => (
-                      <Card key={idx} className="border-dashed">
-                        <CardContent className="p-4 flex items-center justify-between">
-                          <div>
-                            <div className="font-medium">{tpl}</div>
-                            <div className="text-sm text-muted-foreground">Preconfigured template</div>
+                    {documentTemplates.map((template) => (
+                      <Card key={template.id} className="border-dashed hover:shadow-md transition-shadow">
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between mb-3">
+                            <div className="flex-1">
+                              <div className="font-medium mb-1">{template.name}</div>
+                              <div className="text-sm text-muted-foreground mb-2">{template.description}</div>
+                              <Badge variant="outline" className="text-xs">
+                                {template.category.charAt(0).toUpperCase() + template.category.slice(1)}
+                              </Badge>
+                            </div>
                           </div>
-                          <Button variant="outline" size="sm">Use</Button>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="flex-1"
+                              onClick={() => downloadTemplate(template)}
+                            >
+                              <Download className="w-4 h-4 mr-2" />
+                              Download
+                            </Button>
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              className="flex-1"
+                              onClick={() => {
+                                const htmlContent = template.content();
+                                const previewWindow = window.open('', '_blank');
+                                if (previewWindow) {
+                                  previewWindow.document.write(`
+                                    <html>
+                                      <head><title>${template.name} - Preview</title></head>
+                                      <body style="padding: 20px;">
+                                        ${htmlContent}
+                                        <div style="text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #ccc;">
+                                          <button onclick="window.close()" style="background: #6b7280; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer;">Close Preview</button>
+                                        </div>
+                                      </body>
+                                    </html>
+                                  `);
+                                  previewWindow.document.close();
+                                }
+                              }}
+                            >
+                              <Eye className="w-4 h-4 mr-2" />
+                              Preview
+                            </Button>
+                          </div>
                         </CardContent>
                       </Card>
                     ))}
+                  </div>
+
+                  <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <h4 className="font-medium text-blue-900 mb-2">How to Use Templates</h4>
+                    <ul className="text-sm text-blue-800 space-y-1">
+                      <li>• Click "Preview" to view the template content</li>
+                      <li>• Click "Download" to open in a new window for printing or saving as PDF</li>
+                      <li>• Templates automatically include your buyer information when available</li>
+                      <li>• All templates are legally compliant and professionally formatted</li>
+                    </ul>
                   </div>
                 </CardContent>
               </Card>
