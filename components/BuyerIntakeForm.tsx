@@ -530,7 +530,7 @@ export default function BuyerIntakeForm({
               <button
                 type="button"
                 onClick={() => setCoBuyers([...coBuyers, { name: "", email: "", phone: "" }])}
-                className="btn-secondary"
+                className="modern-button-secondary"
               >
                 Add co-buyer
               </button>
@@ -576,7 +576,7 @@ export default function BuyerIntakeForm({
                       <button
                         type="button"
                         onClick={() => setCoBuyers(coBuyers.filter((_, i) => i !== idx))}
-                        className="btn-ghost"
+                        className="modern-button-ghost"
                         aria-label="Remove co-buyer"
                       >
                         Remove
@@ -1193,7 +1193,7 @@ export default function BuyerIntakeForm({
 
         {/* Submit */}
         <div className="flex items-center justify-end">
-          <button type="submit" className="btn-primary">
+          <button type="submit" className="modern-button">
             Save buyer intake
           </button>
         </div>
