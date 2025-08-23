@@ -294,66 +294,113 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
     // DUE DILIGENCE PHASE - FINANCING
     tasks.push({
       id: 'diligence-financing-shop-terms',
-      title: 'Shop for mortgage terms',
-      description: 'Compare mortgage rates and terms from multiple lenders',
+      title: '🏦 Shop for Best Mortgage Terms',
+      description: '⚠️ CRITICAL: Compare rates from 3-5 lenders to save thousands. Even 0.25% difference = $30,000+ over loan life. Get quotes within 14-day window to minimize credit impact.',
       category: 'diligence',
       subcategory: 'financing',
       priority: 'high',
       status: daysUntilClosing > 30 ? 'active' : 'upcoming',
       dueDate: getDateFromClosing(25),
-      estimatedTime: '2-3 hours',
-      assignedTo: 'You',
+      estimatedTime: '4-6 hours over 3 days',
+      assignedTo: 'You + Loan Officer + Mortgage Broker',
       linkedPage: 'financing',
       actionLabel: 'Compare Rates',
-      propertySpecific: true
-    });
-
-    tasks.push({
-      id: 'diligence-financing-send-offer',
-      title: 'Send offer to mortgage company',
-      description: 'Provide accepted purchase agreement to your chosen lender',
-      category: 'diligence',
-      subcategory: 'financing',
-      priority: 'high',
-      status: daysUntilClosing > 25 ? 'active' : 'upcoming',
-      dueDate: getDateFromClosing(20),
-      estimatedTime: '30 minutes',
-      assignedTo: 'You',
-      linkedPage: 'financing',
-      actionLabel: 'Submit to Lender',
-      propertySpecific: true
+      propertySpecific: true,
+      instructions: {
+        overview: 'Shopping for mortgage terms is one of the most important financial decisions in your home purchase. Small rate differences compound to massive savings.',
+        tips: [
+          '💡 TIP: Get quotes within a 14-day window to count as single credit inquiry',
+          '🎯 TARGET: Compare at least 3-5 lenders including banks, credit unions, and brokers',
+          '💰 IMPACT: 0.25% rate difference = ~$50/month = $18,000 over 30 years',
+          '📋 REQUIRED: Pre-approval letter, rate lock options, closing cost estimates'
+        ],
+        timeline: 'Start 25-30 days before closing, complete within 1 week',
+        nextSteps: ['Choose best overall offer', 'Lock rate if favorable', 'Submit formal application']
+      }
     });
 
     tasks.push({
       id: 'diligence-financing-submit-application',
-      title: 'Submit mortage application/financial information',
-      description: 'Complete formal mortgage application with all required financial documents',
+      title: '📋 Submit Complete Mortgage Application',
+      description: '🚨 TIME-SENSITIVE: Submit full application with ALL documents within 3 days of rate lock. Missing docs delay closing. Lender needs 15-20 business days to process.',
       category: 'diligence',
       subcategory: 'financing',
       priority: 'high',
       status: 'upcoming',
-      dueDate: getDateFromClosing(18),
-      estimatedTime: '3-4 hours',
-      assignedTo: 'You & Lender',
+      dueDate: getDateFromClosing(20),
+      estimatedTime: '6-8 hours over 2 days',
+      assignedTo: 'You + Loan Officer + Processor',
       linkedPage: 'financing',
       actionLabel: 'Submit Application',
-      propertySpecific: true
+      propertySpecific: true,
+      instructions: {
+        overview: 'The formal mortgage application starts your loan processing clock. Completeness and accuracy are critical for on-time closing.',
+        tips: [
+          '📦 PACKAGE COMPLETELY: Submit ALL required docs at once to avoid delays',
+          '🔒 RATE LOCK: Secure your rate for 30-60 days during processing',
+          '📞 STAY RESPONSIVE: Answer lender calls/emails within 24 hours',
+          '🚫 AVOID CHANGES: No new credit, job changes, or large purchases',
+          '💼 EMPLOYMENT VERIFICATION: May be reverified closer to closing'
+        ],
+        timeline: 'Submit within 3 days of choosing lender, 20 days before closing',
+        nextSteps: ['Await conditions letter', 'Provide additional docs', 'Schedule appraisal']
+      }
     });
 
     tasks.push({
       id: 'diligence-financing-appraisal',
-      title: 'Appraisal',
-      description: 'Schedule and complete property appraisal as required by lender',
+      title: '🏠 Property Appraisal & Valuation',
+      description: '📊 REQUIRED BY LENDER: Independent appraiser confirms property value supports loan amount. If appraisal comes low, may need to renegotiate price or bring more cash.',
       category: 'diligence',
       subcategory: 'financing',
       priority: 'high',
       status: 'upcoming',
       dueDate: getDateFromClosing(15),
-      estimatedTime: '2-3 hours',
-      assignedTo: 'Appraiser & Lender',
+      estimatedTime: '2-3 hours inspection + 3-5 days report',
+      assignedTo: 'Licensed Appraiser + Lender + You',
       linkedPage: 'financing',
       actionLabel: 'Schedule Appraisal',
-      propertySpecific: true
+      propertySpecific: true,
+      instructions: {
+        overview: 'The appraisal protects the lender by confirming the property is worth the loan amount. You cannot choose the appraiser.',
+        tips: [
+          '🎯 GOAL: Property value = or > contract price',
+          '⚠️ IF LOW: Options include price renegotiation, cash difference, or appeal',
+          '🏠 PREP: Ensure property is clean, accessible, and repairs completed',
+          '📋 PROVIDE: Comparable sales, improvement receipts, HOA info if requested',
+          '⏰ TIMING: Typically ordered after application approval, takes 7-10 days'
+        ],
+        timeline: 'Ordered by lender 15-20 days before closing',
+        nextSteps: ['Review appraisal report', 'Address any value issues', 'Proceed to underwriting']
+      }
+    });
+
+    tasks.push({
+      id: 'diligence-financing-underwriting',
+      title: '🔍 Loan Underwriting & Final Approval',
+      description: '✅ FINAL STEP: Underwriter reviews complete file and issues final loan approval. May request additional conditions. This determines if you get the loan.',
+      category: 'diligence',
+      subcategory: 'financing',
+      priority: 'high',
+      status: 'upcoming',
+      dueDate: getDateFromClosing(5),
+      estimatedTime: '5-10 business days',
+      assignedTo: 'Underwriter + Processor + You',
+      linkedPage: 'financing',
+      actionLabel: 'Track Progress',
+      propertySpecific: true,
+      instructions: {
+        overview: 'Underwriting is the final loan approval process where an expert reviews your complete financial picture and the property.',
+        tips: [
+          '📋 CONDITIONS: Expect 2-5 additional document requests',
+          '🚫 NO CHANGES: Absolutely no credit changes, job changes, or large purchases',
+          '📞 RESPOND FAST: Provide requested docs within 24-48 hours',
+          '💼 EMPLOYMENT: May reverify job and income 1-2 days before closing',
+          '🎯 OUTCOME: Clear to Close (CTC) or additional conditions'
+        ],
+        timeline: 'Begins after appraisal, takes 5-10 business days',
+        nextSteps: ['Receive Clear to Close', 'Review closing disclosure', 'Schedule closing']
+      }
     });
 
     // DUE DILIGENCE PHASE - INSPECTION
