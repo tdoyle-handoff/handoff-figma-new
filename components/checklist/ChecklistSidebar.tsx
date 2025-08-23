@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/card';
 import { Progress } from '../ui/progress';
 import { Badge } from '../ui/badge';
-import { CheckCircle, Circle, ChevronRight } from 'lucide-react';
+import { CheckCircle, Circle, ChevronRight, Search, Handshake, FileText, Zap, Home, Calendar, ArrowRight, DollarSign, Scale, FileCheck, Shield } from 'lucide-react';
 import type { TaskPhase } from '../TaskContext';
 
 interface SidebarProps {
@@ -92,4 +92,3 @@ export default function ChecklistSidebar({ phases, onSelectPhase, onSelectTask, 
     </div>
   );
 }
-
