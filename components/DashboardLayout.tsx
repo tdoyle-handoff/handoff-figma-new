@@ -355,10 +355,6 @@ export default function DashboardLayout({
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 text-sm text-slate-600">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                All systems operational
-              </div>
               <Avatar className="h-8 w-8">
                 <AvatarImage src="" />
                 <AvatarFallback className="bg-blue-600 text-white text-xs">
