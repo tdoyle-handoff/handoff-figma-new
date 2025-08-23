@@ -56,40 +56,49 @@ export default function DashboardLayout({
   const propertyContext = usePropertyContext();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  // Navigation without AI features
+  // Navigation organized by user workflow
   const navigationItems: NavigationItem[] = [
-    // Prioritize Property Search as main entry
+    // Finding your Dream Home
     {
       id: 'property',
       label: 'Property Search',
       icon: Home,
-      category: 'Property'
+      category: 'Finding your Dream Home'
     },
-    {
-      id: 'tasks',
-      label: 'Transaction Checklist',
-      icon: CheckSquare,
-      category: 'Property'
-    },
-
-
-    // Keep Analytics but not as the default landing page
     {
       id: 'overview',
       label: 'Analytics & Budget',
       icon: BarChart3,
-      category: 'Core'
+      category: 'Finding your Dream Home'
     },
-    
-    // Transaction Details
+
+    // Purchasing Your Home
+    {
+      id: 'tasks',
+      label: 'Transaction Checklist',
+      icon: CheckSquare,
+      category: 'Purchasing Your Home'
+    },
     {
       id: 'vendor-marketplace',
       label: 'Vendor Marketplace',
       icon: ShoppingCart,
-      category: 'Transaction Details'
+      category: 'Purchasing Your Home'
     },
-    
-    // Communication & Support
+    {
+      id: 'documents',
+      label: 'Offer & Document Hub',
+      icon: FileText,
+      category: 'Purchasing Your Home'
+    },
+    {
+      id: 'offer-builder',
+      label: 'Offer Builder',
+      icon: FileText,
+      category: 'Purchasing Your Home'
+    },
+
+    // Support
     {
       id: 'communications',
       label: 'Communication Suite',
@@ -103,18 +112,6 @@ export default function DashboardLayout({
       category: 'Support'
     },
     {
-      id: 'documents',
-      label: 'Offer & Document Hub',
-      icon: FileText,
-      category: 'Support'
-    },
-    {
-      id: 'offer-builder',
-      label: 'Offer Builder',
-      icon: FileText,
-      category: 'Support'
-    },
-    {
       id: 'resources',
       label: 'Education Hub',
       icon: BookOpen,
@@ -123,10 +120,9 @@ export default function DashboardLayout({
   ];
 
   const categoryColors = {
-    'Core': 'text-blue-600 bg-blue-50 border-blue-200',
-    'Property': 'text-blue-600 bg-blue-50 border-blue-200',
-    'Transaction Details': 'text-green-600 bg-green-50 border-green-200',
-    'Support': 'text-gray-600 bg-gray-50 border-gray-200'
+    'Finding your Dream Home': 'text-blue-600 bg-blue-50 border-blue-200',
+    'Purchasing Your Home': 'text-sky-600 bg-sky-50 border-sky-200',
+    'Support': 'text-indigo-600 bg-indigo-50 border-indigo-200'
   };
 
   const getUserDisplayName = () => {
@@ -236,7 +232,7 @@ export default function DashboardLayout({
         <div className="flex-1 overflow-y-auto p-4 space-y-1">
           {Object.entries(groupedNavigation).map(([category, items]) => (
             <div key={category}>
-              {sidebarOpen && category !== 'Core' && (
+              {sidebarOpen && (
                 <div className="px-3 py-2 text-xs font-medium text-blue-300 uppercase tracking-wide">
                   {category}
                 </div>
