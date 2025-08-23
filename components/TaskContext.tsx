@@ -561,11 +561,11 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
       instructions: {
         overview: 'Finalize the inspection resolution and remove your inspection contingency to proceed to closing.',
         tips: [
-          '📋 DOCUMENT EVERYTHING: Specific repairs, timeline, licensed contractors',
-          '💰 CREDIT AMOUNTS: Exact dollar amounts if credits negotiated',
-          '⏰ COMPLETION TIMELINE: When repairs must be done (usually before closing)',
-          '🔍 FINAL WALKTHROUGH: Plan to verify completion at walkthrough',
-          '✅ REMOVE CONTINGENCY: Formally remove inspection contingency'
+          'DOCUMENT EVERYTHING: Specific repairs, timeline, licensed contractors',
+          'CREDIT AMOUNTS: Exact dollar amounts if credits negotiated',
+          'COMPLETION TIMELINE: When repairs must be done (usually before closing)',
+          'FINAL WALKTHROUGH: Plan to verify completion at walkthrough',
+          'REMOVE CONTINGENCY: Formally remove inspection contingency'
         ],
         timeline: 'Complete within inspection contingency period',
         nextSteps: ['Plan final walkthrough verification', 'Proceed to other contingencies', 'Focus on closing prep']
@@ -590,11 +590,11 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
       instructions: {
         overview: 'The title search ensures you receive clear ownership and identifies any legal issues that could affect your ownership.',
         tips: [
-          '🔍 WHAT\'S SEARCHED: Public records for 30+ years of ownership history',
-          '⚠️ POTENTIAL ISSUES: Liens, judgments, easements, boundary disputes',
-          '🛡️ TITLE INSURANCE: Protects against undiscovered title defects',
-          '📋 TITLE REPORT: Detailed report of findings and any exceptions',
-          '⏰ TIMING: Started immediately after attorney retained'
+          'WHAT\'S SEARCHED: Public records for 30+ years of ownership history',
+          'POTENTIAL ISSUES: Liens, judgments, easements, boundary disputes',
+          'TITLE INSURANCE: Protects against undiscovered title defects',
+          'TITLE REPORT: Detailed report of findings and any exceptions',
+          'TIMING: Started immediately after attorney retained'
         ],
         timeline: 'Initiated within days of contract, completed 10+ days before closing',
         nextSteps: ['Review title report', 'Address any title issues', 'Purchase title insurance']
@@ -618,8 +618,8 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
       instructions: {
         overview: 'Review and address any title issues discovered during the search to ensure clear ownership transfer.',
         tips: [
-          '💰 LIENS: Must be paid off at closing (seller responsibility)',
-          '🚧 EASEMENTS: Rights others have to use your property (utilities, access)',
+          'LIENS: Must be paid off at closing (seller responsibility)',
+          'EASEMENTS: Rights others have to use your property (utilities, access)',
           '📏 ENCROACHMENTS: Structures crossing property lines',
           '📜 RESTRICTIONS: HOA rules, building restrictions, deed covenants',
           '⚖️ ATTORNEY ADVICE: Essential for understanding legal implications'
@@ -646,10 +646,10 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
       instructions: {
         overview: 'The Closing Disclosure is your final loan terms and closing costs. Federal law requires 3+ day review period.',
         tips: [
-          '📋 COMPARE: Line by line vs. original Loan Estimate',
-          '🚫 RED FLAGS: Unexpected fees, rate changes, cost increases',
-          '💰 CASH TO CLOSE: Exact amount you need to bring',
-          '⏰ MANDATORY WAIT: Cannot close for 3+ business days after receipt',
+          'COMPARE: Line by line vs. original Loan Estimate',
+          'RED FLAGS: Unexpected fees, rate changes, cost increases',
+          'CASH TO CLOSE: Exact amount you need to bring',
+          'MANDATORY WAIT: Cannot close for 3+ business days after receipt',
           '❓ ASK QUESTIONS: Get explanations for any changes or unclear items'
         ],
         timeline: 'Received 3+ business days before closing',
@@ -674,11 +674,11 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
       instructions: {
         overview: 'All legal documents must be prepared and reviewed before closing to ensure accuracy and prevent delays.',
         tips: [
-          '📜 KEY DOCUMENTS: Deed, settlement statement, loan documents, affidavits',
-          '✅ VERIFY ACCURACY: Names, property description, amounts, dates',
-          '🔍 PREVIEW: Review key documents before closing day',
-          '📋 SETTLEMENT STATEMENT: Detailed breakdown of all costs',
-          '🆔 REQUIRED ID: Bring government-issued photo ID to closing'
+          'KEY DOCUMENTS: Deed, settlement statement, loan documents, affidavits',
+          'VERIFY ACCURACY: Names, property description, amounts, dates',
+          'PREVIEW: Review key documents before closing day',
+          'SETTLEMENT STATEMENT: Detailed breakdown of all costs',
+          'REQUIRED ID: Bring government-issued photo ID to closing'
         ],
         timeline: 'Documents prepared 2-3 days before closing',
         nextSteps: ['Review document package', 'Prepare for closing', 'Arrange closing funds']
@@ -704,9 +704,9 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
         tips: [
           '🚨 FRAUD WARNING: Always verify wire instructions by phone',
           '☎️ CALL DIRECTLY: Use known number, not number in email',
-          '📧 EMAIL RISK: Never trust wire instructions received only by email',
-          '🏦 BANK TIMING: Arrange wire 1-2 days before closing',
-          '💰 BACKUP PLAN: Certified check as backup if wire issues'
+          'EMAIL RISK: Never trust wire instructions received only by email',
+          'BANK TIMING: Arrange wire 1-2 days before closing',
+          'BACKUP PLAN: Certified check as backup if wire issues'
         ],
         timeline: 'Arrange 1-2 days before closing',
         nextSteps: ['Execute wire transfer', 'Confirm receipt', 'Proceed to closing']
