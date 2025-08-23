@@ -205,7 +205,11 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask }: {
   );
 };
 
-const PhaseCard = ({ phase, onNavigate }: { phase: TaskPhase; onNavigate: (page: string) => void }) => {
+const PhaseCard = ({ phase, onNavigate, onUpdateTask }: {
+  phase: TaskPhase;
+  onNavigate: (page: string) => void;
+  onUpdateTask?: (taskId: string, status: Task['status']) => void;
+}) => {
   const [isExpanded, setIsExpanded] = useState(phase.status === 'active');
   const completedTasks = phase.tasks.filter(task => task.status === 'completed').length;
   const totalTasks = phase.tasks.length;
@@ -266,7 +270,7 @@ const PhaseCard = ({ phase, onNavigate }: { phase: TaskPhase; onNavigate: (page:
           <CardContent className="pt-0">
             <div className="space-y-2">
               {phase.tasks.map((task) => (
-                <ExpandableTaskCard key={task.id} task={task} onNavigate={onNavigate} />
+                <ExpandableTaskCard key={task.id} task={task} onNavigate={onNavigate} onUpdateTask={onUpdateTask} />
               ))}
             </div>
           </CardContent>
