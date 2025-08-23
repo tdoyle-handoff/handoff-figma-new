@@ -217,7 +217,7 @@ export function SimpleOnboardingForm({ onComplete, onSkip }: SimpleOnboardingFor
   };
 
   const renderProgressIndicator = () => (
-    <div className="mb-12 pb-8 border-b border-gray-200">
+    <div className="mb-20 pb-12 border-b border-gray-200">
       <div className="flex items-center justify-center space-x-4">
         {Array.from({ length: TOTAL_STEPS }, (_, index) => {
           const stepNumber = index + 1;
