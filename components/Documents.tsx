@@ -1273,7 +1273,27 @@ export default function Documents({ setupData }: DocumentsProps) {
               </CardContent>
             </Card>
           }>
-            <OfferBuilder />
+            <React.ErrorBoundary
+              fallback={
+                <Card>
+                  <CardContent className="p-8 text-center">
+                    <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+                    <h3 className="font-medium mb-2">Offer Builder Error</h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      There was an issue loading the offer builder. Please try refreshing the page.
+                    </p>
+                    <Button
+                      variant="outline"
+                      onClick={() => window.location.reload()}
+                    >
+                      Refresh Page
+                    </Button>
+                  </CardContent>
+                </Card>
+              }
+            >
+              <OfferBuilder />
+            </React.ErrorBoundary>
           </Suspense>
         </TabsContent>
 
