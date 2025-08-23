@@ -4,8 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { Badge } from './ui/badge'
 import { Search as SearchIcon, ListChecks, Database, Play, Home, CheckCircle } from 'lucide-react'
 
-// Home Search panel (simple property search panel)
-import PropertySearchPanel from './search-panel-impl'
+// Home Tracker for tracking and ranking interested homes
+import HomeTracker from './HomeTracker'
 
 // ATTOM API summary (read-only summary UI; does not auto-fetch)
 import { ComprehensiveAttomDataSummaryTable } from './ComprehensiveAttomDataSummaryTable'
