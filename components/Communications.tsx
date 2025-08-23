@@ -437,7 +437,14 @@ const MessageModal = ({
                           size={isMobile ? "sm" : "lg"}
                           className={`flex items-center gap-2 hover:bg-gray-100 ${isMobile ? 'text-sm px-3 py-2' : 'text-base px-4 py-3'} mobile-button-sm`}
                           onClick={() => {
-                            console.log('Download:', attachment);
+                            // Create a temporary link to download the attachment
+                            const link = document.createElement('a');
+                            link.href = '#'; // In a real app, this would be the file URL
+                            link.download = attachment;
+                            link.click();
+
+                            // Show download notification
+                            alert(`Downloading ${attachment}...`);
                           }}
                         >
                           <Paperclip className={`${isMobile ? 'w-3 h-3' : 'w-5 h-5'}`} />
@@ -469,7 +476,20 @@ const MessageModal = ({
                           variant="outline"
                           size={isMobile ? "default" : "lg"}
                           onClick={() => {
-                            console.log('Attach file');
+                            // Create file input for attachment
+                            const input = document.createElement('input');
+                            input.type = 'file';
+                            input.multiple = true;
+                            input.accept = '.pdf,.doc,.docx,.jpg,.jpeg,.png';
+                            input.onchange = (e) => {
+                              const files = (e.target as HTMLInputElement).files;
+                              if (files && files.length > 0) {
+                                const fileNames = Array.from(files).map(f => f.name).join(', ');
+                                alert(`Selected files: ${fileNames}`);
+                                // In a real app, files would be uploaded to server
+                              }
+                            };
+                            input.click();
                           }}
                           className={`${isMobile ? 'w-full text-base' : 'text-base'} mobile-button`}
                         >
@@ -521,7 +541,14 @@ const MessageModal = ({
                   <Button
                     variant="outline"
                     onClick={() => {
-                      console.log('Forward message');
+                      // Open compose modal with forwarded message content
+                      const forwardSubject = `Fwd: ${message.subject || 'Message from ' + message.from}`;
+                      const forwardContent = `\n\n--- Forwarded Message ---\nFrom: ${message.from}\nDate: ${message.timestamp}\nSubject: ${message.subject || 'No Subject'}\n\n${message.content}`;
+
+                      // In a real app, this would open compose modal with pre-filled content
+                      if (confirm('Forward this message?')) {
+                        alert('Forward functionality would open compose window with pre-filled content');
+                      }
                     }}
                     className={`flex items-center gap-2 ${isMobile ? 'text-sm px-4 py-2' : 'text-base px-6 py-3'} mobile-button-sm`}
                     size={isMobile ? "sm" : "lg"}
@@ -532,7 +559,12 @@ const MessageModal = ({
                   <Button
                     variant="outline"
                     onClick={() => {
-                      console.log('Archive message');
+                      // Archive the message
+                      if (confirm(`Archive message from ${message.from}?`)) {
+                        alert('Message archived successfully!');
+                        onClose(); // Close the message modal
+                        // In a real app, this would call API to archive message
+                      }
                     }}
                     className={`flex items-center gap-2 ${isMobile ? 'text-sm px-4 py-2' : 'text-base px-6 py-3'} mobile-button-sm`}
                     size={isMobile ? "sm" : "lg"}
