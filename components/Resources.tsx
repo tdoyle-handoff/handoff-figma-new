@@ -137,15 +137,6 @@ export default function Resources({ onNavigate }: ResourcesProps) {
   const completedSteps = homeBasics.filter(step => step.completed).length;
   const progressPercentage = (completedSteps / homeBasics.length) * 100;
 
-  const handleCalculatorClick = (resourceId: string) => {
-    if (onNavigate) {
-      if (resourceId === '2') {
-        onNavigate('mortgage-calculator');
-      } else if (resourceId === '6') {
-        onNavigate('closing-calculator');
-      }
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -207,20 +198,12 @@ export default function Resources({ onNavigate }: ResourcesProps) {
                       variant="outline" 
                       size="sm" 
                       className={`w-full ${isMobile ? 'touch-target' : ''}`}
-                      onClick={() => {
-                        if (resource.type === 'calculator') {
-                          handleCalculatorClick(resource.id);
-                        }
-                      }}
+                      onClick={() => {}}
                     >
                       {resource.type === 'video' && <Play className="w-4 h-4 mr-2" />}
-                      {resource.type === 'calculator' && <Calculator className="w-4 h-4 mr-2" />}
-                      {resource.type === 'checklist' && <CheckSquare className="w-4 h-4 mr-2" />}
                       {resource.type === 'article' && <FileText className="w-4 h-4 mr-2" />}
                       {resource.type === 'guide' && <BookOpen className="w-4 h-4 mr-2" />}
-                      {resource.type === 'video' ? 'Watch' : 
-                       resource.type === 'calculator' ? 'Calculate' : 
-                       resource.type === 'checklist' ? 'View Checklist' : 'Read'}
+                      {resource.type === 'video' ? 'Watch' : 'Read'}
                     </Button>
                   </CardContent>
                 </Card>
@@ -228,109 +211,8 @@ export default function Resources({ onNavigate }: ResourcesProps) {
             </div>
           </div>
 
-          {/* Home Buying Progress */}
-          <div>
-            <h2 className="text-lg font-semibold mb-4">Your Home Buying Journey</h2>
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle>Progress Overview</CardTitle>
-                  <Badge variant="secondary">{completedSteps}/{homeBasics.length} Steps</Badge>
-                </div>
-                <Progress value={progressPercentage} className="w-full" />
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {homeBasics.map((step, index) => (
-                    <div key={index} className="flex items-center gap-3">
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                        step.completed ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600'
-                      }`}>
-                        {step.completed ? <CheckSquare className="w-4 h-4" /> : <span className="text-xs">{index + 1}</span>}
-                      </div>
-                      <div className="flex-1">
-                        <p className={`font-medium ${step.completed ? 'text-green-600' : ''}`}>{step.step}</p>
-                        <p className="text-sm text-muted-foreground">{step.description}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
         </TabsContent>
 
-        <TabsContent value="calculators" className="space-y-6">
-          <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'} gap-6`}>
-            {resources.filter(r => r.type === 'calculator').map((resource) => (
-              <Card key={resource.id} className="hover:shadow-md transition-shadow">
-                <CardHeader>
-                  <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${getTypeColor(resource.type)}`}>
-                      {getTypeIcon(resource.type)}
-                    </div>
-                    <div>
-                      <CardTitle className="text-lg">{resource.title}</CardTitle>
-                      <div className="flex items-center gap-2 mt-1">
-                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                        <span className="text-sm">{resource.rating}</span>
-                        <span className="text-sm text-muted-foreground">• {resource.views.toLocaleString()} uses</span>
-                      </div>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground mb-4">{resource.description}</p>
-                  <Button 
-                    className={`w-full ${isMobile ? 'touch-target' : ''}`}
-                    onClick={() => handleCalculatorClick(resource.id)}
-                  >
-                    <Calculator className="w-4 h-4 mr-2" />
-                    Open Calculator
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {/* Quick Calculator Preview */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Quick Payment Calculator</CardTitle>
-              <CardDescription>Get an instant estimate of your monthly payment</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-3'} gap-4 mb-4`}>
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Home Price</label>
-                  <Input placeholder="$450,000" />
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Down Payment</label>
-                  <Input placeholder="$90,000" />
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Interest Rate</label>
-                  <Input placeholder="6.75%" />
-                </div>
-              </div>
-              <div className="bg-muted p-4 rounded-lg mb-4">
-                <div className="text-center">
-                  <p className="text-sm text-muted-foreground">Estimated Monthly Payment</p>
-                  <p className="text-2xl font-semibold text-primary">$2,347</p>
-                  <p className="text-xs text-muted-foreground mt-1">Principal & Interest only</p>
-                </div>
-              </div>
-              <Button 
-                className={`w-full ${isMobile ? 'touch-target' : ''}`}
-                onClick={() => handleCalculatorClick('2')}
-              >
-                <Calculator className="w-4 h-4 mr-2" />
-                Open Full Calculator
-              </Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
 
         {!isMobile && (
           <Fragment>
@@ -358,30 +240,6 @@ export default function Resources({ onNavigate }: ResourcesProps) {
               </Card>
             </TabsContent>
 
-            <TabsContent value="stages" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Stage-Based Guides</CardTitle>
-                  <CardDescription>Learn what to expect at each stage of your transaction</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {[
-                      { title: 'Home Search', desc: 'How to evaluate listings, schedule tours, and compare properties.' },
-                      { title: 'Making an Offer', desc: 'Offer strategy, contingencies, and negotiation tips.' },
-                      { title: 'Diligence', desc: 'Inspections, appraisals, and addressing findings.' },
-                      { title: 'Financing', desc: 'Underwriting, rate locks, and closing disclosures.' },
-                      { title: 'Closing', desc: 'Final walkthrough, signing, and getting the keys.' }
-                    ].map((stage, idx) => (
-                      <div key={idx} className="p-4 border rounded-lg">
-                        <div className="font-medium">{stage.title}</div>
-                        <div className="text-sm text-muted-foreground">{stage.desc}</div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
             <TabsContent value="guides" className="space-y-6">
               <div className="flex gap-4 mb-6">
                 <Input
@@ -472,42 +330,6 @@ export default function Resources({ onNavigate }: ResourcesProps) {
               </div>
             </TabsContent>
 
-            <TabsContent value="checklists" className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {resources.filter(r => r.type === 'checklist').map((resource) => (
-                  <Card key={resource.id} className="hover:shadow-md transition-shadow">
-                    <CardHeader>
-                      <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${getTypeColor(resource.type)}`}>
-                          {getTypeIcon(resource.type)}
-                        </div>
-                        <div>
-                          <CardTitle className="text-lg">{resource.title}</CardTitle>
-                          <div className="flex items-center gap-2 mt-1">
-                            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                            <span className="text-sm">{resource.rating}</span>
-                            <span className="text-sm text-muted-foreground">• {resource.views.toLocaleString()} downloads</span>
-                          </div>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-muted-foreground mb-4">{resource.description}</p>
-                      <div className="flex gap-2">
-                        <Button className="flex-1">
-                          <CheckSquare className="w-4 h-4 mr-2" />
-                          View Checklist
-                        </Button>
-                        <Button variant="outline">
-                          <Download className="w-4 h-4 mr-2" />
-                          Download
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </TabsContent>
           </Fragment>
         )}
       </Tabs>
