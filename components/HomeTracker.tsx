@@ -5,18 +5,22 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import { Badge } from './ui/badge';
-import { 
-  Plus, 
-  Home, 
-  Star, 
-  MapPin, 
-  DollarSign, 
-  Edit, 
-  Trash2, 
+import {
+  Plus,
+  Home,
+  Star,
+  MapPin,
+  DollarSign,
+  Edit,
+  Trash2,
   GripVertical,
   Save,
-  X
+  X,
+  Heart
 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+
+type InterestLabel = 'dream-home' | 'very-interested' | 'maybe' | 'not-interested';
 
 interface TrackedHome {
   id: string;
@@ -27,6 +31,7 @@ interface TrackedHome {
   notes: string;
   ranking: number;
   dateAdded: string;
+  label: InterestLabel;
 }
 
 export default function HomeTracker() {
@@ -38,7 +43,8 @@ export default function HomeTracker() {
     price: '',
     bedrooms: '',
     bathrooms: '',
-    notes: ''
+    notes: '',
+    label: 'very-interested' as InterestLabel
   });
 
   const addHome = () => {
@@ -52,7 +58,7 @@ export default function HomeTracker() {
     };
 
     setHomes([...homes, home]);
-    setNewHome({ address: '', price: '', bedrooms: '', bathrooms: '', notes: '' });
+    setNewHome({ address: '', price: '', bedrooms: '', bathrooms: '', notes: '', label: 'very-interested' as InterestLabel });
     setIsAddingHome(false);
   };
 
