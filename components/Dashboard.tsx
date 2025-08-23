@@ -263,6 +263,209 @@ export default function Dashboard({ setupData }: DashboardProps) {
         </TabsContent>
 
         <TabsContent value="budget" className="space-y-6">
+          {/* One-time Costs at Closing */}
+          <Card className="shadow-sm">
+            <CardHeader>
+              <CardTitle>One-time Costs at Closing</CardTitle>
+              <CardDescription>Typical range is 2-5% of the price.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                <div>
+                  <div className="text-sm text-muted-foreground mb-1">Bank & lender fees</div>
+                  <div className="text-lg font-semibold">{shortCurrency(closingBreakdown[0].value)}</div>
+                  <div className="w-full bg-blue-200 h-1 rounded mt-2"></div>
+                </div>
+                <div>
+                  <div className="text-sm text-muted-foreground mb-1">Title & legal</div>
+                  <div className="text-lg font-semibold">{shortCurrency(closingBreakdown[1].value)}</div>
+                  <div className="w-full bg-yellow-200 h-1 rounded mt-2"></div>
+                </div>
+                <div>
+                  <div className="text-sm text-muted-foreground mb-1">Prepaid taxes/insurance</div>
+                  <div className="text-lg font-semibold">{shortCurrency(closingBreakdown[2].value)}</div>
+                  <div className="w-full bg-green-200 h-1 rounded mt-2"></div>
+                </div>
+                <div>
+                  <div className="text-sm text-muted-foreground mb-1">Gov. & recording</div>
+                  <div className="text-lg font-semibold">{shortCurrency(closingBreakdown[3].value)}</div>
+                  <div className="w-full bg-purple-200 h-1 rounded mt-2"></div>
+                </div>
+                <div>
+                  <div className="text-sm text-muted-foreground mb-1">Other</div>
+                  <div className="text-lg font-semibold">{shortCurrency(closingBreakdown[4].value)}</div>
+                  <div className="w-full bg-gray-200 h-1 rounded mt-2"></div>
+                </div>
+              </div>
+
+              <Separator className="my-4" />
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <div className="text-sm text-muted-foreground mb-2">Credits</div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm">Seller</span>
+                      <Input type="number" value={sellerCredits} onChange={(e)=>setSellerCredits(Number(e.target.value||0))} className="w-24 h-8 text-right" />
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm">Lender</span>
+                      <Input type="number" value={lenderCredits} onChange={(e)=>setLenderCredits(Number(e.target.value||0))} className="w-24 h-8 text-right" />
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm text-muted-foreground mb-1">Money needed at closing</div>
+                  <div className="text-2xl font-bold">{shortCurrency(moneyNeeded)}</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Set Your Numbers and Your Monthly Cost */}
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            {/* Set Your Numbers */}
+            <Card className="shadow-sm">
+              <CardHeader>
+                <CardTitle>Set Your Numbers</CardTitle>
+                <CardDescription>Change these to match your situation.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label className="text-sm font-medium">Home price</Label>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Input type="number" value={homePrice} onChange={(e) => setHomePrice(Number(e.target.value || 0))} className="flex-1" />
+                    <span className="text-sm text-muted-foreground">{shortCurrency(homePrice)}</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <Label className="text-sm font-medium">Down payment</Label>
+                    <div className="flex items-center gap-1 mt-1">
+                      <span className="text-xs text-muted-foreground">Percent</span>
+                      <Switch checked={downModeDollar} onCheckedChange={setDownModeDollar} />
+                      <span className="text-xs text-muted-foreground">Dollar</span>
+                    </div>
+                    {!downModeDollar ? (
+                      <Input type="number" value={downPercent} onChange={(e) => setDownPercent(Number(e.target.value || 0))} className="mt-2" />
+                    ) : (
+                      <Input type="number" value={downDollar} onChange={(e) => setDownDollar(Number(e.target.value || 0))} className="mt-2" />
+                    )}
+                    <div className="text-xs text-muted-foreground mt-1">Calculated: {shortCurrency(downPayment)}</div>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium">Interest rate</Label>
+                    <Input type="number" value={rate} onChange={(e) => setRate(Number(e.target.value || 0))} className="mt-2" step="0.01" />
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium">Loan length (years)</Label>
+                    <Input type="number" value={term} onChange={(e) => setTerm(Number(e.target.value || 0))} className="mt-2" />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-sm font-medium">Property taxes (yearly)</Label>
+                    <Input type="number" value={taxesAnnual} onChange={(e) => setTaxesAnnual(Number(e.target.value || 0))} className="mt-1" />
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium">Home insurance (yearly)</Label>
+                    <Input type="number" value={insuranceAnnual} onChange={(e) => setInsuranceAnnual(Number(e.target.value || 0))} className="mt-1" />
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium">HOA (monthly)</Label>
+                    <Input type="number" value={hoaMonthly} onChange={(e) => setHoaMonthly(Number(e.target.value || 0))} className="mt-1" />
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium">Upkeep (monthly)</Label>
+                    <Input type="number" value={maintenanceMonthly} onChange={(e) => setMaintenanceMonthly(Number(e.target.value || 0))} className="mt-1" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Your Monthly Cost */}
+            <Card className="shadow-sm">
+              <CardHeader>
+                <CardTitle>Your Monthly Cost</CardTitle>
+                <CardDescription>Live breakdown by category.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Loan amount</span>
+                    <span className="font-medium">{shortCurrency(loanAmount)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Mortgage</span>
+                    <span className="font-medium">{shortCurrency(pAndI)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Taxes</span>
+                    <span className="font-medium">{shortCurrency(taxesMonthly)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Insurance</span>
+                    <span className="font-medium">{shortCurrency(insuranceMonthly)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">HOA</span>
+                    <span className="font-medium">{shortCurrency(hoaMonthly)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Upkeep</span>
+                    <span className="font-medium">{shortCurrency(maintenanceMonthly)}</span>
+                  </div>
+
+                  <Separator className="my-3" />
+
+                  <div className="flex justify-between font-semibold">
+                    <span>Total monthly</span>
+                    <span className="text-xl">{shortCurrency(totalMonthly)}</span>
+                  </div>
+                </div>
+
+                {/* Pie Chart */}
+                <div className="mt-6 h-32">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={[
+                          { name: 'Mortgage', value: pAndI, fill: '#22c55e' },
+                          { name: 'Taxes', value: taxesMonthly, fill: '#3b82f6' },
+                          { name: 'Insurance', value: insuranceMonthly, fill: '#f59e0b' },
+                          { name: 'Other', value: hoaMonthly + maintenanceMonthly, fill: '#8b5cf6' },
+                        ]}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={30}
+                        outerRadius={60}
+                        paddingAngle={2}
+                        dataKey="value"
+                      >
+                        {[
+                          { fill: '#22c55e' },
+                          { fill: '#3b82f6' },
+                          { fill: '#f59e0b' },
+                          { fill: '#8b5cf6' },
+                        ].map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.fill} />
+                        ))}
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+
+                <div className="mt-4">
+                  <div className="text-sm text-muted-foreground mb-1">Rent comparison</div>
+                  <div className="text-sm font-medium text-orange-600">{rentDeltaCopy}</div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Progress Section */}
           <Card className="shadow-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2"><CalendarCheck2 className="h-5 w-5"/>Your Progress</CardTitle>
