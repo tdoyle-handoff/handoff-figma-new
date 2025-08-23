@@ -220,7 +220,7 @@ export default function MobileLayout({
                   <Menu className="w-5 h-5" />
                 </Button>
               </SheetTrigger>
-              <img src={handoffLogo} alt="Handoff" className="ml-2 h-6 w-auto" />
+              <img src={handoffLogo} alt="Handoff" className="ml-2 h-6 w-auto" onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/handoff-logo.svg'; }} />
               <SheetContent side="left" className="w-80 p-0">
                 <div className="flex flex-col h-full">
                   <SheetHeader className="p-6 border-b border-border text-left">
@@ -229,6 +229,7 @@ export default function MobileLayout({
                         src={handoffLogo} 
                         alt="Handoff" 
                         className="h-10 w-auto"
+                        onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/handoff-logo.svg'; }}
                       />
                       <div>
                         <SheetDescription className="flex items-center gap-1 text-xs">

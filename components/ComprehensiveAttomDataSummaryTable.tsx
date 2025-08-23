@@ -102,7 +102,7 @@ export function ComprehensiveAttomDataSummaryTable({
     {
       id: 'sale',
       name: 'Sale Details',
-      path: '/propertyapi/v1.0.0/property/sale',
+      path: '/propertyapi/v1.0.0/sale/detail',
       priority: 2,
       description: 'Sale history and market data'
     }
@@ -281,16 +281,12 @@ export function ComprehensiveAttomDataSummaryTable({
       // Test each endpoint
       for (const endpoint of endpoints) {
         try {
-          const vercelBase = (import.meta as any).env?.VITE_ATTOM_PROXY_BASE || '/api/attom';
-          const proxyBase = vercelBase || '/api/attom';
-          const url = `${proxyBase.replace(/\/$/, '')}/test-endpoint`;
-          
+          // Force Vercel route
+          const proxyBase = '/api/attom';
+          const url = `${proxyBase}/test-endpoint`;
+
           const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-          // Only send Supabase auth if we are calling Supabase, not Vercel relative API
-          if (url.includes('.supabase.co')) {
-            headers['Authorization'] = `Bearer ${publicAnonKey}`;
-          }
-          
+
           const response = await fetch(url, {
             method: 'POST',
             headers,

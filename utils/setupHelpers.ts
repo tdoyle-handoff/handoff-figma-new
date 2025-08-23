@@ -54,16 +54,9 @@ export const isPropertySetupComplete = (): boolean => {
   }
 };
 
-export const canAccessPage = (page: string): boolean => {
-  const setupComplete = isPropertySetupComplete();
-  
-  // Always allow access to property setup page
-  if (page === 'property') {
-    return true;
-  }
-  
-  // For other pages, user must have completed property setup
-  return setupComplete;
+export const canAccessPage = (_page: string): boolean => {
+  // Full navigation enabled: allow all pages regardless of setup state
+  return true;
 };
 
 export const getSavedPageFromStorage = (): string | null => {

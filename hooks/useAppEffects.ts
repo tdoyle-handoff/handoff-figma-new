@@ -134,50 +134,21 @@ export function useAppEffects({
     }
   }, [isMobile, auth.isAuthenticated, passwordReset.showPasswordReset]);
 
-  // Smart navigation restoration and property setup flow management
+  // Smart navigation restoration (full navigation enabled)
+  // Allow users to navigate anywhere; only restore a saved page if present.
   useEffect(() => {
     if (auth.isAuthenticated && !auth.isLoading) {
-      const setupComplete = isPropertySetupComplete();
-      const hasInitialSetup = localStorage.getItem('handoff-initial-setup-complete') === 'true';
-      const currentPageAccessible = canAccessPage(navigation.currentPage);
-      
-      console.log('Navigation effect - evaluating flow:', {
-        setupComplete,
-        hasInitialSetup,
-        currentPage: navigation.currentPage,
-        currentPageAccessible,
-        isGuestMode: auth.isGuestMode
-      });
-      
-      if (auth.isGuestMode && !hasInitialSetup) {
-        console.log('Guest mode: Initial setup not complete, redirecting to property details');
-        navigation.navigateTo('property');
-        return;
+      try {
+        const saved = getSavedPageFromStorage();
+        if (saved && saved !== navigation.currentPage) {
+          console.log('Restoring saved page after login:', saved);
+          navigation.navigateTo(saved);
+        }
+      } catch (e) {
+        console.warn('Navigation restore error:', e);
       }
-      
-      if (!setupComplete) {
-        console.log('Property setup not complete, redirecting to property details');
-        navigation.navigateTo('property');
-        return;
-      }
-      
-      if (setupComplete && !currentPageAccessible) {
-        console.log('Current page not accessible, redirecting to overview');
-        navigation.navigateTo('overview');
-        return;
-      }
-      
-      // Default behavior: respect saved page; otherwise leave currentPage as is
-      const saved = getSavedPageFromStorage();
-      if (saved) {
-        console.log('Restoring saved page after login:', saved);
-        navigation.navigateTo(saved);
-        return;
-      }
-      console.log('No saved page; keeping current page:', navigation.currentPage);
-      // fall through without redirect
     }
-  }, [auth.isAuthenticated, auth.isLoading, auth.isGuestMode, navigation.currentPage, navigation.navigateTo]);
+  }, [auth.isAuthenticated, auth.isLoading, navigation.currentPage, navigation.navigateTo]);
 
   // FIXED: Clear persisted navigation and user data on sign out with proper error handling
   useEffect(() => {

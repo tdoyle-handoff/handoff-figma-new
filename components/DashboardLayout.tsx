@@ -181,7 +181,7 @@ export default function DashboardLayout({
     <div className="flex h-screen bg-background">
       {/* Sidebar */}
       <div className={cn(
-        "flex flex-col bg-card border-r border-border transition-all duration-300",
+        "relative z-30 flex flex-col bg-card border-r border-border transition-all duration-300 shrink-0",
         sidebarOpen ? "w-80" : "w-16"
       )}>
         {/* Header */}
@@ -192,12 +192,14 @@ export default function DashboardLayout({
                 src={handoffLogo} 
                 alt="Handoff" 
                 className="h-8 w-auto"
+                onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/handoff-logo.svg'; }}
               />
             ) : (
               <img
                 src={handoffLogo}
                 alt="Handoff"
                 className="h-8 w-8 object-contain"
+                onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/handoff-logo.svg'; }}
               />
             )}
             {sidebarOpen && (
@@ -346,7 +348,7 @@ export default function DashboardLayout({
         <Button
           variant="ghost"
           size="sm"
-          className="absolute top-6 left-20 z-10"
+          className="absolute top-6 left-20 z-50"
           onClick={() => setSidebarOpen(true)}
         >
           <div className="text-xs">Expand</div>
@@ -354,7 +356,7 @@ export default function DashboardLayout({
       )}
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-h-0">
+      <div className="relative z-0 flex-1 flex flex-col min-h-0 min-w-0">
         <main className="flex-1 overflow-auto">
           {children}
         </main>

@@ -82,13 +82,14 @@ export function BuildingDetailsDemo({
       // Test each endpoint
       for (const endpoint of endpoints) {
         try {
-          const url = `https://${projectId}.supabase.co/functions/v1/make-server-a24396d5/attom/test-endpoint`;
+          const proxyBase = '/api/attom';
+          const url = `${proxyBase}/test-endpoint`;
+
+          const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+
           const response = await fetch(url, {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${publicAnonKey}`,
-            },
+            headers,
             body: JSON.stringify({
               endpoint: endpoint.path,
               address1,
