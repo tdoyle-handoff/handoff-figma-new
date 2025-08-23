@@ -1,5 +1,6 @@
 import React, { useState, Suspense } from 'react';
 import { FileText, Upload, Download, Share, Eye, Trash2, Plus, Search, Filter, Calendar, User, CheckCircle, Clock, AlertCircle, Folder } from 'lucide-react';
+import ContractAnalysis from './ContractAnalysis';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
@@ -899,9 +900,12 @@ export default function Documents({ setupData }: DocumentsProps) {
       )}
 
       <Tabs defaultValue="all" className="w-full">
-        <TabsList className={`grid w-full ${isMobile ? 'grid-cols-3 tab-container-multiline' : 'grid-cols-5'}`}>
+        <TabsList className={`grid w-full ${isMobile ? 'grid-cols-3 tab-container-multiline' : 'grid-cols-6'}`}>
           <TabsTrigger value="all" className={isMobile ? 'tab-multiline' : ''}>
             {isMobile ? 'Documents' : 'All Documents'}
+          </TabsTrigger>
+          <TabsTrigger value="contract" className={isMobile ? 'tab-multiline' : ''}>
+            Contract Analysis
           </TabsTrigger>
           <TabsTrigger value="offer" className={isMobile ? 'tab-multiline' : ''}>
             Offer Builder
@@ -1111,6 +1115,19 @@ export default function Documents({ setupData }: DocumentsProps) {
               </p>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="contract" className="space-y-6">
+          <Suspense fallback={
+            <Card>
+              <CardContent className="p-8 text-center">
+                <div className="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+                <p className="text-muted-foreground">Loading Contract Analysis...</p>
+              </CardContent>
+            </Card>
+          }>
+            <ContractAnalysis />
+          </Suspense>
         </TabsContent>
 
         <TabsContent value="offer" className="space-y-6">
