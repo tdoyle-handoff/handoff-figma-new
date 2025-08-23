@@ -1,7 +1,8 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/card';
 import { Progress } from '../ui/progress';
-import { LegalProgressTracker, ContractReview, TitleSearch, SettlementReview } from '../Legal';
+import { LegalProgressTracker, TitleSearch, SettlementReview } from '../Legal';
+import ContractAnalysis from '../ContractAnalysis';
 import { Scale, FileText, Search, CheckCircle } from 'lucide-react';
 import { useTaskContext } from '../TaskContext';
 
@@ -71,7 +72,7 @@ export default function ChecklistLegalTabs({ onNavigate }: Props) {
       {/* Center Content */}
       <div className="lg:col-span-9 space-y-3">
         {tab === 'progress' && <LegalProgressTracker />}
-        {tab === 'contract' && <ContractReview />}
+        {tab === 'contract' && <ContractAnalysis />}
         {tab === 'title' && <TitleSearch />}
         {tab === 'settlement' && <SettlementReview />}
       </div>
@@ -79,4 +80,3 @@ export default function ChecklistLegalTabs({ onNavigate }: Props) {
     </div>
   );
 }
-
