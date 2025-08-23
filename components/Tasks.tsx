@@ -299,6 +299,10 @@ export default function Tasks({ onNavigate }: TasksProps) {
   const activeTasks = taskContext.getActiveTasksCount();
   const overallProgress = taskContext.getOverallProgress();
 
+  const handleUpdateTask = (taskId: string, status: Task['status']) => {
+    taskContext.updateTaskStatus(taskId, status);
+  };
+
   // selection state for sidebar -> detail
   const [selectedPhaseId, setSelectedPhaseId] = useState<string | undefined>(taskPhases.find(p => p.status === 'active')?.id);
   const flatTasks = taskPhases.flatMap(p => p.tasks);
