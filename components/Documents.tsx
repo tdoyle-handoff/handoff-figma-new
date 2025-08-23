@@ -857,6 +857,62 @@ export default function Documents({ setupData }: DocumentsProps) {
     setShowShareDialog(true);
   };
 
+  // Function to handle manage access
+  const handleManageAccess = (doc: Document) => {
+    setShareDocument(doc);
+    setShowManageAccessDialog(true);
+  };
+
+  // Function to generate public link
+  const generatePublicLink = () => {
+    const linkId = Math.random().toString(36).substr(2, 9);
+    const link = `https://handoff.app/shared/${shareDocument?.id}/${linkId}`;
+    setPublicLink(link);
+    return link;
+  };
+
+  // Function to copy link to clipboard
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      alert('Link copied to clipboard!');
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
+  };
+
+  // Function to add user to document
+  const addUserToDocument = () => {
+    if (!shareEmail || !shareDocument) return;
+
+    const newUser: SharedUser = {
+      id: Math.random().toString(36).substr(2, 9),
+      name: shareEmail.split('@')[0],
+      email: shareEmail,
+      role: shareRole,
+      addedDate: new Date().toISOString().split('T')[0]
+    };
+
+    // In a real app, this would update the backend
+    alert(`Access granted to ${shareEmail} as ${shareRole}`);
+    setShareEmail('');
+    setShowShareDialog(false);
+  };
+
+  // Function to remove user access
+  const removeUserAccess = (userId: string, userName: string) => {
+    if (confirm(`Remove access for ${userName}?`)) {
+      // In a real app, this would update the backend
+      alert(`Access removed for ${userName}`);
+    }
+  };
+
+  // Function to change user role
+  const changeUserRole = (userId: string, newRole: 'viewer' | 'editor') => {
+    // In a real app, this would update the backend
+    alert(`User role changed to ${newRole}`);
+  };
+
   // Function to send share
   const sendShare = () => {
     if (shareDocument && shareEmail) {
