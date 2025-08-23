@@ -434,8 +434,8 @@ export default function Dashboard({ setupData }: DashboardProps) {
             </CardContent>
           </Card>
 
-          {/* Set Your Numbers and Your Monthly Cost */}
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          {/* Your Monthly Cost */}
+          <div className="flex justify-center">
 
             {/* Your Monthly Cost */}
             <Card className="shadow-sm">
@@ -561,7 +561,7 @@ export default function Dashboard({ setupData }: DashboardProps) {
                   <div>📜 Taxes</div><div className="text-right">{shortCurrency(taxesMonthly)}</div>
                   <div>🛡️ Insurance</div><div className="text-right">{shortCurrency(insuranceMonthly)}</div>
                   <div>🏢 HOA</div><div className="text-right">{shortCurrency(hoaMonthly)}</div>
-                  <div>🛠��� Upkeep</div><div className="text-right">{shortCurrency(maintenanceMonthly)}</div>
+                  <div>🛠️ Upkeep</div><div className="text-right">{shortCurrency(maintenanceMonthly)}</div>
                 </div>
                 <Separator className="my-3" />
                 <div className="text-sm text-muted-foreground">{rentDeltaCopy}</div>
