@@ -236,13 +236,8 @@ export default function Dashboard({ setupData }: DashboardProps) {
         </CardContent>
       </Card>
 
-      <Tabs defaultValue="analytics" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="analytics" className="gap-2"><FileBarChart2 className="h-4 w-4"/>Analytics</TabsTrigger>
-          <TabsTrigger value="budget" className="gap-2"><DollarSign className="h-4 w-4"/>Budget</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="analytics" className="space-y-6">
+      {/* Unified Analytics & Budget View */}
+      <div className="space-y-6">
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             <Card className="shadow-sm">
               <CardHeader>
@@ -372,9 +367,12 @@ export default function Dashboard({ setupData }: DashboardProps) {
               </CardContent>
             </Card>
           </div>
-        </TabsContent>
-
-        <TabsContent value="budget" className="space-y-6">
+        {/* Budget Section */}
+        <div className="mt-8">
+          <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
+            <DollarSign className="h-6 w-6" />
+            Budget & Closing Costs
+          </h2>
           {/* One-time Costs at Closing */}
           <Card className="shadow-sm">
             <CardHeader>
@@ -547,7 +545,7 @@ export default function Dashboard({ setupData }: DashboardProps) {
                 <div className="text-3xl font-semibold">{shortCurrency(moneyNeeded)}</div>
                 <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
                   <div>💰 Down payment</div><div className="text-right">{shortCurrency(downPayment)}</div>
-                  <div>���� One‑time fees</div><div className="text-right">{shortCurrency(closingTotal)}</div>
+                  <div>���� One���time fees</div><div className="text-right">{shortCurrency(closingTotal)}</div>
                   <div>🎁 Credits</div><div className="text-right">−{shortCurrency(sellerCredits + lenderCredits)}</div>
                 </div>
                 <Separator className="my-3" />
@@ -660,8 +658,8 @@ export default function Dashboard({ setupData }: DashboardProps) {
               <div>Healthy budget rule: try to keep home costs at or under one‑third of your gross income.</div>
             </CardContent>
           </Card>
-        </TabsContent>
-      </Tabs>
+        </div>
+      </div>
     </div>
   );
 }

@@ -278,23 +278,6 @@ export default function MyTeam({ setupData }: MyTeamProps) {
         </div>
       </div>
 
-      {/* Team Overview Alert */}
-      <Alert>
-        <User className="h-4 w-4" />
-        <AlertDescription>
-          Your transaction team is actively working on your home purchase. Next action needed: {teamMembers.find(m => m.nextAction)?.nextAction}
-        </AlertDescription>
-      </Alert>
-
-      {/* Default team setup alert */}
-      <Alert className="bg-blue-50 border-blue-200">
-        <CheckCircle className="h-4 w-4 text-blue-600" />
-        <AlertDescription>
-          <span className="text-blue-800">
-            <strong>Your Team:</strong> You can add and manage your real estate team members here. Update contact information and add new professionals as needed.
-          </span>
-        </AlertDescription>
-      </Alert>
 
       <Tabs defaultValue="overview" className="w-full">
         <TabsList className={`grid w-full grid-cols-3 ${isMobile ? 'tab-container-multiline' : ''}`}>
