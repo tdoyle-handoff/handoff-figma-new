@@ -131,7 +131,11 @@ export default function Dashboard({ setupData }: DashboardProps) {
           <TabsTrigger value="budget" className="gap-2"><DollarSign className="h-4 w-4"/>Budget</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="analytics" className="space-y-6">
+        <TabsContent value="analytics" className="p-0">
+          <AnalyticsDashboard />
+        </TabsContent>
+
+        <TabsContent value="budget" className="space-y-6">
           <Card className="shadow-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2"><CalendarCheck2 className="h-5 w-5"/>Your Progress</CardTitle>
@@ -154,7 +158,7 @@ export default function Dashboard({ setupData }: DashboardProps) {
               <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-6">
                 {STAGES.map((s, i) => (
                   <div key={s.key} className="flex items-center gap-2">
-                    <div className={`h-2 w-2 rounded-full ${i <= stageIdx ? 'bg-emerald-500' : 'bg-muted-foreground/30'}`}></div>
+                    <div className={`h-2 w-2 rounded-full ${i <= stageIdx ? 'bg-sky-500' : 'bg-muted-foreground/30'}`}></div>
                     <span className={`text-sm ${i <= stageIdx ? 'text-foreground' : 'text-muted-foreground'}`}>{s.label}</span>
                   </div>
                 ))}
