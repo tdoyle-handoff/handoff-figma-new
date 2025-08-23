@@ -130,7 +130,7 @@ const getPropertyData = (): PropertyData | null => {
   return null;
 };
 
-// Enhanced task generation based on real estate transaction workflow
+// Enhanced task generation based on comprehensive real estate transaction workflow
 const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] => {
   const underContract = isHouseUnderContract();
   const today = new Date();
@@ -156,28 +156,27 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
 
   const tasks: Task[] = [];
 
-  // SEARCH PHASE
+  // SEARCH & PREAPPROVAL PHASE
   tasks.push({
-    id: 'search-questionnaire',
-    title: 'Complete Property Questionnaire',
-    description: 'Define your home preferences, must-have features, and budget requirements',
+    id: 'search-buyer-intake',
+    title: 'Complete buyer intake form',
+    description: 'Complete comprehensive buyer intake form with your real estate agent',
     category: 'search',
     subcategory: 'general',
     priority: 'high',
     status: 'completed',
     completedDate: formatDate(today),
-    estimatedTime: '30-45 minutes',
+    estimatedTime: '45-60 minutes',
     assignedTo: 'You',
     linkedPage: 'property',
-    actionLabel: 'View Questionnaire',
+    actionLabel: 'View Form',
     propertySpecific: true
   });
 
-  // Pre-approval
   tasks.push({
-    id: 'search-preapproval',
-    title: 'Get Mortgage Pre-Approval',
-    description: `Obtain pre-approval for ${propertyData.mortgageType || 'conventional'} mortgage up to your target amount`,
+    id: 'search-mortgage-preapproval',
+    title: 'Get mortgage pre approval',
+    description: 'Obtain pre-approval for mortgage financing from a qualified lender',
     category: 'search',
     subcategory: 'financing',
     priority: 'high',
@@ -191,492 +190,495 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
     propertySpecific: true
   });
 
+  // MAKE OFFER PHASE
   if (underContract) {
-    // LEGAL TASKS
     tasks.push({
-      id: 'offer-select-lawyer',
-      title: 'Select Real Estate Attorney',
-      description: 'Choose and retain qualified real estate attorney for closing',
+      id: 'offer-submission',
+      title: 'Offer Submission',
+      description: 'Submit formal offer to purchase the property',
+      category: 'offer',
+      subcategory: 'general',
+      priority: 'high',
+      status: 'completed',
+      completedDate: getDateFromNow(-15),
+      estimatedTime: '2-3 hours',
+      assignedTo: propertyData.realtorName || 'Your Agent',
+      linkedPage: 'property',
+      actionLabel: 'View Offer',
+      propertySpecific: true
+    });
+
+    tasks.push({
+      id: 'offer-find-lawyer',
+      title: 'Find lawyer',
+      description: 'Select and retain qualified real estate attorney for closing',
       category: 'offer',
       subcategory: 'legal',
       priority: 'high',
       status: propertyData.hasAttorney ? 'completed' : 'active',
       dueDate: propertyData.hasAttorney ? undefined : getDateFromNow(3),
-      completedDate: propertyData.hasAttorney ? getDateFromNow(-10) : undefined,
+      completedDate: propertyData.hasAttorney ? getDateFromNow(-12) : undefined,
       estimatedTime: '2-3 hours',
       assignedTo: 'You',
       linkedPage: 'legal',
       actionLabel: 'Find Attorney',
-      propertySpecific: true,
-      instructions: {
-        overview: 'A qualified real estate attorney will protect your interests throughout the transaction, review contracts, handle title issues, and ensure a smooth closing.',
-        steps: [
-          {
-            step: 1,
-            title: 'Get Referrals',
-            description: 'Ask your real estate agent, lender, or friends for attorney recommendations',
-            action: 'Contact your agent for a list of recommended attorneys in your area',
-            duration: '30 minutes'
-          },
-          {
-            step: 2,
-            title: 'Research Candidates',
-            description: 'Look up each attorney\'s credentials, experience, and reviews online',
-            action: 'Check state bar website, Google reviews, and Better Business Bureau',
-            duration: '1 hour'
-          },
-          {
-            step: 3,
-            title: 'Interview Attorneys',
-            description: 'Call 2-3 attorneys to discuss your transaction and ask about fees',
-            action: 'Schedule brief consultations to assess communication style and expertise',
-            duration: '1-2 hours',
-            important: true
-          },
-          {
-            step: 4,
-            title: 'Make Your Selection',
-            description: 'Choose an attorney and sign retainer agreement',
-            action: 'Review and sign the engagement letter, pay any required retainer',
-            duration: '30 minutes'
-          }
-        ],
-        requiredDocuments: [
-          'Purchase agreement (to discuss with attorney)',
-          'Property address and details',
-          'Timeline and closing date'
-        ],
-        contacts: [
-          {
-            name: 'Your Real Estate Agent',
-            role: 'Referral Source',
-            when: 'For initial recommendations'
-          }
-        ],
-        tips: [
-          'Choose an attorney experienced in your local area',
-          'Ask about flat fees vs. hourly rates for closing services',
-          'Ensure they can meet your closing timeline',
-          'Verify they carry professional liability insurance',
-          'Ask about their communication preferences and response time'
-        ],
-        nextSteps: [
-          'Provide attorney with purchase agreement once signed',
-          'Schedule regular check-ins during the transaction',
-          'Attorney will order title search and review all documents'
-        ],
-        timeline: 'Complete within 3 days of offer acceptance',
-        cost: '$800-$2,000 for closing services',
-        whatToExpect: 'Initial consultation (often free), review of retainer agreement, discussion of services included, and establishment of communication protocols.'
-      }
+      propertySpecific: true
     });
 
-    // FINANCING TASKS
+    // CONTRACT PHASE
     tasks.push({
-      id: 'diligence-mortgage-application',
-      title: 'Submit Full Mortgage Application',
-      description: 'Complete formal mortgage application with financial documents',
+      id: 'contract-acceptance-signing',
+      title: 'Offer Acceptance/Signing',
+      description: 'Review and sign the accepted purchase agreement',
+      category: 'contract',
+      subcategory: 'legal',
+      priority: 'high',
+      status: 'completed',
+      completedDate: getDateFromNow(-14),
+      estimatedTime: '1-2 hours',
+      assignedTo: 'You & Attorney',
+      linkedPage: 'legal',
+      actionLabel: 'View Contract',
+      propertySpecific: true
+    });
+
+    tasks.push({
+      id: 'contract-riders',
+      title: 'Riders',
+      description: 'Review and execute any contract riders or addendums',
+      category: 'contract',
+      subcategory: 'legal',
+      priority: 'medium',
+      status: 'completed',
+      completedDate: getDateFromNow(-14),
+      estimatedTime: '30-60 minutes',
+      assignedTo: 'You & Attorney',
+      linkedPage: 'legal',
+      actionLabel: 'View Riders',
+      propertySpecific: true
+    });
+
+    tasks.push({
+      id: 'contract-send-lawyer-signed',
+      title: 'Send Lawyer Signed Contract',
+      description: 'Provide signed contract to your attorney for review and processing',
+      category: 'contract',
+      subcategory: 'legal',
+      priority: 'high',
+      status: 'completed',
+      completedDate: getDateFromNow(-13),
+      estimatedTime: '15 minutes',
+      assignedTo: 'You',
+      linkedPage: 'legal',
+      actionLabel: 'Send to Attorney',
+      propertySpecific: true
+    });
+
+    tasks.push({
+      id: 'contract-produce-deposit',
+      title: 'Produce deposit',
+      description: 'Submit earnest money deposit as specified in the purchase agreement',
+      category: 'contract',
+      subcategory: 'general',
+      priority: 'high',
+      status: 'completed',
+      completedDate: getDateFromNow(-13),
+      estimatedTime: '30 minutes',
+      assignedTo: 'You',
+      linkedPage: 'legal',
+      actionLabel: 'Submit Deposit',
+      propertySpecific: true
+    });
+
+    // DUE DILIGENCE PHASE - FINANCING
+    tasks.push({
+      id: 'diligence-financing-shop-terms',
+      title: 'Shop for mortgage terms',
+      description: 'Compare mortgage rates and terms from multiple lenders',
+      category: 'diligence',
+      subcategory: 'financing',
+      priority: 'high',
+      status: daysUntilClosing > 30 ? 'active' : 'upcoming',
+      dueDate: getDateFromClosing(25),
+      estimatedTime: '2-3 hours',
+      assignedTo: 'You',
+      linkedPage: 'financing',
+      actionLabel: 'Compare Rates',
+      propertySpecific: true
+    });
+
+    tasks.push({
+      id: 'diligence-financing-send-offer',
+      title: 'Send offer to mortgage company',
+      description: 'Provide accepted purchase agreement to your chosen lender',
+      category: 'diligence',
+      subcategory: 'financing',
+      priority: 'high',
+      status: daysUntilClosing > 25 ? 'active' : 'upcoming',
+      dueDate: getDateFromClosing(20),
+      estimatedTime: '30 minutes',
+      assignedTo: 'You',
+      linkedPage: 'financing',
+      actionLabel: 'Submit to Lender',
+      propertySpecific: true
+    });
+
+    tasks.push({
+      id: 'diligence-financing-submit-application',
+      title: 'Submit mortage application/financial information',
+      description: 'Complete formal mortgage application with all required financial documents',
       category: 'diligence',
       subcategory: 'financing',
       priority: 'high',
       status: 'upcoming',
-      dueDate: getDateFromClosing(daysUntilClosing > 25 ? 18 : Math.max(2, daysUntilClosing - 10)),
-      estimatedTime: '1-2 days',
+      dueDate: getDateFromClosing(18),
+      estimatedTime: '3-4 hours',
       assignedTo: 'You & Lender',
       linkedPage: 'financing',
       actionLabel: 'Submit Application',
-      propertySpecific: true,
-      instructions: {
-        overview: 'The formal mortgage application is your official request for a loan. All information must be accurate and complete to avoid delays in underwriting.',
-        steps: [
-          {
-            step: 1,
-            title: 'Gather Required Documents',
-            description: 'Collect all financial documents needed for the application',
-            action: 'Use the lender\'s document checklist to gather all required paperwork',
-            duration: '2-3 hours',
-            important: true
-          },
-          {
-            step: 2,
-            title: 'Complete Application Form',
-            description: 'Fill out the Uniform Residential Loan Application (Form 1003)',
-            action: 'Work with your loan officer to complete all sections accurately',
-            duration: '1-2 hours'
-          },
-          {
-            step: 3,
-            title: 'Review Before Signing',
-            description: 'Carefully review all information for accuracy',
-            action: 'Double-check all names, addresses, employment, and financial information',
-            duration: '30 minutes',
-            important: true
-          },
-          {
-            step: 4,
-            title: 'Submit Application',
-            description: 'Sign and submit application with all supporting documents',
-            action: 'Submit via lender\'s preferred method (online portal, email, or in-person)',
-            duration: '30 minutes'
-          },
-          {
-            step: 5,
-            title: 'Pay Application Fee',
-            description: 'Pay required application and credit report fees',
-            action: 'Submit payment as instructed by lender (typically $300-$500)',
-            duration: '15 minutes'
-          }
-        ],
-        requiredDocuments: [
-          'Photo ID (driver\'s license or passport)',
-          'Social Security card',
-          'Pay stubs (last 2-3)',
-          'W-2 forms (last 2 years)',
-          'Tax returns (last 2 years)',
-          'Bank statements (last 2 months)',
-          'Investment account statements',
-          'Employment verification letter',
-          'Purchase agreement',
-          'Proof of down payment source'
-        ],
-        contacts: [
-          {
-            name: 'Your Loan Officer',
-            role: 'Primary Contact',
-            when: 'For application assistance and questions'
-          },
-          {
-            name: 'Loan Processor',
-            role: 'Document Review',
-            when: 'For document requirements and status updates'
-          }
-        ],
-        tips: [
-          'Be completely honest and accurate - discrepancies can delay approval',
-          'Don\'t apply for new credit during the loan process',
-          'Keep copies of everything you submit',
-          'Respond quickly to any lender requests for additional information',
-          'Don\'t make large deposits without explaining the source',
-          'Keep your employment stable - avoid job changes if possible'
-        ],
-        nextSteps: [
-          'Lender will order appraisal',
-          'Underwriter will review your application',
-          'You may receive requests for additional documentation',
-          'Loan processor will update you on status',
-          'Expect final approval 2-3 weeks after submission'
-        ],
-        timeline: 'Complete within 5 days of contract acceptance',
-        cost: 'Application fee: $300-$500, Appraisal fee: $400-$600',
-        whatToExpect: 'Initial review within 24-48 hours, possible requests for additional documents, and regular status updates from your loan processor.'
-      }
+      propertySpecific: true
     });
 
-    // INSPECTION TASKS
     tasks.push({
-      id: 'diligence-schedule-inspection',
-      title: `Schedule Home Inspection for ${propertyData.address || 'Property'}`,
-      description: 'Book professional home inspection within contingency period',
+      id: 'diligence-financing-appraisal',
+      title: 'Appraisal',
+      description: 'Schedule and complete property appraisal as required by lender',
+      category: 'diligence',
+      subcategory: 'financing',
+      priority: 'high',
+      status: 'upcoming',
+      dueDate: getDateFromClosing(15),
+      estimatedTime: '2-3 hours',
+      assignedTo: 'Appraiser & Lender',
+      linkedPage: 'financing',
+      actionLabel: 'Schedule Appraisal',
+      propertySpecific: true
+    });
+
+    // DUE DILIGENCE PHASE - INSPECTION
+    tasks.push({
+      id: 'diligence-inspection-shop-inspectors',
+      title: 'Shop for inspectors',
+      description: 'Research and contact qualified home inspectors',
       category: 'diligence',
       subcategory: 'inspections',
       priority: 'high',
       status: 'active',
-      dueDate: getDateFromClosing(daysUntilClosing > 15 ? 10 : 3),
+      dueDate: getDateFromClosing(12),
+      estimatedTime: '1-2 hours',
+      assignedTo: 'You',
+      linkedPage: 'inspections',
+      actionLabel: 'Find Inspectors',
+      propertySpecific: true
+    });
+
+    tasks.push({
+      id: 'diligence-inspection-general-scheduled',
+      title: 'General scheduled',
+      description: 'Schedule and complete general home inspection',
+      category: 'diligence',
+      subcategory: 'inspections',
+      priority: 'high',
+      status: 'active',
+      dueDate: getDateFromClosing(10),
       estimatedTime: '3-4 hours',
       assignedTo: 'You & Inspector',
       linkedPage: 'inspections',
       actionLabel: 'Schedule Inspection',
-      propertySpecific: true,
-      instructions: {
-        overview: 'A professional home inspection is crucial for identifying potential issues with the property before you finalize the purchase. This protects your investment and gives you negotiating power.',
-        steps: [
-          {
-            step: 1,
-            title: 'Find Qualified Inspectors',
-            description: 'Research and contact 2-3 licensed home inspectors',
-            action: 'Get referrals from your agent, check online reviews, and verify licenses',
-            duration: '1 hour'
-          },
-          {
-            step: 2,
-            title: 'Compare Inspectors',
-            description: 'Ask about experience, certifications, and what\'s included',
-            action: 'Compare quotes, ask about report turnaround time and follow-up policies',
-            duration: '30 minutes',
-            important: true
-          },
-          {
-            step: 3,
-            title: 'Schedule Inspection',
-            description: 'Book inspection within your contingency period',
-            action: 'Schedule for a date that allows time to review results and negotiate',
-            duration: '15 minutes'
-          },
-          {
-            step: 4,
-            title: 'Prepare for Inspection',
-            description: 'Ensure utilities are on and property is accessible',
-            action: 'Coordinate with seller\'s agent to ensure power, water, and gas are on',
-            duration: '30 minutes'
-          },
-          {
-            step: 5,
-            title: 'Attend Inspection',
-            description: 'Be present during the inspection to ask questions',
-            action: 'Follow inspector, take notes, ask about any concerns you observe',
-            duration: '3-4 hours',
-            important: true
-          }
-        ],
-        requiredDocuments: [
-          'Purchase agreement (to verify inspection contingency period)',
-          'Property address and access information',
-          'Seller\'s disclosure statement',
-          'Any previous inspection reports (if available)'
-        ],
-        contacts: [
-          {
-            name: 'Your Real Estate Agent',
-            role: 'Coordinator',
-            when: 'For inspector referrals and scheduling coordination'
-          },
-          {
-            name: 'Seller\'s Agent',
-            role: 'Property Access',
-            when: 'To arrange property access and utility confirmation'
-          },
-          {
-            name: 'Home Inspector',
-            role: 'Primary Service Provider',
-            when: 'For scheduling and conducting the inspection'
-          }
-        ],
-        tips: [
-          'Schedule as early as possible within your contingency period',
-          'Choose an inspector who belongs to professional organizations (ASHI, InterNACHI)',
-          'Ask if the inspector carries errors & omissions insurance',
-          'Verify the inspector will test all major systems',
-          'Plan to attend the entire inspection - don\'t just rely on the report',
-          'Bring a flashlight and wear appropriate clothing',
-          'Take photos of any issues the inspector identifies'
-        ],
-        nextSteps: [
-          'Receive detailed inspection report within 24-48 hours',
-          'Review report with your real estate agent',
-          'Decide whether to request repairs, credits, or walk away',
-          'Submit formal response to seller within contingency period',
-          'Consider additional specialized inspections if issues are found'
-        ],
-        timeline: 'Schedule within 3-5 days of contract acceptance, complete within contingency period',
-        cost: '$400-$800 depending on property size and location',
-        whatToExpect: 'Inspector will examine all accessible areas, test major systems, and provide a detailed report with photos. Inspection typically takes 3-4 hours for an average home.'
-      }
+      propertySpecific: true
     });
 
-    // INSURANCE TASKS
     tasks.push({
-      id: 'pre-closing-find-insurance',
-      title: 'Find Homeowners Insurance Coverage',
-      description: `Obtain homeowners insurance quotes for ${propertyData.address || 'the property'}`,
-      category: 'pre-closing',
-      subcategory: 'insurance',
+      id: 'diligence-inspection-additional',
+      title: 'Additional: bug, septic, lead, radon, roof, structural',
+      description: 'Schedule specialized inspections as needed based on property type and general inspection results',
+      category: 'diligence',
+      subcategory: 'inspections',
+      priority: 'medium',
+      status: 'upcoming',
+      dueDate: getDateFromClosing(8),
+      estimatedTime: 'Variable',
+      assignedTo: 'You & Specialists',
+      linkedPage: 'inspections',
+      actionLabel: 'Schedule Additional',
+      propertySpecific: true
+    });
+
+    tasks.push({
+      id: 'diligence-inspection-review-results',
+      title: 'Review inspection results',
+      description: 'Carefully review all inspection reports and identify any issues',
+      category: 'diligence',
+      subcategory: 'inspections',
       priority: 'high',
       status: 'upcoming',
-      dueDate: getDateFromClosing(daysUntilClosing > 15 ? 10 : Math.max(3, daysUntilClosing - 5)),
-      estimatedTime: '2-3 hours',
-      assignedTo: 'You & Insurance Agent',
-      linkedPage: 'insurance',
-      actionLabel: 'Get Quotes',
-      propertySpecific: true,
-      instructions: {
-        overview: 'Homeowners insurance is required by your lender and protects your investment. Shop around for the best coverage and rates before closing.',
-        steps: [
-          {
-            step: 1,
-            title: 'Gather Property Information',
-            description: 'Collect detailed information about the property for quotes',
-            action: 'Compile property details, square footage, construction type, and features',
-            duration: '30 minutes'
-          },
-          {
-            step: 2,
-            title: 'Research Insurance Companies',
-            description: 'Identify reputable insurance companies and agents',
-            action: 'Get referrals and check financial ratings (A.M. Best, Standard & Poor\'s)',
-            duration: '45 minutes'
-          },
-          {
-            step: 3,
-            title: 'Request Multiple Quotes',
-            description: 'Contact 3-5 insurance companies for quotes',
-            action: 'Provide same information to each company for accurate comparison',
-            duration: '1-2 hours',
-            important: true
-          },
-          {
-            step: 4,
-            title: 'Compare Coverage Options',
-            description: 'Review coverage types, limits, and deductibles',
-            action: 'Compare dwelling coverage, personal property, liability, and additional coverages',
-            duration: '1 hour'
-          },
-          {
-            step: 5,
-            title: 'Select Best Policy',
-            description: 'Choose policy that provides best value and coverage',
-            action: 'Consider price, coverage, deductibles, and company reputation',
-            duration: '30 minutes',
-            important: true
-          }
-        ],
-        requiredDocuments: [
-          'Property address and legal description',
-          'Property details (square footage, age, construction type)',
-          'Home inspection report (if available)',
-          'Security system information',
-          'Previous insurance claims history'
-        ],
-        contacts: [
-          {
-            name: 'Insurance Agents',
-            role: 'Quote Providers',
-            when: 'For obtaining quotes and coverage options'
-          },
-          {
-            name: 'Your Lender',
-            role: 'Requirements Specialist',
-            when: 'To confirm minimum coverage requirements'
-          },
-          {
-            name: 'Current Insurance Agent',
-            role: 'Existing Relationship',
-            when: 'For potential bundle discounts and quotes'
-          }
-        ],
-        tips: [
-          'Shop around - prices can vary significantly',
-          'Consider bundling with auto insurance for discounts',
-          'Ask about discounts (security systems, smoke detectors, etc.)',
-          'Understand the difference between replacement cost and actual cash value',
-          'Consider umbrella liability coverage for additional protection',
-          'Review and understand all policy exclusions',
-          'Ensure coverage meets lender requirements',
-          'Factor insurance costs into your monthly housing budget'
-        ],
-        nextSteps: [
-          'Purchase selected policy before closing',
-          'Provide insurance binder to lender',
-          'Set up automatic payments if desired',
-          'Schedule annual policy reviews',
-          'Update policy for any home improvements'
-        ],
-        timeline: 'Start shopping 2-3 weeks before closing, finalize 1 week before',
-        cost: '$800-$2,000+ annually depending on property value and location',
-        whatToExpect: 'Multiple agent consultations, detailed property questions, and comprehensive coverage proposals with various options and pricing.'
-      }
+      dueDate: getDateFromClosing(6),
+      estimatedTime: '1-2 hours',
+      assignedTo: 'You & Agent',
+      linkedPage: 'inspections',
+      actionLabel: 'Review Reports',
+      propertySpecific: true
     });
 
-    // FINAL WALKTHROUGH
     tasks.push({
-      id: 'pre-closing-walkthrough-schedule',
-      title: 'Schedule Final Walkthrough',
-      description: `Schedule final property inspection 24-48 hours before closing`,
-      category: 'pre-closing',
+      id: 'diligence-inspection-submit-items',
+      title: 'Submit items to address/begin negotiations',
+      description: 'Submit repair requests or negotiate credits for inspection issues',
+      category: 'diligence',
+      subcategory: 'inspections',
+      priority: 'high',
+      status: 'upcoming',
+      dueDate: getDateFromClosing(5),
+      estimatedTime: '2-3 hours',
+      assignedTo: 'You & Agent',
+      linkedPage: 'inspections',
+      actionLabel: 'Submit Requests',
+      propertySpecific: true
+    });
+
+    tasks.push({
+      id: 'diligence-inspection-finalize-remedies',
+      title: 'Finalize inspection remedies and timelines (extended)',
+      description: 'Complete negotiations and finalize repair agreements with seller',
+      category: 'diligence',
       subcategory: 'inspections',
       priority: 'high',
       status: 'upcoming',
       dueDate: getDateFromClosing(3),
-      estimatedTime: '30 minutes to schedule',
+      estimatedTime: '1-2 hours',
+      assignedTo: 'You & Agent',
+      linkedPage: 'inspections',
+      actionLabel: 'Finalize Agreement',
+      propertySpecific: true
+    });
+
+    // DUE DILIGENCE PHASE - LEGAL
+    tasks.push({
+      id: 'diligence-legal-title-search',
+      title: 'Title search',
+      description: 'Attorney conducts comprehensive title search for property',
+      category: 'diligence',
+      subcategory: 'legal',
+      priority: 'high',
+      status: 'upcoming',
+      dueDate: getDateFromClosing(10),
+      estimatedTime: '1-2 days',
+      assignedTo: 'Your Attorney',
+      linkedPage: 'legal',
+      actionLabel: 'Monitor Progress',
+      propertySpecific: true
+    });
+
+    tasks.push({
+      id: 'diligence-legal-review-liens',
+      title: 'Review liens, parcel nuances (easements, encroachments)',
+      description: 'Review title report for any liens, easements, or encroachments',
+      category: 'diligence',
+      subcategory: 'legal',
+      priority: 'medium',
+      status: 'upcoming',
+      dueDate: getDateFromClosing(8),
+      estimatedTime: '1-2 hours',
+      assignedTo: 'Your Attorney',
+      linkedPage: 'legal',
+      actionLabel: 'Review Title',
+      propertySpecific: true
+    });
+
+    tasks.push({
+      id: 'diligence-legal-confirm-clear',
+      title: 'Confirm clear to close',
+      description: 'Attorney confirms title is clear and ready for closing',
+      category: 'diligence',
+      subcategory: 'legal',
+      priority: 'high',
+      status: 'upcoming',
+      dueDate: getDateFromClosing(5),
+      estimatedTime: '30 minutes',
+      assignedTo: 'Your Attorney',
+      linkedPage: 'legal',
+      actionLabel: 'Confirm Status',
+      propertySpecific: true
+    });
+
+    tasks.push({
+      id: 'diligence-legal-settlement-statement',
+      title: 'Produce settlement statement (general proration)',
+      description: 'Attorney prepares settlement statement with all closing costs and prorations',
+      category: 'diligence',
+      subcategory: 'legal',
+      priority: 'high',
+      status: 'upcoming',
+      dueDate: getDateFromClosing(3),
+      estimatedTime: '1-2 hours',
+      assignedTo: 'Your Attorney',
+      linkedPage: 'legal',
+      actionLabel: 'Review Statement',
+      propertySpecific: true
+    });
+
+    tasks.push({
+      id: 'diligence-legal-escrow-wire',
+      title: 'Escrow account for deposit / wire instructions prep',
+      description: 'Set up escrow account and prepare wire transfer instructions for closing',
+      category: 'diligence',
+      subcategory: 'legal',
+      priority: 'high',
+      status: 'upcoming',
+      dueDate: getDateFromClosing(2),
+      estimatedTime: '1 hour',
+      assignedTo: 'Your Attorney',
+      linkedPage: 'legal',
+      actionLabel: 'Setup Escrow',
+      propertySpecific: true
+    });
+
+    // PRE-CLOSING PREPARATION - FINAL WALKTHROUGH
+    tasks.push({
+      id: 'pre-closing-walkthrough-schedule',
+      title: 'Schedule',
+      description: 'Schedule final walkthrough 24-48 hours before closing',
+      category: 'pre-closing',
+      subcategory: 'inspections',
+      priority: 'high',
+      status: 'upcoming',
+      dueDate: getDateFromClosing(2),
+      estimatedTime: '15 minutes',
       assignedTo: propertyData.realtorName || 'Your Agent',
       linkedPage: 'inspections',
       actionLabel: 'Schedule Walkthrough',
-      propertySpecific: true,
-      instructions: {
-        overview: 'The final walkthrough is your last chance to verify the property is in the agreed-upon condition before closing. This is not a second inspection, but a verification that nothing has changed.',
-        steps: [
-          {
-            step: 1,
-            title: 'Schedule Walkthrough',
-            description: 'Coordinate walkthrough 24-48 hours before closing',
-            action: 'Work with agents to schedule convenient time for all parties',
-            duration: '15 minutes'
-          },
-          {
-            step: 2,
-            title: 'Prepare Walkthrough Checklist',
-            description: 'Create systematic checklist for property review',
-            action: 'Include all rooms, systems, and agreed-upon repairs',
-            duration: '30 minutes'
-          },
-          {
-            step: 3,
-            title: 'Conduct Walkthrough',
-            description: 'Systematically inspect entire property',
-            action: 'Check all rooms, test systems, verify repairs completed',
-            duration: '1-2 hours',
-            important: true
-          },
-          {
-            step: 4,
-            title: 'Test All Systems',
-            description: 'Verify electrical, plumbing, HVAC, and appliances work',
-            action: 'Turn on lights, run water, test heating/cooling, check appliances',
-            duration: '30 minutes'
-          },
-          {
-            step: 5,
-            title: 'Document Any Issues',
-            description: 'Note any problems or incomplete items',
-            action: 'Take photos and create detailed list of any concerns',
-            duration: '15 minutes'
-          },
-          {
-            step: 6,
-            title: 'Address Issues Before Closing',
-            description: 'Resolve any problems found during walkthrough',
-            action: 'Negotiate solutions with seller before proceeding to closing',
-            duration: 'Variable'
-          }
-        ],
-        requiredDocuments: [
-          'Purchase agreement with repair addendum',
-          'Home inspection report for reference',
-          'Walkthrough checklist',
-          'Camera for documentation'
-        ],
-        contacts: [
-          {
-            name: 'Your Real Estate Agent',
-            role: 'Walkthrough Coordinator',
-            when: 'For scheduling and conducting walkthrough'
-          },
-          {
-            name: 'Seller\'s Agent',
-            role: 'Property Access',
-            when: 'To coordinate access and address any issues'
-          }
-        ],
-        tips: [
-          'Bring a copy of your original inspection report',
-          'Test every light switch, faucet, and appliance',
-          'Check that agreed-upon repairs are complete and satisfactory',
-          'Verify all personal property remains that was included in sale',
-          'Ensure no new damage has occurred since inspection',
-          'Don\'t rush - take your time to be thorough',
-          'Bring a flashlight to check dark areas',
-          'Take photos of any issues for documentation'
-        ],
-        nextSteps: [
-          'If everything is satisfactory, proceed to closing',
-          'If issues are found, negotiate resolution before closing',
-          'Consider holding funds in escrow for unresolved items',
-          'Document all agreements in writing',
-          'Inform your attorney of any last-minute issues'
-        ],
-        timeline: 'Schedule 2-3 days before closing, conduct 24-48 hours before',
-        cost: 'No cost (part of transaction process)',
-        whatToExpect: 'Thorough walk-through of entire property to verify condition and completion of any agreed-upon repairs or conditions.'
-      }
+      propertySpecific: true
+    });
+
+    tasks.push({
+      id: 'pre-closing-walkthrough-confirm-remedies',
+      title: 'Confirm remedies were complete',
+      description: 'Verify all agreed-upon repairs have been completed satisfactorily',
+      category: 'pre-closing',
+      subcategory: 'inspections',
+      priority: 'high',
+      status: 'upcoming',
+      dueDate: getDateFromClosing(1),
+      estimatedTime: '1-2 hours',
+      assignedTo: 'You & Agent',
+      linkedPage: 'inspections',
+      actionLabel: 'Conduct Walkthrough',
+      propertySpecific: true
+    });
+
+    tasks.push({
+      id: 'pre-closing-walkthrough-renegotiate',
+      title: 'Re-negotiate new findings, if applicable',
+      description: 'Address any new issues discovered during final walkthrough',
+      category: 'pre-closing',
+      subcategory: 'inspections',
+      priority: 'medium',
+      status: 'upcoming',
+      dueDate: getDateFromClosing(1),
+      estimatedTime: 'Variable',
+      assignedTo: 'You & Agent',
+      linkedPage: 'inspections',
+      actionLabel: 'Address Issues',
+      propertySpecific: true
+    });
+
+    // PRE-CLOSING PREPARATION - INSURANCE
+    tasks.push({
+      id: 'pre-closing-insurance-find-coverage',
+      title: 'Find coverage (bids from brokers or direct): homeowner',
+      description: 'Obtain homeowners insurance quotes and select coverage',
+      category: 'pre-closing',
+      subcategory: 'insurance',
+      priority: 'high',
+      status: 'upcoming',
+      dueDate: getDateFromClosing(7),
+      estimatedTime: '2-3 hours',
+      assignedTo: 'You & Insurance Agent',
+      linkedPage: 'insurance',
+      actionLabel: 'Get Quotes',
+      propertySpecific: true
+    });
+
+    tasks.push({
+      id: 'pre-closing-insurance-pay-coverage',
+      title: 'Pay for coverage / choose effective date',
+      description: 'Purchase selected insurance policy with effective date at closing',
+      category: 'pre-closing',
+      subcategory: 'insurance',
+      priority: 'high',
+      status: 'upcoming',
+      dueDate: getDateFromClosing(3),
+      estimatedTime: '30 minutes',
+      assignedTo: 'You & Insurance Agent',
+      linkedPage: 'insurance',
+      actionLabel: 'Purchase Policy',
+      propertySpecific: true
+    });
+
+    // CLOSING DAY
+    tasks.push({
+      id: 'closing-wire-funds',
+      title: 'Wire funds / produce check',
+      description: 'Wire closing funds or provide certified check as instructed by attorney',
+      category: 'closing',
+      subcategory: 'general',
+      priority: 'high',
+      status: 'upcoming',
+      dueDate: formatDate(closingDate),
+      estimatedTime: '30 minutes',
+      assignedTo: 'You',
+      linkedPage: 'legal',
+      actionLabel: 'Wire Funds',
+      propertySpecific: true
+    });
+
+    tasks.push({
+      id: 'closing-sign-documents',
+      title: 'Sign final documents',
+      description: 'Review and sign all closing documents at the closing table',
+      category: 'closing',
+      subcategory: 'legal',
+      priority: 'high',
+      status: 'upcoming',
+      dueDate: formatDate(closingDate),
+      estimatedTime: '1-2 hours',
+      assignedTo: 'You & Attorney',
+      linkedPage: 'legal',
+      actionLabel: 'Attend Closing',
+      propertySpecific: true
+    });
+
+    // POST CLOSING
+    tasks.push({
+      id: 'post-closing-setup-utilities',
+      title: 'Set up utilities',
+      description: 'Transfer or set up utility services in your name',
+      category: 'post-closing',
+      subcategory: 'general',
+      priority: 'high',
+      status: 'upcoming',
+      dueDate: getDateFromClosing(-2),
+      estimatedTime: '2-3 hours',
+      assignedTo: 'You',
+      linkedPage: null,
+      actionLabel: 'Setup Utilities',
+      propertySpecific: true
+    });
+
+    tasks.push({
+      id: 'post-closing-move-in',
+      title: 'Move-in',
+      description: 'Coordinate and execute your move to the new property',
+      category: 'post-closing',
+      subcategory: 'general',
+      priority: 'medium',
+      status: 'upcoming',
+      dueDate: getDateFromClosing(-1),
+      estimatedTime: 'Full day',
+      assignedTo: 'You & Movers',
+      linkedPage: null,
+      actionLabel: 'Plan Move',
+      propertySpecific: true
     });
   }
 
@@ -718,12 +720,22 @@ const generateRealEstateTaskPhases = (tasks: Task[], propertyData: PropertyData 
       keyMilestones: underContract ? ['Offer submitted', 'Terms negotiated', 'Contract signed'] : ['Property found', 'Offer submitted', 'Terms negotiated']
     },
     {
+      id: 'phase-contract',
+      title: 'Contract',
+      description: 'Execute contract and complete initial requirements',
+      status: underContract ? 'completed' : 'upcoming',
+      tasks: [],
+      order: 3,
+      estimatedDuration: '1 week',
+      keyMilestones: ['Contract signed', 'Deposit submitted', 'Attorney engaged']
+    },
+    {
       id: 'phase-diligence',
       title: 'Due Diligence',
       description: 'Complete financing, legal, and inspection requirements',
       status: underContract ? 'active' : 'upcoming',
       tasks: [],
-      order: 3,
+      order: 4,
       estimatedDuration: '3-6 weeks',
       keyMilestones: ['Financing approved', 'Title clear', 'Inspections complete']
     },
@@ -733,7 +745,7 @@ const generateRealEstateTaskPhases = (tasks: Task[], propertyData: PropertyData 
       description: 'Final walkthrough and insurance arrangements',
       status: 'upcoming',
       tasks: [],
-      order: 4,
+      order: 5,
       estimatedDuration: '1 week',
       keyMilestones: ['Insurance secured', 'Final walkthrough', 'Funds ready']
     },
@@ -743,9 +755,19 @@ const generateRealEstateTaskPhases = (tasks: Task[], propertyData: PropertyData 
       description: 'Complete the purchase and receive keys',
       status: 'upcoming',
       tasks: [],
-      order: 5,
+      order: 6,
       estimatedDuration: '1 day',
       keyMilestones: ['Documents signed', 'Funds transferred', 'Keys received']
+    },
+    {
+      id: 'phase-post-closing',
+      title: 'Post Closing',
+      description: 'Set up utilities and move into your new home',
+      status: 'upcoming',
+      tasks: [],
+      order: 7,
+      estimatedDuration: '1 week',
+      keyMilestones: ['Utilities transferred', 'Move completed']
     }
   ];
 
