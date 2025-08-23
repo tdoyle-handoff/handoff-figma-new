@@ -40,7 +40,7 @@ const getPriorityBadgeColor = (priority: string) => {
   }
 };
 
-export default function ChecklistDetail({ task, onAction }: DetailProps) {
+export default function ChecklistDetail({ task, onAction, onUpdateTask }: DetailProps) {
   if (!task) {
     return (
       <Card className="shadow-sm h-full">
