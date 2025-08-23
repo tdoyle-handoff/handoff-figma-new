@@ -211,21 +211,70 @@ export default function OfferBuilder() {
     return earnestMode === "percent" ? base * (Number(earnest) || 0) / 100 : (Number(earnest) || 0);
   }, [earnestMode, earnest, offerPrice, listPrice]);
 
-  // Compliance flags
+  // Enhanced compliance flags with state-specific requirements
   const flags = useMemo(() => {
     const out: string[] = [];
-    if (!address || !city || !stateUS || !zip) out.push("Missing property address");
-    if (!offerPrice || offerPrice <= 0) out.push("Offer price required");
-    if (financingType !== "Cash" && (!preApprovalAttached)) out.push("Attach pre-approval letter");
-    if (financingType !== "Cash" && (!interestRate || !termYears)) out.push("Interest rate and term required");
-    if (!closingDate) out.push("Closing date not set");
-    if (hasEscalation) {
-      if (!escalationCap) out.push("Escalation cap missing");
-      if (!escalationIncrement) out.push("Escalation increment missing");
+
+    // Basic required fields
+    if (!address || !city || !stateUS || !zip) out.push("Complete property address required");
+    if (!buyerName || !buyerEmail) out.push("Buyer contact information required");
+    if (!offerPrice || offerPrice <= 0) out.push("Valid offer price required");
+    if (!closingDate) out.push("Closing date must be specified");
+
+    // Financing requirements
+    if (financingType !== "Cash") {
+      if (!preApprovalAttached) out.push("Pre-approval letter required for financed offers");
+      if (!interestRate || !termYears) out.push("Interest rate and loan term required");
+      if (dpPercent < 3) out.push("Minimum 3% down payment typically required");
+    } else {
+      if (!preApprovalAttached) out.push("Proof of funds required for cash offers");
     }
-    if (dpDollar < 0) out.push("Down payment invalid");
+
+    // State-specific validation
+    if (stateRequirements) {
+      const earnestRules = stateRequirements.earnestMoneyRules;
+      const earnestPercent = earnestMode === 'percent' ? earnest : (earnestDollar / offerPrice) * 100;
+
+      if (earnestPercent < earnestRules.minPercent) {
+        out.push(`${stateRequirements.name} requires minimum ${earnestRules.minPercent}% earnest money`);
+      }
+      if (earnestPercent > earnestRules.maxPercent) {
+        out.push(`${stateRequirements.name} maximum earnest money is ${earnestRules.maxPercent}%`);
+      }
+
+      // Contingency period validation
+      const contReqs = stateRequirements.contingencyRequirements;
+      if (inspection && (inspectionDays < contReqs.inspection.minDays || inspectionDays > contReqs.inspection.maxDays)) {
+        out.push(`${stateRequirements.name} inspection period must be ${contReqs.inspection.minDays}-${contReqs.inspection.maxDays} days`);
+      }
+      if (financingCont && (financingDays < contReqs.financing.minDays || financingDays > contReqs.financing.maxDays)) {
+        out.push(`${stateRequirements.name} financing contingency must be ${contReqs.financing.minDays}-${contReqs.financing.maxDays} days`);
+      }
+    }
+
+    // Escalation clause validation
+    if (hasEscalation) {
+      if (!escalationCap || escalationCap <= offerPrice) out.push("Escalation cap must be higher than offer price");
+      if (!escalationIncrement || escalationIncrement <= 0) out.push("Escalation increment must be positive");
+      if (escalationCap - offerPrice < escalationIncrement) out.push("Escalation cap too close to offer price");
+    }
+
+    // Down payment validation
+    if (dpDollar < 0) out.push("Down payment cannot be negative");
+    if (dpDollar > offerPrice) out.push("Down payment cannot exceed offer price");
+
+    // Closing date validation
+    if (closingDate) {
+      const closingDateObj = new Date(closingDate);
+      const today = new Date();
+      const daysUntilClosing = Math.ceil((closingDateObj.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+
+      if (daysUntilClosing < 14) out.push("Closing date should be at least 14 days from today");
+      if (daysUntilClosing > 90) out.push("Closing date more than 90 days out may not be acceptable");
+    }
+
     return out;
-  }, [address, city, stateUS, zip, offerPrice, financingType, preApprovalAttached, interestRate, termYears, closingDate, hasEscalation, escalationCap, escalationIncrement, dpDollar]);
+  }, [address, city, stateUS, zip, buyerName, buyerEmail, offerPrice, financingType, preApprovalAttached, interestRate, termYears, closingDate, hasEscalation, escalationCap, escalationIncrement, dpDollar, dpPercent, stateRequirements, earnestMode, earnest, earnestDollar, inspection, inspectionDays, financingCont, financingDays]);
 
   // Stepper meta
   const steps = ["Property", "Buyer & Financing", "Offer Terms", "Contingencies", "Review & Submit"];
