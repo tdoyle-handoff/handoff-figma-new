@@ -851,8 +851,30 @@ export default function Communications() {
   };
 
   const handleReply = (message: Message, replyText: string) => {
-    console.log('Reply to:', message.from, 'Content:', replyText);
-    // In a real app, this would send the reply
+    // Simulate sending reply
+    if (!replyText.trim()) {
+      alert('Please enter a reply message.');
+      return;
+    }
+
+    // In a real app, this would call an API to send the reply
+    alert(`Reply sent to ${message.from}!`);
+
+    // Add the reply to the conversation (in a real app, this would come from the server)
+    const newReply = {
+      id: Date.now().toString(),
+      type: message.type as 'email' | 'chat' | 'sms',
+      from: 'You',
+      fromEmail: 'you@handoff.com',
+      content: replyText,
+      timestamp: new Date().toISOString(),
+      isRead: true,
+      isStarred: false,
+      priority: 'medium' as const,
+      threadId: message.threadId
+    };
+
+    setMessages(prev => [newReply, ...prev]);
     setSelectedMessage(null);
   };
 
@@ -921,7 +943,16 @@ export default function Communications() {
                   className={`pl-10 ${isMobile ? 'mobile-input' : ''}`}
                 />
               </div>
-              <Button variant="outline" size={isMobile ? "sm" : "default"} className={`${isMobile ? 'mobile-button-sm' : ''}`}>
+              <Button
+                variant="outline"
+                size={isMobile ? "sm" : "default"}
+                className={`${isMobile ? 'mobile-button-sm' : ''}`}
+                onClick={() => {
+                  // Open filter modal or dropdown
+                  alert('Filter options: Unread, Starred, By Sender, By Date Range');
+                  // In a real app, this would open filter UI
+                }}
+              >
                 <Filter className={`${isMobile ? 'w-4 h-4' : 'w-4 h-4'}`} />
                 {!isMobile && <span className="ml-2">Filter</span>}
               </Button>
@@ -955,7 +986,14 @@ export default function Communications() {
                       className="pl-10"
                     />
                   </div>
-                  <Button variant="outline">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      // Open filter modal or dropdown for inbox
+                      alert('Inbox filter options: All, Important, Sent, Drafts');
+                      // In a real app, this would open filter UI
+                    }}
+                  >
                     <Filter className="w-4 h-4" />
                     <span className="ml-2">Filter</span>
                   </Button>
