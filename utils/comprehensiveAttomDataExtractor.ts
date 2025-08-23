@@ -255,8 +255,8 @@ export function extractFromBasicProfile(response: any): Partial<ComprehensivePro
     },
     
     location: {
-      latitude: location.latitude,
-      longitude: location.longitude,
+      latitude: typeof location.latitude === 'string' ? parseFloat(location.latitude) : location.latitude,
+      longitude: typeof location.longitude === 'string' ? parseFloat(location.longitude) : location.longitude,
       geoId: location.geoId,
     },
     
@@ -272,8 +272,8 @@ export function extractFromBasicProfile(response: any): Partial<ComprehensivePro
       standardUse: buildingSummary.propLandUse,
       yearBuilt: buildingSummary.yearBuilt,
       stories: buildingSummary.levels,
-      livingAreaSqFt: buildingSize.livingAreaSqFt,
-      bedrooms: buildingRooms.bedsCount,
+      livingAreaSqFt: buildingSize.livingAreaSqFt ?? buildingSize.livingSize,
+      bedrooms: buildingRooms.bedsCount ?? buildingRooms.beds,
       bathrooms: buildingRooms.bathsTotal,
       roomsTotal: buildingRooms.roomsTotal,
     },
@@ -287,9 +287,9 @@ export function extractFromBasicProfile(response: any): Partial<ComprehensivePro
     },
     
     market: {
-      lastSaleDate: market.saleHistory?.[0]?.saleTransDate,
-      lastSalePrice: market.saleHistory?.[0]?.saleAmt,
-      lastSaleTransactionType: market.saleHistory?.[0]?.saleTransType,
+      lastSaleDate: market.saleHistory?.[0]?.saleTransDate ?? property.sale?.saleTransDate ?? property.sale?.amount?.saleRecDate,
+      lastSalePrice: market.saleHistory?.[0]?.saleAmt ?? property.sale?.amount?.saleAmt,
+      lastSaleTransactionType: market.saleHistory?.[0]?.saleTransType ?? property.sale?.saleTransType,
     },
     
     dataSources: {
@@ -327,24 +327,26 @@ export function extractFromExpandedProfile(response: any): Partial<Comprehensive
       roofType: construction.roofType,
       foundationType: construction.foundationType,
       exteriorWalls: construction.exteriorWalls,
-      heating: interior.heating,
+      heating: interior.heating ?? (property.utilities?.heatingType as any),
       cooling: interior.cooling,
-      fuel: interior.fuel,
-      sewer: interior.sewer,
-      water: interior.water,
+      fuel: interior.fuel ?? (property.utilities?.heatingFuel as any),
+      sewer: interior.sewer ?? (property.utilities?.sewer as any),
+      water: interior.water ?? (property.utilities?.water as any),
       condition: building.summary?.condition,
       quality: building.summary?.quality,
       garageType: parking.garageType,
-      parkingSpaces: parking.prkgSpaces,
+      parkingSpaces: parking.prkgSpaces ?? parking.prkgSize,
       parkingType: parking.prkgType,
-      fireplace: interior.fireplaceInd === 'Y',
-      fireplaceType: interior.fireplaceType,
+      fireplace: interior.fireplaceInd === 'Y' || interior.fplcInd === 'Y',
+      fireplaceType: interior.fireplaceType ?? interior.fplcType,
       pool: interior.poolInd === 'Y',
       poolType: interior.poolType,
     },
     
     owner: {
-      names: owner.owner1?.owner1FullName ? [owner.owner1.owner1FullName] : [],
+      names: owner.owner1?.owner1FullName
+        ? [owner.owner1.owner1FullName]
+        : (property.assessment?.owner?.mailingAddressOneLine ? [property.assessment.owner.mailingAddressOneLine] : []),
       ownershipType: owner.ownershipType,
     },
     
@@ -396,10 +398,10 @@ export function extractFromPropertyDetail(response: any): Partial<ComprehensiveP
     
     building: {
       ...expandedData.building,
-      grossAreaSqFt: buildingSize.grossAreaSqFt,
-      adjustedGrossAreaSqFt: buildingSize.adjustedGrossAreaSqFt,
-      basementAreaSqFt: buildingSize.basementAreaSqFt,
-      garageAreaSqFt: buildingSize.garageAreaSqFt,
+      grossAreaSqFt: buildingSize.grossAreaSqFt ?? buildingSize.grossSize,
+      adjustedGrossAreaSqFt: buildingSize.adjustedGrossAreaSqFt ?? buildingSize.grossSizeAdjusted,
+      basementAreaSqFt: buildingSize.basementAreaSqFt ?? (building.interior?.bsmtSize as any),
+      garageAreaSqFt: buildingSize.garageAreaSqFt ?? (building.parking?.prkgSize as any),
       architecturalStyle: building.summary?.archStyle,
       buildingStyle: building.summary?.bldgStyle,
     },
