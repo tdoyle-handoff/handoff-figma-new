@@ -9,6 +9,7 @@ import { ExternalLink, Clock, User, Calendar, AlertTriangle, Lightbulb, Target }
 interface DetailProps {
   task: Task | null;
   onAction?: () => void;
+  onUpdateTask?: (taskId: string, status: 'completed' | 'active' | 'pending' | 'overdue' | 'in-progress' | 'upcoming') => void;
 }
 
 const getStatusBadgeColor = (status: string) => {
