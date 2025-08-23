@@ -65,7 +65,7 @@ interface SectionData {
 
 export function ComprehensiveAttomDataSummaryTable({ 
   className = '',
-  defaultAddress = '586 Franklin Ave, Brooklyn, NY 11238',
+  defaultAddress = '586 Franklin Ave, Brooklyn, NY',
   autoFetch = false
 }: ComprehensiveAttomDataSummaryTableProps) {
   const [address, setAddress] = useState(defaultAddress);
@@ -472,7 +472,7 @@ export function ComprehensiveAttomDataSummaryTable({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Database className="w-5 h-5 text-primary" />
-            Comprehensive ATTOM API Data Summary
+            Find out more details about a home
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -492,7 +492,7 @@ export function ComprehensiveAttomDataSummaryTable({
               ) : (
                 <Database className="w-4 h-4 mr-2" />
               )}
-              Fetch All Data
+              Search
             </Button>
           </div>
 
@@ -693,14 +693,6 @@ export function ComprehensiveAttomDataSummaryTable({
         </Card>
       )}
 
-      {!mergedData && !isLoading && (
-        <Alert>
-          <Info className="h-4 w-4" />
-          <AlertDescription>
-            Enter a property address and click "Fetch All Data" to see comprehensive property information from all available ATTOM API endpoints.
-          </AlertDescription>
-        </Alert>
-      )}
     </div>
   );
 }
