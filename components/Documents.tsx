@@ -1130,15 +1130,15 @@ export default function Documents({ setupData }: DocumentsProps) {
                         <Eye className="w-4 h-4" />
                         {!isMobile && <span className="ml-2">View</span>}
                       </Button>
-                      <Button 
-                        variant="outline" 
-                        size={isMobile ? "icon" : "sm"} 
-                        className={`${isMobile ? 'mobile-button-sm w-9 h-9' : 'mobile-button-sm'}`}
-                        title="Download Document"
-                      >
-                        <Download className="w-4 h-4" />
-                        {!isMobile && <span className="ml-2">Download</span>}
-                      </Button>
+                      <DownloadButton
+                        variant={isMobile ? "dark" : "primary"}
+                        size="sm"
+                        showText={!isMobile}
+                        onDownload={() => {
+                          // Handle document download
+                          console.log('Downloading document:', doc.name);
+                        }}
+                      />
                       <Button
                         variant="outline"
                         size={isMobile ? "icon" : "sm"}
@@ -1322,15 +1322,14 @@ export default function Documents({ setupData }: DocumentsProps) {
                             </div>
                           </div>
                           <div className="flex gap-2">
-                            <Button
-                              variant="outline"
+                            <DownloadButton
+                              variant="primary"
                               size="sm"
                               className="flex-1"
-                              onClick={() => downloadTemplate(template)}
+                              onDownload={() => downloadTemplate(template)}
                             >
-                              <Download className="w-4 h-4 mr-2" />
                               Download
-                            </Button>
+                            </DownloadButton>
                             <Button
                               variant="secondary"
                               size="sm"
