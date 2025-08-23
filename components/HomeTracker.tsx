@@ -331,12 +331,36 @@ export default function HomeTracker() {
             <p className="text-slate-600 mb-4">
               Start tracking homes you're interested in to compare and rank them
             </p>
-            <Button 
+            <Button
               onClick={() => setIsAddingHome(true)}
               className="bg-sky-600 hover:bg-sky-700"
             >
               <Plus className="h-4 w-4 mr-2" />
               Add Your First Home
+            </Button>
+          </CardContent>
+        </Card>
+      ) : homes.filter(home => labelFilter === 'all' || home.label === labelFilter).length === 0 ? (
+        <Card className="text-center py-12">
+          <CardContent>
+            <Home className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-slate-700 mb-2">No homes match this filter</h3>
+            <p className="text-slate-600 mb-4">
+              Try selecting a different filter or add more homes to your tracker
+            </p>
+            <Button
+              onClick={() => setLabelFilter('all')}
+              variant="outline"
+              className="mr-2"
+            >
+              Show All Homes
+            </Button>
+            <Button
+              onClick={() => setIsAddingHome(true)}
+              className="bg-sky-600 hover:bg-sky-700"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Home
             </Button>
           </CardContent>
         </Card>
