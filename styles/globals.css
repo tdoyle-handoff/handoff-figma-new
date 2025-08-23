@@ -304,22 +304,30 @@
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   }
 
-  /* Input field styling with modern design */
+  /* Enhanced input field styling */
   input, textarea, select {
-    color: var(--input-foreground) !important;
-    border: 1px solid var(--input-border) !important;
-    background-color: var(--input-background) !important;
-    border-radius: 0.5rem !important;
-    transition: all 0.2s ease-in-out !important;
-    box-shadow: var(--shadow-sm) !important;
+    color: hsl(var(--input-foreground)) !important;
+    border: 1px solid hsl(var(--input-border) / 0.8) !important;
+    background: linear-gradient(135deg, hsl(var(--input-background)) 0%, hsl(var(--input-background) / 0.98) 100%) !important;
+    border-radius: calc(var(--radius) - 2px) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.05), var(--shadow-sm) !important;
+    position: relative;
   }
 
   /* Enhanced focus states for input fields */
   input:focus, textarea:focus, select:focus {
     outline: none !important;
-    border-color: var(--ring) !important;
-    box-shadow: 0 0 0 3px rgb(3 64 120 / 0.1), var(--shadow-md) !important;
+    border-color: hsl(var(--ring)) !important;
+    background: hsl(var(--input-background)) !important;
+    box-shadow: 0 0 0 3px hsl(var(--ring) / 0.1), inset 0 1px 2px rgba(15, 23, 42, 0.05), var(--shadow-md) !important;
     transform: translateY(-1px) !important;
+  }
+
+  /* Hover states for inputs */
+  input:hover:not(:focus), textarea:hover:not(:focus), select:hover:not(:focus) {
+    border-color: hsl(var(--input-border)) !important;
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.05), var(--shadow-sm) !important;
   }
 
   /* Ensure placeholder text is grey */
