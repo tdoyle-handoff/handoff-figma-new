@@ -210,7 +210,6 @@ export default function Settings({ onSignOut, setupData, onNavigate }: SettingsP
       <div className="rounded-lg border bg-white p-4 md:p-5">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl md:text-2xl font-semibold">Settings</h1>
             <p className="text-sm text-muted-foreground">
               Manage your account preferences and application settings.
             </p>
