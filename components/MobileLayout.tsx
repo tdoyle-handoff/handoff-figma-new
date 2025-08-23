@@ -5,7 +5,7 @@ import { Badge } from './ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
 import { usePropertyContext } from './PropertyContext';
-const handoffLogo = '/handoff-logo.png';
+const handoffLogo = 'https://cdn.builder.io/api/v1/image/assets%2Fd17493787dd14ef798478b15abccc651%2Fdf51dc32668b459882a7a106ef4658d1?format=webp&width=800';
 import { 
   Home, 
   FileText, 
