@@ -201,7 +201,7 @@ export default function Dashboard({ setupData }: DashboardProps) {
               />
             </div>
             <div>
-              <Label className="text-sm font-medium">Maintenance (Monthly)</Label>
+              <Label className="text-sm font-medium">Monthly Upkeep</Label>
               <Input
                 type="number"
                 value={maintenanceMonthly}
