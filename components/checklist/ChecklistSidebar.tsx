@@ -71,7 +71,7 @@ const getPhaseColor = (phaseId: string) => {
   }
 };
 
-export default function ChecklistSidebar({ phases, onSelectPhase, onSelectTask, selectedPhaseId, selectedTaskId }: SidebarProps) {
+export default function ChecklistSidebar({ phases, onSelectPhase, onSelectTask, selectedPhaseId, selectedTaskId, onUpdateTask }: SidebarProps) {
   const totalTasks = phases.reduce((sum, p) => sum + p.tasks.length, 0);
   const completedTasks = phases.reduce((sum, p) => sum + p.tasks.filter(t => t.status === 'completed').length, 0);
   const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
