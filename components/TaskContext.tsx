@@ -309,10 +309,10 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
       instructions: {
         overview: 'Shopping for mortgage terms is one of the most important financial decisions in your home purchase. Small rate differences compound to massive savings.',
         tips: [
-          '💡 TIP: Get quotes within a 14-day window to count as single credit inquiry',
-          '🎯 TARGET: Compare at least 3-5 lenders including banks, credit unions, and brokers',
-          '💰 IMPACT: 0.25% rate difference = ~$50/month = $18,000 over 30 years',
-          '📋 REQUIRED: Pre-approval letter, rate lock options, closing cost estimates'
+          'TIP: Get quotes within a 14-day window to count as single credit inquiry',
+          'TARGET: Compare at least 3-5 lenders including banks, credit unions, and brokers',
+          'IMPACT: 0.25% rate difference = ~$50/month = $18,000 over 30 years',
+          'REQUIRED: Pre-approval letter, rate lock options, closing cost estimates'
         ],
         timeline: 'Start 25-30 days before closing, complete within 1 week',
         nextSteps: ['Choose best overall offer', 'Lock rate if favorable', 'Submit formal application']
@@ -337,9 +337,9 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
         overview: 'The formal mortgage application starts your loan processing clock. Completeness and accuracy are critical for on-time closing.',
         tips: [
           '📦 PACKAGE COMPLETELY: Submit ALL required docs at once to avoid delays',
-          '🔒 RATE LOCK: Secure your rate for 30-60 days during processing',
-          '📞 STAY RESPONSIVE: Answer lender calls/emails within 24 hours',
-          '🚫 AVOID CHANGES: No new credit, job changes, or large purchases',
+          'RATE LOCK: Secure your rate for 30-60 days during processing',
+          'STAY RESPONSIVE: Answer lender calls/emails within 24 hours',
+          'AVOID CHANGES: No new credit, job changes, or large purchases',
           '💼 EMPLOYMENT VERIFICATION: May be reverified closer to closing'
         ],
         timeline: 'Submit within 3 days of choosing lender, 20 days before closing',
@@ -364,11 +364,11 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
       instructions: {
         overview: 'The appraisal protects the lender by confirming the property is worth the loan amount. You cannot choose the appraiser.',
         tips: [
-          '🎯 GOAL: Property value = or > contract price',
-          '⚠️ IF LOW: Options include price renegotiation, cash difference, or appeal',
-          '🏠 PREP: Ensure property is clean, accessible, and repairs completed',
-          '📋 PROVIDE: Comparable sales, improvement receipts, HOA info if requested',
-          '⏰ TIMING: Typically ordered after application approval, takes 7-10 days'
+          'GOAL: Property value = or > contract price',
+          'IF LOW: Options include price renegotiation, cash difference, or appeal',
+          'PREP: Ensure property is clean, accessible, and repairs completed',
+          'PROVIDE: Comparable sales, improvement receipts, HOA info if requested',
+          'TIMING: Typically ordered after application approval, takes 7-10 days'
         ],
         timeline: 'Ordered by lender 15-20 days before closing',
         nextSteps: ['Review appraisal report', 'Address any value issues', 'Proceed to underwriting']
@@ -392,11 +392,11 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
       instructions: {
         overview: 'Underwriting is the final loan approval process where an expert reviews your complete financial picture and the property.',
         tips: [
-          '📋 CONDITIONS: Expect 2-5 additional document requests',
-          '🚫 NO CHANGES: Absolutely no credit changes, job changes, or large purchases',
-          '📞 RESPOND FAST: Provide requested docs within 24-48 hours',
-          '💼 EMPLOYMENT: May reverify job and income 1-2 days before closing',
-          '🎯 OUTCOME: Clear to Close (CTC) or additional conditions'
+          'CONDITIONS: Expect 2-5 additional document requests',
+          'NO CHANGES: Absolutely no credit changes, job changes, or large purchases',
+          'RESPOND FAST: Provide requested docs within 24-48 hours',
+          'EMPLOYMENT: May reverify job and income 1-2 days before closing',
+          'OUTCOME: Clear to Close (CTC) or additional conditions'
         ],
         timeline: 'Begins after appraisal, takes 5-10 business days',
         nextSteps: ['Receive Clear to Close', 'Review closing disclosure', 'Schedule closing']
@@ -621,7 +621,7 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
           '💰 LIENS: Must be paid off at closing (seller responsibility)',
           '🚧 EASEMENTS: Rights others have to use your property (utilities, access)',
           '📏 ENCROACHMENTS: Structures crossing property lines',
-          '📜 RESTRICTIONS: HOA rules, building restrictions, deed covenants',
+          '��� RESTRICTIONS: HOA rules, building restrictions, deed covenants',
           '⚖️ ATTORNEY ADVICE: Essential for understanding legal implications'
         ],
         timeline: 'Review within 2-3 days of receiving title report',
@@ -703,7 +703,7 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
         overview: 'Wire transfer instructions must be verified to prevent wire fraud, which is extremely common in real estate.',
         tips: [
           '🚨 FRAUD WARNING: Always verify wire instructions by phone',
-          '☎️ CALL DIRECTLY: Use known number, not number in email',
+          '��️ CALL DIRECTLY: Use known number, not number in email',
           '📧 EMAIL RISK: Never trust wire instructions received only by email',
           '🏦 BANK TIMING: Arrange wire 1-2 days before closing',
           '💰 BACKUP PLAN: Certified check as backup if wire issues'
