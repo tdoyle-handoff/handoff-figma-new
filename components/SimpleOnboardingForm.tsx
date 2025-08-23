@@ -259,7 +259,7 @@ export function SimpleOnboardingForm({ onComplete, onSkip }: SimpleOnboardingFor
       </div>
 
       <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <Label htmlFor="fullName" className="text-sm font-medium text-slate-700 mb-2 block">
               Full name *
@@ -277,22 +277,6 @@ export function SimpleOnboardingForm({ onComplete, onSkip }: SimpleOnboardingFor
             )}
           </div>
           <div>
-            <Label htmlFor="email" className="text-sm font-medium text-slate-700 mb-2 block">
-              Email *
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="jane@acme.com"
-              value={formData.email}
-              onChange={(e) => updateFormData({ email: e.target.value })}
-              className={`h-10 ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
-            />
-            {errors.email && (
-              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-            )}
-          </div>
-          <div>
             <Label htmlFor="phone" className="text-sm font-medium text-slate-700 mb-2 block">
               Phone *
             </Label>
@@ -307,6 +291,44 @@ export function SimpleOnboardingForm({ onComplete, onSkip }: SimpleOnboardingFor
             {errors.phone && (
               <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
             )}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="dateOfBirth" className="text-sm font-medium text-slate-700 mb-2 block">
+              Date of birth
+            </Label>
+            <Input
+              id="dateOfBirth"
+              type="text"
+              placeholder="DD/MM/YYYY"
+              value={formData.dateOfBirth}
+              onChange={(e) => updateFormData({ dateOfBirth: e.target.value })}
+              className={`h-10 ${errors.dateOfBirth ? 'border-red-500' : 'border-gray-300'}`}
+            />
+            {errors.dateOfBirth && (
+              <p className="text-red-500 text-sm mt-1">{errors.dateOfBirth}</p>
+            )}
+          </div>
+          <div>
+            <Label className="text-sm font-medium text-slate-700 mb-2 block">
+              Gender
+            </Label>
+            <Select
+              value={formData.gender}
+              onValueChange={(value) => updateFormData({ gender: value })}
+            >
+              <SelectTrigger className="h-10 border-gray-300">
+                <SelectValue placeholder="Select..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="male">Male</SelectItem>
+                <SelectItem value="female">Female</SelectItem>
+                <SelectItem value="other">Other</SelectItem>
+                <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
