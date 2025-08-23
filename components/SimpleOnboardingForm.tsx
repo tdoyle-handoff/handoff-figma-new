@@ -80,12 +80,12 @@ export function SimpleOnboardingForm({ onComplete, onSkip }: SimpleOnboardingFor
         newErrors.fullName = 'Full name is required';
       }
       if (!formData.email.trim()) {
-        newErrors.email = 'E-mail é obrigatório';
+        newErrors.email = 'Email is required';
       } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-        newErrors.email = 'E-mail inválido';
+        newErrors.email = 'Invalid email address';
       }
       if (!formData.gender) {
-        newErrors.gender = 'Gênero é obrigatório';
+        newErrors.gender = 'Gender is required';
       }
     }
 
