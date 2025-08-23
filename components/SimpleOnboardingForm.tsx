@@ -426,8 +426,8 @@ export function SimpleOnboardingForm({ onComplete, onSkip }: SimpleOnboardingFor
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-2xl bg-white shadow-lg">
+    <div className="w-full max-w-2xl mx-auto">
+      <Card className="bg-white shadow-sm border">
         <CardContent className="p-8">
           {renderProgressIndicator()}
           
