@@ -38,6 +38,7 @@ export default function HomeTracker() {
   const [homes, setHomes] = useState<TrackedHome[]>([]);
   const [isAddingHome, setIsAddingHome] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [labelFilter, setLabelFilter] = useState<InterestLabel | 'all'>('all');
   const [newHome, setNewHome] = useState({
     address: '',
     price: '',
