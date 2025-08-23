@@ -168,7 +168,6 @@ export default function VendorMarketplace({ defaultTab = 'attorneys' }: VendorMa
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Vendor Marketplace</CardTitle>
           <CardDescription>
             Browse and book trusted providers with ratings, availability, and pricing.
           </CardDescription>
@@ -212,4 +211,3 @@ export default function VendorMarketplace({ defaultTab = 'attorneys' }: VendorMa
     </div>
   );
 }
-

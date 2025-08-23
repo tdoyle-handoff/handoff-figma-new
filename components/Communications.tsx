@@ -808,13 +808,13 @@ export default function Communications() {
       <CardHeader className={`${isMobile ? 'p-4 pb-3' : 'pb-4'}`}>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className={`${isMobile ? 'text-lg' : 'text-xl'} flex items-center gap-2`}>
+            <div className={`${isMobile ? 'text-lg' : 'text-xl'} flex items-center gap-2`}>
               <MessageCircle className={`${isMobile ? 'w-5 h-5' : 'w-6 h-6'}`} />
-              Communication Suite
+              <span className="font-medium">Messages</span>
               {unreadCount > 0 && (
                 <Badge className={`${isMobile ? 'text-xs' : ''}`}>{unreadCount} new</Badge>
               )}
-            </CardTitle>
+            </div>
             <p className={`${isMobile ? 'text-sm' : ''} text-black`}>
               Secure chat, email, SMS, and file sharing in one place
             </p>

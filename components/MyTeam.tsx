@@ -208,7 +208,6 @@ export default function MyTeam({ setupData }: MyTeamProps) {
       {/* Header */}
       <div className="rounded-lg border bg-white p-4 md:p-5 flex items-center justify-between">
         <div>
-          <h1 className="text-xl md:text-2xl font-semibold mb-1">My Team</h1>
           <p className="text-sm text-muted-foreground">
             Manage your real estate transaction team members and their contact information
           </p>
