@@ -157,41 +157,57 @@ export default function ChecklistSidebar({ phases, onSelectPhase, onSelectTask, 
                             const isOverdue = t.status === 'overdue';
                             const isActive = t.status === 'active';
                             return (
-                              <button
+                              <div
                                 key={t.id}
-                                onClick={() => onSelectTask(t.id)}
                                 className={`w-full text-left flex items-center gap-3 px-3 py-2 rounded-lg transition-colors hover:bg-blue-50 ${
                                   isSelected ? 'bg-blue-50 ring-1 ring-blue-200 shadow-sm' : ''
                                 }`}
                               >
-                                {done ? (
-                                  <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
-                                ) : isOverdue ? (
-                                  <Circle className="w-4 h-4 text-red-500 flex-shrink-0" />
-                                ) : isActive ? (
-                                  <Circle className="w-4 h-4 text-blue-500 flex-shrink-0" />
-                                ) : (
-                                  <Circle className="w-4 h-4 text-gray-300 flex-shrink-0" />
-                                )}
-                                <div className="flex-1 min-w-0">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (onUpdateTask) {
+                                      const newStatus = done ? 'active' : 'completed';
+                                      onUpdateTask(t.id, newStatus);
+                                    }
+                                  }}
+                                  className="p-0.5 -m-0.5 rounded hover:bg-gray-200 transition-colors"
+                                  title={done ? "Mark as incomplete" : "Mark as complete"}
+                                >
+                                  {done ? (
+                                    <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
+                                  ) : isOverdue ? (
+                                    <Circle className="w-4 h-4 text-red-500 flex-shrink-0" />
+                                  ) : isActive ? (
+                                    <Circle className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                                  ) : (
+                                    <Circle className="w-4 h-4 text-gray-300 flex-shrink-0" />
+                                  )}
+                                </button>
+                                <button
+                                  onClick={() => onSelectTask(t.id)}
+                                  className="flex-1 min-w-0 text-left"
+                                >
                                   <div className={`text-sm truncate ${isSelected ? 'font-medium text-gray-900' : 'text-gray-700'}`}>
                                     {t.title}
                                   </div>
                                   {t.estimatedTime && (
                                     <div className="text-xs text-gray-500">{t.estimatedTime}</div>
                                   )}
+                                </button>
+                                <div className="flex items-center gap-1">
+                                  {isOverdue && (
+                                    <Badge variant="outline" className="text-xs bg-red-50 text-red-600 border-red-200">
+                                      Overdue
+                                    </Badge>
+                                  )}
+                                  {isActive && !isSelected && (
+                                    <Badge variant="outline" className="text-xs bg-blue-50 text-blue-600 border-blue-200">
+                                      Active
+                                    </Badge>
+                                  )}
                                 </div>
-                                {isOverdue && (
-                                  <Badge variant="outline" className="text-xs bg-red-50 text-red-600 border-red-200">
-                                    Overdue
-                                  </Badge>
-                                )}
-                                {isActive && !isSelected && (
-                                  <Badge variant="outline" className="text-xs bg-blue-50 text-blue-600 border-blue-200">
-                                    Active
-                                  </Badge>
-                                )}
-                              </button>
+                              </div>
                             );
                           })}
                         </div>
