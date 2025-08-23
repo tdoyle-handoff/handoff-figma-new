@@ -331,6 +331,10 @@ export default function OfferBuilder() {
   const [currentDraftId, setCurrentDraftId] = useState<string | null>(null);
   const [currentDraftName, setCurrentDraftName] = useState<string | null>(null);
 
+  // State-specific legal requirements
+  const [stateRequirements, setStateRequirements] = useState<any>(null);
+  const [legalDisclosures, setLegalDisclosures] = useState<string[]>([]);
+
   // Load drafts list
   useEffect(() => {
     try {
@@ -402,34 +406,107 @@ export default function OfferBuilder() {
     } catch {}
   };
 
-  const handleExportJSON = () => {
-    const draft = buildDraft();
-    const blob = new Blob([JSON.stringify(draft, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `offer-draft-${new Date().toISOString().slice(0,19)}.json`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
+  // State-specific legal requirements database
+  const stateRequirementsDB = {
+    'CA': {
+      name: 'California',
+      requiredDisclosures: [
+        'Natural Hazard Disclosure Statement',
+        'Lead-Based Paint Disclosure (pre-1978 homes)',
+        'Transfer Disclosure Statement',
+        'Seller Property Questionnaire',
+        'Water Heater and Smoke Detector Statement of Compliance'
+      ],
+      contingencyRequirements: {
+        inspection: { minDays: 7, maxDays: 21, default: 10 },
+        financing: { minDays: 17, maxDays: 30, default: 21 },
+        appraisal: { minDays: 17, maxDays: 30, default: 21 }
+      },
+      mandatoryForms: [
+        'California Residential Purchase Agreement (RPA-CA)',
+        'Buyer Inspection Advisory (BIA)',
+        'Agent Visual Inspection Disclosure (AVID)'
+      ],
+      earnestMoneyRules: {
+        minPercent: 1,
+        maxPercent: 3,
+        defaultPercent: 3,
+        holdingRequirement: 'Licensed escrow company or real estate broker'
+      }
+    },
+    'TX': {
+      name: 'Texas',
+      requiredDisclosures: [
+        'Seller\'s Disclosure Notice',
+        'Lead-Based Paint Disclosure (pre-1978 homes)',
+        'Property Condition Disclosure'
+      ],
+      contingencyRequirements: {
+        inspection: { minDays: 7, maxDays: 14, default: 10 },
+        financing: { minDays: 20, maxDays: 30, default: 25 },
+        appraisal: { minDays: 15, maxDays: 25, default: 20 }
+      },
+      mandatoryForms: [
+        'One to Four Family Residential Contract (Resale)',
+        'Addendum for Property Subject to Mandatory Membership',
+        'Seller Financing Addendum (if applicable)'
+      ],
+      earnestMoneyRules: {
+        minPercent: 1,
+        maxPercent: 5,
+        defaultPercent: 2,
+        holdingRequirement: 'Title company or licensed escrow agent'
+      }
+    },
+    'FL': {
+      name: 'Florida',
+      requiredDisclosures: [
+        'Property Disclosure Summary',
+        'Lead-Based Paint Disclosure (pre-1978 homes)',
+        'Radon Gas Disclosure'
+      ],
+      contingencyRequirements: {
+        inspection: { minDays: 10, maxDays: 15, default: 15 },
+        financing: { minDays: 30, maxDays: 45, default: 30 },
+        appraisal: { minDays: 15, maxDays: 30, default: 21 }
+      },
+      mandatoryForms: [
+        'Florida Residential Contract for Sale and Purchase',
+        'Property Tax Disclosure Summary',
+        'Homeowners\' Association Disclosure Summary'
+      ],
+      earnestMoneyRules: {
+        minPercent: 1,
+        maxPercent: 10,
+        defaultPercent: 3,
+        holdingRequirement: 'Licensed real estate broker or attorney'
+      }
+    }
   };
 
-  const handleImportJSON = (file?: File | null) => {
-    const f = file || importRef.current?.files?.[0];
-    if (!f) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        const parsed = JSON.parse(String(reader.result || '{}')) as Partial<OfferDraft>;
-        applyDraft(parsed);
-        handleSaveDraft();
-      } catch {
-        alert('Invalid JSON file');
+  // Update state requirements when state changes
+  useEffect(() => {
+    if (stateUS && stateRequirementsDB[stateUS as keyof typeof stateRequirementsDB]) {
+      const requirements = stateRequirementsDB[stateUS as keyof typeof stateRequirementsDB];
+      setStateRequirements(requirements);
+      setLegalDisclosures(requirements.requiredDisclosures);
+
+      // Auto-adjust contingency periods to state defaults
+      if (requirements.contingencyRequirements) {
+        setInspectionDays(requirements.contingencyRequirements.inspection.default);
+        setFinancingDays(requirements.contingencyRequirements.financing.default);
       }
-    };
-    reader.readAsText(f);
-  };
+
+      // Auto-adjust earnest money to state default
+      if (requirements.earnestMoneyRules) {
+        setEarnestMode('percent');
+        setEarnest(requirements.earnestMoneyRules.defaultPercent);
+      }
+    } else {
+      setStateRequirements(null);
+      setLegalDisclosures([]);
+    }
+  }, [stateUS]);
 
   const savedText = savedAt ? `Draft saved ${new Date(savedAt).toLocaleTimeString()}` : 'Autosave enabled';
 
@@ -496,49 +573,135 @@ export default function OfferBuilder() {
     setAttachments(prev => prev.filter(a => a.id !== id));
   };
 
-  // Generate a printable HTML summary and invoke browser print for PDF
-  const handleGeneratePdf = () => {
+  // Generate legally binding purchase agreement
+  const handleGenerateLegalDocument = () => {
     const w = window.open('', '_blank');
     if (!w) return;
-    const section = `
-      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 24px;">
-        <h1 style="margin:0 0 8px 0; font-size:22px;">Offer Summary</h1>
-        <div style="color:#6b7280; font-size:12px; margin-bottom:16px;">Generated ${new Date().toLocaleString()}</div>
-        <h2 style="font-size:16px; margin:16px 0 6px;">Property</h2>
-        <div>${address || '[Address]'}, ${city || '[City]'}, ${stateUS || '[State]'} ${zip || '[ZIP]'}</div>
-        <div>List: ${formatMoney(listPrice)} | Offer: <strong>${formatMoney(offerPrice)}</strong></div>
-        <div>Down payment: ${formatMoney(dpDollar)} (${dpPercent.toFixed(1)}%) | Loan: ${formatMoney(loanAmount)}</div>
-        <div>Earnest: ${formatMoney(earnestDollar)} | Closing: ${closingDate || '[Select date]'}</div>
-        ${hasEscalation ? `<div>Escalation: +${formatMoney(escalationIncrement)} up to ${formatMoney(escalationCap)}</div>` : ''}
-        ${sellerConcessions ? `<div>Concessions: ${sellerConcessions}</div>` : ''}
-        <h2 style="font-size:16px; margin:16px 0 6px;">Financing</h2>
-        <div>Type: ${financingType}</div>
-        ${financingType !== 'Cash' ? `<div>Rate: ${interestRate}% • Term: ${termYears} yrs • P&I: ${formatMoney(pi)}</div>` : ''}
-        <div>Taxes/mo: ${formatMoney(taxesM)} | Insurance/mo: ${formatMoney(insM)} | HOA/mo: ${formatMoney(hoaMonthly)}</div>
-        <div style="font-weight:600;">Estimated monthly: ${formatMoney(estMonthly)}</div>
-        <h2 style="font-size:16px; margin:16px 0 6px;">Contingencies</h2>
-        <ul>
-          ${inspection ? `<li>Inspection (${inspectionDays} days)</li>` : '<li>No inspection contingency</li>'}
-          ${appraisal ? '<li>Appraisal</li>' : '<li>No appraisal contingency</li>'}
-          ${financingCont ? `<li>Financing (${financingDays} days)</li>` : '<li>No financing contingency</li>'}
-          ${homeSale ? `<li>Home sale (${homeSaleDays} days)</li>` : '<li>No home sale contingency</li>'}
-        </ul>
-        ${flags.length > 0 ? `<div style="margin-top:12px; padding:12px; border:1px solid #fca5a5; background:#fef2f2;">
-          <div style="font-weight:600; color:#b91c1c;">Resolve before submission</div>
-          <ul>${flags.map(f => `<li>${f}</li>`).join('')}</ul>
-        </div>` : '<div style="margin-top:12px; color:#6b7280;">No blocking issues detected.</div>'}
-        <h2 style="font-size:16px; margin:16px 0 6px;">Attachments</h2>
-        ${attachments.length === 0 ? '<div>None</div>' : attachments.map(a => {
-          if (a.dataUrl && a.type.startsWith('image/')) {
-            return `<div style="margin-bottom:8px;"><div style="font-size:12px;color:#6b7280;">${a.name}</div><img src="${a.dataUrl}" style="max-width:100%;height:auto;border:1px solid #e5e7eb;"/></div>`;
-          }
-          return `<div>${a.name}</div>`;
-        }).join('')}
+
+    const stateName = stateRequirements?.name || stateUS || 'State';
+    const requiredForms = stateRequirements?.mandatoryForms || ['Standard Purchase Agreement'];
+    const disclosures = legalDisclosures || [];
+
+    const legalDocument = `
+      <div style="font-family: 'Times New Roman', serif; padding: 40px; max-width: 800px; margin: 0 auto; line-height: 1.6;">
+        <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #000; padding-bottom: 20px;">
+          <h1 style="margin: 0; font-size: 24px; font-weight: bold;">RESIDENTIAL PURCHASE AGREEMENT</h1>
+          <h2 style="margin: 10px 0 0 0; font-size: 18px;">State of ${stateName}</h2>
+          <p style="margin: 10px 0 0 0; font-size: 12px;">This document constitutes a legally binding agreement</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">PROPERTY INFORMATION</h3>
+          <p><strong>Property Address:</strong> ${address || '[Property Address]'}, ${city || '[City]'}, ${stateUS || '[State]'} ${zip || '[ZIP Code]'}</p>
+          <p><strong>Legal Description:</strong> To be inserted from title report</p>
+          <p><strong>Assessor's Parcel Number (APN):</strong> To be inserted from title report</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">PURCHASE TERMS</h3>
+          <p><strong>Purchase Price:</strong> ${formatMoney(offerPrice)}</p>
+          <p><strong>Earnest Money Deposit:</strong> ${formatMoney(earnestDollar)} (${earnestMode === 'percent' ? earnest + '%' : 'fixed amount'}) to be deposited within 3 business days</p>
+          <p><strong>Down Payment:</strong> ${formatMoney(dpDollar)} (${dpPercent.toFixed(1)}%)</p>
+          <p><strong>Loan Amount:</strong> ${formatMoney(loanAmount)}</p>
+          <p><strong>Financing Type:</strong> ${financingType}</p>
+          ${financingType !== 'Cash' ? `<p><strong>Interest Rate:</strong> ${interestRate}% for ${termYears} years (subject to final loan approval)</p>` : ''}
+          <p><strong>Closing Date:</strong> ${closingDate || '[To be determined]'}</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">CONTINGENCIES</h3>
+          ${inspection ? `<p><strong>Inspection Contingency:</strong> Buyer has ${inspectionDays} days from acceptance to complete property inspections and either approve the property condition or cancel this agreement.</p>` : '<p><strong>Inspection Contingency:</strong> WAIVED</p>'}
+          ${appraisal ? '<p><strong>Appraisal Contingency:</strong> This agreement is contingent upon the property appraising for at least the purchase price.</p>' : '<p><strong>Appraisal Contingency:</strong> WAIVED</p>'}
+          ${financingCont ? `<p><strong>Financing Contingency:</strong> Buyer has ${financingDays} days to obtain loan approval. If financing is not approved, buyer may cancel this agreement and receive refund of earnest money.</p>` : '<p><strong>Financing Contingency:</strong> WAIVED</p>'}
+          ${homeSale ? `<p><strong>Home Sale Contingency:</strong> This agreement is contingent upon the sale of buyer's existing home within ${homeSaleDays} days.</p>` : ''}
+          ${hasEscalation ? `<p><strong>Escalation Clause:</strong> If a higher competing offer is received, buyer's offer will automatically increase by ${formatMoney(escalationIncrement)} increments up to a maximum of ${formatMoney(escalationCap)}.</p>` : ''}
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">BUYER INFORMATION</h3>
+          <p><strong>Buyer Name:</strong> ${buyerName || '[Buyer Name]'}</p>
+          <p><strong>Email:</strong> ${buyerEmail || '[Email Address]'}</p>
+          <p><strong>Phone:</strong> ${buyerPhone || '[Phone Number]'}</p>
+        </div>
+
+        ${sellerConcessions ? `<div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">SELLER CONCESSIONS</h3>
+          <p>${sellerConcessions}</p>
+        </div>` : ''}
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">REQUIRED ${stateName.toUpperCase()} DISCLOSURES</h3>
+          ${disclosures.length > 0 ? `<ul>${disclosures.map(d => `<li style="margin-bottom: 5px;">${d}</li>`).join('')}</ul>` : '<p>Standard state disclosures apply as required by law.</p>'}
+          <p style="font-size: 12px; margin-top: 15px;"><em>Seller must provide all required disclosures within the time frames specified by ${stateName} law.</em></p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">MANDATORY FORMS</h3>
+          <p>This agreement incorporates the following required forms:</p>
+          <ul>${requiredForms.map(form => `<li style="margin-bottom: 5px;">${form}</li>`).join('')}</ul>
+        </div>
+
+        <div style="margin-bottom: 30px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">EARNEST MONEY HANDLING</h3>
+          <p>Earnest money shall be held by: ${stateRequirements?.earnestMoneyRules?.holdingRequirement || 'Licensed escrow company'}</p>
+          <p>Earnest money shall be applied toward the purchase price at closing or returned to buyer if this agreement is cancelled according to its terms.</p>
+        </div>
+
+        <div style="margin-bottom: 40px; border: 2px solid #000; padding: 15px;">
+          <p style="font-weight: bold; font-size: 14px; margin-bottom: 10px;">LEGAL NOTICE:</p>
+          <p style="font-size: 12px; margin-bottom: 8px;">This is a legally binding contract. If not understood, seek competent legal advice before signing.</p>
+          <p style="font-size: 12px; margin-bottom: 8px;">Time is of the essence. All deadlines in this agreement are strictly enforced.</p>
+          <p style="font-size: 12px;">This agreement shall be governed by the laws of the State of ${stateName}.</p>
+        </div>
+
+        <div style="margin-bottom: 30px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 15px;">SIGNATURES</h3>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 40px;">
+            <div style="width: 45%;">
+              <p><strong>BUYER:</strong></p>
+              <div style="border-bottom: 1px solid #000; height: 30px; margin-bottom: 5px;"></div>
+              <p style="font-size: 12px;">${buyerName || '[Print Name]'}</p>
+              <p style="font-size: 12px;">Date: _______________</p>
+            </div>
+            <div style="width: 45%;">
+              <p><strong>SELLER:</strong></p>
+              <div style="border-bottom: 1px solid #000; height: 30px; margin-bottom: 5px;"></div>
+              <p style="font-size: 12px;">[Print Name]</p>
+              <p style="font-size: 12px;">Date: _______________</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align: center; font-size: 10px; color: #666; border-top: 1px solid #ccc; padding-top: 15px;">
+          <p>Document generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
+          <p>This document was prepared by Handoff Real Estate Platform</p>
+        </div>
       </div>
     `;
-    w.document.write(`<html><head><title>Offer Summary</title><style>@page{margin:12mm;} body{background:#fff;} @media print { a{color:black;text-decoration:none} }</style></head><body>${section}</body></html>`);
+
+    w.document.write(`
+      <html>
+        <head>
+          <title>Purchase Agreement - ${address || 'Property'}</title>
+          <style>
+            @page { margin: 0.5in; }
+            body { margin: 0; }
+            @media print {
+              body { -webkit-print-color-adjust: exact; }
+              .no-print { display: none; }
+            }
+          </style>
+        </head>
+        <body>
+          ${legalDocument}
+          <div class="no-print" style="text-align: center; margin: 20px; page-break-before: always;">
+            <button onclick="window.print()" style="background: #2563eb; color: white; padding: 12px 24px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer;">Print Document</button>
+            <p style="margin-top: 10px; font-size: 14px; color: #666;">This document can be printed or saved as PDF for signing and submission.</p>
+          </div>
+        </body>
+      </html>
+    `);
     w.document.close();
-    setTimeout(() => { w.print(); }, 250);
   };
 
   return (
@@ -903,8 +1066,8 @@ export default function OfferBuilder() {
             <CardFooter className="justify-between">
               <Button variant="ghost" onClick={back}><ArrowLeft className="w-4 h-4 mr-2"/>Back</Button>
               <div className="flex items-center gap-2">
-                <Button variant="outline" onClick={handleGeneratePdf}><FileText className="w-4 h-4 mr-2"/>Generate PDF</Button>
-                <Button><Mail className="w-4 h-4 mr-2"/>Send to listing agent</Button>
+                <Button variant="outline" onClick={handleGenerateLegalDocument}><FileText className="w-4 h-4 mr-2"/>Generate Legal Document</Button>
+                <Button><Mail className="w-4 h-4 mr-2"/>Submit Offer</Button>
               </div>
             </CardFooter>
           </Card>
@@ -983,10 +1146,9 @@ export default function OfferBuilder() {
                 </ul>
               )}
             </div>
-            <div className="flex gap-2">
-              <Button className="flex-1" variant="outline" onClick={handleExportJSON}>Export JSON</Button>
-              <Button className="flex-1" variant="outline" onClick={()=> importRef.current?.click()}>Import JSON</Button>
-              <input ref={importRef} type="file" accept="application/json" className="hidden" onChange={(e)=> handleImportJSON(e.target.files?.[0] || null)} />
+            <div className="p-3 border rounded-lg bg-blue-50">
+              <h6 className="font-medium text-sm mb-1">Legal Documents</h6>
+              <p className="text-xs text-blue-800">Your completed offer will include all required state-specific forms and disclosures.</p>
             </div>
             <Button variant="destructive" onClick={handleClearDraft}>Clear saved (autosave) draft</Button>
           </CardContent>
@@ -995,4 +1157,3 @@ export default function OfferBuilder() {
     </div>
   );
 }
-
