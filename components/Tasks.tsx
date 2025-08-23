@@ -330,11 +330,11 @@ export default function Tasks({ onNavigate }: TasksProps) {
       </div>
 
       <Tabs defaultValue="checklist" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="checklist" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white font-semibold text-base px-6 py-3">✓ Checklist</TabsTrigger>
-          <TabsTrigger value="legal" className="text-sm">Legal</TabsTrigger>
-          <TabsTrigger value="inspections" className="text-sm">Inspections</TabsTrigger>
-          <TabsTrigger value="insurance" className="text-sm">Insurance</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-4 h-12 p-1">
+          <TabsTrigger value="checklist" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white font-semibold text-sm px-4 py-2">✓ Checklist</TabsTrigger>
+          <TabsTrigger value="legal" className="text-sm px-4 py-2">Legal</TabsTrigger>
+          <TabsTrigger value="inspections" className="text-sm px-4 py-2">Inspections</TabsTrigger>
+          <TabsTrigger value="insurance" className="text-sm px-4 py-2">Insurance</TabsTrigger>
         </TabsList>
 
         <TabsContent value="checklist" className="space-y-6">
