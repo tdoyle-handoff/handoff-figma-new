@@ -1051,7 +1051,7 @@ export default function Documents({ setupData }: DocumentsProps) {
           )}
         </TabsList>
 
-        <TabsContent value="all" className="space-y-6">
+        <TabsContent value="all" className="space-y-6 bg-white">
           {/* Search and Filter */}
           <div className="flex gap-4">
             <div className="flex-1">
@@ -1156,7 +1156,7 @@ export default function Documents({ setupData }: DocumentsProps) {
           </div>
         </TabsContent>
 
-        <TabsContent value="shared" className="space-y-6">
+        <TabsContent value="shared" className="space-y-6 bg-white">
           <div className="space-y-4">
             {documents.filter(doc => doc.shared).map((doc) => (
               <Card key={doc.id} className="hover:shadow-md transition-shadow">
@@ -1198,7 +1198,7 @@ export default function Documents({ setupData }: DocumentsProps) {
           </div>
         </TabsContent>
 
-        <TabsContent value="signatures" className="space-y-6">
+        <TabsContent value="signatures" className="space-y-6 bg-white">
           <div className="space-y-4">
             {documents.filter(doc => doc.status === 'requires_signature').map((doc) => (
               <Card key={doc.id} className="border-orange-200 hover:shadow-md transition-shadow">
@@ -1239,7 +1239,7 @@ export default function Documents({ setupData }: DocumentsProps) {
           </div>
         </TabsContent>
 
-        <TabsContent value="archive" className="space-y-6">
+        <TabsContent value="archive" className="space-y-6 bg-white">
           <Card>
             <CardContent className="p-8 text-center">
               <Folder className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
@@ -1251,7 +1251,7 @@ export default function Documents({ setupData }: DocumentsProps) {
           </Card>
         </TabsContent>
 
-        <TabsContent value="contract" className="space-y-6">
+        <TabsContent value="contract" className="space-y-6 bg-white">
           <Suspense fallback={
             <Card>
               <CardContent className="p-8 text-center">
@@ -1264,7 +1264,7 @@ export default function Documents({ setupData }: DocumentsProps) {
           </Suspense>
         </TabsContent>
 
-        <TabsContent value="offer" className="space-y-6">
+        <TabsContent value="offer" className="space-y-6 bg-white">
           <Suspense fallback={
             <Card>
               <CardContent className="p-8 text-center">
@@ -1300,7 +1300,7 @@ export default function Documents({ setupData }: DocumentsProps) {
         {!isMobile && (
           <>
 
-            <TabsContent value="templates" className="space-y-6">
+            <TabsContent value="templates" className="space-y-6 bg-white">
               <Card>
                 <CardHeader>
                   <CardTitle>Document Templates</CardTitle>
