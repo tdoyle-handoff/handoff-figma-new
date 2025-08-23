@@ -36,12 +36,12 @@ export default function PropertySearchTabs() {
               <span className="text-blue-600 font-medium">Phase 1: Get Started</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-              <span className="text-emerald-600 font-medium">Phase 2: Track & Compare Homes</span>
+              <div className="w-2 h-2 bg-sky-500 rounded-full"></div>
+              <span className="text-sky-600 font-medium">Phase 2: Track & Compare Homes</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-              <span className="text-purple-600 font-medium">Phase 3: I've Found a Home</span>
+              <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
+              <span className="text-indigo-600 font-medium">Phase 3: I've Found a Home</span>
             </div>
           </div>
         </CardContent>
@@ -56,14 +56,14 @@ export default function PropertySearchTabs() {
               <div className="text-xs opacity-80">Let's Get Started</div>
             </div>
           </TabsTrigger>
-          <TabsTrigger value="find-home" className="gap-2 data-[state=active]:bg-emerald-500 data-[state=active]:text-white">
+          <TabsTrigger value="find-home" className="gap-2 data-[state=active]:bg-sky-500 data-[state=active]:text-white">
             <ListChecks className="h-4 w-4" />
             <div className="text-left">
               <div className="font-medium">Phase 2</div>
               <div className="text-xs opacity-80">Track & Compare</div>
             </div>
           </TabsTrigger>
-          <TabsTrigger value="found-home" className="gap-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white">
+          <TabsTrigger value="found-home" className="gap-2 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">
             <CheckCircle className="h-4 w-4" />
             <div className="text-left">
               <div className="font-medium">Phase 3</div>
@@ -87,16 +87,16 @@ export default function PropertySearchTabs() {
 
         {/* Phase 2: Let's Find a Home */}
         <TabsContent value="find-home" className="space-y-6 mt-8">
-          <Card className="border-emerald-200 bg-emerald-50/30">
+          <Card className="border-sky-200 bg-sky-50/30">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-emerald-700">
+              <CardTitle className="flex items-center gap-2 text-sky-700">
                 <ListChecks className="h-5 w-5" />
                 Phase 2: Track & Compare Homes
-                <Badge className="bg-emerald-600">Home Tracker</Badge>
+                <Badge className="bg-sky-600">Home Tracker</Badge>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-emerald-700 mb-4">
+              <p className="text-sky-700 mb-4">
                 Keep track of homes you're interested in, add notes about each property, and rank them by preference to help make your decision.
               </p>
             </CardContent>
@@ -106,16 +106,16 @@ export default function PropertySearchTabs() {
 
         {/* Phase 3: I've Found a Home */}
         <TabsContent value="found-home" className="space-y-6 mt-8">
-          <Card className="border-purple-200 bg-purple-50/30">
+          <Card className="border-indigo-200 bg-indigo-50/30">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-purple-700">
+              <CardTitle className="flex items-center gap-2 text-indigo-700">
                 <CheckCircle className="h-5 w-5" />
                 Phase 3: I've Found a Home
-                <Badge className="bg-purple-600">Property Analysis</Badge>
+                <Badge className="bg-indigo-600">Property Analysis</Badge>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-purple-700 mb-4">
+              <p className="text-indigo-700 mb-4">
                 Review comprehensive property data, market analysis, and detailed information about your chosen home.
               </p>
             </CardContent>
