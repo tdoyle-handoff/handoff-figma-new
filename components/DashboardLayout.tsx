@@ -55,6 +55,7 @@ export default function DashboardLayout({
 }: DashboardLayoutProps) {
   const propertyContext = usePropertyContext();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [logoSrc, setLogoSrc] = useState<string>('/handoff-logo.png');
 
   // Navigation without AI features
   const navigationItems: NavigationItem[] = [
@@ -183,17 +184,17 @@ export default function DashboardLayout({
           <div className="flex items-center gap-3">
             {sidebarOpen ? (
               <img 
-                src={handoffLogo} 
+                src={logoSrc} 
                 alt="Handoff" 
                 className="h-8 w-auto"
-                onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/handoff-logo.svg'; }}
+                onError={() => setLogoSrc('/handoff-logo.svg')}
               />
             ) : (
               <img
-                src={handoffLogo}
+                src={logoSrc}
                 alt="Handoff"
                 className="h-8 w-8 object-contain"
-                onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/handoff-logo.svg'; }}
+                onError={() => setLogoSrc('/handoff-logo.svg')}
               />
             )}
             {sidebarOpen && (

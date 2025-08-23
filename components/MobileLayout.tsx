@@ -55,6 +55,7 @@ export default function MobileLayout({
 }: MobileLayoutProps) {
   const propertyContext = usePropertyContext();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [logoSrc, setLogoSrc] = useState<string>('/handoff-logo.png');
 
   // Navigation without AI features
   const navigationItems: NavigationItem[] = [
@@ -214,16 +215,16 @@ export default function MobileLayout({
                   <Menu className="w-5 h-5" />
                 </Button>
               </SheetTrigger>
-              <img src={handoffLogo} alt="Handoff" className="ml-2 h-6 w-auto" onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/handoff-logo.svg'; }} />
+              <img src={logoSrc} alt="Handoff" className="ml-2 h-6 w-auto" onError={() => setLogoSrc('/handoff-logo.svg')} />
               <SheetContent side="left" className="w-80 p-0">
                 <div className="flex flex-col h-full">
                   <SheetHeader className="p-6 border-b border-border text-left">
                     <div className="flex items-center gap-3">
                       <img 
-                        src={handoffLogo} 
+                        src={logoSrc} 
                         alt="Handoff" 
                         className="h-10 w-auto"
-                        onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/handoff-logo.svg'; }}
+                        onError={() => setLogoSrc('/handoff-logo.svg')}
                       />
                       <div>
                         <SheetDescription className="flex items-center gap-1 text-xs">

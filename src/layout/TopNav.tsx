@@ -1,10 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 export function TopNav() {
+  const [logoSrc, setLogoSrc] = useState('/handoff-logo.png')
+
   return (
     <div className="h-14 px-4 flex items-center justify-between">
       <div className="flex items-center gap-3">
-        <img src="/handoff-logo.png" alt="Handoff" className="h-8 w-auto" onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/handoff-logo.svg'; }} />
+        <img
+          src={logoSrc}
+          alt="Handoff"
+          className="h-8 w-auto"
+          onError={() => setLogoSrc('/handoff-logo.svg')}
+        />
       </div>
       <div className="flex items-center gap-3">
         <button className="text-sm">Notifications</button>
