@@ -3,11 +3,9 @@ import React, { useState } from 'react';
 import { BookOpen, Video, FileText, ExternalLink, Search, Star, Clock, Play, Download, Bookmark } from 'lucide-react';
 import { useIsMobile } from './ui/use-mobile';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { Progress } from './ui/progress';
 
 interface Resource {
   id: string;
@@ -123,19 +121,6 @@ export default function Resources({ onNavigate }: ResourcesProps) {
     }
   };
 
-  const homeBasics = [
-    { step: 'Get Pre-approved', completed: true, description: 'Secure financing pre-approval' },
-    { step: 'Find an Agent', completed: true, description: 'Choose a qualified real estate agent' },
-    { step: 'Start House Hunting', completed: true, description: 'Begin viewing properties' },
-    { step: 'Make an Offer', completed: false, description: 'Submit competitive offer on chosen property' },
-    { step: 'Get Inspections', completed: false, description: 'Schedule and complete home inspections' },
-    { step: 'Secure Insurance', completed: false, description: 'Obtain homeowners insurance' },
-    { step: 'Final Walkthrough', completed: false, description: 'Complete final property inspection' },
-    { step: 'Closing', completed: false, description: 'Sign documents and get keys' }
-  ];
-
-  const completedSteps = homeBasics.filter(step => step.completed).length;
-  const progressPercentage = (completedSteps / homeBasics.length) * 100;
 
 
   return (
