@@ -13,6 +13,8 @@ import { ComprehensiveAttomDataSummaryTable } from './ComprehensiveAttomDataSumm
 import BuyerIntakeForm from './BuyerIntakeForm'
 
 export default function PropertySearchTabs() {
+  const [tabValue, setTabValue] = React.useState<string>('onboarding');
+
   return (
     <div className="w-full max-w-7xl mx-auto p-4 md:p-6">
       <Card className="mb-4">
@@ -29,7 +31,7 @@ export default function PropertySearchTabs() {
         </CardContent>
       </Card>
 
-      <Tabs defaultValue="onboarding" className="w-full">
+      <Tabs value={tabValue} onValueChange={setTabValue} className="w-full">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="home" className="gap-2">
             <SearchIcon className="h-4 w-4" />
