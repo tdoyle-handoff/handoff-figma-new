@@ -192,12 +192,14 @@ export default function DashboardLayout({
                 src={handoffLogo} 
                 alt="Handoff" 
                 className="h-8 w-auto"
+                onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/handoff-logo.svg'; }}
               />
             ) : (
               <img
                 src={handoffLogo}
                 alt="Handoff"
                 className="h-8 w-8 object-contain"
+                onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/handoff-logo.svg'; }}
               />
             )}
             {sidebarOpen && (
