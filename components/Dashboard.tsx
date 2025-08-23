@@ -436,66 +436,6 @@ export default function Dashboard({ setupData }: DashboardProps) {
 
           {/* Set Your Numbers and Your Monthly Cost */}
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            {/* Set Your Numbers */}
-            <Card className="shadow-sm">
-              <CardHeader>
-                <CardTitle>Set Your Numbers</CardTitle>
-                <CardDescription>Change these to match your situation.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label className="text-sm font-medium">Home price</Label>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Input type="number" value={homePrice} onChange={(e) => setHomePrice(Number(e.target.value || 0))} className="flex-1" />
-                    <span className="text-sm text-muted-foreground">{shortCurrency(homePrice)}</span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <Label className="text-sm font-medium">Down payment</Label>
-                    <div className="flex items-center gap-1 mt-1">
-                      <span className="text-xs text-muted-foreground">Percent</span>
-                      <Switch checked={downModeDollar} onCheckedChange={setDownModeDollar} />
-                      <span className="text-xs text-muted-foreground">Dollar</span>
-                    </div>
-                    {!downModeDollar ? (
-                      <Input type="number" value={downPercent} onChange={(e) => setDownPercent(Number(e.target.value || 0))} className="mt-2" />
-                    ) : (
-                      <Input type="number" value={downDollar} onChange={(e) => setDownDollar(Number(e.target.value || 0))} className="mt-2" />
-                    )}
-                    <div className="text-xs text-muted-foreground mt-1">Calculated: {shortCurrency(downPayment)}</div>
-                  </div>
-                  <div>
-                    <Label className="text-sm font-medium">Interest rate</Label>
-                    <Input type="number" value={rate} onChange={(e) => setRate(Number(e.target.value || 0))} className="mt-2" step="0.01" />
-                  </div>
-                  <div>
-                    <Label className="text-sm font-medium">Loan length (years)</Label>
-                    <Input type="number" value={term} onChange={(e) => setTerm(Number(e.target.value || 0))} className="mt-2" />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label className="text-sm font-medium">Property taxes (yearly)</Label>
-                    <Input type="number" value={taxesAnnual} onChange={(e) => setTaxesAnnual(Number(e.target.value || 0))} className="mt-1" />
-                  </div>
-                  <div>
-                    <Label className="text-sm font-medium">Home insurance (yearly)</Label>
-                    <Input type="number" value={insuranceAnnual} onChange={(e) => setInsuranceAnnual(Number(e.target.value || 0))} className="mt-1" />
-                  </div>
-                  <div>
-                    <Label className="text-sm font-medium">HOA (monthly)</Label>
-                    <Input type="number" value={hoaMonthly} onChange={(e) => setHoaMonthly(Number(e.target.value || 0))} className="mt-1" />
-                  </div>
-                  <div>
-                    <Label className="text-sm font-medium">Upkeep (monthly)</Label>
-                    <Input type="number" value={maintenanceMonthly} onChange={(e) => setMaintenanceMonthly(Number(e.target.value || 0))} className="mt-1" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
 
             {/* Your Monthly Cost */}
             <Card className="shadow-sm">
@@ -621,7 +561,7 @@ export default function Dashboard({ setupData }: DashboardProps) {
                   <div>📜 Taxes</div><div className="text-right">{shortCurrency(taxesMonthly)}</div>
                   <div>🛡️ Insurance</div><div className="text-right">{shortCurrency(insuranceMonthly)}</div>
                   <div>🏢 HOA</div><div className="text-right">{shortCurrency(hoaMonthly)}</div>
-                  <div>🛠️ Upkeep</div><div className="text-right">{shortCurrency(maintenanceMonthly)}</div>
+                  <div>🛠��� Upkeep</div><div className="text-right">{shortCurrency(maintenanceMonthly)}</div>
                 </div>
                 <Separator className="my-3" />
                 <div className="text-sm text-muted-foreground">{rentDeltaCopy}</div>
