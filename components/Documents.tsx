@@ -1,5 +1,5 @@
 import React, { useState, Suspense } from 'react';
-import { FileText, Upload, Download, Share, Eye, Trash2, Plus, Search, Filter, Calendar, User, CheckCircle, Clock, AlertCircle, Folder } from 'lucide-react';
+import { FileText, Upload, Download, Share, Eye, Trash2, Plus, Search, Filter, Calendar, User, CheckCircle, Clock, AlertCircle, Folder, Users, Copy, Mail, Link, Globe, Lock, Settings, UserPlus, UserMinus, Shield } from 'lucide-react';
 import ContractAnalysis from './ContractAnalysis';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
@@ -10,6 +10,11 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Progress } from './ui/progress';
 import { Alert, AlertDescription } from './ui/alert';
+import { Textarea } from './ui/textarea';
+import { Separator } from './ui/separator';
+import { Switch } from './ui/switch';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { useIsMobile } from './ui/use-mobile';
 
 const OfferBuilder = React.lazy(() => import('./OfferBuilder'));
@@ -26,6 +31,26 @@ interface Document {
   description?: string;
   shared: boolean;
   required: boolean;
+  permissions?: DocumentPermissions;
+  sharedWith?: SharedUser[];
+}
+
+interface DocumentPermissions {
+  canView: boolean;
+  canEdit: boolean;
+  canShare: boolean;
+  canDownload: boolean;
+  expiresAt?: string;
+}
+
+interface SharedUser {
+  id: string;
+  name: string;
+  email: string;
+  role: 'viewer' | 'editor' | 'owner';
+  avatar?: string;
+  addedDate: string;
+  lastAccessed?: string;
 }
 
 interface UploadedDocument {
