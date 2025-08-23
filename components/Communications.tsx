@@ -760,7 +760,22 @@ const ComposeModal = ({ isOpen, onClose, recipient }: {
           <div className={`flex ${isMobile ? 'flex-col gap-3' : 'justify-between items-center'}`}>
             <Button
               variant="outline"
-              onClick={() => console.log('Attach file')}
+              onClick={() => {
+                // Create file input for attachment
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.multiple = true;
+                input.accept = '.pdf,.doc,.docx,.jpg,.jpeg,.png';
+                input.onchange = (e) => {
+                  const files = (e.target as HTMLInputElement).files;
+                  if (files && files.length > 0) {
+                    const fileNames = Array.from(files).map(f => f.name).join(', ');
+                    alert(`Selected files for attachment: ${fileNames}`);
+                    // In a real app, files would be uploaded and attached to message
+                  }
+                };
+                input.click();
+              }}
               className={`${isMobile ? 'w-full mobile-button' : ''}`}
             >
               <Paperclip className="w-4 h-4 mr-2" />
@@ -777,7 +792,23 @@ const ComposeModal = ({ isOpen, onClose, recipient }: {
               </Button>
               <Button
                 onClick={() => {
-                  console.log('Send message:', { recipient, subject, content });
+                  // Validate message content
+                  if (!content.trim()) {
+                    alert('Please enter a message before sending.');
+                    return;
+                  }
+
+                  // Simulate sending message
+                  const messageData = {
+                    to: recipient?.email || recipient?.name,
+                    subject: subject || 'No Subject',
+                    content: content.trim(),
+                    timestamp: new Date().toISOString()
+                  };
+
+                  // In a real app, this would call an API to send the message
+                  alert(`Message sent successfully to ${recipient?.name || 'recipient'}!`);
+
                   onClose();
                 }}
                 disabled={!content.trim()}
