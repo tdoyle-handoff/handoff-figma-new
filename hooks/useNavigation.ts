@@ -9,8 +9,7 @@ export type PageType =
   | 'inspections' 
   | 'insurance' 
   | 'vendor-marketplace'
-  | 'documents' 
-  | 'offer-builder'
+  | 'documents'
   | 'resources' 
   | 'team' 
   | 'communications' 
@@ -63,8 +62,8 @@ const getSavedPreviousPage = (): PageType | null => {
 // Helper function to validate if a string is a valid PageType
 const isValidPageType = (page: string): page is PageType => {
   const validPages: PageType[] = [
-    'overview', 'tasks', 'property', 'legal', 'financing', 
-    'inspections', 'insurance', 'vendor-marketplace', 'documents', 'offer-builder', 'resources', 
+    'overview', 'tasks', 'property', 'legal', 'financing',
+    'inspections', 'insurance', 'vendor-marketplace', 'documents', 'resources', 
     'team', 'communications', 'mortgage-calculator', 
     'closing-calculator', 'settings', 'dev-tools'
   ];
@@ -112,7 +111,6 @@ export function useNavigation(): NavigationState & NavigationActions {
     'insurance': 'Insurance - Handoff',
     'vendor-marketplace': 'Vendor Marketplace - Handoff',
 'documents': 'Offer & Document Hub - Handoff',
-    'offer-builder': 'Offer Builder - Handoff',
     'resources': 'Education Hub - Handoff',
     'team': 'My Team - Handoff',
     'communications': 'Communication Suite - Handoff',
