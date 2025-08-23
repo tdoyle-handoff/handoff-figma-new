@@ -294,8 +294,8 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
     // DUE DILIGENCE PHASE - FINANCING
     tasks.push({
       id: 'diligence-financing-shop-terms',
-      title: '🏦 Shop for Best Mortgage Terms',
-      description: '⚠️ CRITICAL: Compare rates from 3-5 lenders to save thousands. Even 0.25% difference = $30,000+ over loan life. Get quotes within 14-day window to minimize credit impact.',
+      title: 'Shop for Best Mortgage Terms',
+      description: 'CRITICAL: Compare rates from 3-5 lenders to save thousands. Even 0.25% difference = $30,000+ over loan life. Get quotes within 14-day window to minimize credit impact.',
       category: 'diligence',
       subcategory: 'financing',
       priority: 'high',
@@ -321,8 +321,8 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
 
     tasks.push({
       id: 'diligence-financing-submit-application',
-      title: '📋 Submit Complete Mortgage Application',
-      description: '🚨 TIME-SENSITIVE: Submit full application with ALL documents within 3 days of rate lock. Missing docs delay closing. Lender needs 15-20 business days to process.',
+      title: 'Submit Complete Mortgage Application',
+      description: 'TIME-SENSITIVE: Submit full application with ALL documents within 3 days of rate lock. Missing docs delay closing. Lender needs 15-20 business days to process.',
       category: 'diligence',
       subcategory: 'financing',
       priority: 'high',
@@ -349,8 +349,8 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
 
     tasks.push({
       id: 'diligence-financing-appraisal',
-      title: '🏠 Property Appraisal & Valuation',
-      description: '📊 REQUIRED BY LENDER: Independent appraiser confirms property value supports loan amount. If appraisal comes low, may need to renegotiate price or bring more cash.',
+      title: 'Property Appraisal & Valuation',
+      description: 'REQUIRED BY LENDER: Independent appraiser confirms property value supports loan amount. If appraisal comes low, may need to renegotiate price or bring more cash.',
       category: 'diligence',
       subcategory: 'financing',
       priority: 'high',
@@ -377,8 +377,8 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
 
     tasks.push({
       id: 'diligence-financing-underwriting',
-      title: '🔍 Loan Underwriting & Final Approval',
-      description: '✅ FINAL STEP: Underwriter reviews complete file and issues final loan approval. May request additional conditions. This determines if you get the loan.',
+      title: 'Loan Underwriting & Final Approval',
+      description: 'FINAL STEP: Underwriter reviews complete file and issues final loan approval. May request additional conditions. This determines if you get the loan.',
       category: 'diligence',
       subcategory: 'financing',
       priority: 'high',
