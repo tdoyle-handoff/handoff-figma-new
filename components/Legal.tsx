@@ -994,23 +994,23 @@ export default function Legal() {
           <TabsTrigger value="settlement">Settlement</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="progress" className="space-y-6">
+        <TabsContent value="progress" className="space-y-6 bg-white">
           <LegalProgressTracker />
         </TabsContent>
 
-        <TabsContent value="attorney" className="space-y-6">
+        <TabsContent value="attorney" className="space-y-6 bg-white">
           <LawyerSearch />
         </TabsContent>
 
-        <TabsContent value="contract" className="space-y-6">
+        <TabsContent value="contract" className="space-y-6 bg-white">
           <ContractAnalysis />
         </TabsContent>
 
-        <TabsContent value="title" className="space-y-6">
+        <TabsContent value="title" className="space-y-6 bg-white">
           <TitleSearch />
         </TabsContent>
 
-        <TabsContent value="settlement" className="space-y-6">
+        <TabsContent value="settlement" className="space-y-6 bg-white">
           <SettlementReview />
         </TabsContent>
       </Tabs>

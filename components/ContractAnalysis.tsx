@@ -766,7 +766,7 @@ export default function ContractAnalysis({ onNavigate }: ContractAnalysisProps) 
 
       {/* Upload Dialog */}
       <Dialog open={showUpload} onOpenChange={setShowUpload}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl bg-white border border-gray-200 shadow-xl">
           <DialogHeader>
             <DialogTitle>Upload Contract</DialogTitle>
             <DialogDescription>
@@ -835,7 +835,7 @@ export default function ContractAnalysis({ onNavigate }: ContractAnalysisProps) 
 
       {/* Document Viewer Dialog */}
       <Dialog open={showDocumentViewer} onOpenChange={setShowDocumentViewer}>
-        <DialogContent className="max-w-4xl h-[80vh]">
+        <DialogContent className="max-w-4xl h-[80vh] bg-white border border-gray-200 shadow-xl">
           <DialogHeader>
             <DialogTitle>Contract Viewer</DialogTitle>
             <DialogDescription>

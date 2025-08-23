@@ -148,7 +148,7 @@ export default function Resources({ onNavigate }: ResourcesProps) {
           )}
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-6">
+        <TabsContent value="overview" className="space-y-6 bg-white">
           {/* Featured Resources */}
           <div>
             <h2 className="text-lg font-semibold mb-4">Featured Resources</h2>
@@ -203,7 +203,7 @@ export default function Resources({ onNavigate }: ResourcesProps) {
 
         {!isMobile && (
           <Fragment>
-            <TabsContent value="glossary" className="space-y-6">
+            <TabsContent value="glossary" className="space-y-6 bg-white">
               <Card>
                 <CardHeader>
                   <CardTitle>Glossary</CardTitle>
@@ -227,7 +227,7 @@ export default function Resources({ onNavigate }: ResourcesProps) {
               </Card>
             </TabsContent>
 
-            <TabsContent value="guides" className="space-y-6">
+            <TabsContent value="guides" className="space-y-6 bg-white">
               <div className="flex gap-4 mb-6">
                 <Input
                   placeholder="Search guides..."
@@ -287,7 +287,7 @@ export default function Resources({ onNavigate }: ResourcesProps) {
               </div>
             </TabsContent>
 
-            <TabsContent value="videos" className="space-y-6">
+            <TabsContent value="videos" className="space-y-6 bg-white">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {resources.filter(r => r.type === 'video').map((resource) => (
                   <Card key={resource.id} className="hover:shadow-md transition-shadow">
