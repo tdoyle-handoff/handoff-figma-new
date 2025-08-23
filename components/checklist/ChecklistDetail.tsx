@@ -77,12 +77,27 @@ export default function ChecklistDetail({ task, onAction, onUpdateTask }: Detail
                 )}
               </div>
             </div>
-            {task.linkedPage && (
-              <Button onClick={onAction} className="shrink-0">
-                <ExternalLink className="w-4 h-4 mr-2" />
-                {task.actionLabel || 'Take Action'}
-              </Button>
-            )}
+            <div className="flex items-center gap-2 shrink-0">
+              {onUpdateTask && (
+                <Button
+                  onClick={() => {
+                    const newStatus = task.status === 'completed' ? 'active' : 'completed';
+                    onUpdateTask(task.id, newStatus);
+                  }}
+                  variant={task.status === 'completed' ? 'outline' : 'default'}
+                  size="sm"
+                  className={task.status === 'completed' ? 'text-orange-600 border-orange-300 hover:bg-orange-50' : 'bg-green-600 hover:bg-green-700'}
+                >
+                  {task.status === 'completed' ? 'Mark Incomplete' : 'Mark Complete'}
+                </Button>
+              )}
+              {task.linkedPage && (
+                <Button onClick={onAction} variant="outline" size="sm">
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  {task.actionLabel || 'Take Action'}
+                </Button>
+              )}
+            </div>
           </div>
 
           {/* Task Meta Information */}
