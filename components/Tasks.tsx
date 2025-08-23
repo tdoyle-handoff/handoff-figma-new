@@ -107,16 +107,10 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask }: {
             
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between">
-                <h4 className={`font-medium truncate ${isCompleted ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
+                <h4 className={`font-medium ${isCompleted ? 'text-gray-500 line-through' : 'text-gray-900'} break-words flex-1 pr-2`}>
                   {task.title}
                 </h4>
-                <div className="flex items-center gap-2 ml-4">
-                  {task.dueDate && !isCompleted && (
-                    <div className="flex items-center gap-1 text-sm text-gray-500">
-                      <Calendar className="w-4 h-4" />
-                      <span>{formatDate(task.dueDate)}</span>
-                    </div>
-                  )}
+                <div className="flex items-center gap-2 flex-shrink-0">
                   {task.completedDate && (
                     <span className="text-sm text-green-600">Completed</span>
                   )}
@@ -337,10 +331,10 @@ export default function Tasks({ onNavigate }: TasksProps) {
 
       <Tabs defaultValue="checklist" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="checklist">Checklist</TabsTrigger>
-          <TabsTrigger value="legal">Legal</TabsTrigger>
-          <TabsTrigger value="inspections">Inspections</TabsTrigger>
-          <TabsTrigger value="insurance">Insurance</TabsTrigger>
+          <TabsTrigger value="checklist" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white font-semibold text-base px-6 py-3">✓ Checklist</TabsTrigger>
+          <TabsTrigger value="legal" className="text-sm">Legal</TabsTrigger>
+          <TabsTrigger value="inspections" className="text-sm">Inspections</TabsTrigger>
+          <TabsTrigger value="insurance" className="text-sm">Insurance</TabsTrigger>
         </TabsList>
 
         <TabsContent value="checklist" className="space-y-6">

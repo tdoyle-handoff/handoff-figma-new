@@ -178,16 +178,12 @@ export default function DashboardLayout({
         <div className="p-6 bg-white border-b border-gray-200">
           <div className="flex items-center gap-3">
             {sidebarOpen ? (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center">
                 <img
                   src="https://cdn.builder.io/api/v1/image/assets%2Fd17493787dd14ef798478b15abccc651%2Fb04354276d72434e8f80fe564c56b532?format=webp&width=800"
                   alt="Handoff Logo"
                   className="w-8 h-8"
                 />
-                <div>
-                  <h1 className="text-slate-900 font-semibold text-lg">Handoff</h1>
-                  <p className="text-slate-600 text-xs">Real Estate Platform</p>
-                </div>
               </div>
             ) : (
               <img
