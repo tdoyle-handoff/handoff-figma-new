@@ -37,7 +37,7 @@ export default function PropertySearchTabs() {
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-              <span className="text-emerald-600 font-medium">Phase 2: Find a Home</span>
+              <span className="text-emerald-600 font-medium">Phase 2: Track & Compare Homes</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
