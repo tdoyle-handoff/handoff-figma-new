@@ -135,14 +135,16 @@ export default function Resources({ onNavigate }: ResourcesProps) {
       </div>
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className={`grid w-full ${isMobile ? 'grid-cols-2' : 'grid-cols-3'}`}>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          {!isMobile && (
+        <TabsList className={`grid w-full ${isMobile ? 'grid-cols-2 gap-1' : 'grid-cols-4 gap-2'}`}>
+          <TabsTrigger value="overview" className="px-4 py-2">Overview</TabsTrigger>
+          {!isMobile ? (
             <Fragment>
-              <TabsTrigger value="guides">Guides</TabsTrigger>
-              <TabsTrigger value="videos">Videos</TabsTrigger>
-              <TabsTrigger value="glossary">Glossary</TabsTrigger>
+              <TabsTrigger value="guides" className="px-4 py-2">Guides</TabsTrigger>
+              <TabsTrigger value="videos" className="px-4 py-2">Videos</TabsTrigger>
+              <TabsTrigger value="glossary" className="px-4 py-2">Glossary</TabsTrigger>
             </Fragment>
+          ) : (
+            <TabsTrigger value="guides" className="px-4 py-2">Resources</TabsTrigger>
           )}
         </TabsList>
 

@@ -52,7 +52,7 @@ export function AuthLoader() {
             <img
               src={handoffLogo}
               alt="Handoff"
-              className="h-24 w-auto animate-pulse"
+              className="h-40 w-auto animate-pulse"
             />
           </div>
 
@@ -112,7 +112,7 @@ export function QuickLoader() {
         <img
           src={handoffLogo}
           alt="Handoff"
-          className="h-32 w-auto mx-auto animate-pulse"
+          className="h-48 w-auto mx-auto animate-pulse"
         />
         <div className="flex justify-center">
           <Loader2 className="h-6 w-6 text-primary animate-spin" />
@@ -198,7 +198,7 @@ export function ProgressLoader({ progress, message }: { progress: number; messag
             <img
               src={handoffLogo}
               alt="Handoff"
-              className="h-20 w-auto"
+              className="h-32 w-auto"
             />
           </div>
           
