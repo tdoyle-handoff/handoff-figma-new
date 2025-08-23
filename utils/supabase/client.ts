@@ -86,7 +86,20 @@ export interface Database {
   };
 }
 
-// Use env-only configuration (Option C)
+// Check for placeholder credentials
+const hasPlaceholderCredentials =
+  !SUPABASE_URL ||
+  !SUPABASE_ANON_KEY ||
+  SUPABASE_URL.includes('placeholder') ||
+  SUPABASE_ANON_KEY.includes('placeholder');
+
+if (hasPlaceholderCredentials) {
+  console.warn('⚠️ Placeholder Supabase credentials detected. Running in offline mode.');
+  console.warn('To connect to a real database:');
+  console.warn('1. Connect to Neon or set up Supabase');
+  console.warn('2. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY');
+}
+
 if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
   console.error('Missing Supabase configuration:');
   console.error('- URL:', SUPABASE_URL ? '✓' : '❌');
@@ -94,18 +107,21 @@ if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
   throw new Error('Supabase configuration incomplete. Ensure base URL and publicAnonKey are available.');
 }
 
-export const supabase = createClient<Database>(SUPABASE_URL as string, SUPABASE_ANON_KEY as string, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true,
-    flowType: 'pkce',
-  },
-  global: {
-    headers: { 'x-application-name': 'handoff-real-estate' },
-  },
-  db: { schema: 'public' },
-});
+// Create client with placeholder handling
+export const supabase = hasPlaceholderCredentials
+  ? null // Use null client for placeholder credentials
+  : createClient<Database>(SUPABASE_URL as string, SUPABASE_ANON_KEY as string, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        flowType: 'pkce',
+      },
+      global: {
+        headers: { 'x-application-name': 'handoff-real-estate' },
+      },
+      db: { schema: 'public' },
+    });
 
 // FIXED: Use SafeProfileCache instead of Map to prevent constructor errors
 const profileCache = new SafeProfileCache(10);
@@ -215,14 +231,21 @@ export class AuthStateManager {
   private async doInitialize(): Promise<void> {
     try {
       console.log('🔐 Initializing Supabase auth listener...');
-      
+
+      // Skip initialization if using placeholder credentials
+      if (hasPlaceholderCredentials || !supabase) {
+        console.log('⚠️ Skipping Supabase initialization due to placeholder credentials');
+        this.initialized = true;
+        return;
+      }
+
       // Get current session first (synchronous check)
       const { data: { session }, error } = await supabase.auth.getSession();
       if (error) {
         console.warn('Warning getting initial session:', error);
       }
       this.currentSession = session as AuthSession | null;
-      
+
       // Set up auth state listener with error handling
       const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
         try {
@@ -270,13 +293,26 @@ export class AuthStateManager {
   async addAuthListener(listener: (session: AuthSession | null) => void) {
     try {
       this.authListeners.push(listener);
-      
+
+      // Check for placeholder credentials
+      if (hasPlaceholderCredentials) {
+        console.log('🎭 Using placeholder credentials - skipping Supabase auth, enabling guest mode');
+        // Immediately call listener with null session to trigger guest mode
+        setTimeout(() => listener(null), 100);
+        return () => {
+          const index = this.authListeners.indexOf(listener);
+          if (index > -1) {
+            this.authListeners.splice(index, 1);
+          }
+        };
+      }
+
       // Initialize on first listener for better performance
       await this.initializeAuthListener();
-      
+
       // Immediately call with current session
       listener(this.currentSession);
-      
+
       return () => {
         const index = this.authListeners.indexOf(listener);
         if (index > -1) {
@@ -386,6 +422,9 @@ export const authHelpers = {
   // Get current user session (cached)
   async getCurrentSession(): Promise<AuthSession | null> {
     try {
+      if (hasPlaceholderCredentials || !supabase) {
+        return null;
+      }
       const { data: { session }, error } = await supabase.auth.getSession();
       if (error) {
         console.error('Error getting current session:', error);
@@ -401,6 +440,9 @@ export const authHelpers = {
   // Get current user (cached)
   async getCurrentUser() {
     try {
+      if (hasPlaceholderCredentials || !supabase) {
+        return null;
+      }
       const { data: { user }, error } = await supabase.auth.getUser();
       if (error && error.message !== 'Auth session missing!') {
         console.error('Error getting current user:', error);
