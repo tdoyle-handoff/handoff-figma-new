@@ -1192,7 +1192,7 @@ const [formData, setFormData] = useState<Partial<OnboardingData>>({
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-primary relative overflow-hidden">
         <div className="relative z-10 flex flex-col justify-center items-center p-12 text-white min-h-full">
           <div className="flex flex-col items-center justify-center flex-1 space-y-8">
-            <HandoffLogo className="mb-8" size="h-32" />
+            <HandoffLogo className="mb-8" size="h-56" />
             <div className="text-center space-y-4">
               <h1 className="text-4xl font-bold">Welcome to Handoff</h1>
               <p className="text-xl text-white/90">

@@ -511,7 +511,7 @@ export function SetupWizard({
         <div className="hidden lg:flex lg:w-1/2 bg-white relative overflow-hidden">
           <div className="relative z-10 flex flex-col justify-center items-center p-12 text-gray-900 min-h-full">
             <div className="flex flex-col items-center justify-center flex-1">
-              <HandoffLogo className="mb-8" size="h-32" />
+              <HandoffLogo className="mb-8" size="h-56" />
             </div>
             <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-sm text-gray-500">
               © 2025 Handoff. All rights reserved.
@@ -796,7 +796,7 @@ export function SetupWizard({
       <div className="hidden lg:flex lg:w-1/2 bg-white relative overflow-hidden">
         <div className="relative z-10 flex flex-col justify-center items-center p-12 text-gray-900 min-h-full">
           <div className="flex flex-col items-center justify-center flex-1">
-            <HandoffLogo className="mb-8" size="h-32" />
+            <HandoffLogo className="mb-8" size="h-56" />
           </div>
           <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-sm text-gray-500">
             © 2025 Handoff. All rights reserved.
