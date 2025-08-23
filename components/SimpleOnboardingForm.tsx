@@ -381,57 +381,209 @@ export function SimpleOnboardingForm({ onComplete, onSkip }: SimpleOnboardingFor
   );
 
   const renderStep2 = () => (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-semibold text-slate-700 mb-2">Property Preferences</h2>
-        <p className="text-slate-600">Tell us about your ideal home</p>
+        <h2 className="text-2xl font-semibold text-slate-700 mb-2">Goals & Timeline + Budget & Financing</h2>
+        <p className="text-slate-600">Tell us about your timeline and financial readiness</p>
       </div>
-      
-      <div className="space-y-4">
-        <div>
-          <Label className="text-sm font-medium text-slate-700 mb-2 block">
-            PHONE NUMBER
-          </Label>
-          <Input
-            type="tel"
-            placeholder="Enter your phone number"
-            value={formData.phone}
-            onChange={(e) => updateFormData({ phone: e.target.value })}
-            className="h-12 border-gray-300"
-          />
+
+      {/* Goals & Timeline */}
+      <div className="space-y-6">
+        <h3 className="text-lg font-semibold text-slate-700">Goals & Timeline</h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label className="text-sm font-medium text-slate-700 mb-2 block">
+              Why buy now? *
+            </Label>
+            <Input
+              type="text"
+              placeholder="e.g., larger space, new school zone"
+              value={formData.whyBuyNow}
+              onChange={(e) => updateFormData({ whyBuyNow: e.target.value })}
+              className="h-10 border-gray-300"
+            />
+          </div>
+          <div>
+            <Label className="text-sm font-medium text-slate-700 mb-2 block">
+              Target move-in
+            </Label>
+            <Input
+              type="date"
+              value={formData.targetMoveIn}
+              onChange={(e) => updateFormData({ targetMoveIn: e.target.value })}
+              className="h-10 border-gray-300"
+            />
+          </div>
         </div>
-        
-        <div>
-          <Label className="text-sm font-medium text-slate-700 mb-2 block">
-            OCCUPATION
-          </Label>
-          <Input
-            type="text"
-            placeholder="Enter your occupation"
-            value={formData.occupation}
-            onChange={(e) => updateFormData({ occupation: e.target.value })}
-            className="h-12 border-gray-300"
-          />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label className="text-sm font-medium text-slate-700 mb-2 block">
+              Hard deadlines
+            </Label>
+            <Input
+              type="text"
+              placeholder="Lease end, school start, baby, etc."
+              value={formData.hardDeadlines}
+              onChange={(e) => updateFormData({ hardDeadlines: e.target.value })}
+              className="h-10 border-gray-300"
+            />
+          </div>
+          <div className="flex items-center space-x-2 mt-6">
+            <Checkbox
+              checked={formData.madePreviousOffers}
+              onCheckedChange={(checked) => updateFormData({ madePreviousOffers: !!checked })}
+            />
+            <Label className="text-sm text-slate-700">Made offers before</Label>
+          </div>
         </div>
-        
+      </div>
+
+      {/* Budget & Financing */}
+      <div className="space-y-6">
+        <h3 className="text-lg font-semibold text-slate-700">Budget & Financing</h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <Label className="text-sm font-medium text-slate-700 mb-2 block">
+              Financing type
+            </Label>
+            <Select
+              value={formData.financingType}
+              onValueChange={(value) => updateFormData({ financingType: value })}
+            >
+              <SelectTrigger className="h-10 border-gray-300">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="conventional">Conventional</SelectItem>
+                <SelectItem value="fha">FHA</SelectItem>
+                <SelectItem value="va">VA</SelectItem>
+                <SelectItem value="cash">Cash</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label className="text-sm font-medium text-slate-700 mb-2 block">
+              Max price ($)
+            </Label>
+            <div className="space-y-2">
+              <Slider
+                value={[formData.maxPrice]}
+                onValueChange={(value) => updateFormData({ maxPrice: value[0] })}
+                max={2000000}
+                min={100000}
+                step={10000}
+                className="w-full"
+              />
+              <div className="text-right text-sm text-slate-600">${formData.maxPrice.toLocaleString()}</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            checked={formData.preApproved}
+            onCheckedChange={(checked) => updateFormData({ preApproved: !!checked })}
+          />
+          <Label className="text-sm text-slate-700">Pre-approved</Label>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label className="text-sm font-medium text-slate-700 mb-2 block">
+              Lender name
+            </Label>
+            <Input
+              type="text"
+              placeholder="Acme Mortgage"
+              value={formData.lenderName}
+              onChange={(e) => updateFormData({ lenderName: e.target.value })}
+              className="h-10 border-gray-300"
+            />
+          </div>
+          <div>
+            <Label className="text-sm font-medium text-slate-700 mb-2 block">
+              Pre-approval amount
+            </Label>
+            <Input
+              type="text"
+              placeholder="650000"
+              value={formData.preApprovalAmount}
+              onChange={(e) => updateFormData({ preApprovalAmount: e.target.value })}
+              className="h-10 border-gray-300"
+            />
+          </div>
+        </div>
+
         <div>
           <Label className="text-sm font-medium text-slate-700 mb-2 block">
-            ANNUAL INCOME
+            Comfort monthly PITI ($)
           </Label>
-          <Select 
-            value={formData.income} 
-            onValueChange={(value) => updateFormData({ income: value })}
-          >
-            <SelectTrigger className="h-12 border-gray-300">
-              <SelectValue placeholder="Select income range" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="under-50k">Under $50,000</SelectItem>
-              <SelectItem value="50k-100k">$50,000 - $100,000</SelectItem>
-              <SelectItem value="100k-150k">$100,000 - $150,000</SelectItem>
-              <SelectItem value="150k-plus">$150,000+</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="space-y-2">
+            <Slider
+              value={[formData.comfortMonthlyPiti]}
+              onValueChange={(value) => updateFormData({ comfortMonthlyPiti: value[0] })}
+              max={10000}
+              min={1000}
+              step={100}
+              className="w-full"
+            />
+            <div className="text-right text-sm text-slate-600">${formData.comfortMonthlyPiti.toLocaleString()}</div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <Label className="text-sm font-medium text-slate-700 mb-2 block">
+              Down payment input
+            </Label>
+            <Select
+              value={formData.downPaymentType}
+              onValueChange={(value) => updateFormData({ downPaymentType: value })}
+            >
+              <SelectTrigger className="h-10 border-gray-300">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="percent">Percent</SelectItem>
+                <SelectItem value="dollars">Dollars</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label className="text-sm font-medium text-slate-700 mb-2 block">
+              Down payment %
+            </Label>
+            <div className="space-y-2">
+              <Slider
+                value={[formData.downPaymentPercent]}
+                onValueChange={(value) => updateFormData({ downPaymentPercent: value[0] })}
+                max={50}
+                min={3}
+                step={1}
+                className="w-full"
+              />
+              <div className="text-sm text-slate-600">≤ ${(formData.maxPrice * formData.downPaymentPercent / 100).toLocaleString()} - {formData.downPaymentPercent}%</div>
+            </div>
+          </div>
+          <div>
+            <Label className="text-sm font-medium text-slate-700 mb-2 block">
+              Down payment ($)
+            </Label>
+            <div className="space-y-2">
+              <Slider
+                value={[formData.downPaymentDollars]}
+                onValueChange={(value) => updateFormData({ downPaymentDollars: value[0] })}
+                max={500000}
+                min={10000}
+                step={5000}
+                className="w-full"
+              />
+              <div className="text-right text-sm text-slate-600">${formData.downPaymentDollars.toLocaleString()}</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
