@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 import React, { useState } from 'react';
-import { BookOpen, Calculator, Video, FileText, CheckSquare, ExternalLink, Search, Star, Clock, Play, Download, Bookmark } from 'lucide-react';
+import { BookOpen, Video, FileText, ExternalLink, Search, Star, Clock, Play, Download, Bookmark } from 'lucide-react';
 import { useIsMobile } from './ui/use-mobile';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
@@ -13,7 +13,7 @@ interface Resource {
   id: string;
   title: string;
   description: string;
-  type: 'article' | 'video' | 'calculator' | 'checklist' | 'guide';
+  type: 'article' | 'video' | 'guide';
   category: string;
   duration?: string;
   rating: number;
@@ -44,17 +44,6 @@ export default function Resources({ onNavigate }: ResourcesProps) {
       featured: true
     },
     {
-      id: '2',
-      title: 'Mortgage Calculator',
-      description: 'Calculate your monthly payments, total interest, and amortization schedule.',
-      type: 'calculator',
-      category: 'financing',
-      rating: 4.9,
-      views: 28350,
-      featured: true,
-      url: '/calculators/mortgage'
-    },
-    {
       id: '3',
       title: 'Understanding Home Inspections',
       description: 'Learn what to expect during a home inspection and how to interpret the results.',
@@ -66,16 +55,6 @@ export default function Resources({ onNavigate }: ResourcesProps) {
       featured: false
     },
     {
-      id: '4',
-      title: 'Home Buying Checklist',
-      description: 'Step-by-step checklist to ensure you don\'t miss any important steps in the buying process.',
-      type: 'checklist',
-      category: 'getting-started',
-      rating: 4.6,
-      views: 18750,
-      featured: true
-    },
-    {
       id: '5',
       title: 'How to Get the Best Mortgage Rate',
       description: 'Tips and strategies for securing the lowest possible interest rate on your home loan.',
@@ -85,17 +64,6 @@ export default function Resources({ onNavigate }: ResourcesProps) {
       rating: 4.5,
       views: 12680,
       featured: false
-    },
-    {
-      id: '6',
-      title: 'Closing Costs Calculator',
-      description: 'Estimate your closing costs based on your loan amount and location.',
-      type: 'calculator',
-      category: 'financing',
-      rating: 4.4,
-      views: 7890,
-      featured: false,
-      url: '/calculators/closing-costs'
     },
     {
       id: '7',
@@ -141,8 +109,6 @@ export default function Resources({ onNavigate }: ResourcesProps) {
     switch (type) {
       case 'article': return <FileText className="w-5 h-5" />;
       case 'video': return <Video className="w-5 h-5" />;
-      case 'calculator': return <Calculator className="w-5 h-5" />;
-      case 'checklist': return <CheckSquare className="w-5 h-5" />;
       case 'guide': return <BookOpen className="w-5 h-5" />;
       default: return <FileText className="w-5 h-5" />;
     }
@@ -152,8 +118,6 @@ export default function Resources({ onNavigate }: ResourcesProps) {
     switch (type) {
       case 'article': return 'bg-blue-100 text-blue-600';
       case 'video': return 'bg-red-100 text-red-600';
-      case 'calculator': return 'bg-green-100 text-green-600';
-      case 'checklist': return 'bg-purple-100 text-purple-600';
       case 'guide': return 'bg-orange-100 text-orange-600';
       default: return 'bg-gray-100 text-gray-600';
     }
@@ -189,22 +153,19 @@ export default function Resources({ onNavigate }: ResourcesProps) {
       <div className="flex items-center justify-between">
         <div>
           <p className="text-black">
-            Stage-based guides, videos, checklists, calculators, and a glossary to support every step
+            Educational videos, guides, and a glossary to support every step
           </p>
         </div>
       </div>
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className={`grid w-full ${isMobile ? 'grid-cols-2' : 'grid-cols-7'}`}>
+        <TabsList className={`grid w-full ${isMobile ? 'grid-cols-2' : 'grid-cols-3'}`}>
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="calculators">Calculators</TabsTrigger>
           {!isMobile && (
             <Fragment>
               <TabsTrigger value="guides">Guides</TabsTrigger>
               <TabsTrigger value="videos">Videos</TabsTrigger>
-              <TabsTrigger value="checklists">Checklists</TabsTrigger>
               <TabsTrigger value="glossary">Glossary</TabsTrigger>
-              <TabsTrigger value="stages">Stage Guides</TabsTrigger>
             </Fragment>
           )}
         </TabsList>
