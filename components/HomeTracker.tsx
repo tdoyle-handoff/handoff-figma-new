@@ -156,13 +156,30 @@ export default function HomeTracker() {
             Keep track of homes you're interested in, add notes, and rank them by preference
           </p>
         </div>
-        <Button 
-          onClick={() => setIsAddingHome(true)}
-          className="bg-sky-600 hover:bg-sky-700"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Add Home
-        </Button>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <Label className="text-sm text-slate-600">Filter by:</Label>
+            <Select value={labelFilter} onValueChange={(value: InterestLabel | 'all') => setLabelFilter(value)}>
+              <SelectTrigger className="w-40">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Homes</SelectItem>
+                <SelectItem value="dream-home">🏡 Dream Home</SelectItem>
+                <SelectItem value="very-interested">⭐ Very Interested</SelectItem>
+                <SelectItem value="maybe">🤔 Maybe</SelectItem>
+                <SelectItem value="not-interested">❌ Not Interested</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <Button
+            onClick={() => setIsAddingHome(true)}
+            className="bg-sky-600 hover:bg-sky-700"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add Home
+          </Button>
+        </div>
       </div>
 
       {/* Stats */}
