@@ -236,11 +236,14 @@ export function extractFromBasicProfile(response: any): Partial<ComprehensivePro
   const buildingSize = building.size || {};
   const buildingRooms = building.rooms || {};
   const lot = property.lot || {};
+  const area = property.area || {};
   const assessment = property.assessment || {};
   const market = property.market || {};
+  const sale = property.sale || {};
+  const saleAmountData = sale.saleAmountData || {};
   
   return {
-    propertyId: identifier.obPropId || identifier.attomId,
+    propertyId: identifier.obPropId || identifier.attomId || identifier.Id,
     apn: identifier.apn,
     fips: identifier.fips,
     
@@ -248,34 +251,38 @@ export function extractFromBasicProfile(response: any): Partial<ComprehensivePro
       line1: address.line1,
       line2: address.line2,
       locality: address.locality,
-      adminArea1: address.adminArea1,
-      adminArea2: address.adminArea2,
-      postalCode: address.postalCode,
-      countryCode: address.countryCode,
+      adminArea1: address.adminArea1 ?? address.countrySubd,
+      adminArea2: address.adminArea2 ?? area.countrySecSubd,
+      postalCode: address.postalCode ?? address.postal1,
+      countryCode: address.country ?? address.countryCode,
     },
     
     location: {
       latitude: typeof location.latitude === 'string' ? parseFloat(location.latitude) : location.latitude,
       longitude: typeof location.longitude === 'string' ? parseFloat(location.longitude) : location.longitude,
-      geoId: location.geoId,
+      geoId: (location as any).geoId ?? (location as any).geoid,
+      censusTract: area.censusTractIdent,
     },
     
     lot: {
-      lotSizeAcres: lot.lotSizeAcres,
-      lotSizeSqFt: lot.lotSizeSqFt,
+      lotSizeAcres: lot.lotSizeAcres ?? lot.lotSize1,
+      lotSizeSqFt: lot.lotSizeSqFt ?? lot.lotSize2,
     },
     
     building: {
-      propertyType: buildingSummary.propertyType,
-      propertySubType: buildingSummary.propSubType,
-      propertyClass: buildingSummary.propClass,
-      standardUse: buildingSummary.propLandUse,
-      yearBuilt: buildingSummary.yearBuilt,
+      propertyType: summary.propertyType ?? buildingSummary.propertyType,
+      propertySubType: summary.propSubType ?? buildingSummary.propSubType,
+      propertyClass: summary.propClass ?? buildingSummary.propClass,
+      standardUse: summary.propLandUse ?? buildingSummary.propLandUse,
+      yearBuilt: summary.yearBuilt ?? buildingSummary.yearBuilt,
       stories: buildingSummary.levels,
       livingAreaSqFt: buildingSize.livingAreaSqFt ?? buildingSize.livingSize,
       bedrooms: buildingRooms.bedsCount ?? buildingRooms.beds,
+      fullBaths: buildingRooms.bathsFull,
       bathrooms: buildingRooms.bathsTotal,
       roomsTotal: buildingRooms.roomsTotal,
+      wallType: (property.utilities && (property.utilities as any).wallType) as any,
+      condition: (building.construction && (building.construction as any).condition) ?? buildingSummary.condition,
     },
     
     assessment: {
@@ -287,9 +294,9 @@ export function extractFromBasicProfile(response: any): Partial<ComprehensivePro
     },
     
     market: {
-      lastSaleDate: market.saleHistory?.[0]?.saleTransDate ?? property.sale?.saleTransDate ?? property.sale?.amount?.saleRecDate,
-      lastSalePrice: market.saleHistory?.[0]?.saleAmt ?? property.sale?.amount?.saleAmt,
-      lastSaleTransactionType: market.saleHistory?.[0]?.saleTransType ?? property.sale?.saleTransType,
+      lastSaleDate: market.saleHistory?.[0]?.saleTransDate ?? sale.saleTransDate ?? saleAmountData.saleRecDate,
+      lastSalePrice: market.saleHistory?.[0]?.saleAmt ?? saleAmountData.saleAmt,
+      lastSaleTransactionType: market.saleHistory?.[0]?.saleTransType ?? saleAmountData.saleTransType,
     },
     
     dataSources: {
@@ -346,8 +353,11 @@ export function extractFromExpandedProfile(response: any): Partial<Comprehensive
     owner: {
       names: owner.owner1?.owner1FullName
         ? [owner.owner1.owner1FullName]
-        : (property.assessment?.owner?.mailingAddressOneLine ? [property.assessment.owner.mailingAddressOneLine] : []),
+        : (assessment.owner?.owner1?.fullName ? [assessment.owner.owner1.fullName] : (assessment.owner?.mailingAddressOneLine ? [assessment.owner.mailingAddressOneLine] : [])),
       ownershipType: owner.ownershipType,
+      mailingAddress: {
+        line1: assessment.owner?.mailingAddressOneLine,
+      }
     },
     
     utilities: {
@@ -358,8 +368,8 @@ export function extractFromExpandedProfile(response: any): Partial<Comprehensive
     },
     
     zoning: {
-      zoning: area.zoning,
-      landUse: area.landUse,
+      zoning: area.zoning ?? lot.zoningType,
+      landUse: area.landUse ?? summary.propLandUse,
     },
     
     dataSources: {
