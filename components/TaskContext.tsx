@@ -575,8 +575,8 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
     // DUE DILIGENCE PHASE - LEGAL & TITLE
     tasks.push({
       id: 'diligence-legal-title-search',
-      title: '🔍 Comprehensive Title Search',
-      description: '⚖️ LEGAL PROTECTION: Attorney searches public records for liens, judgments, ownership disputes. Ensures you get clear, marketable title. Title insurance protects against unknown issues.',
+      title: 'Comprehensive Title Search',
+      description: 'LEGAL PROTECTION: Attorney searches public records for liens, judgments, ownership disputes. Ensures you get clear, marketable title. Title insurance protects against unknown issues.',
       category: 'diligence',
       subcategory: 'legal',
       priority: 'high',
@@ -603,8 +603,8 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
 
     tasks.push({
       id: 'diligence-legal-review-title-issues',
-      title: '📋 Review Title Issues & Exceptions',
-      description: '🚨 DETAILED REVIEW: Examine liens, easements, encroachments, restrictions. Some issues can be resolved, others may be deal-breakers. Attorney advises on significance.',
+      title: 'Review Title Issues & Exceptions',
+      description: 'DETAILED REVIEW: Examine liens, easements, encroachments, restrictions. Some issues can be resolved, others may be deal-breakers. Attorney advises on significance.',
       category: 'diligence',
       subcategory: 'legal',
       priority: 'high',
@@ -631,8 +631,8 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
 
     tasks.push({
       id: 'diligence-legal-closing-disclosure',
-      title: '💰 Review Closing Disclosure (CD)',
-      description: '📊 FINAL NUMBERS: Lender provides exact closing costs 3+ days before closing. Compare to Loan Estimate. No surprises allowed. Review every line item carefully.',
+      title: 'Review Closing Disclosure (CD)',
+      description: 'FINAL NUMBERS: Lender provides exact closing costs 3+ days before closing. Compare to Loan Estimate. No surprises allowed. Review every line item carefully.',
       category: 'diligence',
       subcategory: 'legal',
       priority: 'high',
@@ -659,8 +659,8 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
 
     tasks.push({
       id: 'diligence-legal-closing-documents',
-      title: '📑 Prepare Closing Documents',
-      description: '📋 LEGAL PAPERWORK: Attorney prepares deed, settlement statement, affidavits, and all closing documents. Review key docs in advance to avoid closing delays.',
+      title: 'Prepare Closing Documents',
+      description: 'LEGAL PAPERWORK: Attorney prepares deed, settlement statement, affidavits, and all closing documents. Review key docs in advance to avoid closing delays.',
       category: 'diligence',
       subcategory: 'legal',
       priority: 'high',
@@ -687,8 +687,8 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
 
     tasks.push({
       id: 'diligence-legal-wire-instructions',
-      title: '💸 Secure Wire Transfer Instructions',
-      description: '🔒 FRAUD ALERT: Get wire instructions directly from attorney/title company. Verify by phone. Wire fraud is common - criminals change banking info in emails.',
+      title: 'Secure Wire Transfer Instructions',
+      description: 'FRAUD ALERT: Get wire instructions directly from attorney/title company. Verify by phone. Wire fraud is common - criminals change banking info in emails.',
       category: 'diligence',
       subcategory: 'legal',
       priority: 'high',
