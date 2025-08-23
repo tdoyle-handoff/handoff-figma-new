@@ -480,6 +480,25 @@ export const authHelpers = {
   // Update user profile by updating user metadata - NO DATABASE REQUIRED
   async updateUserProfile(updates: Partial<UserProfile>): Promise<UserProfile | null> {
     try {
+      if (hasPlaceholderCredentials || !supabase) {
+        // Handle guest mode profile updates
+        const storedProfile = localStorage.getItem('handoff-user-profile');
+        if (!storedProfile) {
+          throw new Error('No user profile found in guest mode');
+        }
+
+        const currentProfile = JSON.parse(storedProfile);
+        const updatedProfile = {
+          ...currentProfile,
+          ...updates,
+          updated_at: new Date().toISOString()
+        };
+
+        localStorage.setItem('handoff-user-profile', JSON.stringify(updatedProfile));
+        console.log('✅ User profile updated in guest mode');
+        return updatedProfile;
+      }
+
       const user = await this.getCurrentUser();
       if (!user) {
         throw new Error('No authenticated user found');
@@ -487,7 +506,7 @@ export const authHelpers = {
 
       // Prepare user metadata updates
       const metadataUpdates: Record<string, any> = {};
-      
+
       // Map profile fields to user metadata
       const metadataFields = [
         'full_name', 'phone', 'avatar_url', 'buyer_name', 'property_address',
@@ -524,7 +543,7 @@ export const authHelpers = {
 
       // Return updated profile created from auth data
       const updatedProfile = createUserProfileFromAuth(updatedUser);
-      
+
       // Update localStorage cache
       localStorage.setItem('handoff-user-profile', JSON.stringify(updatedProfile));
 
@@ -539,7 +558,11 @@ export const authHelpers = {
   // Sign in with email and password
   async signInWithPassword(email: string, password: string) {
     console.log('🔐 Attempting Supabase sign in for:', email);
-    
+
+    if (hasPlaceholderCredentials || !supabase) {
+      throw new Error('Supabase not configured. Please set up your database connection.');
+    }
+
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email: email.trim().toLowerCase(),
@@ -562,7 +585,11 @@ export const authHelpers = {
   // Sign up with email and password
   async signUpWithPassword(email: string, password: string, fullName: string) {
     console.log('🔐 Attempting Supabase sign up for:', email);
-    
+
+    if (hasPlaceholderCredentials || !supabase) {
+      throw new Error('Supabase not configured. Please set up your database connection.');
+    }
+
     try {
       const { data, error } = await supabase.auth.signUp({
         email: email.trim().toLowerCase(),
@@ -600,11 +627,16 @@ export const authHelpers = {
   // Sign out
   async signOut() {
     console.log('🔐 Attempting Supabase sign out');
-    
+
     try {
       // Clear profile cache before sign out
       profileCache.clear();
-      
+
+      if (hasPlaceholderCredentials || !supabase) {
+        console.log('✅ Guest mode sign out (no Supabase call needed)');
+        return;
+      }
+
       const { error } = await supabase.auth.signOut();
       if (error) {
         console.error('Supabase sign out error:', error);
@@ -687,6 +719,9 @@ export const authHelpers = {
   },
 };
 
-// Export the configured client and types
+// Export placeholder credential status
+export { hasPlaceholderCredentials };
+
+// Export the configured client and types (may be null for placeholder credentials)
 export default supabase;
 export type { Database, AuthSession };
