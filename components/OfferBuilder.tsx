@@ -2,12 +2,12 @@
 WIREFRAME: Buyer Offer Builder (Web)
 
 [Header]
-┌──────────────────────────────────────────────────────────────┐
+┌─────────────────────────────────────────────────────────���────┐
 │ Offer Builder  | Step 1 of 5  | Save Draft | Help            │
 └──────────────────────────────────────────────────────────────┘
 
 [Stepper]
-● Property  →  ��� Buyer & Financing  →  ● Offer Terms  →  ● Contingencies  →  ● Review & Submit
+● Property  →  ● Buyer & Financing  →  ● Offer Terms  →  ● Contingencies  →  ● Review & Submit
 
 [Right Sidebar]
 - Affordability (P&I, Taxes, Insurance, HOA)
@@ -59,7 +59,7 @@ import { Textarea } from "./ui/textarea";
 import { Slider } from "./ui/slider";
 import { Badge } from "./ui/badge";
 import { Separator } from "./ui/separator";
-import { AlertCircle, ArrowLeft, ArrowRight, DollarSign, FileText, Mail, Percent } from "lucide-react";
+import { AlertCircle, ArrowLeft, ArrowRight, DollarSign, FileText, Mail, Percent, Shield } from "lucide-react";
 import { supabase } from "../utils/supabase/client";
 
 // Utility helpers
