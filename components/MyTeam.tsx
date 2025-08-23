@@ -220,7 +220,7 @@ export default function MyTeam({ setupData }: MyTeamProps) {
                 Add Team Member
               </Button>
             </DialogTrigger>
-            <DialogContent aria-describedby="add-member-dialog-description">
+            <DialogContent aria-describedby="add-member-dialog-description" className="bg-white shadow-xl border border-gray-200">
               <DialogHeader>
                 <DialogTitle>Add Team Member</DialogTitle>
                 <DialogDescription id="add-member-dialog-description">

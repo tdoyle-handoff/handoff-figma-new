@@ -175,22 +175,26 @@ export default function DashboardLayout({
         sidebarOpen ? "w-80" : "w-16"
       )}>
         {/* Header */}
-        <div className="p-6 border-b border-blue-700/50">
+        <div className="p-6 bg-white border-b border-gray-200">
           <div className="flex items-center gap-3">
             {sidebarOpen ? (
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-                  <Building className="w-5 h-5 text-blue-600" />
-                </div>
+                <img
+                  src="https://cdn.builder.io/api/v1/image/assets%2Fd17493787dd14ef798478b15abccc651%2Fb04354276d72434e8f80fe564c56b532?format=webp&width=800"
+                  alt="Handoff Logo"
+                  className="w-8 h-8"
+                />
                 <div>
-                  <h1 className="text-white font-semibold text-lg">Handoff</h1>
-                  <p className="text-blue-200 text-xs">Real Estate Platform</p>
+                  <h1 className="text-slate-900 font-semibold text-lg">Handoff</h1>
+                  <p className="text-slate-600 text-xs">Real Estate Platform</p>
                 </div>
               </div>
             ) : (
-              <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-                <Building className="w-5 h-5 text-blue-600" />
-              </div>
+              <img
+                src="https://cdn.builder.io/api/v1/image/assets%2Fd17493787dd14ef798478b15abccc651%2Fb04354276d72434e8f80fe564c56b532?format=webp&width=800"
+                alt="Handoff Logo"
+                className="w-8 h-8"
+              />
             )}
           </div>
         </div>
@@ -284,38 +288,38 @@ export default function DashboardLayout({
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-blue-700/50 mt-auto">
-          <div className="space-y-1">
+        <div className="p-2 border-t border-blue-700/50 mt-auto">
+          <div className="flex items-center gap-1">
             <button
               className={cn(
-                "w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-blue-100 hover:bg-blue-800/50 hover:text-white",
-                !sidebarOpen && "justify-center px-3"
+                "flex items-center gap-2 px-2 py-1.5 rounded transition-all duration-200 text-blue-200 hover:bg-blue-800/30 hover:text-white text-xs",
+                !sidebarOpen && "justify-center px-2"
               )}
               onClick={() => onPageChange('settings')}
             >
-              <Settings className="h-4 w-4" />
-              {sidebarOpen && <span className="text-sm">Settings</span>}
+              <Settings className="h-3 w-3" />
+              {sidebarOpen && <span>Settings</span>}
             </button>
 
             <button
               className={cn(
-                "w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-blue-100 hover:bg-red-600 hover:text-white",
-                !sidebarOpen && "justify-center px-3"
+                "flex items-center gap-2 px-2 py-1.5 rounded transition-all duration-200 text-blue-200 hover:bg-red-600/30 hover:text-white text-xs",
+                !sidebarOpen && "justify-center px-2"
               )}
               onClick={onSignOut}
             >
-              <LogOut className="h-4 w-4" />
-              {sidebarOpen && <span className="text-sm">Quit</span>}
+              <LogOut className="h-3 w-3" />
+              {sidebarOpen && <span>Quit</span>}
             </button>
           </div>
 
           {sidebarOpen && (
-            <div className="mt-4 pt-4 border-t border-blue-700/50">
+            <div className="mt-2 pt-2 border-t border-blue-700/30">
               <button
                 onClick={() => setSidebarOpen(false)}
                 className="text-xs text-blue-300 hover:text-white transition-colors"
               >
-                Collapse Sidebar
+                Collapse
               </button>
             </div>
           )}
