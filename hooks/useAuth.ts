@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { supabase, authHelpers, authStateManager } from '../utils/supabase/client';
+import { supabase, authHelpers, authStateManager, hasPlaceholderCredentials } from '../utils/supabase/client';
 import { handleGoogleSignIn, handleAuthComplete, continueAsGuest, restoreExistingSession } from './authHandlers';
 import { validateAuthData } from '../utils/authHelpers';
 import type { SetupData } from '../utils/authHelpers';
@@ -78,6 +78,52 @@ export function useAuth() {
             localStorage.removeItem('handoff-user-profile');
             localStorage.removeItem('handoff-setup-data');
           }
+        }
+
+        // Check for placeholder credentials and automatically enable guest mode
+        if (hasPlaceholderCredentials) {
+          console.log('🎭 Placeholder credentials detected - automatically enabling guest mode');
+          const guestProfile: UserProfile = {
+            id: 'guest-user',
+            email: 'guest@handoff.demo',
+            full_name: 'Guest User',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            is_guest: true,
+            is_offline: true,
+            questionnaire_complete: false,
+            initial_setup_complete: false,
+            property_setup_complete: false,
+            role: 'guest',
+            login_count: 1,
+            preferences: {},
+            mls_data: {},
+            property_data: {},
+          };
+
+          const guestSetupData = {
+            buyerName: 'Guest User',
+            buyerEmail: 'guest@handoff.demo'
+          };
+
+          // Store guest data
+          localStorage.setItem('handoff-user-profile', JSON.stringify(guestProfile));
+          localStorage.setItem('handoff-setup-data', JSON.stringify(guestSetupData));
+
+          setAuthState({
+            isAuthenticated: true,
+            isLoading: false,
+            userProfile: guestProfile,
+            setupData: guestSetupData,
+            authError: null,
+            isOfflineMode: true,
+            isGuestMode: true,
+            isQuestionnaireComplete: false,
+            showQuestionnairePrompt: false,
+          });
+
+          console.log('✅ Guest mode enabled automatically');
+          return;
         }
 
         // Set up optimized auth state listener
