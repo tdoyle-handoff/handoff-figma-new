@@ -265,6 +265,23 @@ export default function HomeTracker() {
               </div>
             </div>
             <div>
+              <Label htmlFor="label">Interest Level</Label>
+              <Select
+                value={newHome.label}
+                onValueChange={(value: InterestLabel) => setNewHome({...newHome, label: value})}
+              >
+                <SelectTrigger className="mt-2">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="dream-home">🏡 Dream Home</SelectItem>
+                  <SelectItem value="very-interested">⭐ Very Interested</SelectItem>
+                  <SelectItem value="maybe">🤔 Maybe</SelectItem>
+                  <SelectItem value="not-interested">❌ Not Interested</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
               <Label htmlFor="notes">Notes</Label>
               <Textarea
                 id="notes"
