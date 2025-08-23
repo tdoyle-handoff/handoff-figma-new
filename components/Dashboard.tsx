@@ -517,36 +517,6 @@ export default function Dashboard({ setupData }: DashboardProps) {
             </Card>
           </div>
 
-          {/* Progress Section */}
-          <Card className="shadow-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2"><CalendarCheck2 className="h-5 w-5"/>Your Progress</CardTitle>
-              <CardDescription>From offer to keys in hand.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="mb-3 flex flex-wrap items-center gap-2">
-                <Label className="mr-2">Where you are</Label>
-                <Select value={String(stageIdx)} onValueChange={(v) => setStageIdx(Number(v))}>
-                  <SelectTrigger className="w-[240px]"><SelectValue placeholder="Select stage"/></SelectTrigger>
-                  <SelectContent>
-                    {STAGES.map((s, i) => (
-                      <SelectItem key={s.key} value={String(i)}>{i + 1}. {s.label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <div className="ml-auto text-sm text-muted-foreground">{progressPct}% done</div>
-              </div>
-              <Progress value={progressPct} className="h-2" />
-              <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-6">
-                {STAGES.map((s, i) => (
-                  <div key={s.key} className="flex items-center gap-2">
-                    <div className={`h-2 w-2 rounded-full ${i <= stageIdx ? 'bg-sky-500' : 'bg-muted-foreground/30'}`}></div>
-                    <span className={`text-sm ${i <= stageIdx ? 'text-foreground' : 'text-muted-foreground'}`}>{s.label}</span>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             <Card className="shadow-sm">
@@ -678,23 +648,6 @@ export default function Dashboard({ setupData }: DashboardProps) {
             </Card>
           </div>
 
-          <Card className="shadow-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2"><TrendingUp className="h-5 w-5"/>Similar homes nearby</CardTitle>
-              <CardDescription>Recent prices to sanity‑check your offer.</CardDescription>
-            </CardHeader>
-            <CardContent className="h-[280px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={comps}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="label" />
-                  <YAxis tickFormatter={(v) => (v/1000).toFixed(0) + 'k'} />
-                  <ReTooltip formatter={(v: number) => shortCurrency(v)} />
-                  <Bar dataKey="price" radius={[6,6,0,0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
 
           <Card className="shadow-sm">
             <CardHeader>
