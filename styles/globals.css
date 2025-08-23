@@ -10,24 +10,24 @@
 
  :root {
   --font-size: 14px;
-  /* Light neutral SaaS palette to mirror the screenshot */
-  --background: #F6F7FB;            /* app canvas */
-  --foreground: #111827;            /* slate-900 text */
-  --card: #FFFFFF;                  /* white cards */
-  --card-foreground: #111827;
+  /* Enhanced color palette with better harmony */
+  --background: #F8FAFC;            /* softer app canvas */
+  --foreground: #0F172A;            /* deeper slate-900 text */
+  --card: #FFFFFF;                  /* pure white cards */
+  --card-foreground: #1E293B;       /* slate-800 for better contrast */
   --popover: #FFFFFF;
-  --popover-foreground: #111827;
-  --primary: #3B82F6;               /* blue accents for actions */
+  --popover-foreground: #1E293B;
+  --primary: #2563EB;               /* refined blue with better contrast */
   --primary-foreground: #FFFFFF;
-  --secondary: #F3F4F6;             /* subtle gray surfaces */
-  --secondary-foreground: #111827;
-  --muted: #F3F4F6;                 /* muted backgrounds */
-  --muted-foreground: #6B7280;      /* slate-500 */
-  --accent: #10B981;                /* emerald for positive values (e.g., $5,000) */
-  --accent-foreground: #063221;
-  --destructive: #EF4444;           /* red for errors */
+  --secondary: #F1F5F9;             /* softer gray surfaces */
+  --secondary-foreground: #334155;  /* slate-700 for better readability */
+  --muted: #F1F5F9;                 /* consistent with secondary */
+  --muted-foreground: #64748B;      /* slate-500 with better contrast */
+  --accent: #059669;                /* deeper emerald for better contrast */
+  --accent-foreground: #FFFFFF;
+  --destructive: #DC2626;           /* deeper red for better contrast */
   --destructive-foreground: #FFFFFF;
-  --border: #E5E7EB;                /* subtle borders */
+  --border: #E2E8F0;                /* softer slate borders */
   --input: #FFFFFF;
   --input-background: #FFFFFF;
   --input-foreground: #111827;
@@ -52,12 +52,12 @@
   --sidebar-border: #E5E7EB;
   --sidebar-ring: #3B82F6;
   
-  /* Enhanced shadow system - softened to match reference */
-  --shadow-sm: 0 1px 2px 0 rgba(17, 24, 39, 0.06);
-  --shadow-md: 0 2px 8px -1px rgba(17, 24, 39, 0.10), 0 1px 3px -1px rgba(17, 24, 39, 0.06);
-  --shadow-lg: 0 10px 28px -10px rgba(17, 24, 39, 0.14);
-  --shadow-xl: 0 18px 36px -14px rgba(17, 24, 39, 0.18);
-  --shadow-2xl: 0 25px 50px -12px rgba(17, 24, 39, 0.22);
+  /* Enhanced shadow system with better depth */
+  --shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.08), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.12), 0 2px 6px -1px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 8px 25px -5px rgba(15, 23, 42, 0.16), 0 4px 12px -4px rgba(15, 23, 42, 0.08);
+  --shadow-xl: 0 12px 32px -8px rgba(15, 23, 42, 0.20), 0 6px 20px -6px rgba(15, 23, 42, 0.10);
+  --shadow-2xl: 0 20px 50px -12px rgba(15, 23, 42, 0.25), 0 8px 25px -8px rgba(15, 23, 42, 0.12);
   
   /* Text size variables */
   --text-xs: 0.75rem;
@@ -106,24 +106,24 @@
 }
 
 .dark {
-  /* Dark mode tuned to neutral blues, subtle contrasts */
-  --background: #0F172A;            /* slate-900 */
-  --foreground: #E5E7EB;            /* gray-200 */
-  --card: #111827;                  /* slate-800 */
-  --card-foreground: #E5E7EB;
-  --popover: #111827;
-  --popover-foreground: #E5E7EB;
-  --primary: #60A5FA;               /* lighter blue */
-  --primary-foreground: #0B1220;
-  --secondary: #1F2937;             /* slate-700 */
-  --secondary-foreground: #E5E7EB;
-  --muted: #1F2937;
-  --muted-foreground: #9CA3AF;
-  --accent: #34D399;                /* emerald-400 */
-  --accent-foreground: #0B1220;
-  --destructive: #F87171;
-  --destructive-foreground: #0B1220;
-  --border: #293241;
+  /* Enhanced dark mode with better contrast */
+  --background: #020617;            /* slate-950 for deeper contrast */
+  --foreground: #F1F5F9;            /* slate-100 for better readability */
+  --card: #0F172A;                  /* slate-900 for cards */
+  --card-foreground: #E2E8F0;       /* slate-200 for card text */
+  --popover: #0F172A;
+  --popover-foreground: #E2E8F0;
+  --primary: #3B82F6;               /* blue-500 for consistency */
+  --primary-foreground: #F8FAFC;
+  --secondary: #1E293B;             /* slate-800 */
+  --secondary-foreground: #CBD5E1;  /* slate-300 */
+  --muted: #1E293B;
+  --muted-foreground: #94A3B8;      /* slate-400 */
+  --accent: #10B981;                /* emerald-500 */
+  --accent-foreground: #F0FDF4;
+  --destructive: #EF4444;           /* red-500 */
+  --destructive-foreground: #FEF2F2;
+  --border: #334155;                /* slate-700 */
   --input: #1F2937;
   --input-background: #1F2937;
   --input-foreground: #E5E7EB;
@@ -143,12 +143,12 @@
   --sidebar-border: #1F2937;
   --sidebar-ring: #60A5FA;
   
-  /* Dark mode shadows */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.3), 0 8px 10px -6px rgb(0 0 0 / 0.3);
-  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.5);
+  /* Enhanced dark mode shadows */
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.2);
+  --shadow-md: 0 4px 12px -2px rgb(0 0 0 / 0.4), 0 2px 6px -1px rgb(0 0 0 / 0.2);
+  --shadow-lg: 0 8px 25px -5px rgb(0 0 0 / 0.4), 0 4px 12px -4px rgb(0 0 0 / 0.2);
+  --shadow-xl: 0 12px 32px -8px rgb(0 0 0 / 0.5), 0 6px 20px -6px rgb(0 0 0 / 0.3);
+  --shadow-2xl: 0 20px 50px -12px rgb(0 0 0 / 0.6), 0 8px 25px -8px rgb(0 0 0 / 0.4);
 }
 
 @theme inline {
@@ -225,31 +225,70 @@
     background-color: var(--background);
   }
 
-  /* Enhanced card styling */
+  /* Enhanced card styling with improved harmony */
   .card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
+    background: linear-gradient(135deg, var(--card) 0%, hsl(var(--card) / 0.98) 100%);
+    border: 1px solid hsl(var(--border) / 0.8);
+    border-radius: calc(var(--radius) + 4px);
     box-shadow: var(--shadow-sm);
-    transition: all 0.2s ease-in-out;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
 
   .card:hover {
-    box-shadow: var(--shadow-md);
-    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+    border-color: hsl(var(--primary) / 0.2);
   }
 
+  .card:hover::before {
+    opacity: 1;
+  }
+
+  /* Premium card variant */
   .card-enhanced {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
+    background: linear-gradient(135deg, var(--card) 0%, hsl(var(--muted) / 0.2) 100%);
+    border: 1px solid hsl(var(--border) / 0.6);
+    border-radius: calc(var(--radius) + 6px);
     box-shadow: var(--shadow-md);
-    transition: all 0.3s ease-in-out;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+  }
+
+  .card-enhanced::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--accent) / 0.1));
+    border-radius: inherit;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: xor;
+    -webkit-mask-composite: xor;
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
 
   .card-enhanced:hover {
-    box-shadow: var(--shadow-lg);
-    transform: translateY(-2px);
+    box-shadow: var(--shadow-xl);
+    transform: translateY(-3px);
+  }
+
+  .card-enhanced:hover::after {
+    opacity: 1;
   }
 
   /* Modern container with spacing */
