@@ -832,12 +832,9 @@ export default function Communications() {
       
       <CardContent className={`${isMobile ? 'p-4 pt-0' : 'pt-0'}`}>
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className={`grid w-full ${isMobile ? 'grid-cols-2 h-9' : 'grid-cols-6'}`}>
+          <TabsList className={`grid w-full ${isMobile ? 'grid-cols-1 h-9' : 'grid-cols-5'}`}>
             <TabsTrigger value="messages" className={`${isMobile ? 'text-sm' : ''}`}>
               Messages {unreadCount > 0 && `(${unreadCount})`}
-            </TabsTrigger>
-            <TabsTrigger value="contacts" className={`${isMobile ? 'text-sm' : ''}`}>
-              Team
             </TabsTrigger>
             {!isMobile && (
               <Fragment>
@@ -881,23 +878,6 @@ export default function Communications() {
             </ScrollArea>
           </TabsContent>
 
-          <TabsContent value="contacts" className="space-y-4">
-            <div className={`${isMobile ? 'text-sm' : 'text-sm'} text-muted-foreground`}>
-              Your transaction team members
-            </div>
-            
-            <ScrollArea className={`${isMobile ? 'h-[400px]' : 'h-[500px]'} border rounded-lg`}>
-              <div className="divide-y">
-                {mockContacts.map((contact) => (
-                  <ContactItem
-                    key={contact.id}
-                    contact={contact}
-                    onMessage={handleContactMessage}
-                  />
-                ))}
-              </div>
-            </ScrollArea>
-          </TabsContent>
 
           {!isMobile && (
             <Fragment>

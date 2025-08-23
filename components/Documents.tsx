@@ -221,7 +221,7 @@ export default function Documents({ setupData }: DocumentsProps) {
                 Upload Document
               </Button>
             </DialogTrigger>
-            <DialogContent aria-describedby="upload-dialog-description">
+            <DialogContent aria-describedby="upload-dialog-description" className="bg-white border border-gray-300 shadow-xl">
               <DialogHeader>
                 <DialogTitle>Upload Document</DialogTitle>
                 <DialogDescription id="upload-dialog-description">
@@ -251,15 +251,15 @@ export default function Documents({ setupData }: DocumentsProps) {
                   <label className="text-sm font-medium mb-2 block">Description (Optional)</label>
                   <Input placeholder="Brief description of the document" />
                 </div>
-                <div className="text-center border-2 border-dashed border-border rounded-lg p-8">
-                  <Upload className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground mb-2">
+                <div className="text-center border-2 border-dashed border-gray-300 bg-gray-50 rounded-lg p-8">
+                  <Upload className="w-12 h-12 text-gray-500 mx-auto mb-4" />
+                  <p className="text-gray-700 mb-2">
                     Drag and drop files here or click to browse
                   </p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-gray-600">
                     Supported formats: PDF, DOC, DOCX, JPG, PNG (Max 25MB)
                   </p>
-                  <Button variant="outline" className="mt-4 mobile-button">
+                  <Button variant="outline" className="mt-4 mobile-button border-gray-400 text-gray-700 hover:bg-gray-100">
                     Choose Files
                   </Button>
                 </div>
@@ -299,7 +299,7 @@ export default function Documents({ setupData }: DocumentsProps) {
       )}
 
       <Tabs defaultValue="all" className="w-full">
-        <TabsList className={`grid w-full ${isMobile ? 'grid-cols-3 tab-container-multiline' : 'grid-cols-6'}`}>
+        <TabsList className={`grid w-full ${isMobile ? 'grid-cols-3 tab-container-multiline' : 'grid-cols-5'}`}>
           <TabsTrigger value="all" className={isMobile ? 'tab-multiline' : ''}>
             {isMobile ? 'Documents' : 'All Documents'}
           </TabsTrigger>
@@ -311,7 +311,6 @@ export default function Documents({ setupData }: DocumentsProps) {
             <>
               <TabsTrigger value="signatures" className="tab-multiline">Signatures Needed</TabsTrigger>
               <TabsTrigger value="templates">Templates</TabsTrigger>
-              <TabsTrigger value="esign">E-Sign</TabsTrigger>
             </>
           )}
         </TabsList>
@@ -552,19 +551,6 @@ export default function Documents({ setupData }: DocumentsProps) {
               </Card>
             </TabsContent>
 
-            <TabsContent value="esign" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>E-Sign</CardTitle>
-                  <CardDescription>Send documents for electronic signature</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="p-4 border rounded-lg text-sm text-muted-foreground">
-                    Connect your preferred e-sign provider to send and track signature requests.
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
           </>
         )}
       </Tabs>
