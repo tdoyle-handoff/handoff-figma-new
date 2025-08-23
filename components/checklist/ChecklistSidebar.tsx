@@ -96,47 +96,104 @@ export default function ChecklistSidebar({ phases, onSelectPhase, onSelectTask, 
         {phases.map((phase) => {
           const completed = phase.tasks.filter(t => t.status === 'completed').length;
           const isActive = selectedPhaseId ? selectedPhaseId === phase.id : phase.status === 'active';
+          const PhaseIcon = getPhaseIcon(phase.id);
+          const phaseColorClass = getPhaseColor(phase.id);
+
+          // Group tasks by subcategory for better organization
+          const tasksBySubcategory = phase.tasks.reduce((acc, task) => {
+            const sub = task.subcategory || 'general';
+            if (!acc[sub]) acc[sub] = [];
+            acc[sub].push(task);
+            return acc;
+          }, {} as Record<string, typeof phase.tasks>);
+
           return (
-            <div key={phase.id} className={`border rounded-lg bg-white transition-colors ${isActive ? 'ring-2 ring-primary border-l-4 border-l-primary' : ''}`}>
+            <div key={phase.id} className={`border rounded-lg bg-white transition-all hover:shadow-sm ${isActive ? 'ring-2 ring-blue-400 border-blue-300 shadow-sm' : ''}`}>
               <button
                 onClick={() => onSelectPhase(phase.id)}
-                className={`w-full text-left p-3 hover:bg-gray-50 rounded-lg`}
+                className={`w-full text-left p-4 hover:bg-gray-50 rounded-lg transition-colors`}
               >
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center bg-gray-100">
+                <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${phaseColorClass}`}>
                     {completed === phase.tasks.length && phase.tasks.length > 0 ? (
-                      <CheckCircle className="w-4 h-4 text-green-600" />
+                      <CheckCircle className="w-5 h-5" />
                     ) : (
-                      <Circle className="w-4 h-4 text-gray-400" />
+                      <PhaseIcon className="w-5 h-5" />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="font-medium truncate">{phase.title}</div>
-                    <div className="text-xs text-gray-500">{completed} / {phase.tasks.length} Completed</div>
+                    <div className="font-semibold text-gray-900 truncate">{phase.title}</div>
+                    <div className="text-sm text-gray-600">{completed} / {phase.tasks.length} tasks completed</div>
+                    <div className="mt-1 bg-gray-200 rounded-full h-1.5">
+                      <div
+                        className="bg-blue-500 h-1.5 rounded-full transition-all"
+                        style={{ width: `${phase.tasks.length > 0 ? (completed / phase.tasks.length) * 100 : 0}%` }}
+                      />
+                    </div>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-gray-400" />
+                  <ChevronRight className={`w-4 h-4 transition-transform ${isActive ? 'rotate-90' : ''} text-gray-400`} />
                 </div>
               </button>
 
               {isActive && phase.tasks.length > 0 && (
-                <div className="px-2 pb-2">
-                  <div className="space-y-1">
-                    {phase.tasks.map((t) => {
-                      const done = t.status === 'completed';
-                      const isSelected = selectedTaskId === t.id;
+                <div className="px-3 pb-3">
+                  <div className="space-y-3">
+                    {Object.entries(tasksBySubcategory).map(([subcategory, tasks]) => {
+                      const SubcategoryIcon = getSubcategoryIcon(subcategory);
                       return (
-                        <button
-                          key={t.id}
-                          onClick={() => onSelectTask(t.id)}
-                          className={`w-full text-left flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-gray-50 ${isSelected ? 'bg-gray-50 ring-1 ring-primary/40' : ''}`}
-                        >
-                          {done ? (
-                            <CheckCircle className="w-3.5 h-3.5 text-green-600" />
-                          ) : (
-                            <Circle className="w-3.5 h-3.5 text-gray-300" />
+                        <div key={subcategory} className="space-y-1">
+                          {subcategory !== 'general' && (
+                            <div className="flex items-center gap-2 px-2 py-1">
+                              <SubcategoryIcon className="w-3.5 h-3.5 text-gray-500" />
+                              <span className="text-xs font-medium text-gray-700 uppercase tracking-wide">
+                                {subcategory}
+                              </span>
+                            </div>
                           )}
-                          <span className={`text-xs truncate ${isSelected ? 'font-medium text-gray-900' : ''}`}>{t.title}</span>
-                        </button>
+                          {tasks.map((t) => {
+                            const done = t.status === 'completed';
+                            const isSelected = selectedTaskId === t.id;
+                            const isOverdue = t.status === 'overdue';
+                            const isActive = t.status === 'active';
+                            return (
+                              <button
+                                key={t.id}
+                                onClick={() => onSelectTask(t.id)}
+                                className={`w-full text-left flex items-center gap-3 px-3 py-2 rounded-lg transition-colors hover:bg-blue-50 ${
+                                  isSelected ? 'bg-blue-50 ring-1 ring-blue-200 shadow-sm' : ''
+                                }`}
+                              >
+                                {done ? (
+                                  <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
+                                ) : isOverdue ? (
+                                  <Circle className="w-4 h-4 text-red-500 flex-shrink-0" />
+                                ) : isActive ? (
+                                  <Circle className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                                ) : (
+                                  <Circle className="w-4 h-4 text-gray-300 flex-shrink-0" />
+                                )}
+                                <div className="flex-1 min-w-0">
+                                  <div className={`text-sm truncate ${isSelected ? 'font-medium text-gray-900' : 'text-gray-700'}`}>
+                                    {t.title}
+                                  </div>
+                                  {t.estimatedTime && (
+                                    <div className="text-xs text-gray-500">{t.estimatedTime}</div>
+                                  )}
+                                </div>
+                                {isOverdue && (
+                                  <Badge variant="outline" className="text-xs bg-red-50 text-red-600 border-red-200">
+                                    Overdue
+                                  </Badge>
+                                )}
+                                {isActive && !isSelected && (
+                                  <Badge variant="outline" className="text-xs bg-blue-50 text-blue-600 border-blue-200">
+                                    Active
+                                  </Badge>
+                                )}
+                              </button>
+                            );
+                          })}
+                        </div>
                       );
                     })}
                   </div>
