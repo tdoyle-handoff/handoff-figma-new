@@ -1172,11 +1172,13 @@ export default function Documents({ setupData }: DocumentsProps) {
                       </div>
                     </div>
                     <div className={`flex gap-2 ${isMobile ? 'w-full justify-end' : ''}`}>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
+                      <Button
+                        variant="outline"
+                        size="sm"
                         className="mobile-button-sm"
+                        onClick={() => handleManageAccess(doc)}
                       >
+                        <Users className="w-4 h-4 mr-1" />
                         {isMobile ? 'Manage' : 'Manage Access'}
                       </Button>
                       <Button
