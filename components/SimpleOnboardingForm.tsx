@@ -13,7 +13,8 @@ import { useIsMobile } from './ui/use-mobile';
 interface FormData {
   // Contact & Decision Makers (Step 1)
   fullName: string;
-  email: string;
+  dateOfBirth: string;
+  gender: string;
   phone: string;
   preferredContact: string;
   madeOffersBefore: string;
@@ -95,7 +96,8 @@ export function SimpleOnboardingForm({ onComplete, onSkip }: SimpleOnboardingFor
   const [formData, setFormData] = useState<FormData>({
     // Contact & Decision Makers
     fullName: '',
-    email: '',
+    dateOfBirth: '',
+    gender: '',
     phone: '',
     preferredContact: 'email',
     madeOffersBefore: 'no',
@@ -186,13 +188,11 @@ export function SimpleOnboardingForm({ onComplete, onSkip }: SimpleOnboardingFor
       if (!formData.fullName.trim()) {
         newErrors.fullName = 'Full name is required';
       }
-      if (!formData.email.trim()) {
-        newErrors.email = 'Email is required';
-      } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-        newErrors.email = 'Invalid email address';
-      }
       if (!formData.phone.trim()) {
         newErrors.phone = 'Phone number is required';
+      }
+      if (formData.dateOfBirth && !/^\d{2}\/\d{2}\/\d{4}$/.test(formData.dateOfBirth)) {
+        newErrors.dateOfBirth = 'Date must be in DD/MM/YYYY format';
       }
     }
 
