@@ -337,7 +337,7 @@ export default function Tasks({ onNavigate }: TasksProps) {
           <TabsTrigger value="insurance" className="text-sm px-4 py-2">Insurance</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="checklist" className="space-y-6 mt-6">
+        <TabsContent value="checklist" className="space-y-6 mt-6 bg-white">
           {/* New three-column layout mirroring screenshot */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div className="lg:col-span-3">
@@ -516,15 +516,15 @@ export default function Tasks({ onNavigate }: TasksProps) {
           </Card>
         </TabsContent>
 
-        <TabsContent value="legal" className="space-y-6 mt-6">
+        <TabsContent value="legal" className="space-y-6 mt-6 bg-white">
           <ChecklistLegalTabs />
         </TabsContent>
 
-        <TabsContent value="inspections" className="space-y-6 mt-6">
+        <TabsContent value="inspections" className="space-y-6 mt-6 bg-white">
           <ChecklistInspectionTabs />
         </TabsContent>
 
-        <TabsContent value="insurance" className="space-y-6 mt-6">
+        <TabsContent value="insurance" className="space-y-6 mt-6 bg-white">
           <ChecklistInsuranceTabs />
         </TabsContent>
       </Tabs>
