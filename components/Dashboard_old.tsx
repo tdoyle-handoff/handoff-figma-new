@@ -276,7 +276,7 @@ export default function Dashboard({ setupData }: DashboardProps) {
             <Card className="shadow-sm">
               <CardHeader>
                 <CardTitle>Ownership You Build</CardTitle>
-                <CardDescription>How much you'll own after 5 years.</CardDescription>
+                <CardDescription>How much you’ll own after 5 years.</CardDescription>
               </CardHeader>
               <CardContent className="h-[280px]">
                 <div className="text-2xl font-semibold">{shortCurrency(equity5)}</div>
@@ -321,10 +321,194 @@ export default function Dashboard({ setupData }: DashboardProps) {
             </CardHeader>
             <CardContent className="grid gap-2 text-sm text-muted-foreground md:grid-cols-3">
               <div>"Monthly Home Cost" includes mortgage, taxes, insurance, HOA, and upkeep.</div>
-              <div>"Money Needed at Closing" is your down payment plus one‑time fees. Credits can reduce it.</div>
+              <div>“Money Needed at Closing” is your down payment plus one‑time fees. Credits can reduce it.</div>
               <div>Healthy budget rule: try to keep home costs at or under one‑third of your gross income.</div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="budget" className="space-y-6">
+          <div>
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+              <Card className="lg:col-span-2 shadow-sm">
+                <CardHeader>
+                  <CardTitle>Set Your Numbers</CardTitle>
+                  <CardDescription>Change these to match your situation.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <Label>Home price</Label>
+                      <div className="text-sm text-muted-foreground">{shortCurrency(homePrice)}</div>
+                    </div>
+                    <div className="mt-2 flex items-center gap-3">
+                      <Input type="number" value={homePrice} onChange={(e) => setHomePrice(Number(e.target.value || 0))} className="w-48" />
+                      <Slider value={[homePrice]} onValueChange={([v]) => setHomePrice(v)} min={100_000} max={2_000_000} step={5_000} className="w-full" />
+                    </div>
+                  </div>
+
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Label>Down payment</Label>
+                        <div className="ml-auto flex items-center gap-2 text-sm">
+                          <span className={!downModeDollar ? 'font-medium text-foreground' : 'text-muted-foreground'}>Percent</span>
+                          <Switch checked={downModeDollar} onCheckedChange={setDownModeDollar} aria-label="Toggle between percent and dollar down payment" />
+                          <span className={downModeDollar ? 'font-medium text-foreground' : 'text-muted-foreground'}>Dollar</span>
+                        </div>
+                      </div>
+                      {!downModeDollar ? (
+                        <div className="flex items-center gap-3">
+                          <Input type="number" value={downPercent} onChange={(e) => setDownPercent(Number(e.target.value || 0))} className="w-28" />
+                          <Slider value={[downPercent]} onValueChange={([v]) => setDownPercent(v)} min={0} max={100} step={1} className="w-full" />
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-3">
+                          <Input type="number" value={downDollar} onChange={(e) => setDownDollar(Number(e.target.value || 0))} className="w-40" />
+                          <Slider value={[Math.min(downDollar, homePrice)]} onValueChange={([v]) => setDownDollar(v)} min={0} max={homePrice} step={1000} className="w-full" />
+                        </div>
+                      )}
+                      <div className="text-sm text-muted-foreground">Calculated: <span className="font-medium text-foreground">{shortCurrency(downPayment)}</span></div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label>Interest rate</Label>
+                        <div className="mt-2 flex items-center gap-3">
+                          <Input type="number" value={rate} onChange={(e) => setRate(Number(e.target.value || 0))} className="w-28" />
+                          <Slider value={[rate]} onValueChange={([v]) => setRate(Number(v.toFixed(2)))} min={0} max={12} step={0.05} className="w-full" />
+                        </div>
+                      </div>
+                      <div>
+                        <Label>Loan length (years)</Label>
+                        <div className="mt-2 flex items-center gap-3">
+                          <Input type="number" value={term} onChange={(e) => setTerm(Number(e.target.value || 0))} className="w-28" />
+                          <Slider value={[term]} onValueChange={([v]) => setTerm(v)} min={10} max={40} step={5} className="w-full" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <Separator />
+
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div>
+                      <Label>Property taxes (yearly)</Label>
+                      <div className="mt-2 flex items-center gap-3">
+                        <Input type="number" value={taxesAnnual} onChange={(e) => setTaxesAnnual(Number(e.target.value || 0))} className="w-40" />
+                        <Slider value={[taxesAnnual]} onValueChange={([v]) => setTaxesAnnual(v)} min={0} max={40_000} step={250} className="w-full" />
+                      </div>
+                    </div>
+                    <div>
+                      <Label>Home insurance (yearly)</Label>
+                      <div className="mt-2 flex items-center gap-3">
+                        <Input type="number" value={insuranceAnnual} onChange={(e) => setInsuranceAnnual(Number(e.target.value || 0))} className="w-40" />
+                        <Slider value={[insuranceAnnual]} onValueChange={([v]) => setInsuranceAnnual(v)} min={0} max={10_000} step={100} className="w-full" />
+                      </div>
+                    </div>
+                    <div>
+                      <Label>HOA (monthly)</Label>
+                      <div className="mt-2 flex items-center gap-3">
+                        <Input type="number" value={hoaMonthly} onChange={(e) => setHoaMonthly(Number(e.target.value || 0))} className="w-40" />
+                        <Slider value={[hoaMonthly]} onValueChange={([v]) => setHoaMonthly(v)} min={0} max={2_000} step={25} className="w-full" />
+                      </div>
+                    </div>
+                    <div>
+                      <Label>Upkeep (monthly)</Label>
+                      <div className="mt-2 flex items-center gap-3">
+                        <Input type="number" value={maintenanceMonthly} onChange={(e) => setMaintenanceMonthly(Number(e.target.value || 0))} className="w-40" />
+                        <Slider value={[maintenanceMonthly]} onValueChange={([v]) => setMaintenanceMonthly(v)} min={0} max={2_000} step={25} className="w-full" />
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="shadow-sm">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">Your Monthly Cost <Loader2 className="h-4 w-4 animate-spin text-muted-foreground"/></CardTitle>
+                  <CardDescription>Live breakdown by category.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className="text-muted-foreground">Loan amount</div>
+                    <div className="text-right font-medium">{shortCurrency(loanAmount)}</div>
+                    <div className="text-muted-foreground">Mortgage</div>
+                    <div className="text-right font-medium">{shortCurrency(pAndI)}</div>
+                    <div className="text-muted-foreground">Taxes</div>
+                    <div className="text-right font-medium">{shortCurrency(taxesMonthly)}</div>
+                    <div className="text-muted-foreground">Insurance</div>
+                    <div className="text-right font-medium">{shortCurrency(insuranceMonthly)}</div>
+                    <div className="text-muted-foreground">HOA</div>
+                    <div className="text-right font-medium">{shortCurrency(hoaMonthly)}</div>
+                    <div className="text-muted-foreground">Upkeep</div>
+                    <div className="text-right font-medium">{shortCurrency(maintenanceMonthly)}</div>
+                  </div>
+
+                  <div className="my-3" />
+                  <div className="flex items-center justify-between rounded-xl bg-muted p-3">
+                    <div className="text-sm text-muted-foreground">Total monthly</div>
+                    <div className="text-xl font-semibold">{shortCurrency(totalMonthly)}</div>
+                  </div>
+
+                  <div className="mt-4 h-[220px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie data={[
+                          { name: 'Mortgage', value: Math.round(pAndI) },
+                          { name: 'Taxes', value: Math.round(taxesMonthly) },
+                          { name: 'Insurance', value: Math.round(insuranceMonthly) },
+                          { name: 'HOA', value: Math.round(hoaMonthly) },
+                          { name: 'Upkeep', value: Math.round(maintenanceMonthly) },
+                        ]} dataKey="value" nameKey="name" innerRadius={50} outerRadius={85} paddingAngle={2}>
+                          {[0,1,2,3,4].map((i) => (
+                            <Cell key={`cell-${i}`} fill={["#10b981","#6366f1","#f59e0b","#ef4444","#14b8a6"][i]} />
+                          ))}
+                        </Pie>
+                        <ReTooltip formatter={(v: number) => shortCurrency(v)} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  <Separator className="my-4" />
+
+                  <div className="text-sm text-muted-foreground">Rent comparison</div>
+                  <div className={`mt-1 text-sm ${rentDelta>0?'text-orange-600':'text-emerald-600'}`}>{rentDeltaCopy}</div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card className="shadow-sm">
+              <CardHeader>
+                <CardTitle>One‑time Costs at Closing</CardTitle>
+                <CardDescription>Typical range is 2–5% of the price.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+                  {closingBreakdown.map((c, i) => (
+                    <div key={c.name} className="rounded-2xl border p-4">
+                      <div className="text-sm text-muted-foreground">{c.name}</div>
+                      <div className="mt-1 text-xl font-semibold">{shortCurrency(c.value)}</div>
+                      <div className="mt-2 h-2 w-full rounded-full bg-muted">
+                        <div className={`h-2 rounded-full ${i % 2 ? 'bg-indigo-500' : 'bg-emerald-500'}`} style={{ width: `${Math.min((c.value / (homePrice * 0.03)) * 100, 100)}%` }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 grid grid-cols-2 gap-3">
+                  <div className="rounded-xl bg-muted p-3 text-sm">
+                    <div className="text-muted-foreground">Credits</div>
+                    <div className="mt-1 flex items-center justify-between"><span>Seller</span><span className="font-medium">{shortCurrency(sellerCredits)}</span></div>
+                    <div className="mt-1 flex items-center justify-between"><span>Lender</span><span className="font-medium">{shortCurrency(lenderCredits)}</span></div>
+                  </div>
+                  <div className="rounded-xl bg-muted p-3 text-sm">
+                    <div className="text-muted-foreground">Money needed at closing</div>
+                    <div className="mt-1 text-xl font-semibold">{shortCurrency(moneyNeeded)}</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
       </Tabs>
     </div>
