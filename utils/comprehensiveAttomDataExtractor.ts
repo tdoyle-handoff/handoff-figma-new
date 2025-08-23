@@ -482,24 +482,45 @@ export function extractFromSaleDetails(response: any): Partial<ComprehensiveProp
   const root = response?.data ?? response;
   const property = root?.property?.[0];
   if (!property) return {};
-  const saleHistory = property.saleHistory || [];
-  
-  const latestSale = saleHistory[0] || {};
-  const priorSale = saleHistory[1] || {};
-  
+
+  // Normalize possible sale shapes across endpoints (sale/detail, property/sale, etc.)
+  const history: any[] = Array.isArray(property.saleHistory)
+    ? property.saleHistory
+    : Array.isArray((property as any).saleHistories)
+      ? (property as any).saleHistories
+      : Array.isArray((property as any).sale)
+        ? (property as any).sale
+        : [];
+
+  // Helper to safely read a sale record
+  const readSale = (s: any) => {
+    if (!s) return { date: undefined, amount: undefined, type: undefined };
+    return {
+      date: s.saleTransDate || s.saleRecDate || s.saleDate || s.saleRecordedDate,
+      amount: s.saleAmt || s.amount || s.salePrice,
+      type: s.saleTransType || s.transType || s.saleType,
+    };
+  };
+
+  let latest = readSale(history[0]);
+  let prior = readSale(history[1]);
+
+  // If no array-based history, try object-based property.sale
+  if (!latest.date && !latest.amount && (property as any).sale && !Array.isArray((property as any).sale)) {
+    latest = readSale((property as any).sale);
+  }
+
   return {
     market: {
-      lastSaleDate: latestSale.saleTransDate,
-      lastSalePrice: latestSale.saleAmt,
-      lastSaleTransactionType: latestSale.saleTransType,
-      priorSaleDate: priorSale.saleTransDate,
-      priorSalePrice: priorSale.saleAmt,
+      lastSaleDate: latest.date,
+      lastSalePrice: latest.amount,
+      lastSaleTransactionType: latest.type,
+      priorSaleDate: prior.date,
+      priorSalePrice: prior.amount,
     },
-    
     dataSources: {
       saleDetails: true,
     },
-    
     lastUpdated: new Date().toISOString(),
   };
 }

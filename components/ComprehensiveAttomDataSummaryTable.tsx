@@ -102,7 +102,7 @@ export function ComprehensiveAttomDataSummaryTable({
     {
       id: 'sale',
       name: 'Sale Details',
-      path: '/propertyapi/v1.0.0/property/sale',
+      path: '/propertyapi/v1.0.0/sale/detail',
       priority: 2,
       description: 'Sale history and market data'
     }
