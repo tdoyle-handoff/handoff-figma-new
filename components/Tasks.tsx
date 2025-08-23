@@ -55,15 +55,27 @@ const formatDate = (dateStr: string) => {
   return date.toLocaleDateString();
 };
 
-const ExpandableTaskCard = ({ task, onNavigate }: { task: Task; onNavigate: (page: string) => void }) => {
+const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask }: {
+  task: Task;
+  onNavigate: (page: string) => void;
+  onUpdateTask?: (taskId: string, status: Task['status']) => void;
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const isCompleted = task.status === 'completed';
   const isActive = ['active', 'in-progress', 'overdue'].includes(task.status);
   const isOverdue = task.status === 'overdue';
-  
+
   const handleNavigation = () => {
     if (task.linkedPage) {
       onNavigate(task.linkedPage);
+    }
+  };
+
+  const handleToggleCompletion = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent triggering the collapsible
+    if (onUpdateTask) {
+      const newStatus = isCompleted ? 'active' : 'completed';
+      onUpdateTask(task.id, newStatus);
     }
   };
   
