@@ -4,30 +4,83 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Card, CardContent } from './ui/card';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { Textarea } from './ui/textarea';
+import { Checkbox } from './ui/checkbox';
+import { Slider } from './ui/slider';
+import { ArrowLeft, ArrowRight, Plus } from 'lucide-react';
 import { useIsMobile } from './ui/use-mobile';
 
 interface FormData {
-  // Personal Information (Step 1)
+  // Contact & Decision Makers (Step 1)
   fullName: string;
-  birthDay: string;
-  birthMonth: string;
-  birthYear: string;
-  gender: string;
-  nationality: string;
-  cpf: string;
-  rg: string;
-  zipCode: string;
-  address: string;
-  neighborhood: string;
-  complement: string;
   email: string;
-  
-  // Additional steps would be added here
   phone: string;
-  occupation: string;
-  income: string;
-  // ... other fields
+  preferredContact: string;
+  madeOffersBefore: string;
+  tourTimeWindow: string;
+  cobuyers: string[];
+
+  // Goals & Timeline + Budget & Financing (Step 2)
+  whyBuyNow: string;
+  targetMoveIn: string;
+  hardDeadlines: string;
+  madePreviousOffers: boolean;
+  financingType: string;
+  maxPrice: number;
+  preApproved: boolean;
+  lenderName: string;
+  preApprovalAmount: string;
+  comfortMonthlyPiti: number;
+  downPaymentType: string;
+  downPaymentPercent: number;
+  downPaymentDollars: number;
+  hoaCondoFeeCeiling: number;
+  propertyTaxTolerance: number;
+  closingCashAvailable: number;
+
+  // Location & Lifestyle + Property Criteria (Step 3)
+  targetNeighborhoods: string[];
+  backupNeighborhoods: string[];
+  maxCommute: number;
+  transitNeeds: string;
+  schoolNeeds: string;
+  pets: boolean;
+  minBeds: string;
+  minBaths: string;
+  minSqft: string;
+  parking: string;
+  propertyTypes: string[];
+  needsOutdoorSpace: boolean;
+  lotSizeMin: number;
+  layoutMustHaves: string;
+
+  // Condition & Renovation + Dealbreakers + Touring (Step 4)
+  willingToRenovate: boolean;
+  renoBudget: number;
+  ageTolerance: string;
+  hazardConcerns: string[];
+  topMustHaves: string[];
+  dealbreakers: string;
+  compromisePreference: string;
+  tourDays: string[];
+  tourTimeWindow: string;
+  virtualToursOk: boolean;
+  accessibilityNeeds: string;
+
+  // Offer Strategy + Due Diligence + Ownership (Step 5)
+  willingToBidOverList: boolean;
+  overListCap: number;
+  earnestMoney: number;
+  contingencyPreferences: string[];
+  useEscalationClause: boolean;
+  willCoverAppraisalGap: boolean;
+  needSellerCredits: boolean;
+  inspections: string[];
+  insuranceConcerns: string;
+  useType: string;
+  planToRent: boolean;
+  holdPeriod: string;
+  additionalNotes: string;
 }
 
 interface SimpleOnboardingFormProps {
@@ -40,22 +93,76 @@ const TOTAL_STEPS = 5;
 export function SimpleOnboardingForm({ onComplete, onSkip }: SimpleOnboardingFormProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<FormData>({
+    // Contact & Decision Makers
     fullName: '',
-    birthDay: '',
-    birthMonth: '',
-    birthYear: '',
-    gender: '',
-    nationality: '',
-    cpf: '',
-    rg: '',
-    zipCode: '',
-    address: '',
-    neighborhood: '',
-    complement: '',
     email: '',
     phone: '',
-    occupation: '',
-    income: ''
+    preferredContact: 'email',
+    madeOffersBefore: 'no',
+    tourTimeWindow: '',
+    cobuyers: [],
+
+    // Goals & Timeline + Budget & Financing
+    whyBuyNow: '',
+    targetMoveIn: '',
+    hardDeadlines: '',
+    madePreviousOffers: false,
+    financingType: 'conventional',
+    maxPrice: 900000,
+    preApproved: false,
+    lenderName: '',
+    preApprovalAmount: '',
+    comfortMonthlyPiti: 4000,
+    downPaymentType: 'percent',
+    downPaymentPercent: 20,
+    downPaymentDollars: 180000,
+    hoaCondoFeeCeiling: 800,
+    propertyTaxTolerance: 12000,
+    closingCashAvailable: 60000,
+
+    // Location & Lifestyle + Property Criteria
+    targetNeighborhoods: [],
+    backupNeighborhoods: [],
+    maxCommute: 45,
+    transitNeeds: '',
+    schoolNeeds: '',
+    pets: false,
+    minBeds: 'studio',
+    minBaths: '1',
+    minSqft: '1100',
+    parking: 'garage',
+    propertyTypes: ['single-family'],
+    needsOutdoorSpace: false,
+    lotSizeMin: 3000,
+    layoutMustHaves: '',
+
+    // Condition & Renovation + Dealbreakers + Touring
+    willingToRenovate: false,
+    renoBudget: 50000,
+    ageTolerance: 'no-preference',
+    hazardConcerns: [],
+    topMustHaves: [],
+    dealbreakers: '',
+    compromisePreference: '',
+    tourDays: [],
+    tourTimeWindow: 'weeknights-after-6pm',
+    virtualToursOk: true,
+    accessibilityNeeds: 'none',
+
+    // Offer Strategy + Due Diligence + Ownership
+    willingToBidOverList: false,
+    overListCap: 5,
+    earnestMoney: 20000,
+    contingencyPreferences: ['inspection', 'financing', 'appraisal'],
+    useEscalationClause: false,
+    willCoverAppraisalGap: false,
+    needSellerCredits: false,
+    inspections: ['general'],
+    insuranceConcerns: 'none',
+    useType: 'primary-residence',
+    planToRent: false,
+    holdPeriod: '5',
+    additionalNotes: ''
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const isMobile = useIsMobile();
