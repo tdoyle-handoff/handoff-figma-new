@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from '../ui/badge';
 import { Textarea } from '../ui/textarea';
 import { Search, ClipboardCheck, AlertTriangle, FileText, Home, Plus, Upload, Download, Calendar, Clock, Phone, DollarSign } from 'lucide-react';
+import { DownloadButton } from '../ui/download-button';
 import { useTaskContext } from '../TaskContext';
 import { useInspectionStore, Inspection } from '../InspectionContext';
 
@@ -389,10 +390,15 @@ export default function ChecklistInspectionTabs({ onNavigate }: Props) {
                             </Button>
                           </>
                         ) : (
-                          <Button size="sm" variant="outline">
-                            <Download className="w-4 h-4 mr-1" />
+                          <DownloadButton
+                            size="sm"
+                            variant="dark-rect"
+                            onDownload={() => {
+                              console.log('Downloading report:', uploadedReports[inspection.id].file);
+                            }}
+                          >
                             {uploadedReports[inspection.id].file}
-                          </Button>
+                          </DownloadButton>
                         )}
                       </div>
                     </div>
