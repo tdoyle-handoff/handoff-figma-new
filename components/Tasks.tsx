@@ -337,9 +337,9 @@ export default function Tasks({ onNavigate }: TasksProps) {
           <TabsTrigger value="insurance" className="text-sm px-4 py-2">Insurance</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="checklist" className="space-y-6">
+        <TabsContent value="checklist" className="space-y-6 mt-6">
           {/* New three-column layout mirroring screenshot */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div className="lg:col-span-3">
               <ChecklistSidebar
                 phases={taskPhases}
