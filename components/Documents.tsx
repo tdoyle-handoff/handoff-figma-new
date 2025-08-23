@@ -565,7 +565,7 @@ export default function Documents({ setupData }: DocumentsProps) {
             <p><strong>SELLER RESPONSE:</strong></p>
             <p>☐ Agree to complete all requested repairs</p>
             <p>☐ Agree to alternative option (specify): ___________________________</p>
-            <p>�� Counter with different terms (attach separate document)</p>
+            <p>☐ Counter with different terms (attach separate document)</p>
             <p>☐ Decline repair request</p>
             <br>
             <div style="border-bottom: 1px solid #000; height: 30px; margin: 10px 0 5px 0;"></div>
@@ -1207,6 +1207,62 @@ export default function Documents({ setupData }: DocumentsProps) {
           </>
         )}
       </Tabs>
+
+      {/* Share Dialog */}
+      <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
+        <DialogContent className="bg-white shadow-xl border border-gray-200">
+          <DialogHeader>
+            <DialogTitle>Share Document</DialogTitle>
+            <DialogDescription>
+              {shareDocument ? `Share "${shareDocument.name}" with others` : 'Share document'}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium mb-2 block">Email Address</label>
+              <Input
+                type="email"
+                placeholder="Enter email address"
+                value={shareEmail}
+                onChange={(e) => setShareEmail(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-2 block">Message (Optional)</label>
+              <Textarea
+                placeholder="Add a message to include with the shared document..."
+                value={shareMessage}
+                onChange={(e) => setShareMessage(e.target.value)}
+                rows={3}
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button
+                className="flex-1"
+                onClick={sendShare}
+                disabled={!shareEmail}
+              >
+                <Share className="w-4 h-4 mr-2" />
+                Send Share Link
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowShareDialog(false);
+                  setShareDocument(null);
+                  setShareEmail('');
+                  setShareMessage('');
+                }}
+              >
+                Cancel
+              </Button>
+            </div>
+            <div className="text-xs text-muted-foreground">
+              A secure link will be sent to the recipient allowing them to view this document.
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
