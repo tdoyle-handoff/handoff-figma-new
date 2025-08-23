@@ -194,11 +194,11 @@ export default function HomeTracker() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-2">
-                <Edit className="h-5 w-5 text-blue-600" />
+                <Heart className="h-5 w-5 text-red-500" />
                 <div>
-                  <p className="text-sm text-slate-600">With Notes</p>
+                  <p className="text-sm text-slate-600">Dream Homes</p>
                   <p className="text-2xl font-semibold">
-                    {homes.filter(h => h.notes.trim()).length}
+                    {homes.filter(h => h.label === 'dream-home').length}
                   </p>
                 </div>
               </div>
