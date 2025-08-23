@@ -191,7 +191,8 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
   });
 
   // MAKE OFFER PHASE
-  if (underContract) {
+  // Show all comprehensive tasks regardless of contract status for demo purposes
+  if (true) {
     tasks.push({
       id: 'offer-submission',
       title: 'Offer Submission',
