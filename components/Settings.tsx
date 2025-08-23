@@ -408,7 +408,39 @@ export default function Settings({ onSignOut, setupData, onNavigate }: SettingsP
                 />
               </div>
 
-              <Button>Update Password</Button>
+              <Button
+                onClick={() => {
+                  // Validate password fields
+                  const currentPassword = (document.querySelector('input[placeholder="Current password"]') as HTMLInputElement)?.value;
+                  const newPassword = (document.querySelector('input[placeholder="New password"]') as HTMLInputElement)?.value;
+                  const confirmPassword = (document.querySelector('input[placeholder="Confirm new password"]') as HTMLInputElement)?.value;
+
+                  if (!currentPassword || !newPassword || !confirmPassword) {
+                    alert('Please fill in all password fields.');
+                    return;
+                  }
+
+                  if (newPassword !== confirmPassword) {
+                    alert('New passwords do not match.');
+                    return;
+                  }
+
+                  if (newPassword.length < 8) {
+                    alert('Password must be at least 8 characters long.');
+                    return;
+                  }
+
+                  // In a real app, this would call an API to update the password
+                  alert('Password updated successfully!');
+
+                  // Clear form
+                  (document.querySelector('input[placeholder="Current password"]') as HTMLInputElement).value = '';
+                  (document.querySelector('input[placeholder="New password"]') as HTMLInputElement).value = '';
+                  (document.querySelector('input[placeholder="Confirm new password"]') as HTMLInputElement).value = '';
+                }}
+              >
+                Update Password
+              </Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -807,15 +839,36 @@ export default function Settings({ onSignOut, setupData, onNavigate }: SettingsP
                 <div className="space-y-4">
                   <h3 className="font-medium">Quick Actions</h3>
                   <div className="grid grid-cols-1 gap-3">
-                    <Button variant="outline" className="justify-start">
+                    <Button
+                      variant="outline"
+                      className="justify-start"
+                      onClick={() => {
+                        // Open help documentation
+                        window.open('https://www.builder.io/c/docs/projects', '_blank');
+                      }}
+                    >
                       <HelpCircle className="w-4 h-4 mr-2" />
                       View Help Documentation
                     </Button>
-                    <Button variant="outline" className="justify-start">
+                    <Button
+                      variant="outline"
+                      className="justify-start"
+                      onClick={() => {
+                        // Open support contact
+                        window.open('mailto:support@handoff.com?subject=Support Request&body=Please describe your issue...', '_blank');
+                      }}
+                    >
                       <Mail className="w-4 h-4 mr-2" />
                       Contact Support
                     </Button>
-                    <Button variant="outline" className="justify-start">
+                    <Button
+                      variant="outline"
+                      className="justify-start"
+                      onClick={() => {
+                        // Open community forum
+                        window.open('https://github.com/BuilderIO/builder/discussions', '_blank');
+                      }}
+                    >
                       <Globe className="w-4 h-4 mr-2" />
                       Visit Community Forum
                     </Button>
