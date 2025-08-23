@@ -406,8 +406,8 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
     // DUE DILIGENCE PHASE - INSPECTIONS
     tasks.push({
       id: 'diligence-inspection-shop-inspectors',
-      title: '🔍 Find Qualified Home Inspector',
-      description: '⭐ CHOOSE WISELY: Your inspector is your property detective. Get referrals, check licenses, read reviews. A good inspector can save you thousands by finding hidden issues.',
+      title: 'Find Qualified Home Inspector',
+      description: 'CHOOSE WISELY: Your inspector is your property detective. Get referrals, check licenses, read reviews. A good inspector can save you thousands by finding hidden issues.',
       category: 'diligence',
       subcategory: 'inspections',
       priority: 'high',
@@ -462,8 +462,8 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
 
     tasks.push({
       id: 'diligence-inspection-specialized',
-      title: '🔬 Specialized Inspections (If Needed)',
-      description: '📋 PROPERTY-SPECIFIC: Based on age, type, location, and general inspection findings. May include: Pest, Radon, Lead, Asbestos, Septic, Well, Roof, Foundation.',
+      title: 'Specialized Inspections (If Needed)',
+      description: 'PROPERTY-SPECIFIC: Based on age, type, location, and general inspection findings. May include: Pest, Radon, Lead, Asbestos, Septic, Well, Roof, Foundation.',
       category: 'diligence',
       subcategory: 'inspections',
       priority: 'medium',
@@ -490,8 +490,8 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
 
     tasks.push({
       id: 'diligence-inspection-review-results',
-      title: '📊 Review All Inspection Reports',
-      description: '🎯 STRATEGIC REVIEW: Categorize issues by severity and cost. Focus on safety, major systems, and expensive repairs. Cosmetic issues typically not worth negotiating.',
+      title: 'Review All Inspection Reports',
+      description: 'STRATEGIC REVIEW: Categorize issues by severity and cost. Focus on safety, major systems, and expensive repairs. Cosmetic issues typically not worth negotiating.',
       category: 'diligence',
       subcategory: 'inspections',
       priority: 'high',
@@ -546,8 +546,8 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
 
     tasks.push({
       id: 'diligence-inspection-finalize-agreement',
-      title: '✅ Finalize Repair Agreement',
-      description: '📑 CLOSE THE LOOP: Finalize which repairs will be completed vs. credits given. Get specific timeline and contractor requirements in writing. Remove inspection contingency.',
+      title: 'Finalize Repair Agreement',
+      description: 'CLOSE THE LOOP: Finalize which repairs will be completed vs. credits given. Get specific timeline and contractor requirements in writing. Remove inspection contingency.',
       category: 'diligence',
       subcategory: 'inspections',
       priority: 'high',
