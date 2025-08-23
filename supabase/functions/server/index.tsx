@@ -43,6 +43,15 @@ app.route('/make-server-a24396d5', userRoutes);
 // Mount ATTOM routes under /attom prefix to match client expectations
 app.route('/make-server-a24396d5/attom', attomRoutes);
 app.route('/make-server-a24396d5', placesRoutes);
+
+// Explicit preflight handler to guarantee 2xx on any path
+app.options('/make-server-a24396d5/*', (c) => {
+  c.header('Access-Control-Allow-Origin', '*');
+  c.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  c.header('Access-Control-Allow-Headers', '*');
+  c.header('Access-Control-Max-Age', '600');
+  return c.text('', 204);
+});
 app.route('/make-server-a24396d5', mlsRoutes);
 app.route('/make-server-a24396d5', attomAdminRoutes);
 app.route('/make-server-a24396d5', attomKeyUpdaterRoutes);

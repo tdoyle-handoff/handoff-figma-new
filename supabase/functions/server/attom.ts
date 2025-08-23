@@ -37,6 +37,15 @@ attom.get('/health', (c) => {
   return c.json(healthResponse);
 });
 
+// Preflight for any ATTOM route
+attom.options('*', (c) => {
+  c.header('Access-Control-Allow-Origin', '*');
+  c.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+  c.header('Access-Control-Allow-Headers', '*');
+  c.header('Access-Control-Max-Age', '600');
+  return c.text('', 204);
+});
+
 // Test endpoint
 attom.get('/test', (c) => {
   return c.json({
