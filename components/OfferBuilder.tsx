@@ -7,7 +7,7 @@ WIREFRAME: Buyer Offer Builder (Web)
 └──────────────────────────────────────────────────────────────┘
 
 [Stepper]
-● Property  →  ● Buyer & Financing  →  ● Offer Terms  →  ● Contingencies  →  ● Review & Submit
+● Property  →  ��� Buyer & Financing  →  ● Offer Terms  →  ● Contingencies  →  ● Review & Submit
 
 [Right Sidebar]
 - Affordability (P&I, Taxes, Insurance, HOA)
@@ -822,6 +822,43 @@ export default function OfferBuilder() {
                 <Input type="number" value={insuranceAnnual} onChange={e=>setInsuranceAnnual(Number(e.target.value))} />
               </div>
             </CardContent>
+
+            {/* State-Specific Legal Requirements */}
+            {stateRequirements && (
+              <CardContent className="pt-0">
+                <div className="border-t pt-4">
+                  <h4 className="font-medium mb-3 flex items-center gap-2">
+                    <Shield className="w-4 h-4" />
+                    {stateRequirements.name} Legal Requirements
+                  </h4>
+                  <div className="grid md:grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <h5 className="font-medium mb-2">Required Disclosures</h5>
+                      <ul className="space-y-1 text-muted-foreground">
+                        {legalDisclosures.slice(0, 3).map((disclosure, index) => (
+                          <li key={index} className="flex items-start gap-2">
+                            <div className="w-1 h-1 bg-muted-foreground rounded-full mt-2 flex-shrink-0" />
+                            {disclosure}
+                          </li>
+                        ))}
+                        {legalDisclosures.length > 3 && (
+                          <li className="text-blue-600">+{legalDisclosures.length - 3} more disclosures required</li>
+                        )}
+                      </ul>
+                    </div>
+                    <div>
+                      <h5 className="font-medium mb-2">Earnest Money Rules</h5>
+                      <div className="text-muted-foreground space-y-1">
+                        <div>Range: {stateRequirements.earnestMoneyRules.minPercent}% - {stateRequirements.earnestMoneyRules.maxPercent}%</div>
+                        <div>Recommended: {stateRequirements.earnestMoneyRules.defaultPercent}%</div>
+                        <div className="text-xs">Held by: {stateRequirements.earnestMoneyRules.holdingRequirement}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            )}
+
             <CardFooter className="justify-between">
               <Button variant="ghost" disabled><ArrowLeft className="w-4 h-4 mr-2"/>Back</Button>
               <Button onClick={()=>{ setOfferPrice(listPrice); next(); }}>Next<ArrowRight className="w-4 h-4 ml-2"/></Button>
