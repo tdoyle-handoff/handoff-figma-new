@@ -435,6 +435,12 @@ export default function HomeTracker() {
                               <Badge variant="outline" className="text-xs">
                                 Added {home.dateAdded}
                               </Badge>
+                              <Badge
+                                className={`text-xs ${getLabelConfig(home.label).color} border`}
+                              >
+                                {getLabelConfig(home.label).icon}
+                                <span className={getLabelConfig(home.label).icon ? 'ml-1' : ''}>{getLabelConfig(home.label).text}</span>
+                              </Badge>
                             </div>
                           </div>
                         </div>
