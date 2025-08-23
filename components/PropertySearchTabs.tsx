@@ -12,6 +12,7 @@ import { ComprehensiveAttomDataSummaryTable } from './ComprehensiveAttomDataSumm
 
 // Onboarding / Buyer Intake form
 import BuyerIntakeForm from './BuyerIntakeForm'
+import SimpleOnboardingForm from './SimpleOnboardingForm'
 
 export default function PropertySearchTabs() {
   const [tabValue, setTabValue] = React.useState<string>('get-started');
@@ -73,21 +74,15 @@ export default function PropertySearchTabs() {
 
         {/* Phase 1: Let's Get Started */}
         <TabsContent value="get-started" className="space-y-6">
-          <Card className="border-blue-200 bg-blue-50/30">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-blue-700">
-                <Play className="h-5 w-5" />
-                Phase 1: Let's Get Started
-                <Badge className="bg-blue-600">Onboarding</Badge>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-blue-700 mb-4">
-                Tell us about your home buying preferences and requirements so we can help you find the perfect property.
-              </p>
-            </CardContent>
-          </Card>
-          <BuyerIntakeForm title="Complete Your Buyer Profile" />
+          <SimpleOnboardingForm
+            onComplete={(data) => {
+              console.log('Onboarding completed:', data);
+              // You can handle the completion here
+            }}
+            onSkip={() => {
+              console.log('Onboarding skipped');
+            }}
+          />
         </TabsContent>
 
         {/* Phase 2: Let's Find a Home */}
