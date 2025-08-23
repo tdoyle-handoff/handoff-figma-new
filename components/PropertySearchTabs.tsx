@@ -73,7 +73,7 @@ export default function PropertySearchTabs() {
         </TabsList>
 
         {/* Phase 1: Let's Get Started */}
-        <TabsContent value="get-started" className="space-y-6">
+        <TabsContent value="get-started" className="space-y-6 mt-8">
           <SimpleOnboardingForm
             onComplete={(data) => {
               console.log('Onboarding completed:', data);
@@ -86,7 +86,7 @@ export default function PropertySearchTabs() {
         </TabsContent>
 
         {/* Phase 2: Let's Find a Home */}
-        <TabsContent value="find-home" className="space-y-6">
+        <TabsContent value="find-home" className="space-y-6 mt-8">
           <Card className="border-emerald-200 bg-emerald-50/30">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-emerald-700">
@@ -105,7 +105,7 @@ export default function PropertySearchTabs() {
         </TabsContent>
 
         {/* Phase 3: I've Found a Home */}
-        <TabsContent value="found-home" className="space-y-6">
+        <TabsContent value="found-home" className="space-y-6 mt-8">
           <Card className="border-purple-200 bg-purple-50/30">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-purple-700">
