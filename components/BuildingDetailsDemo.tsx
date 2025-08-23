@@ -82,8 +82,8 @@ export function BuildingDetailsDemo({
       // Test each endpoint
       for (const endpoint of endpoints) {
         try {
-          const proxyBase = ((import.meta as any).env?.VITE_ATTOM_PROXY_BASE?.trim()) || '/api/attom';
-          const url = `${proxyBase.replace(/\/$/, '')}/test-endpoint`;
+          const proxyBase = '/api/attom';
+          const url = `${proxyBase}/test-endpoint`;
 
           const headers: Record<string, string> = { 'Content-Type': 'application/json' };
 

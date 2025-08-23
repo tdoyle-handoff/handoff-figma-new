@@ -281,9 +281,9 @@ export function ComprehensiveAttomDataSummaryTable({
       // Test each endpoint
       for (const endpoint of endpoints) {
         try {
-          // Use Vercel route by default, allow override via env
-          const proxyBase = ((import.meta as any).env?.VITE_ATTOM_PROXY_BASE?.trim()) || '/api/attom';
-          const url = `${proxyBase.replace(/\/$/, '')}/test-endpoint`;
+          // Force Vercel route
+          const proxyBase = '/api/attom';
+          const url = `${proxyBase}/test-endpoint`;
 
           const headers: Record<string, string> = { 'Content-Type': 'application/json' };
 
