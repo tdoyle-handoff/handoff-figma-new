@@ -116,7 +116,7 @@ export default function HomeTracker() {
         </div>
         <Button 
           onClick={() => setIsAddingHome(true)}
-          className="bg-emerald-600 hover:bg-emerald-700"
+          className="bg-sky-600 hover:bg-sky-700"
         >
           <Plus className="h-4 w-4 mr-2" />
           Add Home
@@ -129,7 +129,7 @@ export default function HomeTracker() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-2">
-                <Home className="h-5 w-5 text-emerald-600" />
+                <Home className="h-5 w-5 text-sky-600" />
                 <div>
                   <p className="text-sm text-slate-600">Total Homes</p>
                   <p className="text-2xl font-semibold">{homes.length}</p>
@@ -168,7 +168,7 @@ export default function HomeTracker() {
 
       {/* Add Home Form */}
       {isAddingHome && (
-        <Card className="border-emerald-200">
+        <Card className="border-sky-200">
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               <span className="flex items-center gap-2">
@@ -257,7 +257,7 @@ export default function HomeTracker() {
             </p>
             <Button 
               onClick={() => setIsAddingHome(true)}
-              className="bg-emerald-600 hover:bg-emerald-700"
+              className="bg-sky-600 hover:bg-sky-700"
             >
               <Plus className="h-4 w-4 mr-2" />
               Add Your First Home
@@ -322,7 +322,7 @@ export default function HomeTracker() {
                           <Button 
                             size="sm" 
                             onClick={() => setEditingId(null)}
-                            className="bg-emerald-600 hover:bg-emerald-700"
+                            className="bg-sky-600 hover:bg-sky-700"
                           >
                             <Save className="h-4 w-4 mr-1" />
                             Save
