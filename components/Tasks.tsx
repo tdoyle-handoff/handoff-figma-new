@@ -359,9 +359,9 @@ export default function Tasks({ onNavigate }: TasksProps) {
         </TabsList>
 
         <TabsContent value="checklist" className="space-y-6 mt-6 bg-white">
-          {/* New three-column layout mirroring screenshot */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div className="lg:col-span-3">
+          {/* Wider layout for better task visibility */}
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 max-w-none">
+            <div className="lg:col-span-2">
               <ChecklistSidebar
                 phases={taskPhases}
                 selectedPhaseId={selectedPhaseId}
@@ -371,7 +371,7 @@ export default function Tasks({ onNavigate }: TasksProps) {
                 onUpdateTask={handleUpdateTask}
               />
             </div>
-            <div className="lg:col-span-9">
+            <div className="lg:col-span-3">
               <ChecklistDetail
                 task={flatTasks.find(t => t.id === selectedTaskId) || firstActiveTask}
                 onAction={() => {
