@@ -128,8 +128,9 @@ export default function Resources({ onNavigate }: ResourcesProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-black">
-            Educational videos, guides, and a glossary to support every step
+          <h2 className="text-2xl font-bold text-gray-900">Education Hub</h2>
+          <p className="text-gray-600 mt-1">
+            Educational content, guides, and helpful tools for home buyers
           </p>
         </div>
       </div>
