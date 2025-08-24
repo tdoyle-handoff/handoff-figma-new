@@ -1026,9 +1026,6 @@ export default function Communications() {
                   </div>
                 </ScrollArea>
               </TabsContent>
-
-
-
             </Fragment>
           )}
         </Tabs>
