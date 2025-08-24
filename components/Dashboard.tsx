@@ -118,15 +118,15 @@ export default function Dashboard({ setupData }: DashboardProps) {
   }, [loanAmount, rate, term]);
 
   return (
-    <div className="mx-auto max-w-7xl p-6">
+    <div className="mx-auto max-w-7xl p-8">
       {/* Property Input Form */}
-      <Card className="shadow-sm mb-6">
+      <Card className="shadow-sm mb-8">
         <CardHeader>
           <CardTitle>Property Information</CardTitle>
           <CardDescription>Enter your property details to calculate costs and payments.</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <CardContent className="p-8">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
             <div>
               <Label className="text-sm font-medium">Home Price</Label>
               <Input
@@ -211,7 +211,7 @@ export default function Dashboard({ setupData }: DashboardProps) {
               />
             </div>
           </div>
-          <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>
               <Label className="text-sm font-medium">Monthly Income</Label>
               <Input
@@ -237,21 +237,21 @@ export default function Dashboard({ setupData }: DashboardProps) {
       </Card>
 
       {/* Unified Analytics & Budget View */}
-      <div className="space-y-6">
+      <div className="space-y-12">
         {/* Budget Section */}
-        <div className="mt-8">
-          <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
+        <div className="mt-12">
+          <h2 className="text-2xl font-semibold mb-8 flex items-center gap-2">
             <DollarSign className="h-6 w-6" />
             Budget & Closing Costs
           </h2>
           {/* One-time Costs at Closing */}
-          <Card className="shadow-sm">
-            <CardHeader>
-              <CardTitle>One-time Costs at Closing</CardTitle>
+          <Card className="shadow-sm mb-10">
+            <CardHeader className="pb-6">
+              <CardTitle className="text-xl">One-time Costs at Closing</CardTitle>
               <CardDescription>Typical range is 2-5% of the price.</CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <CardContent className="p-8">
+              <div className="grid grid-cols-1 gap-8 md:grid-cols-3 lg:grid-cols-5">
                 <div>
                   <div className="text-sm text-muted-foreground mb-1">Bank & lender fees</div>
                   <div className="text-lg font-semibold">{shortCurrency(closingBreakdown[0].value)}</div>
@@ -279,9 +279,9 @@ export default function Dashboard({ setupData }: DashboardProps) {
                 </div>
               </div>
 
-              <Separator className="my-4" />
+              <Separator className="my-8" />
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
                 <div>
                   <div className="text-sm text-muted-foreground mb-2">Credits</div>
                   <div className="space-y-2">
@@ -304,15 +304,13 @@ export default function Dashboard({ setupData }: DashboardProps) {
           </Card>
 
           {/* Your Monthly Cost */}
-          <div className="flex justify-center">
-
-            {/* Your Monthly Cost */}
-            <Card className="shadow-sm w-full max-w-md">
-              <CardHeader>
-                <CardTitle>Your Monthly Cost</CardTitle>
+          <div className="flex justify-center my-12">
+            <Card className="shadow-sm w-full max-w-lg">
+              <CardHeader className="pb-6">
+                <CardTitle className="text-xl">Your Monthly Cost</CardTitle>
                 <CardDescription>Live breakdown by category.</CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-8">
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Loan amount</span>
@@ -387,14 +385,14 @@ export default function Dashboard({ setupData }: DashboardProps) {
           </div>
 
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-10 md:grid-cols-3 my-12">
             <Card className="shadow-sm">
-              <CardHeader>
-                <CardTitle>Monthly Home Cost</CardTitle>
+              <CardHeader className="pb-6">
+                <CardTitle className="text-lg">Monthly Home Cost</CardTitle>
                 <CardDescription>Everything in one monthly number.</CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-semibold">{shortCurrency(totalMonthly)}</div>
+              <CardContent className="p-6">
+                <div className="text-3xl font-semibold mb-4">{shortCurrency(totalMonthly)}</div>
                 <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
                   <div>🏠 Mortgage</div><div className="text-right">{shortCurrency(pAndI)}</div>
                   <div>📜 Taxes</div><div className="text-right">{shortCurrency(taxesMonthly)}</div>
@@ -408,12 +406,12 @@ export default function Dashboard({ setupData }: DashboardProps) {
             </Card>
 
             <Card className="shadow-sm">
-              <CardHeader>
-                <CardTitle>Money Needed at Closing</CardTitle>
+              <CardHeader className="pb-6">
+                <CardTitle className="text-lg">Money Needed at Closing</CardTitle>
                 <CardDescription>Down payment + one‑time fees.</CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-semibold">{shortCurrency(moneyNeeded)}</div>
+              <CardContent className="p-6">
+                <div className="text-3xl font-semibold mb-4">{shortCurrency(moneyNeeded)}</div>
                 <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
                   <div>💰 Down payment</div><div className="text-right">{shortCurrency(downPayment)}</div>
                   <div>���� One���time fees</div><div className="text-right">{shortCurrency(closingTotal)}</div>
@@ -434,11 +432,11 @@ export default function Dashboard({ setupData }: DashboardProps) {
             </Card>
 
             <Card className="shadow-sm">
-              <CardHeader>
-                <CardTitle>Healthy Budget Check</CardTitle>
+              <CardHeader className="pb-6">
+                <CardTitle className="text-lg">Healthy Budget Check</CardTitle>
                 <CardDescription>Rule of thumb: home costs ≤ 1/3 of income</CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between rounded-xl bg-muted p-3">
                   <div className="text-sm text-muted-foreground">Your housing share</div>
                   <div className={`text-xl font-semibold ${budgetShare>33? budgetShare>40? 'text-red-600':'text-orange-600' : ''}`}>{budgetShare.toFixed(1)}%</div>
@@ -460,13 +458,13 @@ export default function Dashboard({ setupData }: DashboardProps) {
             </Card>
           </div>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-10 md:grid-cols-2 my-12">
             <Card className="shadow-sm">
-              <CardHeader>
-                <CardTitle>What if I change it?</CardTitle>
+              <CardHeader className="pb-6">
+                <CardTitle className="text-lg">What if I change it?</CardTitle>
                 <CardDescription>See how choices change your monthly.</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-6 p-6">
                 <div>
                   <div className="flex items-center justify-between"><Label>Down payment</Label><div className="text-sm text-muted-foreground">{shortCurrency(downPayment)}</div></div>
                   <div className="mt-2 flex items-center gap-3">
@@ -495,11 +493,11 @@ export default function Dashboard({ setupData }: DashboardProps) {
             </Card>
 
             <Card className="shadow-sm">
-              <CardHeader>
-                <CardTitle>Ownership You Build</CardTitle>
+              <CardHeader className="pb-6">
+                <CardTitle className="text-lg">Ownership You Build</CardTitle>
                 <CardDescription>How much you'll own after 5 years.</CardDescription>
               </CardHeader>
-              <CardContent className="h-[280px]">
+              <CardContent className="h-[320px] p-6">
                 <div className="text-2xl font-semibold">{shortCurrency(equity5)}</div>
                 <div className="text-xs text-muted-foreground">This is from paying down your loan. Home price changes not included.</div>
                 <div className="mt-3 h-[200px]">
@@ -518,12 +516,12 @@ export default function Dashboard({ setupData }: DashboardProps) {
           </div>
 
 
-          <Card className="shadow-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">Good to know <Info className="h-4 w-4"/></CardTitle>
+          <Card className="shadow-sm mt-12">
+            <CardHeader className="pb-6">
+              <CardTitle className="text-lg flex items-center gap-2">Good to know <Info className="h-4 w-4"/></CardTitle>
               <CardDescription>Quick tips in plain language.</CardDescription>
             </CardHeader>
-            <CardContent className="grid gap-2 text-sm text-muted-foreground md:grid-cols-3">
+            <CardContent className="grid gap-6 text-sm text-muted-foreground md:grid-cols-3 p-6">
               <div>"Monthly Home Cost" includes mortgage, taxes, insurance, HOA, and upkeep.</div>
               <div>"Money Needed at Closing" is your down payment plus one‑time fees. Credits can reduce it.</div>
               <div>Healthy budget rule: try to keep home costs at or under one‑third of your gross income.</div>
