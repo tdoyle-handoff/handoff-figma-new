@@ -942,7 +942,7 @@ export default function Documents({ setupData }: DocumentsProps) {
 
         <div style="margin-bottom: 25px;">
           <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">ENVIRONMENTAL CONDITIONS</h3>
-          <p>Water Damage: ☐ Yes ☐ No ☐ Unknown   Details: _________________________</p>
+          <p>Water Damage: ☐ Yes ☐ No �� Unknown   Details: _________________________</p>
           <p>Mold/Mildew: ☐ Yes ☐ No ☐ Unknown   Details: _________________________</p>
           <p>Pest Infestation: �� Yes ☐ No ☐ Unknown   Details: _________________________</p>
           <p>Asbestos: ☐ Yes ☐ No ☐ Unknown   Details: _________________________</p>
@@ -1383,6 +1383,7 @@ export default function Documents({ setupData }: DocumentsProps) {
                         size={isMobile ? "icon" : "sm"}
                         className={`${isMobile ? 'mobile-button-sm w-9 h-9' : 'mobile-button-sm'}`}
                         title="View Document"
+                        onClick={() => handleViewDocument(doc)}
                       >
                         <Eye className="w-4 h-4" />
                         {!isMobile && <span className="ml-2">View</span>}
@@ -1392,10 +1393,7 @@ export default function Documents({ setupData }: DocumentsProps) {
                         size={isMobile ? "icon" : "sm"}
                         className={`${isMobile ? 'mobile-button-sm w-9 h-9' : 'mobile-button-sm'}`}
                         title="Download Document"
-                        onClick={() => {
-                          // Handle document download
-                          console.log('Downloading document:', doc.name);
-                        }}
+                        onClick={() => handleDownloadDocument(doc)}
                       >
                         <ChevronDown className="w-4 h-4" />
                         {!isMobile && <span className="ml-2">Download</span>}
