@@ -269,15 +269,15 @@ export function ProcessProgress() {
       </Collapsible>
 
       {/* Timeline Summary - Always visible */}
-      <div className="mt-6 pt-6 border-t border-border">
-        <div className="grid grid-cols-2 gap-4 text-sm">
+      <div className="mt-3 pt-2 border-t border-border">
+        <div className="grid grid-cols-2 gap-3 text-xs">
           <div>
-            <p className="text-muted-foreground mb-1">Next deadline</p>
-            <p className="font-medium">Home inspection - Jan 17, 2025</p>
+            <p className="text-muted-foreground mb-0.5">Next deadline</p>
+            <p className="font-medium text-sm">Home inspection - Jan 17, 2025</p>
           </div>
           <div>
-            <p className="text-muted-foreground mb-1">Estimated closing</p>
-            <p className="font-medium">Jan 31, 2025</p>
+            <p className="text-muted-foreground mb-0.5">Estimated closing</p>
+            <p className="font-medium text-sm">Jan 31, 2025</p>
           </div>
         </div>
       </div>
