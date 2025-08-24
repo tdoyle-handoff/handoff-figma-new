@@ -224,31 +224,49 @@ export default function Settings({ onSignOut, setupData, onNavigate }: SettingsP
       )}
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className={`grid w-full ${isMobile ? 'grid-cols-3' : 'grid-cols-6'} mb-6`}>
-          <TabsTrigger value="profile" className={isMobile ? 'text-xs' : ''}>
-            <User className="w-4 h-4 mr-1" />
+        <TabsList className="w-full bg-transparent h-auto p-0 border-b border-gray-200 rounded-none flex justify-start overflow-x-auto mb-6">
+          <TabsTrigger
+            value="profile"
+            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap flex items-center gap-2"
+          >
+            <User className="w-4 h-4" />
             <span className={isMobile ? 'hidden' : 'inline'}>Profile</span>
           </TabsTrigger>
-          <TabsTrigger value="setup" className={isMobile ? 'text-xs' : ''}>
-            <Home className="w-4 h-4 mr-1" />
+          <TabsTrigger
+            value="setup"
+            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap flex items-center gap-2"
+          >
+            <Home className="w-4 h-4" />
             <span className={isMobile ? 'hidden' : 'inline'}>Setup</span>
           </TabsTrigger>
-          <TabsTrigger value="notifications" className={isMobile ? 'text-xs' : ''}>
-            <Bell className="w-4 h-4 mr-1" />
+          <TabsTrigger
+            value="notifications"
+            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap flex items-center gap-2"
+          >
+            <Bell className="w-4 h-4" />
             <span className={isMobile ? 'hidden' : 'inline'}>Notifications</span>
           </TabsTrigger>
           {!isMobile && (
             <Fragment>
-              <TabsTrigger value="privacy" className="text-xs">
-                <Shield className="w-4 h-4 mr-1" />
+              <TabsTrigger
+                value="privacy"
+                className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap flex items-center gap-2"
+              >
+                <Shield className="w-4 h-4" />
                 <span>Privacy</span>
               </TabsTrigger>
-              <TabsTrigger value="team" className="text-xs">
-                <Users className="w-4 h-4 mr-1" />
+              <TabsTrigger
+                value="team"
+                className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap flex items-center gap-2"
+              >
+                <Users className="w-4 h-4" />
                 <span>Team</span>
               </TabsTrigger>
-              <TabsTrigger value="support" className="text-xs">
-                <HelpCircle className="w-4 h-4 mr-1" />
+              <TabsTrigger
+                value="support"
+                className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap flex items-center gap-2"
+              >
+                <HelpCircle className="w-4 h-4" />
                 <span>Support</span>
               </TabsTrigger>
             </Fragment>
