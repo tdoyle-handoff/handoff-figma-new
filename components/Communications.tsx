@@ -943,24 +943,6 @@ export default function Communications() {
                 >
                   Inbox
                 </TabsTrigger>
-                <TabsTrigger
-                  value="chat"
-                  className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
-                >
-                  Chat
-                </TabsTrigger>
-                <TabsTrigger
-                  value="sms"
-                  className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
-                >
-                  SMS
-                </TabsTrigger>
-                <TabsTrigger
-                  value="files"
-                  className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
-                >
-                  Files
-                </TabsTrigger>
               </Fragment>
             )}
           </TabsList>
