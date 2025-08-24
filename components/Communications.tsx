@@ -1033,11 +1033,6 @@ export default function Communications() {
                 </div>
               </TabsContent>
 
-              <TabsContent value="sms" className="space-y-4">
-                <div className="p-4 border rounded-lg text-sm text-muted-foreground">
-                  SMS integration is coming soon. Send and receive text messages with important updates.
-                </div>
-              </TabsContent>
 
             </Fragment>
           )}
