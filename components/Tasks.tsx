@@ -323,8 +323,9 @@ export default function Tasks({ onNavigate }: TasksProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-black mt-1">
-            Color-coded milestones, interactive checklist, and deadline tracker
+          <h2 className="text-2xl font-bold text-gray-900">Transaction Checklist</h2>
+          <p className="text-gray-600 mt-1">
+            Transaction checklist and important milestones to keep you on track
           </p>
         </div>
       </div>
