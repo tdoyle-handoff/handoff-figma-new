@@ -151,11 +151,11 @@ export default function MortgageCalculator({ onBack }: MortgageCalculatorProps) 
           </div>
         </div>
         <div className={`flex gap-2 ${isMobile ? 'hidden' : ''}`}>
-          <Button variant="outline" size="sm">
+          <Button variant="action-share" size="sm">
             <Share2 className="w-4 h-4 mr-2" />
             Share
           </Button>
-          <Button variant="outline" size="sm">
+          <Button variant="action-download" size="sm">
             <Download className="w-4 h-4 mr-2" />
             Export
           </Button>
