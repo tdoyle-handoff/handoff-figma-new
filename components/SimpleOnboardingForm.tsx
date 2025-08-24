@@ -7,8 +7,9 @@ import { Card, CardContent } from './ui/card';
 import { Textarea } from './ui/textarea';
 import { Checkbox } from './ui/checkbox';
 import { Slider } from './ui/slider';
-import { ArrowLeft, ArrowRight, Plus } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Plus, X } from 'lucide-react';
 import { useIsMobile } from './ui/use-mobile';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 
 interface FormData {
   // Contact & Decision Makers (Step 1)
