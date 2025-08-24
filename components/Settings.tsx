@@ -207,13 +207,12 @@ export default function Settings({ onSignOut, setupData, onNavigate }: SettingsP
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       {/* Header */}
-      <div className="rounded-lg border bg-white p-4 md:p-5">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm text-muted-foreground">
-              Manage your account preferences and application settings.
-            </p>
-          </div>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">Settings</h2>
+          <p className="text-gray-600 mt-1">
+            Account preferences, notifications, and application settings
+          </p>
         </div>
       </div>
 
