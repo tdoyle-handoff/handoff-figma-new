@@ -938,6 +938,12 @@ export default function Communications() {
             {!isMobile && (
               <Fragment>
                 <TabsTrigger
+                  value="sent"
+                  className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
+                >
+                  Sent
+                </TabsTrigger>
+                <TabsTrigger
                   value="inbox"
                   className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
                 >
