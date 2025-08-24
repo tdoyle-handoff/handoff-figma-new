@@ -354,14 +354,36 @@ export default function Resources({ onNavigate }: ResourcesProps) {
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {[
+                      { term: 'Adjustable-Rate Mortgage (ARM)', def: 'A mortgage with an interest rate that can change periodically based on market conditions.' },
+                      { term: 'Amortization', def: 'The process of paying off debt through regular payments that include both principal and interest.' },
+                      { term: 'Annual Percentage Rate (APR)', def: 'The total yearly cost of a mortgage expressed as a percentage, including interest and fees.' },
                       { term: 'Appraisal', def: 'A professional opinion of property value performed by a licensed appraiser.' },
-                      { term: 'Contingency', def: 'A condition that must be met for the contract to proceed.' },
-                      { term: 'Earnest Money', def: 'A deposit made to demonstrate good faith when making an offer.' },
-                      { term: 'Escrow', def: 'A neutral third party that holds funds and documents until closing.' }
+                      { term: 'Closing Costs', def: 'Fees and expenses paid at closing, typically 2-5% of the purchase price.' },
+                      { term: 'Comparative Market Analysis (CMA)', def: 'A report comparing similar properties to determine fair market value.' },
+                      { term: 'Contingency', def: 'A condition that must be met for the contract to proceed, such as financing or inspection.' },
+                      { term: 'Debt-to-Income Ratio (DTI)', def: 'Your total monthly debt payments divided by your gross monthly income.' },
+                      { term: 'Down Payment', def: 'The upfront cash payment made toward the purchase price, typically 3-20%.' },
+                      { term: 'Earnest Money', def: 'A deposit made to demonstrate good faith when making an offer, usually 1-3% of purchase price.' },
+                      { term: 'Equity', def: 'The difference between your home\'s current value and the amount you owe on your mortgage.' },
+                      { term: 'Escrow', def: 'A neutral third party that holds funds and documents until closing conditions are met.' },
+                      { term: 'Fixed-Rate Mortgage', def: 'A mortgage with an interest rate that remains the same throughout the loan term.' },
+                      { term: 'Homeowner\'s Insurance', def: 'Insurance that protects against damage to your home and personal property.' },
+                      { term: 'Home Inspection', def: 'A thorough examination of a property\'s condition by a qualified professional.' },
+                      { term: 'Loan-to-Value Ratio (LTV)', def: 'The loan amount divided by the property value, used to assess lending risk.' },
+                      { term: 'Multiple Listing Service (MLS)', def: 'A database used by real estate professionals to share property listings.' },
+                      { term: 'Points', def: 'Prepaid interest paid at closing to reduce the mortgage interest rate (1 point = 1% of loan amount).' },
+                      { term: 'Pre-approval', def: 'A lender\'s written commitment to provide a loan up to a specific amount.' },
+                      { term: 'Pre-qualification', def: 'An informal estimate of how much you might be able to borrow based on basic financial information.' },
+                      { term: 'Principal', def: 'The amount of money borrowed or the remaining balance on a loan, excluding interest.' },
+                      { term: 'Private Mortgage Insurance (PMI)', def: 'Insurance required when down payment is less than 20% of the purchase price.' },
+                      { term: 'Property Taxes', def: 'Annual taxes paid to local government based on the assessed value of your property.' },
+                      { term: 'Title Insurance', def: 'Insurance that protects against problems with the property title or ownership.' },
+                      { term: 'Underwriting', def: 'The process lenders use to evaluate loan applications and assess risk.' },
+                      { term: 'Walk-through', def: 'A final inspection of the property before closing to ensure it\'s in agreed-upon condition.' }
                     ].map((item, idx) => (
-                      <div key={idx} className="p-4 border rounded-lg">
-                        <div className="font-medium">{item.term}</div>
-                        <div className="text-sm text-muted-foreground">{item.def}</div>
+                      <div key={idx} className="p-4 border rounded-lg hover:shadow-sm transition-shadow">
+                        <div className="font-medium text-primary mb-2">{item.term}</div>
+                        <div className="text-sm text-muted-foreground leading-relaxed">{item.def}</div>
                       </div>
                     ))}
                   </div>
