@@ -107,6 +107,17 @@ export default function InspectorSearch({ onSelect, defaultQuery }: InspectorSea
     );
   }, [query]);
 
+  const handleCallInspector = (phone: string, name: string) => {
+    window.location.href = `tel:${phone}`;
+  };
+
+  const handleEmailInspector = (email: string, name: string, company: string) => {
+    const subject = `Home Inspection Inquiry`;
+    const body = `Hi ${name},\n\nI'm interested in scheduling a home inspection for my property purchase. Could you please provide more information about your services and availability?\n\nProperty Details:\n- Location: [Your Property Address]\n- Type: Single Family Home\n- Approximate Size: [Square Footage]\n- Preferred Inspection Date: [Your Preferred Date]\n\nPlease let me know your availability and any additional information you might need.\n\nThank you!\n\nBest regards,\n[Your Name]`;
+    
+    window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -167,46 +178,49 @@ export default function InspectorSearch({ onSelect, defaultQuery }: InspectorSea
                   </div>
                 </div>
                 <div className="flex flex-col gap-2 ml-4">
-                  <div className="flex gap-1">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => window.location.href = `tel:${inspector.phone}`}
-                      title="Call inspector"
-                    >
-                      <Phone className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => window.location.href = `mailto:${inspector.email}?subject=Home Inspection Inquiry&body=Hi ${inspector.name},%0A%0AI am interested in scheduling a home inspection with ${inspector.company}.%0A%0AProperty details:%0A- Address: [Property Address]%0A- Inspection type: ${inspector.specialties.join(', ')}%0A%0APlease let me know your availability.%0A%0AThank you!`}
-                      title="Email inspector"
-                    >
-                      <Mail className="w-4 h-4" />
-                    </Button>
-                  </div>
-                  <Button
+                  <Button 
+                    variant="outline" 
                     size="sm"
-                    onClick={() => {
-                      // Create a booking email with more details
-                      const bookingEmail = `mailto:${inspector.email}?subject=Home Inspection Booking Request&body=Hi ${inspector.name},%0A%0AI would like to book a home inspection with ${inspector.company}.%0A%0AProperty Information:%0A- Address: [Property Address]%0A- Square Footage: [Property Size]%0A- Property Type: [Single Family/Condo/etc]%0A%0AInspection Requirements:%0A- ${inspector.specialties.join('%0A- ')}%0A%0APreferred dates/times:%0A- Option 1: [Date/Time]%0A- Option 2: [Date/Time]%0A- Option 3: [Date/Time]%0A%0AStarting rate: $${inspector.basePrice}%0A%0APlease confirm availability and provide any additional information needed.%0A%0AThank you!`;
-
-                      window.location.href = bookingEmail;
-                    }}
+                    onClick={() => handleCallInspector(inspector.phone, inspector.name)}
                   >
-                    Book Now
+                    <Phone className="w-4 h-4 mr-2" />
+                    Call
                   </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => handleEmailInspector(inspector.email, inspector.name, inspector.company)}
+                  >
+                    <Mail className="w-4 h-4 mr-2" />
+                    Email
+                  </Button>
+                  {onSelect && (
+                    <Button 
+                      size="sm"
+                      onClick={() => onSelect(inspector)}
+                    >
+                      Select
+                    </Button>
+                  )}
                 </div>
               </div>
             </CardContent>
           </Card>
         ))}
-        {filteredInspectors.length === 0 && (
-          <div className="text-sm text-muted-foreground p-4 border rounded-lg">
-            No inspectors found. Try a different search.
-          </div>
-        )}
       </div>
+
+      {filteredInspectors.length === 0 && (
+        <div className="text-center py-8">
+          <p className="text-muted-foreground">No inspectors found matching your search criteria.</p>
+          <Button 
+            variant="outline" 
+            className="mt-4"
+            onClick={() => setQuery('')}
+          >
+            Clear Search
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
