@@ -410,11 +410,62 @@ export function SimpleOnboardingForm({ onComplete, onSkip }: SimpleOnboardingFor
         <div>
           <div className="flex items-center justify-between mb-2">
             <Label className="text-sm font-medium text-slate-700">Co-buyers</Label>
-            <Button type="button" variant="outline" size="sm" className="text-xs">
-              Add co-buyer
-            </Button>
+            <Dialog open={showCobuyerDialog} onOpenChange={setShowCobuyerDialog}>
+              <DialogTrigger asChild>
+                <Button type="button" variant="outline" size="sm" className="text-xs">
+                  <Plus className="w-3 h-3 mr-1" />
+                  Add co-buyer
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="bg-white shadow-xl border border-gray-200">
+                <DialogHeader>
+                  <DialogTitle>Add Co-buyer</DialogTitle>
+                  <DialogDescription>
+                    Add a co-buyer to this home purchase
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label className="text-sm font-medium mb-2 block">Full Name</Label>
+                    <Input
+                      placeholder="Enter co-buyer's full name"
+                      value={newCobuyerName}
+                      onChange={(e) => setNewCobuyerName(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && addCobuyer()}
+                    />
+                  </div>
+                  <div className="flex gap-2 justify-end">
+                    <Button variant="outline" onClick={() => setShowCobuyerDialog(false)}>
+                      Cancel
+                    </Button>
+                    <Button onClick={addCobuyer} disabled={!newCobuyerName.trim()}>
+                      Add Co-buyer
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
-          <p className="text-sm text-gray-500">No co-buyers added yet</p>
+          {formData.cobuyers.length === 0 ? (
+            <p className="text-sm text-gray-500">No co-buyers added yet</p>
+          ) : (
+            <div className="space-y-2">
+              {formData.cobuyers.map((cobuyer, index) => (
+                <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded border">
+                  <span className="text-sm">{cobuyer}</span>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeCobuyer(index)}
+                    className="h-6 w-6 p-0 hover:bg-red-100"
+                  >
+                    <X className="w-3 h-3" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
