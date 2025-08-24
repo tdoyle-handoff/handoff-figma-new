@@ -183,6 +183,22 @@ export function SimpleOnboardingForm({ onComplete, onSkip }: SimpleOnboardingFor
     });
   };
 
+  const addCobuyer = () => {
+    if (newCobuyerName.trim()) {
+      updateFormData({
+        cobuyers: [...formData.cobuyers, newCobuyerName.trim()]
+      });
+      setNewCobuyerName('');
+      setShowCobuyerDialog(false);
+    }
+  };
+
+  const removeCobuyer = (index: number) => {
+    updateFormData({
+      cobuyers: formData.cobuyers.filter((_, i) => i !== index)
+    });
+  };
+
   const validateCurrentStep = (): boolean => {
     const newErrors: Record<string, string> = {};
 
