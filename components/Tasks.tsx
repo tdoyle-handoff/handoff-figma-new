@@ -215,10 +215,10 @@ const PhaseCard = ({ phase, onNavigate, onUpdateTask }: {
   const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
   
   return (
-    <Card className="mb-4">
+    <Card className="mb-6 shadow-sm">
       <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
         <CollapsibleTrigger asChild>
-          <CardHeader className="pb-4 cursor-pointer hover:bg-gray-50/50 transition-colors">
+          <CardHeader className="pb-5 cursor-pointer hover:bg-gray-50/50 transition-colors">
             <div className="flex items-center gap-4">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                 phase.status === 'completed' ? 'bg-green-100' :
