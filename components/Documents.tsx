@@ -944,7 +944,7 @@ export default function Documents({ setupData }: DocumentsProps) {
       <div className="flex items-center justify-between">
         <div>
           <p className="text-black">
-            Smart offer builder, templates, and e-sign integration
+            Document management, contracts, and file sharing for your transaction
           </p>
         </div>
         <div className="flex gap-2">
@@ -1009,18 +1009,6 @@ export default function Documents({ setupData }: DocumentsProps) {
         </div>
       </div>
 
-      {/* Progress Alert */}
-      <Alert>
-        <Folder className="h-4 w-4" />
-        <AlertDescription>
-          <div className="flex items-center justify-between">
-            <span>Required documents completion: {completedRequired.length}/{requiredDocs.length}</span>
-            <div className="w-32">
-              <Progress value={completionPercentage} className="h-2" />
-            </div>
-          </div>
-        </AlertDescription>
-      </Alert>
 
       {/* Agent Agreement Documents Alert */}
       {agentAgreementDocs.length > 0 && (
