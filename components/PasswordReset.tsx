@@ -135,7 +135,7 @@ export function PasswordReset({ resetToken, onSuccess, onBackToLogin }: Password
       </div>
       <div>
         <h1 className="text-3xl font-bold text-primary">Handoff</h1>
-        <p className="text-muted-foreground">Real Estate Transaction Platform</p>
+        <p className="text-muted-foreground">Real Estate Platform</p>
       </div>
     </div>
   );
