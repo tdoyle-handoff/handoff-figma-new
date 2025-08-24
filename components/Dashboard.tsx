@@ -305,7 +305,7 @@ export default function Dashboard({ setupData }: DashboardProps) {
 
           {/* Your Monthly Cost */}
           <div className="flex justify-center my-12">
-            <Card className="shadow-sm w-full max-w-lg">
+            <Card className="shadow-sm w-full max-w-4xl">
               <CardHeader className="pb-6">
                 <CardTitle className="text-xl">Your Monthly Cost</CardTitle>
                 <CardDescription>Live breakdown by category.</CardDescription>
