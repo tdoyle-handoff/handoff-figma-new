@@ -79,17 +79,17 @@ export default function ChecklistSidebar({ phases, onSelectPhase, onSelectTask, 
   return (
     <div className="space-y-3">
       <Card className="shadow-sm">
-        <CardHeader className="pb-3">
+        <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-sm">Checklist Overall Completion</CardTitle>
-              <CardDescription>{completedTasks} / {totalTasks} Completed</CardDescription>
+              <CardTitle className="text-sm">Overall Progress</CardTitle>
+              <CardDescription className="text-xs">{completedTasks} / {totalTasks} Completed</CardDescription>
             </div>
-            <div className="text-lg font-semibold">{Math.round(progress)}%</div>
+            <div className="text-base font-semibold">{Math.round(progress)}%</div>
           </div>
         </CardHeader>
-        <CardContent>
-          <Progress value={progress} />
+        <CardContent className="pt-0 pb-3">
+          <Progress value={progress} className="h-2" />
         </CardContent>
       </Card>
 
