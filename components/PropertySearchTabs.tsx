@@ -30,17 +30,23 @@ export default function PropertySearchTabs() {
       </div>
 
       <Tabs value={tabValue} onValueChange={setTabValue} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="get-started" className="gap-2">
-            <Play className="h-4 w-4" />
+        <TabsList className="w-full bg-transparent h-auto p-0 border-b border-gray-200 rounded-none flex justify-start">
+          <TabsTrigger
+            value="get-started"
+            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200"
+          >
             Get Started
           </TabsTrigger>
-          <TabsTrigger value="find-home" className="gap-2">
-            <ListChecks className="h-4 w-4" />
+          <TabsTrigger
+            value="find-home"
+            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200"
+          >
             Track & Compare
           </TabsTrigger>
-          <TabsTrigger value="found-home" className="gap-2">
-            <CheckCircle className="h-4 w-4" />
+          <TabsTrigger
+            value="found-home"
+            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200"
+          >
             Property Analysis
           </TabsTrigger>
         </TabsList>
