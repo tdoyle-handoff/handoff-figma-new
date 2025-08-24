@@ -166,18 +166,15 @@ export default function VendorMarketplace({ defaultTab = 'attorneys' }: VendorMa
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardDescription>
-            Browse and book trusted providers with ratings, availability, and pricing.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground">
-            Find a real estate attorney, schedule inspections, or compare insurance quotes — all in one place.
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">Vendor Marketplace</h2>
+          <p className="text-gray-600 mt-1">
+            Find and connect with real estate professionals and services
           </p>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       <Tabs value={tabValue} onValueChange={(v) => setTabValue(v as TabKey)} className="w-full">
         <TabsList className="grid w-full grid-cols-5">
