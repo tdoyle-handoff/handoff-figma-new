@@ -61,17 +61,16 @@ export default function DashboardLayout({
     // Finding your Dream Home
     { id: 'property', label: 'Property Search', icon: Home, category: 'Finding your Dream Home' },
     { id: 'overview', label: 'Analytics & Budget', icon: TrendingUp, category: 'Finding your Dream Home' },
-    
+
     // Purchasing Your Home
     { id: 'tasks', label: 'Transaction Checklist', icon: CheckSquare, category: 'Purchasing Your Home' },
     { id: 'documents', label: 'Documents & Legal', icon: FileText, category: 'Purchasing Your Home' },
-    { id: 'communications', label: 'Communications', icon: MessageSquare, category: 'Purchasing Your Home' },
     { id: 'vendor-marketplace', label: 'Vendor Marketplace', icon: ShoppingCart, category: 'Purchasing Your Home' },
-    { id: 'team', label: 'My Team', icon: Users, category: 'Purchasing Your Home' },
-    
+
     // Support
-    { id: 'resources', label: 'Education Hub', icon: BookOpen, category: 'Support' },
-    { id: 'settings', label: 'Settings', icon: Settings, category: 'Support' }
+    { id: 'communications', label: 'Communications', icon: MessageSquare, category: 'Support' },
+    { id: 'team', label: 'My Team', icon: Users, category: 'Support' },
+    { id: 'resources', label: 'Education Hub', icon: BookOpen, category: 'Support' }
   ];
 
   const categoryColors = {
@@ -247,6 +246,17 @@ export default function DashboardLayout({
         {/* Footer */}
         <div className="p-2 border-t border-blue-700/50 mt-auto">
           <div className="flex items-center gap-1">
+            <button
+              className={cn(
+                "flex items-center gap-2 px-2 py-1.5 rounded transition-all duration-200 text-blue-200 hover:bg-blue-800/30 hover:text-white text-xs",
+                !sidebarOpen && "justify-center px-2"
+              )}
+              onClick={() => onPageChange('settings')}
+            >
+              <Settings className="h-3 w-3" />
+              {sidebarOpen && <span>Settings</span>}
+            </button>
+
             <button
               className={cn(
                 "flex items-center gap-2 px-2 py-1.5 rounded transition-all duration-200 text-blue-200 hover:bg-red-600/30 hover:text-white text-xs",
