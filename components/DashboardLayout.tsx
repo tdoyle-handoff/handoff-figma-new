@@ -54,62 +54,57 @@ export default function DashboardLayout({
   children 
 }: DashboardLayoutProps) {
   const propertyContext = usePropertyContext();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Navigation organized by user workflow
+  // Main navigation items for tab header
   const navigationItems: NavigationItem[] = [
-    // Finding your Dream Home
-    {
-      id: 'property',
-      label: 'Property Search',
-      icon: Home,
-      category: 'Finding your Dream Home'
-    },
     {
       id: 'overview',
-      label: 'Analytics & Budget',
+      label: 'Dashboard',
       icon: BarChart3,
-      category: 'Finding your Dream Home'
+      category: 'Main'
     },
-
-    // Purchasing Your Home
+    {
+      id: 'property',
+      label: 'Properties',
+      icon: Home,
+      category: 'Main'
+    },
     {
       id: 'tasks',
-      label: 'Transaction Checklist',
+      label: 'Tasks',
       icon: CheckSquare,
-      category: 'Purchasing Your Home'
-    },
-    {
-      id: 'vendor-marketplace',
-      label: 'Vendor Marketplace',
-      icon: ShoppingCart,
-      category: 'Purchasing Your Home'
+      category: 'Main'
     },
     {
       id: 'documents',
-      label: 'Offer & Document Hub',
+      label: 'Documents',
       icon: FileText,
-      category: 'Purchasing Your Home'
+      category: 'Main'
     },
-
-    // Support
     {
       id: 'communications',
-      label: 'Communication Suite',
+      label: 'Messages',
       icon: MessageSquare,
-      category: 'Support'
+      category: 'Main'
+    },
+    {
+      id: 'vendor-marketplace',
+      label: 'Marketplace',
+      icon: ShoppingCart,
+      category: 'Secondary'
     },
     {
       id: 'team',
-      label: 'My Team',
+      label: 'Team',
       icon: Users,
-      category: 'Support'
+      category: 'Secondary'
     },
     {
       id: 'resources',
-      label: 'Education Hub',
+      label: 'Resources',
       icon: BookOpen,
-      category: 'Support'
+      category: 'Secondary'
     }
   ];
 
