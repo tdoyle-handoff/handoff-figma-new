@@ -276,6 +276,111 @@ export default function Settings({ onSignOut, setupData, onNavigate }: SettingsP
         {/* Profile Tab */}
         <TabsContent value="profile" className="space-y-6">
           <Card>
+            <CardHeader>
+              <CardTitle>Profile Photo</CardTitle>
+              <CardDescription>Upload a profile photo to personalize your account</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center gap-6">
+                <div className="relative">
+                  <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
+                    <User className="w-8 h-8 text-primary" />
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full p-0"
+                    onClick={() => {
+                      const input = document.createElement('input');
+                      input.type = 'file';
+                      input.accept = 'image/*';
+                      input.onchange = (e) => {
+                        const file = (e.target as HTMLInputElement).files?.[0];
+                        if (file) {
+                          // In a real app, this would upload to a server
+                          const reader = new FileReader();
+                          reader.onload = (e) => {
+                            const img = document.querySelector('.profile-photo') as HTMLImageElement;
+                            if (img && e.target?.result) {
+                              img.src = e.target.result as string;
+                              img.style.display = 'block';
+                            }
+                            setSavedMessage('Profile photo updated successfully!');
+                            setTimeout(() => setSavedMessage(''), 3000);
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      };
+                      input.click();
+                    }}
+                  >
+                    <Camera className="w-4 h-4" />
+                  </Button>
+                  <img
+                    className="profile-photo w-20 h-20 rounded-full object-cover absolute inset-0"
+                    style={{ display: 'none' }}
+                    alt="Profile"
+                  />
+                </div>
+                <div>
+                  <h3 className="font-medium mb-1">Upload Profile Photo</h3>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Choose a photo that represents you. JPG, PNG or GIF format, max 5MB.
+                  </p>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const input = document.createElement('input');
+                        input.type = 'file';
+                        input.accept = 'image/*';
+                        input.onchange = (e) => {
+                          const file = (e.target as HTMLInputElement).files?.[0];
+                          if (file) {
+                            if (file.size > 5 * 1024 * 1024) {
+                              alert('File size must be less than 5MB');
+                              return;
+                            }
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                              const img = document.querySelector('.profile-photo') as HTMLImageElement;
+                              if (img && e.target?.result) {
+                                img.src = e.target.result as string;
+                                img.style.display = 'block';
+                              }
+                              setSavedMessage('Profile photo updated successfully!');
+                              setTimeout(() => setSavedMessage(''), 3000);
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        };
+                        input.click();
+                      }}
+                    >
+                      Choose Photo
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        const img = document.querySelector('.profile-photo') as HTMLImageElement;
+                        if (img) {
+                          img.style.display = 'none';
+                          setSavedMessage('Profile photo removed');
+                          setTimeout(() => setSavedMessage(''), 3000);
+                        }
+                      }}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
                 <CardTitle>Personal Information</CardTitle>
