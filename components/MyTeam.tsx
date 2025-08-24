@@ -214,10 +214,11 @@ export default function MyTeam({ setupData }: MyTeamProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="rounded-lg border bg-white p-4 md:p-5 flex items-center justify-between">
+      <div className="flex items-center justify-between mb-6">
         <div>
-          <p className="text-sm text-muted-foreground">
-            Manage your real estate transaction team members and their contact information
+          <h2 className="text-2xl font-bold text-gray-900">My Team</h2>
+          <p className="text-gray-600 mt-1">
+            Manage your real estate team and professional connections
           </p>
         </div>
         <div className="flex gap-2">
