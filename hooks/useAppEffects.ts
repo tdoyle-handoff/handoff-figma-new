@@ -132,7 +132,7 @@ export function useAppEffects({
       document.addEventListener('touchend', preventZoom, { passive: false });
       return () => document.removeEventListener('touchend', preventZoom);
     }
-  }, [isMobile, auth.isAuthenticated, passwordReset.showPasswordReset]);
+  }, [isMobile, auth.isAuthenticated, passwordReset.showPasswordReset, navigation.currentPage, navigation.getPageTitle]);
 
   // Smart navigation restoration (full navigation enabled)
   // Allow users to navigate anywhere; only restore a saved page if present.

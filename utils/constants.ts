@@ -8,7 +8,7 @@ export const FAVICON_SVG = `data:image/svg+xml;base64,${btoa(`
 export const VIEWPORT_META_CONTENT = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover';
 
 export const APP_TITLES = {
-  authenticated: 'Handoff - Real Estate Transaction Management',
+  authenticated: 'Handoff - Real Estate Platform',
   unauthenticated: 'Handoff - Sign In'
 } as const;
 
