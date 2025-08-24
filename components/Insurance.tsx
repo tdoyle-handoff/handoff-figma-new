@@ -522,11 +522,30 @@ export default function Insurance() {
                       </div>
 
                       <div className="flex gap-2 pt-2">
-                        <Button variant="outline" size="sm">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            alert(`Viewing details for ${quote.providerName} ${quote.type} insurance policy.\n\nCoverage Details:\n• Dwelling: $${quote.coverage.dwelling.toLocaleString()}\n• Personal Property: $${quote.coverage.personalProperty.toLocaleString()}\n• Liability: $${quote.coverage.liability.toLocaleString()}\n• Medical Payments: $${quote.coverage.medicalPayments.toLocaleString()}\n\nDeductible: $${quote.deductible.toLocaleString()}\nValid until: ${quote.validUntil}`);
+                          }}
+                        >
                           <FileText className="w-4 h-4 mr-2" />
                           View Details
                         </Button>
-                        <Button size="sm">
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            const updatedQuotes = quotes.map(q =>
+                              q.id === quote.id
+                                ? { ...q, status: 'selected' as const }
+                                : q.type === quote.type
+                                  ? { ...q, status: 'received' as const }
+                                  : q
+                            );
+                            setQuotes(updatedQuotes);
+                            alert(`Selected ${quote.providerName} ${quote.type} insurance policy!\n\nMonthly Premium: $${quote.monthlyPremium.toLocaleString()}\nAnnual Premium: $${quote.annualPremium.toLocaleString()}\n\nYour insurance provider will contact you to finalize the policy details.`);
+                          }}
+                        >
                           Select Policy
                         </Button>
                       </div>
