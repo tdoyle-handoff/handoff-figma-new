@@ -528,7 +528,10 @@ export default function Dashboard({ setupData }: DashboardProps) {
                 <div>
                   <div className="flex items-center justify-between"><Label>Interest rate</Label><div className="text-sm text-muted-foreground">{pct(rate)}</div></div>
                   <div className="mt-2 flex items-center gap-3">
-                    <Input type="number" value={rate} onChange={(e) => setRate(Number(e.target.value || 0))} className="w-24" />
+                    <div className="relative">
+                      <Input type="number" value={rate} onChange={(e) => setRate(Number(e.target.value || 0))} className="w-32 pr-8" step="0.01" />
+                      <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">%</span>
+                    </div>
                     <Slider value={[rate]} onValueChange={([v]) => setRate(Number(v.toFixed(2)))} min={0} max={12} step={0.05} className="w-full" />
                   </div>
                 </div>
