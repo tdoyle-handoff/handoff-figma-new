@@ -1121,26 +1121,30 @@ export default function Documents({ setupData }: DocumentsProps) {
                       </div>
                     </div>
                     <div className={`flex items-center gap-2 ${isMobile ? 'w-full justify-end' : 'ml-4'}`}>
-                      <Button 
-                        variant="outline" 
-                        size={isMobile ? "icon" : "sm"} 
+                      <Button
+                        variant={isMobile ? "action-view" : "action-view"}
+                        size={isMobile ? "icon" : "sm"}
                         className={`${isMobile ? 'mobile-button-sm w-9 h-9' : 'mobile-button-sm'}`}
                         title="View Document"
                       >
                         <Eye className="w-4 h-4" />
                         {!isMobile && <span className="ml-2">View</span>}
                       </Button>
-                      <DownloadButton
-                        variant={isMobile ? "dark" : "primary"}
-                        size="sm"
-                        showText={!isMobile}
-                        onDownload={() => {
+                      <Button
+                        variant="action-download"
+                        size={isMobile ? "icon" : "sm"}
+                        className={`${isMobile ? 'mobile-button-sm w-9 h-9' : 'mobile-button-sm'}`}
+                        title="Download Document"
+                        onClick={() => {
                           // Handle document download
                           console.log('Downloading document:', doc.name);
                         }}
-                      />
+                      >
+                        <ChevronDown className="w-4 h-4" />
+                        {!isMobile && <span className="ml-2">Download</span>}
+                      </Button>
                       <Button
-                        variant="outline"
+                        variant="action-share"
                         size={isMobile ? "icon" : "sm"}
                         className={`${isMobile ? 'mobile-button-sm w-9 h-9' : 'mobile-button-sm'}`}
                         title="Share Document"

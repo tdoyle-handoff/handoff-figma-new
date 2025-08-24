@@ -19,6 +19,10 @@ const buttonVariants = cva(
         ghost:
           "bg-transparent text-[#374151] hover:bg-[#F3F4F6] active:bg-[#E5E7EB] focus-visible:ring-2 focus-visible:ring-[#6B7280] focus-visible:ring-offset-2 disabled:text-[#9CA3AF] disabled:pointer-events-none",
         link: "text-[#3B82F6] underline-offset-4 hover:underline hover:text-[#2563EB] active:text-[#1D4ED8] focus-visible:ring-2 focus-visible:ring-[#3B82F6] focus-visible:ring-offset-2 disabled:text-[#9CA3AF] disabled:no-underline disabled:pointer-events-none",
+        // Action button variants with consistent shape/size but different blue shades
+        "action-view": "bg-[#EFF6FF] text-[#1E40AF] border border-[#BFDBFE] hover:bg-[#DBEAFE] hover:border-[#93C5FD] active:bg-[#BFDBFE] focus-visible:ring-2 focus-visible:ring-[#3B82F6] focus-visible:ring-offset-2 disabled:bg-[#F9FAFB] disabled:text-[#9CA3AF] disabled:border-[#E5E7EB] disabled:pointer-events-none",
+        "action-share": "bg-[#DBEAFE] text-[#1D4ED8] border border-[#93C5FD] hover:bg-[#BFDBFE] hover:border-[#60A5FA] active:bg-[#93C5FD] focus-visible:ring-2 focus-visible:ring-[#3B82F6] focus-visible:ring-offset-2 disabled:bg-[#F9FAFB] disabled:text-[#9CA3AF] disabled:border-[#E5E7EB] disabled:pointer-events-none",
+        "action-download": "bg-[#3B82F6] text-white hover:bg-[#2563EB] active:bg-[#1D4ED8] focus-visible:ring-2 focus-visible:ring-[#3B82F6] focus-visible:ring-offset-2 disabled:bg-[#9CA3AF] disabled:text-[#D1D5DB] disabled:pointer-events-none disabled:cursor-not-allowed",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3 mobile-device:h-11 mobile-device:px-5 mobile-device:py-3",
