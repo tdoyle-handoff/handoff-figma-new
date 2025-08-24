@@ -700,7 +700,7 @@ export default function Documents({ setupData }: DocumentsProps) {
           <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">ENVIRONMENTAL CONDITIONS</h3>
           <p>Water Damage: ☐ Yes ☐ No ☐ Unknown   Details: _________________________</p>
           <p>Mold/Mildew: ☐ Yes ☐ No ☐ Unknown   Details: _________________________</p>
-          <p>Pest Infestation: ☐ Yes ☐ No ☐ Unknown   Details: _________________________</p>
+          <p>Pest Infestation: �� Yes ☐ No ☐ Unknown   Details: _________________________</p>
           <p>Asbestos: ☐ Yes ☐ No ☐ Unknown   Details: _________________________</p>
           <p>Lead Paint: ☐ Yes ☐ No ☐ Unknown   Details: _________________________</p>
         </div>
@@ -943,8 +943,9 @@ export default function Documents({ setupData }: DocumentsProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-black">
-            Document management, contracts, and file sharing for your transaction
+          <h2 className="text-2xl font-bold text-gray-900">Offer & Document Hub</h2>
+          <p className="text-gray-600 mt-1">
+            Create offers, manage contracts, and store important documents
           </p>
         </div>
         <div className="flex gap-2">
