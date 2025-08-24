@@ -1027,11 +1027,6 @@ export default function Communications() {
                 </ScrollArea>
               </TabsContent>
 
-              <TabsContent value="chat" className="space-y-4">
-                <div className="p-4 border rounded-lg text-sm text-muted-foreground">
-                  Real-time chat is coming soon. You’ll be able to start direct and group chats with your team.
-                </div>
-              </TabsContent>
 
 
             </Fragment>
