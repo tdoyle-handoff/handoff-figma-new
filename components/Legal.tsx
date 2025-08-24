@@ -986,13 +986,6 @@ export const SettlementReview = () => {
 export default function Legal() {
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900">Legal</h2>
-        <p className="text-gray-600 mt-1">
-          Contract management, legal documentation, and attorney services
-        </p>
-      </div>
-
       <Tabs defaultValue="progress" className="w-full">
         <TabsList className="w-full bg-transparent h-auto p-0 border-b border-gray-200 rounded-none flex justify-start">
           <TabsTrigger
