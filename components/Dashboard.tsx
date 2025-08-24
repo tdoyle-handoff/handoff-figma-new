@@ -492,7 +492,7 @@ export default function Dashboard({ setupData }: DashboardProps) {
                 <div className="text-3xl font-semibold mb-4">{shortCurrency(moneyNeeded)}</div>
                 <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
                   <div>💰 Down payment</div><div className="text-right">{shortCurrency(downPayment)}</div>
-                  <div>���� One���time fees</div><div className="text-right">{shortCurrency(closingTotal)}</div>
+                  <div>📄 One-time fees</div><div className="text-right">{shortCurrency(closingTotal)}</div>
                   <div>🎁 Credits</div><div className="text-right">−{shortCurrency(sellerCredits + lenderCredits)}</div>
                 </div>
                 <Separator className="my-3" />
