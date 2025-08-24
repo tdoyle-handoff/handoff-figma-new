@@ -186,8 +186,8 @@ export default function InsuranceQuotes({ quotes: quotesProp, defaultType = 'hom
                   )}
                 </div>
                 <div className="text-right">
-                  <p className="text-2xl font-semibold text-primary">${quote.monthlyPremium}/mo</p>
-                  <p className="text-sm text-muted-foreground">${quote.annualPremium}/year</p>
+                  <p className="text-2xl font-semibold text-primary">${quote.monthlyPremium.toLocaleString()}/mo</p>
+                  <p className="text-sm text-muted-foreground">${quote.annualPremium.toLocaleString()}/year</p>
                 </div>
               </div>
 
