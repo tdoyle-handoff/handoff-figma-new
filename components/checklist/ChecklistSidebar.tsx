@@ -109,10 +109,10 @@ export default function ChecklistSidebar({ phases, onSelectPhase, onSelectTask, 
           }, {} as Record<string, typeof phase.tasks>);
 
           return (
-            <div key={phase.id} className={`border rounded-lg bg-white transition-all hover:shadow-sm ${isActive ? 'ring-2 ring-blue-400 border-blue-300 shadow-sm' : ''}`}>
+            <div key={phase.id} className={`border rounded-lg bg-white transition-all hover:shadow-sm min-h-[100px] ${isActive ? 'ring-2 ring-blue-400 border-blue-300 shadow-sm' : ''}`}>
               <button
                 onClick={() => onSelectPhase(phase.id)}
-                className={`w-full text-left p-4 hover:bg-gray-50 rounded-lg transition-colors`}
+                className={`w-full text-left p-5 hover:bg-gray-50 rounded-lg transition-colors`}
               >
                 <div className="flex items-center gap-3">
                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${phaseColorClass}`}>
