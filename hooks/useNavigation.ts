@@ -27,6 +27,7 @@ interface NavigationActions {
   navigateTo: (page: PageType) => void;
   goBack: () => void;
   getPageTitle: (page: PageType) => string;
+  getPageDescription: (page: PageType) => string;
   clearPersistedNavigation: () => void;
 }
 
@@ -120,6 +121,25 @@ export function useNavigation(): NavigationState & NavigationActions {
     'dev-tools': 'Developer Tools - Handoff',
   } as const), []);
 
+  const pageDescriptions = useMemo(() => ({
+    'overview': 'Analytics, budget tracking, and transaction progress overview',
+    'tasks': 'Transaction checklist and important milestones to keep you on track',
+    'property': 'Search for properties, save favorites, and analyze market data',
+    'legal': 'Contract management, legal documentation, and attorney services',
+    'financing': 'Mortgage applications, loan tracking, and financial calculations',
+    'inspections': 'Schedule inspections, review reports, and manage contingencies',
+    'insurance': 'Compare insurance providers and manage policy requirements',
+    'vendor-marketplace': 'Find and connect with real estate professionals and services',
+    'documents': 'Create offers, manage contracts, and store important documents',
+    'resources': 'Educational content, guides, and helpful tools for home buyers',
+    'team': 'Manage your real estate team and professional connections',
+    'communications': 'Messages, notifications, and team collaboration tools',
+    'mortgage-calculator': 'Calculate mortgage payments and loan scenarios',
+    'closing-calculator': 'Estimate closing costs and final transaction expenses',
+    'settings': 'Account preferences, notifications, and application settings',
+    'dev-tools': 'Development and debugging tools for technical support',
+  } as const), []);
+
   // Save current page to localStorage whenever it changes
   useEffect(() => {
     savePage(currentPage);
@@ -156,6 +176,10 @@ export function useNavigation(): NavigationState & NavigationActions {
     return pageTitles[page] || 'Handoff - Real Estate Transaction Management';
   }, [pageTitles]);
 
+  const getPageDescription = useCallback((page: PageType) => {
+    return pageDescriptions[page] || 'Comprehensive real estate transaction management platform';
+  }, [pageDescriptions]);
+
   const clearPersistedNavigation = useCallback(() => {
     try {
       localStorage.removeItem(STORAGE_KEY);
@@ -172,6 +196,7 @@ export function useNavigation(): NavigationState & NavigationActions {
     navigateTo,
     goBack,
     getPageTitle,
+    getPageDescription,
     clearPersistedNavigation,
   };
 }
