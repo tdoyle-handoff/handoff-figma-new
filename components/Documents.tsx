@@ -88,6 +88,250 @@ export default function Documents({ setupData }: DocumentsProps) {
   const [linkExpiration, setLinkExpiration] = useState<string>('7days');
   const isMobile = useIsMobile();
 
+  // Function to generate actual document content
+  const generateDocumentContent = (doc: Document): string => {
+    const currentDate = new Date().toLocaleDateString();
+    const buyerName = setupData?.buyerName || 'John Smith';
+
+    switch (doc.name) {
+      case 'Purchase Agreement.pdf':
+        return `
+          <html>
+            <head>
+              <title>Purchase Agreement</title>
+              <style>
+                body { font-family: 'Times New Roman', serif; margin: 40px; line-height: 1.6; }
+                .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 20px; margin-bottom: 30px; }
+                .section { margin-bottom: 25px; }
+                .signature-line { border-bottom: 1px solid #000; width: 200px; display: inline-block; margin: 0 10px; }
+                .footer { margin-top: 40px; text-align: center; font-size: 12px; color: #666; }
+              </style>
+            </head>
+            <body>
+              <div class="header">
+                <h1>REAL ESTATE PURCHASE AGREEMENT</h1>
+                <p>Property: 123 Oak Street, Riverside Heights, CA 92503</p>
+              </div>
+
+              <div class="section">
+                <h3>BUYER INFORMATION</h3>
+                <p><strong>Buyer Name:</strong> ${buyerName}</p>
+                <p><strong>Purchase Price:</strong> $750,000.00</p>
+                <p><strong>Down Payment:</strong> $150,000.00 (20%)</p>
+                <p><strong>Loan Amount:</strong> $600,000.00</p>
+              </div>
+
+              <div class="section">
+                <h3>PROPERTY DETAILS</h3>
+                <p><strong>Address:</strong> 123 Oak Street, Riverside Heights, CA 92503</p>
+                <p><strong>Property Type:</strong> Single Family Residence</p>
+                <p><strong>Square Footage:</strong> 2,850 sq ft</p>
+                <p><strong>Bedrooms:</strong> 4 | <strong>Bathrooms:</strong> 3</p>
+              </div>
+
+              <div class="section">
+                <h3>TERMS AND CONDITIONS</h3>
+                <p>1. This agreement is contingent upon buyer obtaining financing within 21 days.</p>
+                <p>2. Property inspection must be completed within 10 days of acceptance.</p>
+                <p>3. Closing date is scheduled for ${new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toLocaleDateString()}.</p>
+                <p>4. Property is sold in "as-is" condition unless otherwise specified.</p>
+              </div>
+
+              <div class="section">
+                <h3>SIGNATURES</h3>
+                <p><strong>Buyer:</strong> <span class="signature-line"></span> Date: <span class="signature-line"></span></p>
+                <br><br>
+                <p><strong>Seller:</strong> <span class="signature-line"></span> Date: <span class="signature-line"></span></p>
+              </div>
+
+              <div class="footer">
+                <p>Document generated on ${currentDate} • Handoff Real Estate Platform</p>
+              </div>
+            </body>
+          </html>
+        `;
+
+      case 'Property Disclosure.pdf':
+        return `
+          <html>
+            <head>
+              <title>Property Disclosure Statement</title>
+              <style>
+                body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+                .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 20px; margin-bottom: 30px; }
+                .checkbox { width: 15px; height: 15px; border: 1px solid #000; display: inline-block; margin-right: 10px; }
+                .section { margin-bottom: 25px; }
+                table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                th, td { border: 1px solid #000; padding: 8px; text-align: left; }
+                th { background-color: #f0f0f0; }
+              </style>
+            </head>
+            <body>
+              <div class="header">
+                <h1>PROPERTY DISCLOSURE STATEMENT</h1>
+                <p>123 Oak Street, Riverside Heights, CA 92503</p>
+              </div>
+
+              <div class="section">
+                <h3>PROPERTY CONDITION</h3>
+                <p><span class="checkbox">✓</span> Roof: No known defects</p>
+                <p><span class="checkbox">✓</span> Plumbing: Functioning properly</p>
+                <p><span class="checkbox">✓</span> Electrical: Up to code, recently inspected</p>
+                <p><span class="checkbox">✓</span> HVAC: Central air and heating, serviced annually</p>
+                <p><span class="checkbox">✓</span> Foundation: No structural issues identified</p>
+              </div>
+
+              <div class="section">
+                <h3>KNOWN ISSUES</h3>
+                <p><span class="checkbox">✓</span> Minor cosmetic wear in master bathroom</p>
+                <p><span class="checkbox">✓</span> Deck railing requires minor repair</p>
+                <p><span class="checkbox">✗</span> No known water damage</p>
+                <p><span class="checkbox">✗</span> No known pest issues</p>
+              </div>
+
+              <div class="section">
+                <h3>ENVIRONMENTAL HAZARDS</h3>
+                <table>
+                  <tr><th>Hazard Type</th><th>Present</th><th>Notes</th></tr>
+                  <tr><td>Asbestos</td><td>No</td><td>House built after 1980</td></tr>
+                  <tr><td>Lead Paint</td><td>No</td><td>No lead-based paint used</td></tr>
+                  <tr><td>Radon</td><td>No</td><td>Tested in 2023, levels normal</td></tr>
+                  <tr><td>Mold</td><td>No</td><td>No visible mold or moisture issues</td></tr>
+                </table>
+              </div>
+
+              <div class="footer">
+                <p>Seller Signature: _________________ Date: ${currentDate}</p>
+                <p>Document generated on ${currentDate} • Handoff Real Estate Platform</p>
+              </div>
+            </body>
+          </html>
+        `;
+
+      case 'Home Inspection Report.pdf':
+        return `
+          <html>
+            <head>
+              <title>Home Inspection Report</title>
+              <style>
+                body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+                .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 20px; margin-bottom: 30px; }
+                .grade { padding: 4px 8px; border-radius: 4px; color: white; font-weight: bold; }
+                .grade-a { background-color: #10b981; }
+                .grade-b { background-color: #f59e0b; }
+                .grade-c { background-color: #ef4444; }
+                .section { margin-bottom: 25px; }
+                table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                th, td { border: 1px solid #000; padding: 8px; text-align: left; }
+                th { background-color: #f0f0f0; }
+              </style>
+            </head>
+            <body>
+              <div class="header">
+                <h1>HOME INSPECTION REPORT</h1>
+                <p>123 Oak Street, Riverside Heights, CA 92503</p>
+                <p>Inspector: Mike Thompson | License #HI-2024-1234</p>
+                <p>Inspection Date: ${new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toLocaleDateString()}</p>
+              </div>
+
+              <div class="section">
+                <h3>OVERALL ASSESSMENT</h3>
+                <p><strong>Overall Grade:</strong> <span class="grade grade-a">A-</span></p>
+                <p>This property is in excellent condition with only minor issues identified. The home has been well-maintained and is move-in ready.</p>
+              </div>
+
+              <div class="section">
+                <h3>DETAILED FINDINGS</h3>
+                <table>
+                  <tr><th>System/Component</th><th>Grade</th><th>Notes</th><th>Action Required</th></tr>
+                  <tr><td>Roof</td><td><span class="grade grade-a">A</span></td><td>Excellent condition, no leaks</td><td>None</td></tr>
+                  <tr><td>Electrical</td><td><span class="grade grade-a">A</span></td><td>Updated panel, all outlets GFCI protected</td><td>None</td></tr>
+                  <tr><td>Plumbing</td><td><span class="grade grade-b">B+</span></td><td>Good condition, minor faucet leak</td><td>Replace bathroom faucet</td></tr>
+                  <tr><td>HVAC</td><td><span class="grade grade-a">A</span></td><td>Recently serviced, filters clean</td><td>None</td></tr>
+                  <tr><td>Foundation</td><td><span class="grade grade-a">A</span></td><td>Solid concrete, no cracks</td><td>None</td></tr>
+                  <tr><td>Windows/Doors</td><td><span class="grade grade-b">B+</span></td><td>Good seals, one window screen torn</td><td>Replace screen</td></tr>
+                </table>
+              </div>
+
+              <div class="section">
+                <h3>RECOMMENDATIONS</h3>
+                <p>1. Replace bathroom faucet in guest bathroom (estimated cost: $150-$300)</p>
+                <p>2. Replace torn window screen in master bedroom (estimated cost: $50-$100)</p>
+                <p>3. Consider annual HVAC maintenance service</p>
+                <p>4. Test smoke detectors and replace batteries as needed</p>
+              </div>
+
+              <div class="footer">
+                <p>Inspector: Mike Thompson | Phone: (555) 123-4567 | Email: mike@homeinspections.com</p>
+                <p>Report generated on ${currentDate} • Handoff Real Estate Platform</p>
+              </div>
+            </body>
+          </html>
+        `;
+
+      default:
+        return `
+          <html>
+            <head>
+              <title>${doc.name}</title>
+              <style>
+                body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+                .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 20px; margin-bottom: 30px; }
+              </style>
+            </head>
+            <body>
+              <div class="header">
+                <h1>${doc.name.replace('.pdf', '').toUpperCase()}</h1>
+                <p>Real Estate Transaction Document</p>
+              </div>
+
+              <div class="section">
+                <h3>Document Information</h3>
+                <p><strong>Document Name:</strong> ${doc.name}</p>
+                <p><strong>Category:</strong> ${doc.category}</p>
+                <p><strong>Upload Date:</strong> ${doc.uploadDate}</p>
+                <p><strong>Uploaded By:</strong> ${doc.uploadedBy}</p>
+                <p><strong>Status:</strong> ${doc.status.replace('_', ' ').toUpperCase()}</p>
+                ${doc.description ? `<p><strong>Description:</strong> ${doc.description}</p>` : ''}
+              </div>
+
+              <div class="footer">
+                <p>Document generated on ${currentDate} • Handoff Real Estate Platform</p>
+              </div>
+            </body>
+          </html>
+        `;
+    }
+  };
+
+  // Function to view document
+  const handleViewDocument = (doc: Document) => {
+    const content = generateDocumentContent(doc);
+    const newWindow = window.open('', '_blank');
+    if (newWindow) {
+      newWindow.document.write(content);
+      newWindow.document.close();
+      newWindow.document.title = doc.name;
+    }
+  };
+
+  // Function to download document
+  const handleDownloadDocument = (doc: Document) => {
+    const content = generateDocumentContent(doc);
+    const blob = new Blob([content], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = doc.name.replace('.pdf', '.html');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    // Show success message
+    alert(`"${doc.name}" has been downloaded successfully!`);
+  };
+
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
