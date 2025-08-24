@@ -177,12 +177,37 @@ export default function VendorMarketplace({ defaultTab = 'attorneys' }: VendorMa
       </div>
 
       <Tabs value={tabValue} onValueChange={(v) => setTabValue(v as TabKey)} className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="attorneys">Attorneys</TabsTrigger>
-          <TabsTrigger value="inspectors">Inspectors</TabsTrigger>
-          <TabsTrigger value="insurance-providers">Insurance Providers</TabsTrigger>
-          <TabsTrigger value="insurance-quotes">Insurance Quotes</TabsTrigger>
-          <TabsTrigger value="insurance-calculator">Insurance Calculator</TabsTrigger>
+        <TabsList className="w-full bg-transparent h-auto p-0 border-b border-gray-200 rounded-none flex justify-start overflow-x-auto">
+          <TabsTrigger
+            value="attorneys"
+            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
+          >
+            Attorneys
+          </TabsTrigger>
+          <TabsTrigger
+            value="inspectors"
+            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
+          >
+            Inspectors
+          </TabsTrigger>
+          <TabsTrigger
+            value="insurance-providers"
+            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
+          >
+            Insurance Providers
+          </TabsTrigger>
+          <TabsTrigger
+            value="insurance-quotes"
+            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
+          >
+            Insurance Quotes
+          </TabsTrigger>
+          <TabsTrigger
+            value="insurance-calculator"
+            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
+          >
+            Insurance Calculator
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="attorneys" className="space-y-6">
