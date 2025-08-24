@@ -157,14 +157,17 @@ export default function Dashboard({ setupData }: DashboardProps) {
             </div>
             <div>
               <Label className="text-sm font-medium">Interest Rate %</Label>
-              <Input
-                type="number"
-                value={rate}
-                onChange={(e) => setRate(Number(e.target.value || 0))}
-                placeholder="6.25"
-                className="mt-1"
-                step="0.01"
-              />
+              <div className="relative mt-1">
+                <Input
+                  type="number"
+                  value={rate}
+                  onChange={(e) => setRate(Number(e.target.value || 0))}
+                  placeholder="6.25"
+                  className="pr-8 text-lg"
+                  step="0.01"
+                />
+                <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">%</span>
+              </div>
             </div>
             <div>
               <Label className="text-sm font-medium">Loan Term (Years)</Label>
@@ -173,7 +176,7 @@ export default function Dashboard({ setupData }: DashboardProps) {
                 value={term}
                 onChange={(e) => setTerm(Number(e.target.value || 0))}
                 placeholder="30"
-                className="mt-1"
+                className="mt-1 text-lg"
               />
             </div>
             <div>
