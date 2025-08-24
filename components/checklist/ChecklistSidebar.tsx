@@ -123,7 +123,7 @@ export default function ChecklistSidebar({ phases, onSelectPhase, onSelectTask, 
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="font-semibold text-gray-900 truncate">{phase.title}</div>
+                    <div className="font-semibold text-gray-900 break-words leading-tight">{phase.title}</div>
                     <div className="text-sm text-gray-600">{completed} / {phase.tasks.length} tasks completed</div>
                     <div className="mt-1 bg-gray-200 rounded-full h-1.5">
                       <div
@@ -159,7 +159,7 @@ export default function ChecklistSidebar({ phases, onSelectPhase, onSelectTask, 
                             return (
                               <div
                                 key={t.id}
-                                className={`w-full text-left flex items-center gap-3 px-3 py-2 rounded-lg transition-colors hover:bg-blue-50 ${
+                                className={`w-full text-left flex items-start gap-3 px-3 py-3 rounded-lg transition-colors hover:bg-blue-50 ${
                                   isSelected ? 'bg-blue-50 ring-1 ring-blue-200 shadow-sm' : ''
                                 }`}
                               >
@@ -188,7 +188,7 @@ export default function ChecklistSidebar({ phases, onSelectPhase, onSelectTask, 
                                   onClick={() => onSelectTask(t.id)}
                                   className="flex-1 min-w-0 text-left"
                                 >
-                                  <div className={`text-sm truncate ${isSelected ? 'font-medium text-gray-900' : 'text-gray-700'}`}>
+                                  <div className={`text-sm break-words leading-tight ${isSelected ? 'font-medium text-gray-900' : 'text-gray-700'}`}>
                                     {t.title}
                                   </div>
                                   {t.estimatedTime && (
