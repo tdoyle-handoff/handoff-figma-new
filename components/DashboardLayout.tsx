@@ -173,14 +173,14 @@ export default function DashboardLayout({
             {sidebarOpen ? (
               <div className="flex items-center justify-center">
                 <img
-                  src="https://cdn.builder.io/api/v1/image/assets%2Fd17493787dd14ef798478b15abccc651%2Fb04354276d72434e8f80fe564c56b532?format=webp&width=800"
+                  src="https://cdn.builder.io/api/v1/image/assets%2Fd17493787dd14ef798478b15abccc651%2Fb382513b801044b9b63fee0d35fea0d6?format=webp&width=800"
                   alt="Handoff Logo"
                   className="w-8 h-8"
                 />
               </div>
             ) : (
               <img
-                src="https://cdn.builder.io/api/v1/image/assets%2Fd17493787dd14ef798478b15abccc651%2Fb04354276d72434e8f80fe564c56b532?format=webp&width=800"
+                src="https://cdn.builder.io/api/v1/image/assets%2Fd17493787dd14ef798478b15abccc651%2Fb382513b801044b9b63fee0d35fea0d6?format=webp&width=800"
                 alt="Handoff Logo"
                 className="w-8 h-8"
               />
@@ -333,7 +333,7 @@ export default function DashboardLayout({
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
                 <img
-                  src="https://cdn.builder.io/api/v1/image/assets%2Fd17493787dd14ef798478b15abccc651%2Fb04354276d72434e8f80fe564c56b532?format=webp&width=800"
+                  src="https://cdn.builder.io/api/v1/image/assets%2Fd17493787dd14ef798478b15abccc651%2Fb382513b801044b9b63fee0d35fea0d6?format=webp&width=800"
                   alt="Handoff Logo"
                   className="w-8 h-8"
                 />
