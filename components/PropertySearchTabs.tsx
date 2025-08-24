@@ -19,6 +19,16 @@ export default function PropertySearchTabs() {
 
   return (
     <div className="w-full max-w-7xl mx-auto p-4 md:p-6">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">Property Search</h2>
+          <p className="text-gray-600 mt-1">
+            Search for properties, save favorites, and analyze market data
+          </p>
+        </div>
+      </div>
+
       <Tabs value={tabValue} onValueChange={setTabValue} className="w-full">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="get-started" className="gap-2">
