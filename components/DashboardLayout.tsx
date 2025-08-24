@@ -143,7 +143,7 @@ export default function DashboardLayout({
                 <img
                   src="https://cdn.builder.io/api/v1/image/assets%2Fd17493787dd14ef798478b15abccc651%2Fb382513b801044b9b63fee0d35fea0d6?format=webp&width=800"
                   alt="Handoff Logo"
-                  className="w-8 h-8"
+                  className="h-8 w-auto"
                 />
               </div>
             ) : (
