@@ -133,7 +133,7 @@ export function ComprehensivePropertyAnalysis({
         {reportGenerated && (
           <div className="flex items-center gap-2">
             <Button
-              variant="outline"
+              variant="action-download"
               size="sm"
               onClick={handleExportReport}
               className={isMobile ? 'mobile-button-sm' : ''}
@@ -151,7 +151,7 @@ export function ComprehensivePropertyAnalysis({
               Print
             </Button>
             <Button
-              variant="outline"
+              variant="action-share"
               size="sm"
               onClick={handleShareReport}
               className={isMobile ? 'mobile-button-sm' : ''}
