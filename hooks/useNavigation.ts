@@ -173,7 +173,7 @@ export function useNavigation(): NavigationState & NavigationActions {
   }, [previousPage]);
 
   const getPageTitle = useCallback((page: PageType) => {
-    return pageTitles[page] || 'Handoff - Real Estate Transaction Management';
+    return pageTitles[page] || 'Handoff - Real Estate Platform';
   }, [pageTitles]);
 
   const getPageDescription = useCallback((page: PageType) => {
