@@ -371,17 +371,59 @@ export default function DashboardLayout({
 
               {/* More menu for additional items */}
               {navigationItems.length > 5 && (
-                <div className="relative">
+                <div className="relative group">
                   <button
                     className={cn(
-                      "px-1 py-2 text-sm font-medium border-b-2 transition-colors",
+                      "px-1 py-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-1",
                       navigationItems.slice(5).some(item => item.id === currentPage)
                         ? "text-blue-600 border-blue-600"
                         : "text-slate-500 border-transparent hover:text-slate-700 hover:border-slate-300"
                     )}
                   >
                     More
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
                   </button>
+
+                  {/* Dropdown Menu */}
+                  <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <div className="py-1">
+                      {navigationItems.slice(5).map((item) => {
+                        const Icon = item.icon;
+                        const isActive = currentPage === item.id;
+                        return (
+                          <button
+                            key={item.id}
+                            className={cn(
+                              "w-full flex items-center gap-3 px-4 py-2 text-sm text-left transition-colors",
+                              isActive
+                                ? "bg-blue-50 text-blue-600"
+                                : "text-slate-700 hover:bg-slate-50"
+                            )}
+                            onClick={() => onPageChange(item.id)}
+                          >
+                            <Icon className="h-4 w-4" />
+                            {item.label}
+                          </button>
+                        );
+                      })}
+                      <div className="border-t border-slate-200 mt-1 pt-1">
+                        <button
+                          className={cn(
+                            "w-full flex items-center gap-3 px-4 py-2 text-sm text-left transition-colors",
+                            currentPage === 'settings'
+                              ? "bg-blue-50 text-blue-600"
+                              : "text-slate-700 hover:bg-slate-50"
+                          )}
+                          onClick={() => onPageChange('settings')}
+                        >
+                          <Settings className="h-4 w-4" />
+                          Settings
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
