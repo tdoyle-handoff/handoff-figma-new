@@ -28,6 +28,8 @@ export default function Resources({ onNavigate }: ResourcesProps) {
   const isMobile = useIsMobile();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedGuide, setSelectedGuide] = useState<Resource | null>(null);
+  const [showGuideModal, setShowGuideModal] = useState(false);
 
   const resources: Resource[] = [
     {
@@ -439,7 +441,10 @@ export default function Resources({ onNavigate }: ResourcesProps) {
                               </Fragment>
                             )}
                           </div>
-                          <Button>
+                          <Button onClick={() => {
+                            setSelectedGuide(resource);
+                            setShowGuideModal(true);
+                          }}>
                             <BookOpen className="w-4 h-4 mr-2" />
                             Read Guide
                           </Button>
@@ -471,7 +476,15 @@ export default function Resources({ onNavigate }: ResourcesProps) {
                           <span>{resource.duration}</span>
                         </div>
                       </div>
-                      <Button variant="outline" size="sm" className="w-full">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full"
+                        onClick={() => {
+                          setSelectedGuide(resource);
+                          setShowGuideModal(true);
+                        }}
+                      >
                         <Play className="w-4 h-4 mr-2" />
                         Watch Video
                       </Button>
@@ -484,6 +497,158 @@ export default function Resources({ onNavigate }: ResourcesProps) {
           </Fragment>
         )}
       </Tabs>
+
+      {/* Guide/Content Modal */}
+      <Dialog open={showGuideModal} onOpenChange={setShowGuideModal}>
+        <DialogContent className="max-w-4xl max-h-[90vh] bg-white">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold">
+              {selectedGuide?.title}
+            </DialogTitle>
+            <DialogDescription>
+              {selectedGuide?.type === 'video' ? 'Watch this educational video' : 'Read this comprehensive guide'}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="overflow-y-auto max-h-[70vh] p-6">
+            {selectedGuide && (
+              <div className="space-y-6">
+                {selectedGuide.type === 'video' ? (
+                  <div className="space-y-4">
+                    <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center border">
+                      <div className="text-center">
+                        <Play className="w-16 h-16 text-gray-400 mx-auto mb-2" />
+                        <p className="text-gray-600">Video content would play here</p>
+                        <p className="text-sm text-gray-500 mt-1">Duration: {selectedGuide.duration}</p>
+                      </div>
+                    </div>
+                    <div className="prose max-w-none">
+                      <p className="text-gray-600 mb-4">{selectedGuide.description}</p>
+                      {getGuideContent(selectedGuide.id)}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="prose max-w-none">
+                    <p className="text-gray-600 mb-6">{selectedGuide.description}</p>
+                    {getGuideContent(selectedGuide.id)}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div className="flex justify-between items-center pt-4 border-t">
+            <div className="flex items-center gap-4 text-sm text-gray-500">
+              <div className="flex items-center gap-1">
+                <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                <span>{selectedGuide?.rating} rating</span>
+              </div>
+              <span>•</span>
+              <span>{selectedGuide?.views.toLocaleString()} views</span>
+              {selectedGuide?.duration && (
+                <>
+                  <span>•</span>
+                  <div className="flex items-center gap-1">
+                    <Clock className="w-4 h-4" />
+                    <span>{selectedGuide.duration}</span>
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => {
+                alert('Guide bookmarked successfully!');
+              }}>
+                <Bookmark className="w-4 h-4 mr-2" />
+                Bookmark
+              </Button>
+              <Button variant="outline" onClick={() => setShowGuideModal(false)}>
+                Close
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
+
+  // Function to generate guide content
+  function getGuideContent(guideId: string): JSX.Element {
+    switch (guideId) {
+      case '1': // First-Time Home Buyer's Complete Guide
+        return (
+          <div className="space-y-6">
+            <h3 className="text-xl font-semibold">Chapter 1: Getting Started</h3>
+            <p>Buying your first home is one of the most significant financial decisions you'll make. This comprehensive guide will walk you through every step of the process, from understanding your financial readiness to closing on your dream home.</p>
+
+            <h4 className="text-lg font-medium">Financial Preparation</h4>
+            <ul className="list-disc pl-6 space-y-2">
+              <li><strong>Check Your Credit Score:</strong> Aim for a score of 620 or higher for conventional loans. Higher scores get better rates.</li>
+              <li><strong>Save for Down Payment:</strong> While 20% is ideal, many programs allow 3-5% down. Factor in closing costs (2-5% of home price).</li>
+              <li><strong>Calculate Affordability:</strong> Use the 28/36 rule - housing costs shouldn't exceed 28% of gross income, total debt shouldn't exceed 36%.</li>
+              <li><strong>Get Pre-approved:</strong> This shows sellers you're serious and gives you a clear budget.</li>
+            </ul>
+
+            <h4 className="text-lg font-medium">Finding the Right Home</h4>
+            <p>Consider location, schools, commute, future resale value, and neighborhood trends. Make a list of must-haves vs. nice-to-haves.</p>
+
+            <h4 className="text-lg font-medium">Making an Offer</h4>
+            <p>Your agent will help you determine a competitive offer based on comparable sales, market conditions, and property condition. Include contingencies for inspection, appraisal, and financing.</p>
+
+            <h4 className="text-lg font-medium">The Closing Process</h4>
+            <p>Once your offer is accepted, you'll have inspections, appraisal, final loan approval, and a final walkthrough before closing. The entire process typically takes 30-45 days.</p>
+          </div>
+        );
+
+      case '2': // Understanding Your Credit Score
+        return (
+          <div className="space-y-6">
+            <h3 className="text-xl font-semibold">Understanding Credit Scores</h3>
+            <p>Your credit score is a three-digit number that represents your creditworthiness. It's one of the most important factors lenders consider when determining your mortgage terms.</p>
+
+            <h4 className="text-lg font-medium">Credit Score Ranges</h4>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <ul className="space-y-2">
+                <li><strong>Excellent (740-850):</strong> Best rates and terms available</li>
+                <li><strong>Very Good (670-739):</strong> Above-average rates</li>
+                <li><strong>Good (580-669):</strong> Near-average rates</li>
+                <li><strong>Fair (300-579):</strong> Below-average rates, may require higher down payment</li>
+              </ul>
+            </div>
+
+            <h4 className="text-lg font-medium">Factors That Impact Your Score</h4>
+            <ul className="list-disc pl-6 space-y-2">
+              <li><strong>Payment History (35%):</strong> Make all payments on time</li>
+              <li><strong>Credit Utilization (30%):</strong> Keep balances below 30% of credit limits</li>
+              <li><strong>Length of Credit History (15%):</strong> Keep old accounts open</li>
+              <li><strong>Credit Mix (10%):</strong> Have different types of credit accounts</li>
+              <li><strong>New Credit (10%):</strong> Don't apply for multiple new accounts before buying</li>
+            </ul>
+
+            <h4 className="text-lg font-medium">Improving Your Score</h4>
+            <p>Pay bills on time, pay down balances, don't close old accounts, and check your credit report for errors. Improvements can take 30-60 days to reflect.</p>
+          </div>
+        );
+
+      default:
+        return (
+          <div className="space-y-4">
+            <h3 className="text-xl font-semibold">Real Estate Education Content</h3>
+            <p>This guide provides comprehensive information about real estate processes, best practices, and expert insights to help you make informed decisions.</p>
+
+            <h4 className="text-lg font-medium">Key Topics Covered:</h4>
+            <ul className="list-disc pl-6 space-y-2">
+              <li>Market analysis and trends</li>
+              <li>Financial planning and preparation</li>
+              <li>Legal considerations and documentation</li>
+              <li>Negotiation strategies</li>
+              <li>Property inspection insights</li>
+              <li>Closing process walkthrough</li>
+            </ul>
+
+            <p className="mt-4 text-gray-600">Access to detailed, expert-curated content helps ensure you're well-prepared for every step of your real estate journey.</p>
+          </div>
+        );
+    }
+  }
 }
