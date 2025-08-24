@@ -334,9 +334,8 @@ export default function ChecklistInspectionTabs({ onNavigate }: Props) {
                       </div>
                       <div className="text-right">
                         {inspection.cost && (
-                          <div className="flex items-center gap-1 text-sm font-medium">
-                            <DollarSign className="w-4 h-4" />
-                            {inspection.cost}
+                          <div className="text-sm font-medium">
+                            {inspection.cost.startsWith('$') ? inspection.cost : `$${inspection.cost}`}
                           </div>
                         )}
                       </div>
