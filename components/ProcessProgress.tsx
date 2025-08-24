@@ -131,23 +131,23 @@ export function ProcessProgress() {
   const nextSteps = processSteps.filter(step => step.status === 'upcoming').slice(0, 2);
 
   return (
-    <div className="bg-card rounded-lg border border-border p-6">
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="text-lg font-semibold">Your Progress</h3>
+    <div className="bg-card rounded-lg border border-border p-3">
+      <div className="mb-3">
+        <div className="flex items-center justify-between mb-1">
+          <h3 className="text-base font-semibold">Your Progress</h3>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
+            className="flex items-center gap-1 text-muted-foreground hover:text-foreground text-xs"
           >
             {isExpanded ? 'Hide Details' : 'View All Steps'}
-            {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
           </Button>
         </div>
-        <div className="flex items-center gap-4">
-          <Progress value={progressPercentage} className="flex-1" />
-          <span className="text-sm text-muted-foreground">
+        <div className="flex items-center gap-3">
+          <Progress value={progressPercentage} className="flex-1 h-1.5" />
+          <span className="text-xs text-muted-foreground">
             {completedSteps} of {totalSteps} completed
           </span>
         </div>
