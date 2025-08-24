@@ -215,12 +215,6 @@ export default function MyTeam({ setupData }: MyTeamProps) {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">My Team</h2>
-          <p className="text-gray-600 mt-1">
-            Manage your real estate team and professional connections
-          </p>
-        </div>
         <div className="flex gap-2">
           <Dialog open={showAddMember} onOpenChange={setShowAddMember}>
             <DialogTrigger asChild>
