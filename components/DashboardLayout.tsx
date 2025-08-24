@@ -54,58 +54,24 @@ export default function DashboardLayout({
   children 
 }: DashboardLayoutProps) {
   const propertyContext = usePropertyContext();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  // Main navigation items for tab header
+  // Navigation items organized by workflow categories
   const navigationItems: NavigationItem[] = [
-    {
-      id: 'overview',
-      label: 'Dashboard',
-      icon: BarChart3,
-      category: 'Main'
-    },
-    {
-      id: 'property',
-      label: 'Properties',
-      icon: Home,
-      category: 'Main'
-    },
-    {
-      id: 'tasks',
-      label: 'Tasks',
-      icon: CheckSquare,
-      category: 'Main'
-    },
-    {
-      id: 'documents',
-      label: 'Documents',
-      icon: FileText,
-      category: 'Main'
-    },
-    {
-      id: 'communications',
-      label: 'Messages',
-      icon: MessageSquare,
-      category: 'Main'
-    },
-    {
-      id: 'vendor-marketplace',
-      label: 'Marketplace',
-      icon: ShoppingCart,
-      category: 'Secondary'
-    },
-    {
-      id: 'team',
-      label: 'Team',
-      icon: Users,
-      category: 'Secondary'
-    },
-    {
-      id: 'resources',
-      label: 'Resources',
-      icon: BookOpen,
-      category: 'Secondary'
-    }
+    // Finding your Dream Home
+    { id: 'property', label: 'Property Search', icon: Home, category: 'Finding your Dream Home' },
+    { id: 'overview', label: 'Analytics & Budget', icon: TrendingUp, category: 'Finding your Dream Home' },
+    
+    // Purchasing Your Home
+    { id: 'tasks', label: 'Transaction Checklist', icon: CheckSquare, category: 'Purchasing Your Home' },
+    { id: 'documents', label: 'Documents & Legal', icon: FileText, category: 'Purchasing Your Home' },
+    { id: 'communications', label: 'Communications', icon: MessageSquare, category: 'Purchasing Your Home' },
+    { id: 'vendor-marketplace', label: 'Vendor Marketplace', icon: ShoppingCart, category: 'Purchasing Your Home' },
+    { id: 'team', label: 'My Team', icon: Users, category: 'Purchasing Your Home' },
+    
+    // Support
+    { id: 'resources', label: 'Education Hub', icon: BookOpen, category: 'Support' },
+    { id: 'settings', label: 'Settings', icon: Settings, category: 'Support' }
   ];
 
   const categoryColors = {
@@ -164,9 +130,11 @@ export default function DashboardLayout({
 
   return (
     <div className="flex h-screen bg-slate-50">
-      {/* Sidebar - Only show when explicitly opened */}
-      {sidebarOpen && (
-        <div className="relative z-30 flex flex-col bg-gradient-to-b from-blue-900 to-blue-800 shadow-xl w-80 shrink-0">
+      {/* Sidebar */}
+      <div className={cn(
+        "relative z-30 flex flex-col bg-gradient-to-b from-blue-900 to-blue-800 shadow-xl transition-all duration-300 shrink-0",
+        sidebarOpen ? "w-80" : "w-16"
+      )}>
         {/* Header */}
         <div className="p-6 bg-white border-b border-gray-200">
           <div className="flex items-center gap-3">
@@ -281,17 +249,6 @@ export default function DashboardLayout({
           <div className="flex items-center gap-1">
             <button
               className={cn(
-                "flex items-center gap-2 px-2 py-1.5 rounded transition-all duration-200 text-blue-200 hover:bg-blue-800/30 hover:text-white text-xs",
-                !sidebarOpen && "justify-center px-2"
-              )}
-              onClick={() => onPageChange('settings')}
-            >
-              <Settings className="h-3 w-3" />
-              {sidebarOpen && <span>Settings</span>}
-            </button>
-
-            <button
-              className={cn(
                 "flex items-center gap-2 px-2 py-1.5 rounded transition-all duration-200 text-blue-200 hover:bg-red-600/30 hover:text-white text-xs",
                 !sidebarOpen && "justify-center px-2"
               )}
@@ -313,119 +270,34 @@ export default function DashboardLayout({
             </div>
           )}
         </div>
-        </div>
-      )}
+      </div>
 
       {/* Main Content */}
       <div className="relative z-0 flex-1 flex flex-col min-h-0 min-w-0 bg-slate-50">
-        {/* Sidebar Toggle Button */}
-        <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="absolute top-4 left-4 z-50 p-2 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow"
-        >
-          <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-        {/* Header with Tabs */}
-        <div className="bg-white border-b border-slate-200">
-          <div className="px-8 py-4">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <img
-                  src="https://cdn.builder.io/api/v1/image/assets%2Fd17493787dd14ef798478b15abccc651%2Fb382513b801044b9b63fee0d35fea0d6?format=webp&width=800"
-                  alt="Handoff Logo"
-                  className="w-8 h-8"
-                />
-                <h1 className="text-xl font-semibold text-slate-900">Handoff</h1>
-              </div>
-              <div className="flex items-center gap-4">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src="" />
-                  <AvatarFallback className="bg-blue-600 text-white text-xs">
-                    {getInitials(getUserDisplayName())}
-                  </AvatarFallback>
-                </Avatar>
+        {/* Header */}
+        <div className="bg-white border-b border-slate-200 px-8 py-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors lg:hidden"
+              >
+                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Real Estate Dashboard</h1>
+                <p className="text-sm text-gray-600 mt-1">Manage your property transactions and documentation</p>
               </div>
             </div>
-
-            {/* Tab Navigation */}
-            <div className="flex items-center gap-8">
-              {navigationItems.slice(0, 5).map((item) => {
-                const isActive = currentPage === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    className={cn(
-                      "px-1 py-2 text-sm font-medium border-b-2 transition-colors",
-                      isActive
-                        ? "text-blue-600 border-blue-600"
-                        : "text-slate-500 border-transparent hover:text-slate-700 hover:border-slate-300"
-                    )}
-                    onClick={() => onPageChange(item.id)}
-                  >
-                    {item.label}
-                  </button>
-                );
-              })}
-
-              {/* More menu for additional items */}
-              {navigationItems.length > 5 && (
-                <div className="relative group">
-                  <button
-                    className={cn(
-                      "px-1 py-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-1",
-                      navigationItems.slice(5).some(item => item.id === currentPage)
-                        ? "text-blue-600 border-blue-600"
-                        : "text-slate-500 border-transparent hover:text-slate-700 hover:border-slate-300"
-                    )}
-                  >
-                    More
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
-
-                  {/* Dropdown Menu */}
-                  <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                    <div className="py-1">
-                      {navigationItems.slice(5).map((item) => {
-                        const Icon = item.icon;
-                        const isActive = currentPage === item.id;
-                        return (
-                          <button
-                            key={item.id}
-                            className={cn(
-                              "w-full flex items-center gap-3 px-4 py-2 text-sm text-left transition-colors",
-                              isActive
-                                ? "bg-blue-50 text-blue-600"
-                                : "text-slate-700 hover:bg-slate-50"
-                            )}
-                            onClick={() => onPageChange(item.id)}
-                          >
-                            <Icon className="h-4 w-4" />
-                            {item.label}
-                          </button>
-                        );
-                      })}
-                      <div className="border-t border-slate-200 mt-1 pt-1">
-                        <button
-                          className={cn(
-                            "w-full flex items-center gap-3 px-4 py-2 text-sm text-left transition-colors",
-                            currentPage === 'settings'
-                              ? "bg-blue-50 text-blue-600"
-                              : "text-slate-700 hover:bg-slate-50"
-                          )}
-                          onClick={() => onPageChange('settings')}
-                        >
-                          <Settings className="h-4 w-4" />
-                          Settings
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
+            <div className="flex items-center gap-4">
+              <Avatar className="h-10 w-10">
+                <AvatarImage src="" />
+                <AvatarFallback className="bg-blue-600 text-white">
+                  {getInitials(getUserDisplayName())}
+                </AvatarFallback>
+              </Avatar>
             </div>
           </div>
         </div>
