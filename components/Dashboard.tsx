@@ -142,15 +142,18 @@ export default function Dashboard({ setupData }: DashboardProps) {
             </div>
             <div>
               <Label className="text-sm font-medium">Down Payment %</Label>
-              <Input
-                type="number"
-                value={downPercent}
-                onChange={(e) => setDownPercent(Number(e.target.value || 0))}
-                placeholder="20"
-                className="mt-1"
-                min="0"
-                max="100"
-              />
+              <div className="relative mt-1">
+                <Input
+                  type="number"
+                  value={downPercent}
+                  onChange={(e) => setDownPercent(Number(e.target.value || 0))}
+                  placeholder="20"
+                  className="pr-8 text-lg"
+                  min="0"
+                  max="100"
+                />
+                <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">%</span>
+              </div>
             </div>
             <div>
               <Label className="text-sm font-medium">Interest Rate %</Label>
