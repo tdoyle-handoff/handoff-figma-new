@@ -94,6 +94,8 @@ const TOTAL_STEPS = 5;
 
 export function SimpleOnboardingForm({ onComplete, onSkip }: SimpleOnboardingFormProps) {
   const [currentStep, setCurrentStep] = useState(1);
+  const [showCobuyerDialog, setShowCobuyerDialog] = useState(false);
+  const [newCobuyerName, setNewCobuyerName] = useState('');
   const [formData, setFormData] = useState<FormData>({
     // Contact & Decision Makers
     fullName: '',
