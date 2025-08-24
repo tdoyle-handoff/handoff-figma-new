@@ -891,13 +891,7 @@ export default function Communications() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Communication Suite</h2>
-          <p className="text-gray-600 mt-1">
-            Messages, notifications, and team collaboration tools
-          </p>
-        </div>
+      <div className="flex items-center justify-end">
         <Button
           onClick={handleNewMessage}
           className={`${isMobile ? 'text-sm px-3 py-2' : ''} mobile-button-sm`}
