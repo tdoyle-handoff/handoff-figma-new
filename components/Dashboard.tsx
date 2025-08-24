@@ -384,74 +384,79 @@ export default function Dashboard({ setupData }: DashboardProps) {
                 <CardDescription>Live breakdown by category.</CardDescription>
               </CardHeader>
               <CardContent className="p-8">
-                <div className="space-y-3">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Loan amount</span>
-                    <span className="font-medium">{shortCurrency(loanAmount)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Mortgage</span>
-                    <span className="font-medium">{shortCurrency(pAndI)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Taxes</span>
-                    <span className="font-medium">{shortCurrency(taxesMonthly)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Insurance</span>
-                    <span className="font-medium">{shortCurrency(insuranceMonthly)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">HOA</span>
-                    <span className="font-medium">{shortCurrency(hoaMonthly)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Upkeep</span>
-                    <span className="font-medium">{shortCurrency(maintenanceMonthly)}</span>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                  {/* Left side - Text breakdown */}
+                  <div className="space-y-3">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Loan amount</span>
+                      <span className="font-medium">{shortCurrency(loanAmount)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Mortgage</span>
+                      <span className="font-medium">{shortCurrency(pAndI)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Taxes</span>
+                      <span className="font-medium">{shortCurrency(taxesMonthly)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Insurance</span>
+                      <span className="font-medium">{shortCurrency(insuranceMonthly)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">HOA</span>
+                      <span className="font-medium">{shortCurrency(hoaMonthly)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Upkeep</span>
+                      <span className="font-medium">{shortCurrency(maintenanceMonthly)}</span>
+                    </div>
+
+                    <Separator className="my-3" />
+
+                    <div className="flex justify-between font-semibold">
+                      <span>Total monthly</span>
+                      <span className="text-xl">{shortCurrency(totalMonthly)}</span>
+                    </div>
+
+                    <div className="mt-4">
+                      <div className="text-sm text-muted-foreground mb-1">Rent comparison</div>
+                      <div className="text-sm font-medium text-orange-600">{rentDeltaCopy}</div>
+                    </div>
                   </div>
 
-                  <Separator className="my-3" />
-
-                  <div className="flex justify-between font-semibold">
-                    <span>Total monthly</span>
-                    <span className="text-xl">{shortCurrency(totalMonthly)}</span>
+                  {/* Right side - Pie Chart */}
+                  <div className="flex justify-center">
+                    <div className="h-48 w-48">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={[
+                              { name: 'Mortgage', value: pAndI, fill: '#22c55e' },
+                              { name: 'Taxes', value: taxesMonthly, fill: '#3b82f6' },
+                              { name: 'Insurance', value: insuranceMonthly, fill: '#f59e0b' },
+                              { name: 'Other', value: hoaMonthly + maintenanceMonthly, fill: '#8b5cf6' },
+                            ]}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={40}
+                            outerRadius={80}
+                            paddingAngle={2}
+                            dataKey="value"
+                          >
+                            {[
+                              { fill: '#22c55e' },
+                              { fill: '#3b82f6' },
+                              { fill: '#f59e0b' },
+                              { fill: '#8b5cf6' },
+                            ].map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.fill} />
+                            ))}
+                          </Pie>
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
                   </div>
-                </div>
-
-                {/* Pie Chart */}
-                <div className="mt-6 h-32">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={[
-                          { name: 'Mortgage', value: pAndI, fill: '#22c55e' },
-                          { name: 'Taxes', value: taxesMonthly, fill: '#3b82f6' },
-                          { name: 'Insurance', value: insuranceMonthly, fill: '#f59e0b' },
-                          { name: 'Other', value: hoaMonthly + maintenanceMonthly, fill: '#8b5cf6' },
-                        ]}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={30}
-                        outerRadius={60}
-                        paddingAngle={2}
-                        dataKey="value"
-                      >
-                        {[
-                          { fill: '#22c55e' },
-                          { fill: '#3b82f6' },
-                          { fill: '#f59e0b' },
-                          { fill: '#8b5cf6' },
-                        ].map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.fill} />
-                        ))}
-                      </Pie>
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-
-                <div className="mt-4">
-                  <div className="text-sm text-muted-foreground mb-1">Rent comparison</div>
-                  <div className="text-sm font-medium text-orange-600">{rentDeltaCopy}</div>
                 </div>
               </CardContent>
             </Card>
