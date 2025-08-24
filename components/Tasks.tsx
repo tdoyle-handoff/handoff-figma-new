@@ -81,11 +81,11 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask }: {
   
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <div className={`border rounded-lg transition-all hover:shadow-sm min-h-[80px] ${
+      <div className={`border rounded-lg transition-all hover:shadow-md min-h-[100px] ${
         isOverdue ? 'border-red-200 bg-red-50/30' :
         isActive ? 'border-blue-200 bg-blue-50/30' : 'border-gray-200'
       }`}>
-        <CollapsibleTrigger className="w-full p-5 text-left">
+        <CollapsibleTrigger className="w-full p-6 text-left">
           <div className="flex items-center gap-3">
             <div className="flex-shrink-0">
               <button
