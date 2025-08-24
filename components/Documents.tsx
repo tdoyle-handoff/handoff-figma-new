@@ -1326,16 +1326,8 @@ export default function Documents({ setupData }: DocumentsProps) {
                             </div>
                           </div>
                           <div className="flex gap-2">
-                            <DownloadButton
-                              variant="primary"
-                              size="sm"
-                              className="flex-1"
-                              onDownload={() => downloadTemplate(template)}
-                            >
-                              Download
-                            </DownloadButton>
                             <Button
-                              variant="secondary"
+                              variant="action-view"
                               size="sm"
                               className="flex-1"
                               onClick={() => {
@@ -1359,6 +1351,15 @@ export default function Documents({ setupData }: DocumentsProps) {
                             >
                               <Eye className="w-4 h-4 mr-2" />
                               Preview
+                            </Button>
+                            <Button
+                              variant="action-download"
+                              size="sm"
+                              className="flex-1"
+                              onClick={() => downloadTemplate(template)}
+                            >
+                              <ChevronDown className="w-4 h-4 mr-2" />
+                              Download
                             </Button>
                           </div>
                         </CardContent>
