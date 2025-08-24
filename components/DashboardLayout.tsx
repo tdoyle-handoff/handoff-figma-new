@@ -5,14 +5,15 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Badge } from './ui/badge';
 import { Separator } from './ui/separator';
 import { usePropertyContext } from './PropertyContext';
+import { useNavigation } from '../hooks/useNavigation';
 const handoffLogo = 'https://cdn.builder.io/api/v1/image/assets%2Fd17493787dd14ef798478b15abccc651%2Fb382513b801044b9b63fee0d35fea0d6?format=webp&width=800';
-import { 
-  Home, 
-  FileText, 
-  CheckSquare, 
-  Users, 
-  BookOpen, 
-  Settings, 
+import {
+  Home,
+  FileText,
+  CheckSquare,
+  Users,
+  BookOpen,
+  Settings,
   LogOut,
   DollarSign,
   Scale,
@@ -45,15 +46,16 @@ interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
-export default function DashboardLayout({ 
-  currentPage, 
-  onPageChange, 
-  setupData, 
+export default function DashboardLayout({
+  currentPage,
+  onPageChange,
+  setupData,
   onSignOut,
   isPropertySetupComplete,
-  children 
+  children
 }: DashboardLayoutProps) {
   const propertyContext = usePropertyContext();
+  const navigation = useNavigation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   // Navigation items organized by workflow categories
@@ -297,8 +299,8 @@ export default function DashboardLayout({
                 </svg>
               </button>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Real Estate Dashboard</h1>
-                <p className="text-sm text-gray-600 mt-1">Manage your property transactions and documentation</p>
+                <h1 className="text-2xl font-bold text-gray-900">{navigation.getPageTitle(currentPage).replace(' - Handoff', '')}</h1>
+                <p className="text-sm text-gray-600 mt-1">{navigation.getPageDescription(currentPage)}</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
