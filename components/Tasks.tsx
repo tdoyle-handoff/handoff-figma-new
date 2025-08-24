@@ -331,11 +331,31 @@ export default function Tasks({ onNavigate }: TasksProps) {
       </div>
 
       <Tabs defaultValue="checklist" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 h-14 p-1.5 bg-gray-100">
-          <TabsTrigger value="checklist" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white font-semibold text-sm px-3 py-2.5 min-h-[2.5rem] flex items-center justify-center">✓ Checklist</TabsTrigger>
-          <TabsTrigger value="legal" className="text-sm px-3 py-2.5 min-h-[2.5rem] flex items-center justify-center">Legal</TabsTrigger>
-          <TabsTrigger value="inspections" className="text-sm px-3 py-2.5 min-h-[2.5rem] flex items-center justify-center">Inspections</TabsTrigger>
-          <TabsTrigger value="insurance" className="text-sm px-3 py-2.5 min-h-[2.5rem] flex items-center justify-center">Insurance</TabsTrigger>
+        <TabsList className="w-full bg-transparent h-auto p-0 border-b border-gray-200 rounded-none flex justify-start">
+          <TabsTrigger
+            value="checklist"
+            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200"
+          >
+            Checklist
+          </TabsTrigger>
+          <TabsTrigger
+            value="legal"
+            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200"
+          >
+            Legal
+          </TabsTrigger>
+          <TabsTrigger
+            value="inspections"
+            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200"
+          >
+            Inspections
+          </TabsTrigger>
+          <TabsTrigger
+            value="insurance"
+            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200"
+          >
+            Insurance
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="checklist" className="space-y-6 mt-6 bg-white">
