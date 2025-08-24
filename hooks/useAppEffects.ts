@@ -81,8 +81,8 @@ export function useAppEffects({
 
   // Update document title and meta tags
   useEffect(() => {
-    document.title = auth.isAuthenticated 
-      ? APP_TITLES.authenticated
+    document.title = auth.isAuthenticated
+      ? navigation.getPageTitle(navigation.currentPage)
       : APP_TITLES.unauthenticated;
 
     let viewportMeta = document.querySelector('meta[name="viewport"]');
