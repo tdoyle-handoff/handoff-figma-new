@@ -54,57 +54,62 @@ export default function DashboardLayout({
   children 
 }: DashboardLayoutProps) {
   const propertyContext = usePropertyContext();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  // Main navigation items for tab header
+  // Navigation organized by user workflow
   const navigationItems: NavigationItem[] = [
-    {
-      id: 'overview',
-      label: 'Dashboard',
-      icon: BarChart3,
-      category: 'Main'
-    },
+    // Finding your Dream Home
     {
       id: 'property',
-      label: 'Properties',
+      label: 'Property Search',
       icon: Home,
-      category: 'Main'
+      category: 'Finding your Dream Home'
     },
+    {
+      id: 'overview',
+      label: 'Analytics & Budget',
+      icon: BarChart3,
+      category: 'Finding your Dream Home'
+    },
+
+    // Purchasing Your Home
     {
       id: 'tasks',
-      label: 'Tasks',
+      label: 'Transaction Checklist',
       icon: CheckSquare,
-      category: 'Main'
-    },
-    {
-      id: 'documents',
-      label: 'Documents',
-      icon: FileText,
-      category: 'Main'
-    },
-    {
-      id: 'communications',
-      label: 'Messages',
-      icon: MessageSquare,
-      category: 'Main'
+      category: 'Purchasing Your Home'
     },
     {
       id: 'vendor-marketplace',
-      label: 'Marketplace',
+      label: 'Vendor Marketplace',
       icon: ShoppingCart,
-      category: 'Secondary'
+      category: 'Purchasing Your Home'
+    },
+    {
+      id: 'documents',
+      label: 'Offer & Document Hub',
+      icon: FileText,
+      category: 'Purchasing Your Home'
+    },
+
+    // Support
+    {
+      id: 'communications',
+      label: 'Communication Suite',
+      icon: MessageSquare,
+      category: 'Support'
     },
     {
       id: 'team',
-      label: 'Team',
+      label: 'My Team',
       icon: Users,
-      category: 'Secondary'
+      category: 'Support'
     },
     {
       id: 'resources',
-      label: 'Resources',
+      label: 'Education Hub',
       icon: BookOpen,
-      category: 'Secondary'
+      category: 'Support'
     }
   ];
 
