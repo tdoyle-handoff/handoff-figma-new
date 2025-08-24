@@ -890,18 +890,6 @@ export default function Communications() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-end">
-        <Button
-          onClick={handleNewMessage}
-          className={`${isMobile ? 'text-sm px-3 py-2' : ''} mobile-button-sm`}
-          size={isMobile ? "sm" : "default"}
-        >
-          <Send className={`${isMobile ? 'w-4 h-4 mr-1' : 'w-4 h-4 mr-2'}`} />
-          {isMobile ? 'New' : 'New Message'}
-        </Button>
-      </div>
-
       <Card className="h-full">
       <CardHeader className={`${isMobile ? 'p-4 pb-3' : 'pb-4'}`}>
         <div className="flex items-center justify-between">
@@ -917,6 +905,14 @@ export default function Communications() {
               Secure chat, email, SMS, and file sharing in one place
             </p>
           </div>
+          <Button
+            onClick={handleNewMessage}
+            className={`${isMobile ? 'text-sm px-3 py-2' : ''} mobile-button-sm`}
+            size={isMobile ? "sm" : "default"}
+          >
+            <Send className={`${isMobile ? 'w-4 h-4 mr-1' : 'w-4 h-4 mr-2'}`} />
+            {isMobile ? 'New' : 'New Message'}
+          </Button>
         </div>
       </CardHeader>
       

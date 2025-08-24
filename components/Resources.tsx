@@ -244,16 +244,6 @@ export default function Resources({ onNavigate }: ResourcesProps) {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Education Hub</h2>
-          <p className="text-gray-600 mt-1">
-            Educational content, guides, and helpful tools for home buyers
-          </p>
-        </div>
-      </div>
-
       <Tabs defaultValue="overview" className="w-full">
         <TabsList className="w-full bg-transparent h-auto p-0 border-b border-gray-200 rounded-none flex justify-start overflow-x-auto">
           <TabsTrigger

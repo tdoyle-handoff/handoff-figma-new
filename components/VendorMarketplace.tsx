@@ -166,16 +166,6 @@ export default function VendorMarketplace({ defaultTab = 'attorneys' }: VendorMa
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Vendor Marketplace</h2>
-          <p className="text-gray-600 mt-1">
-            Find and connect with real estate professionals and services
-          </p>
-        </div>
-      </div>
-
       <Tabs value={tabValue} onValueChange={(v) => setTabValue(v as TabKey)} className="w-full">
         <TabsList className="w-full bg-transparent h-auto p-0 border-b border-gray-200 rounded-none flex justify-start overflow-x-auto">
           <TabsTrigger
