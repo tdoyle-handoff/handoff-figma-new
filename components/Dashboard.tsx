@@ -513,7 +513,10 @@ export default function Dashboard({ setupData }: DashboardProps) {
                       <span className={downModeDollar ? 'font-medium text-foreground' : 'text-muted-foreground'}>Dollar</span>
                     </div>
                     {!downModeDollar ? (
-                      <><Input type="number" value={downPercent} onChange={(e) => setDownPercent(Number(e.target.value || 0))} className="w-24" /><Slider value={[downPercent]} onValueChange={([v]) => setDownPercent(v)} min={0} max={100} step={1} className="w-full" /></>
+                      <><div className="relative">
+                        <Input type="number" value={downPercent} onChange={(e) => setDownPercent(Number(e.target.value || 0))} className="w-32 pr-8" />
+                        <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">%</span>
+                      </div><Slider value={[downPercent]} onValueChange={([v]) => setDownPercent(v)} min={0} max={100} step={1} className="w-full" /></>
                     ) : (
                       <><div className="relative">
                         <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
