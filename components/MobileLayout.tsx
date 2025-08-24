@@ -45,15 +45,16 @@ interface MobileLayoutProps {
   children: React.ReactNode;
 }
 
-export default function MobileLayout({ 
-  currentPage, 
-  onPageChange, 
-  setupData, 
+export default function MobileLayout({
+  currentPage,
+  onPageChange,
+  setupData,
   onSignOut,
   isPropertySetupComplete,
-  children 
+  children
 }: MobileLayoutProps) {
   const propertyContext = usePropertyContext();
+  const navigation = useNavigation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Navigation without AI features
@@ -227,7 +228,7 @@ export default function MobileLayout({
                       <div>
                         <SheetDescription className="flex items-center gap-1 text-xs">
                           <TrendingUp className="w-3 h-3" />
-                          Real Estate Transaction Management
+                          {navigation.getPageDescription(currentPage)}
                         </SheetDescription>
                       </div>
                     </div>
