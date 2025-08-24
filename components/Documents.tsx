@@ -1184,14 +1184,8 @@ export default function Documents({ setupData }: DocumentsProps) {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Offer & Document Hub</h2>
-          <p className="text-gray-600 mt-1">
-            Create offers, manage contracts, and store important documents
-          </p>
-        </div>
+      {/* Upload Dialog */}
+      <div className="flex justify-end">
         <div className="flex gap-2">
           <Dialog open={showUpload} onOpenChange={setShowUpload}>
             <DialogTrigger asChild>
