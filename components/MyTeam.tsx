@@ -214,7 +214,7 @@ export default function MyTeam({ setupData }: MyTeamProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-end mb-6">
         <div className="flex gap-2">
           <Dialog open={showAddMember} onOpenChange={setShowAddMember}>
             <DialogTrigger asChild>
