@@ -336,26 +336,63 @@ export default function DashboardLayout({
 
       {/* Main Content */}
       <div className="relative z-0 flex-1 flex flex-col min-h-0 min-w-0 bg-slate-50">
-        {/* Header */}
-        <div className="bg-white border-b border-slate-200 px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-semibold text-slate-900">
-                {navigationItems.find(item => item.id === currentPage)?.label || 'Dashboard'}
-              </h1>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="text-sm text-slate-500">Real Estate</span>
-                <span className="text-slate-300">•</span>
-                <span className="text-sm text-slate-500">Transaction Management</span>
+        {/* Header with Tabs */}
+        <div className="bg-white border-b border-slate-200">
+          <div className="px-8 py-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <img
+                  src="https://cdn.builder.io/api/v1/image/assets%2Fd17493787dd14ef798478b15abccc651%2Fb04354276d72434e8f80fe564c56b532?format=webp&width=800"
+                  alt="Handoff Logo"
+                  className="w-8 h-8"
+                />
+                <h1 className="text-xl font-semibold text-slate-900">Handoff</h1>
+              </div>
+              <div className="flex items-center gap-4">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src="" />
+                  <AvatarFallback className="bg-blue-600 text-white text-xs">
+                    {getInitials(getUserDisplayName())}
+                  </AvatarFallback>
+                </Avatar>
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <Avatar className="h-8 w-8">
-                <AvatarImage src="" />
-                <AvatarFallback className="bg-blue-600 text-white text-xs">
-                  {getInitials(getUserDisplayName())}
-                </AvatarFallback>
-              </Avatar>
+
+            {/* Tab Navigation */}
+            <div className="flex items-center gap-8">
+              {navigationItems.slice(0, 5).map((item) => {
+                const isActive = currentPage === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    className={cn(
+                      "px-1 py-2 text-sm font-medium border-b-2 transition-colors",
+                      isActive
+                        ? "text-blue-600 border-blue-600"
+                        : "text-slate-500 border-transparent hover:text-slate-700 hover:border-slate-300"
+                    )}
+                    onClick={() => onPageChange(item.id)}
+                  >
+                    {item.label}
+                  </button>
+                );
+              })}
+
+              {/* More menu for additional items */}
+              {navigationItems.length > 5 && (
+                <div className="relative">
+                  <button
+                    className={cn(
+                      "px-1 py-2 text-sm font-medium border-b-2 transition-colors",
+                      navigationItems.slice(5).some(item => item.id === currentPage)
+                        ? "text-blue-600 border-blue-600"
+                        : "text-slate-500 border-transparent hover:text-slate-700 hover:border-slate-300"
+                    )}
+                  >
+                    More
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
