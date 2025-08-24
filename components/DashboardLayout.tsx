@@ -54,7 +54,7 @@ export default function DashboardLayout({
   children 
 }: DashboardLayoutProps) {
   const propertyContext = usePropertyContext();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Main navigation items for tab header
   const navigationItems: NavigationItem[] = [
