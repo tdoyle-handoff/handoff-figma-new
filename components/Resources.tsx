@@ -203,7 +203,13 @@ export default function Resources({ onNavigate }: ResourcesProps) {
     { value: 'financing', label: 'Financing', count: resources.filter(r => r.category === 'financing').length },
     { value: 'inspections', label: 'Inspections', count: resources.filter(r => r.category === 'inspections').length },
     { value: 'insurance', label: 'Insurance', count: resources.filter(r => r.category === 'insurance').length },
-    { value: 'negotiations', label: 'Negotiations', count: resources.filter(r => r.category === 'negotiations').length }
+    { value: 'negotiations', label: 'Negotiations', count: resources.filter(r => r.category === 'negotiations').length },
+    { value: 'closing', label: 'Closing Process', count: resources.filter(r => r.category === 'closing').length },
+    { value: 'market-analysis', label: 'Market Analysis', count: resources.filter(r => r.category === 'market-analysis').length },
+    { value: 'taxes', label: 'Taxes & Benefits', count: resources.filter(r => r.category === 'taxes').length },
+    { value: 'investment', label: 'Investment', count: resources.filter(r => r.category === 'investment').length },
+    { value: 'maintenance', label: 'Home Maintenance', count: resources.filter(r => r.category === 'maintenance').length },
+    { value: 'legal', label: 'Legal & HOA', count: resources.filter(r => r.category === 'legal').length }
   ];
 
   const filteredResources = resources.filter(resource => {
