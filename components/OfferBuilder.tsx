@@ -188,6 +188,10 @@ export default function OfferBuilder() {
   const [savedAt, setSavedAt] = useState<string | null>(null);
   const importRef = useRef<HTMLInputElement>(null);
 
+  // State-specific legal requirements (moved here to be available for flags useMemo)
+  const [stateRequirements, setStateRequirements] = useState<any>(null);
+  const [legalDisclosures, setLegalDisclosures] = useState<string[]>([]);
+
   // Derived figures
   const dpDollar = useMemo(() => {
     const base = offerPrice || listPrice || 0;
