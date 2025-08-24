@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Search, Star, MapPin, Filter, Phone } from 'lucide-react';
+import { Search, Star, MapPin, Filter, Phone, Mail } from 'lucide-react';
 import { Card, CardContent } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
