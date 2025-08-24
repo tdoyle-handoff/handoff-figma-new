@@ -81,11 +81,11 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask }: {
   
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <div className={`border rounded-lg transition-all hover:shadow-sm ${
+      <div className={`border rounded-lg transition-all hover:shadow-sm min-h-[80px] ${
         isOverdue ? 'border-red-200 bg-red-50/30' :
         isActive ? 'border-blue-200 bg-blue-50/30' : 'border-gray-200'
       }`}>
-        <CollapsibleTrigger className="w-full p-4 text-left">
+        <CollapsibleTrigger className="w-full p-5 text-left">
           <div className="flex items-center gap-3">
             <div className="flex-shrink-0">
               <button
@@ -106,8 +106,8 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask }: {
             </div>
             
             <div className="flex-1 min-w-0">
-              <div className="flex items-center justify-between">
-                <h4 className={`font-medium ${isCompleted ? 'text-gray-500 line-through' : 'text-gray-900'} break-words flex-1 pr-2`}>
+              <div className="flex items-start justify-between gap-3">
+                <h4 className={`font-medium ${isCompleted ? 'text-gray-500 line-through' : 'text-gray-900'} break-words leading-tight flex-1`}>
                   {task.title}
                 </h4>
                 <div className="flex items-center gap-2 flex-shrink-0">
@@ -135,12 +135,12 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask }: {
           </div>
         </CollapsibleTrigger>
         
-        <CollapsibleContent className="px-4 pb-4">
-          <div className="ml-8 space-y-3 pt-2 border-t border-gray-100">
+        <CollapsibleContent className="px-5 pb-5">
+          <div className="ml-8 space-y-4 pt-3 border-t border-gray-100">
             <p className="text-sm text-gray-600">{task.description}</p>
             
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4 text-sm text-gray-500">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">
                 <div className="flex items-center gap-1">
                   <User className="w-4 h-4" />
                   <span>{task.assignedTo}</span>
@@ -159,7 +159,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask }: {
             </div>
             
             {(isActive || (task.linkedPage && !isCompleted)) && (
-              <div className="flex gap-2 pt-2">
+              <div className="flex flex-wrap gap-3 pt-3">
                 {task.linkedPage && (
                   <Button 
                     size="sm" 
@@ -186,7 +186,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask }: {
             )}
             
             {isCompleted && task.linkedPage && (
-              <div className="flex gap-2 pt-2">
+              <div className="flex flex-wrap gap-3 pt-3">
                 <Button 
                   size="sm" 
                   variant="outline" 
