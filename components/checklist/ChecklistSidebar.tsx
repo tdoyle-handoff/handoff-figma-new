@@ -186,13 +186,13 @@ export default function ChecklistSidebar({ phases, onSelectPhase, onSelectTask, 
                                 </button>
                                 <button
                                   onClick={() => onSelectTask(t.id)}
-                                  className="flex-1 min-w-0 text-left"
+                                  className="flex-1 min-w-0 text-left py-1"
                                 >
                                   <div className={`text-sm break-words leading-tight ${isSelected ? 'font-medium text-gray-900' : 'text-gray-700'}`}>
                                     {t.title}
                                   </div>
                                   {t.estimatedTime && (
-                                    <div className="text-xs text-gray-500">{t.estimatedTime}</div>
+                                    <div className="text-xs text-gray-500 mt-1">{t.estimatedTime}</div>
                                   )}
                                 </button>
                                 <div className="flex items-center gap-1">
