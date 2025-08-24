@@ -928,16 +928,39 @@ export default function Communications() {
       
       <CardContent className={`${isMobile ? 'p-4 pt-0' : 'pt-0'}`}>
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className={`grid w-full ${isMobile ? 'grid-cols-1 h-9' : 'grid-cols-5'}`}>
-            <TabsTrigger value="messages" className={`${isMobile ? 'text-sm' : ''}`}>
+          <TabsList className="w-full bg-transparent h-auto p-0 border-b border-gray-200 rounded-none flex justify-start overflow-x-auto">
+            <TabsTrigger
+              value="messages"
+              className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
+            >
               Messages {unreadCount > 0 && `(${unreadCount})`}
             </TabsTrigger>
             {!isMobile && (
               <Fragment>
-                <TabsTrigger value="inbox">Inbox</TabsTrigger>
-                <TabsTrigger value="chat">Chat</TabsTrigger>
-                <TabsTrigger value="sms">SMS</TabsTrigger>
-                <TabsTrigger value="files">Files</TabsTrigger>
+                <TabsTrigger
+                  value="inbox"
+                  className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
+                >
+                  Inbox
+                </TabsTrigger>
+                <TabsTrigger
+                  value="chat"
+                  className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
+                >
+                  Chat
+                </TabsTrigger>
+                <TabsTrigger
+                  value="sms"
+                  className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
+                >
+                  SMS
+                </TabsTrigger>
+                <TabsTrigger
+                  value="files"
+                  className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
+                >
+                  Files
+                </TabsTrigger>
               </Fragment>
             )}
           </TabsList>
