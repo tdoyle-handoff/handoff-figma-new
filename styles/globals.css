@@ -1798,6 +1798,86 @@
   }
 }
 
+/* Select component styling fixes for dropdown backgrounds */
+@layer components {
+  [data-radix-select-content] {
+    background-color: white !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.05) !important;
+    z-index: 1000 !important;
+  }
+
+  [data-radix-select-item] {
+    background-color: white !important;
+    color: #111827 !important;
+  }
+
+  [data-radix-select-item]:hover,
+  [data-radix-select-item][data-highlighted] {
+    background-color: #f3f4f6 !important;
+    color: #111827 !important;
+  }
+
+  [data-radix-select-trigger] {
+    background-color: white !important;
+    border-color: #d1d5db !important;
+    color: #111827 !important;
+  }
+
+  /* Ensure Select components have proper z-index */
+  [data-slot="select-content"] {
+    background-color: white !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.05) !important;
+    z-index: 1000 !important;
+  }
+
+  [data-slot="select-item"] {
+    background-color: white !important;
+    color: #111827 !important;
+  }
+
+  [data-slot="select-item"]:hover,
+  [data-slot="select-item"][data-highlighted] {
+    background-color: #f3f4f6 !important;
+    color: #111827 !important;
+  }
+
+  [data-slot="select-trigger"] {
+    background-color: white !important;
+    border-color: #d1d5db !important;
+    color: #111827 !important;
+  }
+
+  /* Dark mode fixes */
+  .dark [data-radix-select-content],
+  .dark [data-slot="select-content"] {
+    background-color: #1f2937 !important;
+    border-color: #374151 !important;
+  }
+
+  .dark [data-radix-select-item],
+  .dark [data-slot="select-item"] {
+    background-color: #1f2937 !important;
+    color: #f9fafb !important;
+  }
+
+  .dark [data-radix-select-item]:hover,
+  .dark [data-radix-select-item][data-highlighted],
+  .dark [data-slot="select-item"]:hover,
+  .dark [data-slot="select-item"][data-highlighted] {
+    background-color: #374151 !important;
+    color: #f9fafb !important;
+  }
+
+  .dark [data-radix-select-trigger],
+  .dark [data-slot="select-trigger"] {
+    background-color: #1f2937 !important;
+    border-color: #374151 !important;
+    color: #f9fafb !important;
+  }
+}
+
 /* Performance optimizations */
 @layer utilities {
   .gpu-accelerated {
