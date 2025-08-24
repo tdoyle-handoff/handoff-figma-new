@@ -979,9 +979,9 @@ export default function Legal() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold mb-2">Legal Services</h1>
-        <p className="text-muted-foreground">
-          Manage legal aspects of your real estate transaction including contracts, title search, and closing documentation.
+        <h2 className="text-2xl font-bold text-gray-900">Legal</h2>
+        <p className="text-gray-600 mt-1">
+          Contract management, legal documentation, and attorney services
         </p>
       </div>
 
