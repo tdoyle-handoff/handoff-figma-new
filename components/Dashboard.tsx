@@ -144,7 +144,10 @@ export default function Dashboard({ setupData }: DashboardProps) {
         <CardContent className="p-8">
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
             <div>
-              <Label className="text-sm font-medium">Home Price</Label>
+              <LabelWithTooltip
+                text="Home Price"
+                tooltip="The total purchase price of the property. This is the amount you'll pay the seller, not including closing costs or down payment."
+              />
               <div className="relative mt-1">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
                 <Input
@@ -157,7 +160,10 @@ export default function Dashboard({ setupData }: DashboardProps) {
               </div>
             </div>
             <div>
-              <Label className="text-sm font-medium">Down Payment %</Label>
+              <LabelWithTooltip
+                text="Down Payment %"
+                tooltip="Percentage of home price paid upfront. Higher down payments mean lower monthly payments and may eliminate PMI. Conventional loans typically require 5-20%."
+              />
               <div className="relative mt-1">
                 <Input
                   type="number"
@@ -172,7 +178,10 @@ export default function Dashboard({ setupData }: DashboardProps) {
               </div>
             </div>
             <div>
-              <Label className="text-sm font-medium">Interest Rate %</Label>
+              <LabelWithTooltip
+                text="Interest Rate %"
+                tooltip="Annual percentage rate for your mortgage loan. This is determined by current market rates, your credit score, down payment, and loan type."
+              />
               <div className="relative mt-1">
                 <Input
                   type="number"
@@ -186,7 +195,10 @@ export default function Dashboard({ setupData }: DashboardProps) {
               </div>
             </div>
             <div>
-              <Label className="text-sm font-medium">Loan Term (Years)</Label>
+              <LabelWithTooltip
+                text="Loan Term (Years)"
+                tooltip="Length of your mortgage in years. 30-year loans have lower monthly payments but higher total interest. 15-year loans have higher payments but less total interest."
+              />
               <Input
                 type="number"
                 value={term}
@@ -196,7 +208,10 @@ export default function Dashboard({ setupData }: DashboardProps) {
               />
             </div>
             <div>
-              <Label className="text-sm font-medium">Property Taxes (Annual)</Label>
+              <LabelWithTooltip
+                text="Property Taxes (Annual)"
+                tooltip="Annual property taxes based on your local tax rate and assessed property value. Typically 0.5-2.5% of home value depending on location."
+              />
               <div className="relative mt-1">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
                 <Input
@@ -209,7 +224,10 @@ export default function Dashboard({ setupData }: DashboardProps) {
               </div>
             </div>
             <div>
-              <Label className="text-sm font-medium">Home Insurance (Annual)</Label>
+              <LabelWithTooltip
+                text="Home Insurance (Annual)"
+                tooltip="Annual homeowner's insurance premium. Protects against fire, theft, and other damages. Usually required by your lender and typically costs 0.2-0.5% of home value."
+              />
               <div className="relative mt-1">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
                 <Input
@@ -222,7 +240,10 @@ export default function Dashboard({ setupData }: DashboardProps) {
               </div>
             </div>
             <div>
-              <Label className="text-sm font-medium">HOA (Monthly)</Label>
+              <LabelWithTooltip
+                text="HOA (Monthly)"
+                tooltip="Monthly Homeowners Association fees for shared amenities and maintenance. Common in condos, townhomes, and planned communities. Enter 0 if no HOA."
+              />
               <div className="relative mt-1">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
                 <Input
@@ -235,7 +256,10 @@ export default function Dashboard({ setupData }: DashboardProps) {
               </div>
             </div>
             <div>
-              <Label className="text-sm font-medium">Monthly Upkeep</Label>
+              <LabelWithTooltip
+                text="Monthly Upkeep"
+                tooltip="Estimated monthly maintenance and repair costs. Rule of thumb is 1-3% of home value annually, or about $1 per square foot per year."
+              />
               <div className="relative mt-1">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
                 <Input
@@ -250,7 +274,10 @@ export default function Dashboard({ setupData }: DashboardProps) {
           </div>
           <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>
-              <Label className="text-sm font-medium">Monthly Income</Label>
+              <LabelWithTooltip
+                text="Monthly Income"
+                tooltip="Your gross monthly income before taxes and deductions. Used to calculate debt-to-income ratio and determine if you qualify for the loan amount."
+              />
               <div className="relative mt-1">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
                 <Input
@@ -263,7 +290,10 @@ export default function Dashboard({ setupData }: DashboardProps) {
               </div>
             </div>
             <div>
-              <Label className="text-sm font-medium">Current Rent</Label>
+              <LabelWithTooltip
+                text="Current Rent"
+                tooltip="Your current monthly rent payment. Used to compare your new housing costs with your current housing expenses."
+              />
               <div className="relative mt-1">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
                 <Input
