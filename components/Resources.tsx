@@ -136,16 +136,41 @@ export default function Resources({ onNavigate }: ResourcesProps) {
       </div>
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className={`grid w-full ${isMobile ? 'grid-cols-2 gap-1' : 'grid-cols-4 gap-2'}`}>
-          <TabsTrigger value="overview" className="px-4 py-2">Overview</TabsTrigger>
+        <TabsList className="w-full bg-transparent h-auto p-0 border-b border-gray-200 rounded-none flex justify-start overflow-x-auto">
+          <TabsTrigger
+            value="overview"
+            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
+          >
+            Overview
+          </TabsTrigger>
           {!isMobile ? (
             <Fragment>
-              <TabsTrigger value="guides" className="px-4 py-2">Guides</TabsTrigger>
-              <TabsTrigger value="videos" className="px-4 py-2">Videos</TabsTrigger>
-              <TabsTrigger value="glossary" className="px-4 py-2">Glossary</TabsTrigger>
+              <TabsTrigger
+                value="guides"
+                className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
+              >
+                Guides
+              </TabsTrigger>
+              <TabsTrigger
+                value="videos"
+                className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
+              >
+                Videos
+              </TabsTrigger>
+              <TabsTrigger
+                value="glossary"
+                className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
+              >
+                Glossary
+              </TabsTrigger>
             </Fragment>
           ) : (
-            <TabsTrigger value="guides" className="px-4 py-2">Resources</TabsTrigger>
+            <TabsTrigger
+              value="guides"
+              className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
+            >
+              Resources
+            </TabsTrigger>
           )}
         </TabsList>
 
