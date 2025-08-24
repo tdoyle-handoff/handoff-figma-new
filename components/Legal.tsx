@@ -986,12 +986,37 @@ export default function Legal() {
       </div>
 
       <Tabs defaultValue="progress" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="progress">Progress</TabsTrigger>
-          <TabsTrigger value="attorney">Attorney</TabsTrigger>
-          <TabsTrigger value="contract">Contract</TabsTrigger>
-          <TabsTrigger value="title">Title</TabsTrigger>
-          <TabsTrigger value="settlement">Settlement</TabsTrigger>
+        <TabsList className="w-full bg-transparent h-auto p-0 border-b border-gray-200 rounded-none flex justify-start">
+          <TabsTrigger
+            value="progress"
+            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200"
+          >
+            Progress
+          </TabsTrigger>
+          <TabsTrigger
+            value="attorney"
+            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200"
+          >
+            Attorney
+          </TabsTrigger>
+          <TabsTrigger
+            value="contract"
+            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200"
+          >
+            Contract
+          </TabsTrigger>
+          <TabsTrigger
+            value="title"
+            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200"
+          >
+            Title
+          </TabsTrigger>
+          <TabsTrigger
+            value="settlement"
+            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200"
+          >
+            Settlement
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="progress" className="space-y-6 bg-white">
