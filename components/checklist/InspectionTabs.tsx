@@ -169,9 +169,12 @@ export default function ChecklistInspectionTabs({ onNavigate }: Props) {
                       Add Inspection
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="max-w-2xl">
+                  <DialogContent className="max-w-2xl bg-white shadow-xl border border-gray-200">
                     <DialogHeader>
                       <DialogTitle>Schedule New Inspection</DialogTitle>
+                      <DialogDescription>
+                        Add a new inspection to your schedule
+                      </DialogDescription>
                     </DialogHeader>
                     <div className="grid grid-cols-2 gap-4 py-4">
                       <div className="col-span-2">
