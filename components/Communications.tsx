@@ -889,7 +889,26 @@ export default function Communications() {
   };
 
   return (
-    <Card className="h-full">
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">Communication Suite</h2>
+          <p className="text-gray-600 mt-1">
+            Messages, notifications, and team collaboration tools
+          </p>
+        </div>
+        <Button
+          onClick={handleNewMessage}
+          className={`${isMobile ? 'text-sm px-3 py-2' : ''} mobile-button-sm`}
+          size={isMobile ? "sm" : "default"}
+        >
+          <Send className={`${isMobile ? 'w-4 h-4 mr-1' : 'w-4 h-4 mr-2'}`} />
+          {isMobile ? 'New' : 'New Message'}
+        </Button>
+      </div>
+
+      <Card className="h-full">
       <CardHeader className={`${isMobile ? 'p-4 pb-3' : 'pb-4'}`}>
         <div className="flex items-center justify-between">
           <div>
@@ -1051,5 +1070,6 @@ export default function Communications() {
         recipient={selectedContact}
       />
     </Card>
+    </div>
   );
 }
