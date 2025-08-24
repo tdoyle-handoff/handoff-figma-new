@@ -645,11 +645,19 @@ export const LawyerSearch = () => {
                   
                   <div className="flex items-center justify-between">
                     <div className="flex gap-2">
-                      <Button variant="outline" size="sm">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => window.location.href = `tel:${lawyer.phone}`}
+                      >
                         <Phone className="w-4 h-4 mr-1" />
                         Call
                       </Button>
-                      <Button variant="outline" size="sm">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => window.location.href = `mailto:${lawyer.email}?subject=Real Estate Legal Services Inquiry&body=Hi ${lawyer.name},%0A%0AI am interested in your real estate legal services for my property transaction.%0A%0APlease let me know your availability for a consultation.%0A%0AThank you!`}
+                      >
                         <Mail className="w-4 h-4 mr-1" />
                         Email
                       </Button>
