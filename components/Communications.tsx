@@ -1039,11 +1039,6 @@ export default function Communications() {
                 </div>
               </TabsContent>
 
-              <TabsContent value="files" className="space-y-4">
-                <div className="p-4 border rounded-lg text-sm text-muted-foreground">
-                  Shared files and attachments will appear here for quick access.
-                </div>
-              </TabsContent>
             </Fragment>
           )}
         </Tabs>
