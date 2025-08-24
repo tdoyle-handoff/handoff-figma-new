@@ -137,8 +137,8 @@ export default function ChecklistSidebar({ phases, onSelectPhase, onSelectTask, 
               </button>
 
               {isActive && phase.tasks.length > 0 && (
-                <div className="px-3 pb-3">
-                  <div className="space-y-3">
+                <div className="px-4 pb-4">
+                  <div className="space-y-2">
                     {Object.entries(tasksBySubcategory).map(([subcategory, tasks]) => {
                       const SubcategoryIcon = getSubcategoryIcon(subcategory);
                       return (
