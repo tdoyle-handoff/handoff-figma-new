@@ -167,17 +167,32 @@ export default function InspectorSearch({ onSelect, defaultQuery }: InspectorSea
                   </div>
                 </div>
                 <div className="flex flex-col gap-2 ml-4">
+                  <div className="flex gap-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => window.location.href = `tel:${inspector.phone}`}
+                      title="Call inspector"
+                    >
+                      <Phone className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => window.location.href = `mailto:${inspector.email}?subject=Home Inspection Inquiry&body=Hi ${inspector.name},%0A%0AI am interested in scheduling a home inspection with ${inspector.company}.%0A%0AProperty details:%0A- Address: [Property Address]%0A- Inspection type: ${inspector.specialties.join(', ')}%0A%0APlease let me know your availability.%0A%0AThank you!`}
+                      title="Email inspector"
+                    >
+                      <Mail className="w-4 h-4" />
+                    </Button>
+                  </div>
                   <Button
-                    variant="outline"
                     size="sm"
-                    onClick={() => onSelect?.(inspector)}
-                  >
-                    <Phone className="w-4 h-4 mr-1" />
-                    Contact
-                  </Button>
-                  <Button 
-                    size="sm"
-                    onClick={() => onSelect?.(inspector)}
+                    onClick={() => {
+                      // Create a booking email with more details
+                      const bookingEmail = `mailto:${inspector.email}?subject=Home Inspection Booking Request&body=Hi ${inspector.name},%0A%0AI would like to book a home inspection with ${inspector.company}.%0A%0AProperty Information:%0A- Address: [Property Address]%0A- Square Footage: [Property Size]%0A- Property Type: [Single Family/Condo/etc]%0A%0AInspection Requirements:%0A- ${inspector.specialties.join('%0A- ')}%0A%0APreferred dates/times:%0A- Option 1: [Date/Time]%0A- Option 2: [Date/Time]%0A- Option 3: [Date/Time]%0A%0AStarting rate: $${inspector.basePrice}%0A%0APlease confirm availability and provide any additional information needed.%0A%0AThank you!`;
+
+                      window.location.href = bookingEmail;
+                    }}
                   >
                     Book Now
                   </Button>
