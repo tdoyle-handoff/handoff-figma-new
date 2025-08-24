@@ -493,14 +493,22 @@ export default function Dashboard({ setupData }: DashboardProps) {
                 <Separator className="my-3" />
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <div>
-                    <Label className="text-xs">Seller credits</Label>
+                    <LabelWithTooltip
+                      text="Seller credits"
+                      tooltip="Amount the seller agrees to pay toward your closing costs. Negotiated as part of your purchase offer."
+                      className="text-xs"
+                    />
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
                       <Input type="number" value={sellerCredits} onChange={(e)=>setSellerCredits(Number(e.target.value||0))} className="pl-8" />
                     </div>
                   </div>
                   <div>
-                    <Label className="text-xs">Lender credits</Label>
+                    <LabelWithTooltip
+                      text="Lender credits"
+                      tooltip="Credits from your lender to help with closing costs, usually in exchange for a slightly higher interest rate."
+                      className="text-xs"
+                    />
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
                       <Input type="number" value={lenderCredits} onChange={(e)=>setLenderCredits(Number(e.target.value||0))} className="pl-8" />
@@ -525,14 +533,20 @@ export default function Dashboard({ setupData }: DashboardProps) {
                 <Separator className="my-3" />
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div>
-                    <Label>Monthly income</Label>
+                    <LabelWithTooltip
+                      text="Monthly income"
+                      tooltip="Your gross monthly income used for debt-to-income calculations. Lenders typically want housing costs below 28-33% of gross income."
+                    />
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
                       <Input type="number" value={monthlyIncome} onChange={(e)=>setMonthlyIncome(Number(e.target.value||0))} className="pl-8" />
                     </div>
                   </div>
                   <div>
-                    <Label>Current rent</Label>
+                    <LabelWithTooltip
+                      text="Current rent"
+                      tooltip="Your current monthly rent to compare with your new total housing costs including mortgage, taxes, and insurance."
+                    />
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
                       <Input type="number" value={currentRent} onChange={(e)=>setCurrentRent(Number(e.target.value||0))} className="pl-8" />
@@ -551,7 +565,13 @@ export default function Dashboard({ setupData }: DashboardProps) {
               </CardHeader>
               <CardContent className="space-y-6 p-6">
                 <div>
-                  <div className="flex items-center justify-between"><Label>Down payment</Label><div className="text-sm text-muted-foreground">{shortCurrency(downPayment)}</div></div>
+                  <div className="flex items-center justify-between">
+                    <LabelWithTooltip
+                      text="Down payment"
+                      tooltip="Amount paid upfront toward the home purchase. Changes your loan amount and monthly payment."
+                    />
+                    <div className="text-sm text-muted-foreground">{shortCurrency(downPayment)}</div>
+                  </div>
                   <div className="mt-2 flex items-center gap-3">
                     <div className="flex items-center gap-2 text-sm">
                       <span className={!downModeDollar ? 'font-medium text-foreground' : 'text-muted-foreground'}>Percent</span>
@@ -572,7 +592,13 @@ export default function Dashboard({ setupData }: DashboardProps) {
                   </div>
                 </div>
                 <div>
-                  <div className="flex items-center justify-between"><Label>Interest rate</Label><div className="text-sm text-muted-foreground">{pct(rate)}</div></div>
+                  <div className="flex items-center justify-between">
+                    <LabelWithTooltip
+                      text="Interest rate"
+                      tooltip="Your mortgage interest rate. Even small changes (0.25%) can significantly impact your monthly payment and total interest paid."
+                    />
+                    <div className="text-sm text-muted-foreground">{pct(rate)}</div>
+                  </div>
                   <div className="mt-2 flex items-center gap-3">
                     <div className="relative">
                       <Input type="number" value={rate} onChange={(e) => setRate(Number(e.target.value || 0))} className="w-32 pr-8" step="0.01" />
