@@ -1022,21 +1022,45 @@ export default function Documents({ setupData }: DocumentsProps) {
       )}
 
       <Tabs defaultValue="all" className="w-full">
-        <TabsList className={`grid w-full ${isMobile ? 'grid-cols-3 tab-container-multiline' : 'grid-cols-6'}`}>
-          <TabsTrigger value="all" className={isMobile ? 'tab-multiline' : ''}>
+        <TabsList className="w-full bg-transparent h-auto p-0 border-b border-gray-200 rounded-none flex justify-start overflow-x-auto">
+          <TabsTrigger
+            value="all"
+            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
+          >
             {isMobile ? 'Documents' : 'All Documents'}
           </TabsTrigger>
-          <TabsTrigger value="contract" className={isMobile ? 'tab-multiline' : ''}>
+          <TabsTrigger
+            value="contract"
+            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
+          >
             Contract Analysis
           </TabsTrigger>
-          <TabsTrigger value="offer" className={isMobile ? 'tab-multiline' : ''}>
+          <TabsTrigger
+            value="offer"
+            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
+          >
             Offer Builder
           </TabsTrigger>
-          <TabsTrigger value="shared" className={isMobile ? 'tab-multiline' : ''}>Shared</TabsTrigger>
+          <TabsTrigger
+            value="shared"
+            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
+          >
+            Shared
+          </TabsTrigger>
           {!isMobile && (
             <>
-              <TabsTrigger value="signatures" className="tab-multiline">Signatures Needed</TabsTrigger>
-              <TabsTrigger value="templates">Templates</TabsTrigger>
+              <TabsTrigger
+                value="signatures"
+                className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
+              >
+                Signatures Needed
+              </TabsTrigger>
+              <TabsTrigger
+                value="templates"
+                className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
+              >
+                Templates
+              </TabsTrigger>
             </>
           )}
         </TabsList>
