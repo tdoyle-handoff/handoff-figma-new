@@ -321,7 +321,7 @@ const MessageModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={`${isMobile ? 'w-screen h-screen max-w-none p-0 gap-0 m-0 rounded-none border-0' : 'w-screen h-screen max-w-none p-0 gap-0 m-0 rounded-none border-0'} dialog-content bg-white`}>
+      <DialogContent className={`${isMobile ? 'w-screen h-screen max-w-none p-0 gap-0 m-0 rounded-none border-0' : 'max-w-4xl max-h-[90vh] p-0 gap-0'} dialog-content bg-white`}>
         <DialogHeader className="sr-only">
           <DialogTitle>
             {message.subject || `${message.type} from ${message.from}`}
