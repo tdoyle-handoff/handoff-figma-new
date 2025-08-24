@@ -42,6 +42,17 @@ export default function Resources({ onNavigate }: ResourcesProps) {
       featured: true
     },
     {
+      id: '2',
+      title: 'Understanding Your Credit Score and Pre-Approval',
+      description: 'Learn how your credit score affects your mortgage terms and how to improve it before applying.',
+      type: 'article',
+      category: 'getting-started',
+      duration: '10 min read',
+      rating: 4.6,
+      views: 8750,
+      featured: true
+    },
+    {
       id: '3',
       title: 'Understanding Home Inspections',
       description: 'Learn what to expect during a home inspection and how to interpret the results.',
@@ -53,6 +64,17 @@ export default function Resources({ onNavigate }: ResourcesProps) {
       featured: false
     },
     {
+      id: '4',
+      title: 'The Complete Home Inspection Checklist',
+      description: 'A comprehensive checklist of items to review during your home inspection walkthrough.',
+      type: 'guide',
+      category: 'inspections',
+      duration: '8 min read',
+      rating: 4.5,
+      views: 6890,
+      featured: false
+    },
+    {
       id: '5',
       title: 'How to Get the Best Mortgage Rate',
       description: 'Tips and strategies for securing the lowest possible interest rate on your home loan.',
@@ -61,6 +83,17 @@ export default function Resources({ onNavigate }: ResourcesProps) {
       duration: '8 min read',
       rating: 4.5,
       views: 12680,
+      featured: false
+    },
+    {
+      id: '6',
+      title: 'Fixed vs. Adjustable Rate Mortgages',
+      description: 'Compare different mortgage types and understand which one might be right for you.',
+      type: 'video',
+      category: 'financing',
+      duration: '15 min',
+      rating: 4.4,
+      views: 7320,
       featured: false
     },
     {
@@ -83,6 +116,83 @@ export default function Resources({ onNavigate }: ResourcesProps) {
       duration: '12 min read',
       rating: 4.3,
       views: 6540,
+      featured: false
+    },
+    {
+      id: '9',
+      title: 'Making Sense of Closing Costs',
+      description: 'Breakdown of all the fees and costs you\'ll encounter at closing, and how to prepare.',
+      type: 'article',
+      category: 'closing',
+      duration: '6 min read',
+      rating: 4.7,
+      views: 9870,
+      featured: true
+    },
+    {
+      id: '10',
+      title: 'Your Closing Day Checklist',
+      description: 'What to expect and what to bring on your closing day for a smooth transaction.',
+      type: 'guide',
+      category: 'closing',
+      duration: '5 min read',
+      rating: 4.6,
+      views: 5430,
+      featured: false
+    },
+    {
+      id: '11',
+      title: 'Understanding Market Conditions',
+      description: 'How to read market trends and understand if it\'s a buyer\'s or seller\'s market.',
+      type: 'article',
+      category: 'market-analysis',
+      duration: '7 min read',
+      rating: 4.2,
+      views: 4320,
+      featured: false
+    },
+    {
+      id: '12',
+      title: 'Homeowner Tax Benefits and Deductions',
+      description: 'Learn about mortgage interest deductions and other tax benefits of homeownership.',
+      type: 'guide',
+      category: 'taxes',
+      duration: '9 min read',
+      rating: 4.4,
+      views: 3560,
+      featured: false
+    },
+    {
+      id: '13',
+      title: 'Property Investment Basics',
+      description: 'Introduction to real estate investment strategies and rental property considerations.',
+      type: 'video',
+      category: 'investment',
+      duration: '22 min',
+      rating: 4.1,
+      views: 2890,
+      featured: false
+    },
+    {
+      id: '14',
+      title: 'Home Maintenance for New Owners',
+      description: 'Essential maintenance tasks every new homeowner should know about.',
+      type: 'guide',
+      category: 'maintenance',
+      duration: '11 min read',
+      rating: 4.5,
+      views: 7650,
+      featured: false
+    },
+    {
+      id: '15',
+      title: 'Understanding HOAs and Community Rules',
+      description: 'What to know about homeowner associations, fees, and community regulations.',
+      type: 'article',
+      category: 'legal',
+      duration: '6 min read',
+      rating: 4.3,
+      views: 4120,
       featured: false
     }
   ];
