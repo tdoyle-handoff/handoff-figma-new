@@ -164,11 +164,9 @@ export default function DashboardLayout({
 
   return (
     <div className="flex h-screen bg-slate-50">
-      {/* Sidebar */}
-      <div className={cn(
-        "relative z-30 flex flex-col bg-gradient-to-b from-blue-900 to-blue-800 shadow-xl transition-all duration-300 shrink-0",
-        sidebarOpen ? "w-80" : "w-16"
-      )}>
+      {/* Sidebar - Only show when explicitly opened */}
+      {sidebarOpen && (
+        <div className="relative z-30 flex flex-col bg-gradient-to-b from-blue-900 to-blue-800 shadow-xl w-80 shrink-0">
         {/* Header */}
         <div className="p-6 bg-white border-b border-gray-200">
           <div className="flex items-center gap-3">
@@ -315,22 +313,20 @@ export default function DashboardLayout({
             </div>
           )}
         </div>
-      </div>
-
-      {/* Sidebar Toggle Button (when collapsed) */}
-      {!sidebarOpen && (
-        <Button
-          variant="ghost"
-          size="sm"
-          className="absolute top-6 left-20 z-50"
-          onClick={() => setSidebarOpen(true)}
-        >
-          <div className="text-xs">Expand</div>
-        </Button>
+        </div>
       )}
 
       {/* Main Content */}
       <div className="relative z-0 flex-1 flex flex-col min-h-0 min-w-0 bg-slate-50">
+        {/* Sidebar Toggle Button */}
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="absolute top-4 left-4 z-50 p-2 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow"
+        >
+          <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
         {/* Header with Tabs */}
         <div className="bg-white border-b border-slate-200">
           <div className="px-8 py-4">
