@@ -59,10 +59,10 @@ export default function ChecklistDetail({ task, onAction, onUpdateTask }: Detail
     <div className="space-y-4 h-full overflow-y-auto">
       {/* Main Task Header */}
       <Card className="shadow-sm border-l-4 border-l-blue-500">
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between">
+        <CardHeader className="pb-4">
+          <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
-              <CardTitle className="text-xl mb-2 leading-tight">{task.title}</CardTitle>
+              <CardTitle className="text-xl mb-3 leading-tight break-words">{task.title}</CardTitle>
               <div className="flex items-center gap-2 mb-3">
                 <Badge className={`text-xs font-medium ${getStatusBadgeColor(task.status)}`}>
                   {task.status.replace('-', ' ').toUpperCase()}
@@ -101,7 +101,7 @@ export default function ChecklistDetail({ task, onAction, onUpdateTask }: Detail
           </div>
 
           {/* Task Meta Information */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-3 border-t">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t">
             <div className="flex items-center gap-2 text-sm text-gray-600">
               <Clock className="w-4 h-4" />
               <span>{task.estimatedTime || 'Time varies'}</span>
@@ -119,9 +119,9 @@ export default function ChecklistDetail({ task, onAction, onUpdateTask }: Detail
           </div>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="pt-4">
           <div className="prose prose-sm max-w-none">
-            <p className="text-gray-700 leading-relaxed">{task.description}</p>
+            <p className="text-gray-700 leading-relaxed break-words">{task.description}</p>
           </div>
         </CardContent>
       </Card>
@@ -135,7 +135,7 @@ export default function ChecklistDetail({ task, onAction, onUpdateTask }: Detail
               Detailed Instructions
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-5 pt-4">
             {task.instructions.overview && (
               <div>
                 <h4 className="font-medium text-gray-900 mb-2">Overview</h4>
