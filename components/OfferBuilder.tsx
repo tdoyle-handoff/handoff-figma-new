@@ -384,9 +384,6 @@ export default function OfferBuilder() {
   const [currentDraftId, setCurrentDraftId] = useState<string | null>(null);
   const [currentDraftName, setCurrentDraftName] = useState<string | null>(null);
 
-  // State-specific legal requirements
-  const [stateRequirements, setStateRequirements] = useState<any>(null);
-  const [legalDisclosures, setLegalDisclosures] = useState<string[]>([]);
 
   // Load drafts list
   useEffect(() => {
