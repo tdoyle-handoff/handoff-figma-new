@@ -155,50 +155,44 @@ export function ProcessProgress() {
 
       {/* Condensed view when collapsed */}
       {!isExpanded && (
-        <div className="space-y-4">
+        <div className="space-y-2">
           {/* Current Step - Always show */}
           {currentStep && (
-            <div className="flex items-start gap-4 p-4 bg-primary/5 rounded-lg border border-primary/20">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-primary/20 text-primary border-2 border-primary flex-shrink-0 mt-0.5">
-                <Clock className="w-4 h-4" />
+            <div className="flex items-start gap-2 p-2 bg-primary/5 rounded border border-primary/20">
+              <div className="w-6 h-6 rounded-full flex items-center justify-center bg-primary/20 text-primary border border-primary flex-shrink-0">
+                <Clock className="w-3 h-3" />
               </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <h4 className="font-medium text-primary">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1 mb-0.5">
+                  <h4 className="text-sm font-medium text-primary truncate">
                     {currentStep.title}
                   </h4>
                   {currentStep.dueDate && (
-                    <span className={`text-xs px-2 py-1 rounded-full ${
+                    <span className={`text-xs px-1.5 py-0.5 rounded ${
                       formatDateDisplay(currentStep.dueDate).className
                     }`}>
                       Due {formatDateDisplay(currentStep.dueDate).text}
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-muted-foreground">{currentStep.description}</p>
-                {currentStep.dueDate && (
-                  <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
-                    <Calendar className="w-3 h-3" />
-                    <span>Scheduled for {currentStep.dueDate}</span>
-                  </div>
-                )}
+                <p className="text-xs text-muted-foreground">{currentStep.description}</p>
               </div>
             </div>
           )}
 
           {/* Next upcoming steps preview */}
           {nextSteps.length > 0 && (
-            <div className="space-y-2">
-              <p className="text-sm font-medium text-muted-foreground">Coming up next:</p>
+            <div className="space-y-1">
+              <p className="text-xs font-medium text-muted-foreground">Coming up next:</p>
               {nextSteps.map((step) => (
-                <div key={step.id} className="flex items-center gap-3 p-2 rounded-md bg-muted/50">
-                  <div className="w-5 h-5 rounded-full flex items-center justify-center bg-muted text-muted-foreground flex-shrink-0">
-                    <Circle className="w-3 h-3" />
+                <div key={step.id} className="flex items-center gap-2 p-1.5 rounded bg-muted/50">
+                  <div className="w-4 h-4 rounded-full flex items-center justify-center bg-muted text-muted-foreground flex-shrink-0">
+                    <Circle className="w-2 h-2" />
                   </div>
-                  <div className="flex-1">
-                    <span className="text-sm font-medium">{step.title}</span>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-xs font-medium truncate">{step.title}</span>
                     {step.dueDate && (
-                      <span className="text-xs text-muted-foreground ml-2">
+                      <span className="text-xs text-muted-foreground ml-1 truncate">
                         - {step.dueDate}
                       </span>
                     )}
