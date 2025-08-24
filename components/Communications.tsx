@@ -997,6 +997,50 @@ export default function Communications() {
 
           {!isMobile && (
             <Fragment>
+              <TabsContent value="sent" className="space-y-4">
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <Input
+                      placeholder="Search sent messages..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      // Open filter modal or dropdown for sent messages
+                      alert('Sent filter options: All, Recent, By Recipient, By Date Range');
+                      // In a real app, this would open filter UI
+                    }}
+                  >
+                    <Filter className="w-4 h-4" />
+                    <span className="ml-2">Filter</span>
+                  </Button>
+                </div>
+                <ScrollArea className="h-[500px] border rounded-lg">
+                  <div className="divide-y">
+                    {/* Filter messages to show only sent messages (from "You") */}
+                    {filteredMessages.filter(msg => msg.from === 'You').map((message) => (
+                      <MessageItem
+                        key={message.id}
+                        message={message}
+                        onClick={() => handleMessageClick(message)}
+                      />
+                    ))}
+                    {filteredMessages.filter(msg => msg.from === 'You').length === 0 && (
+                      <div className="p-8 text-center text-muted-foreground">
+                        <Send className="w-8 h-8 mx-auto mb-3 opacity-50" />
+                        <p className="text-sm">No sent messages yet</p>
+                        <p className="text-xs mt-1">Messages you send will appear here</p>
+                      </div>
+                    )}
+                  </div>
+                </ScrollArea>
+              </TabsContent>
+
               <TabsContent value="inbox" className="space-y-4">
                 <div className="flex gap-2">
                   <div className="relative flex-1">
