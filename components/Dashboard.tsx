@@ -129,13 +129,16 @@ export default function Dashboard({ setupData }: DashboardProps) {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
             <div>
               <Label className="text-sm font-medium">Home Price</Label>
-              <Input
-                type="number"
-                value={homePrice}
-                onChange={(e) => setHomePrice(Number(e.target.value || 0))}
-                placeholder="750000"
-                className="mt-1"
-              />
+              <div className="relative mt-1">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                <Input
+                  type="number"
+                  value={homePrice}
+                  onChange={(e) => setHomePrice(Number(e.target.value || 0))}
+                  placeholder="750,000"
+                  className="pl-8 text-lg"
+                />
+              </div>
             </div>
             <div>
               <Label className="text-sm font-medium">Down Payment %</Label>
@@ -172,65 +175,83 @@ export default function Dashboard({ setupData }: DashboardProps) {
             </div>
             <div>
               <Label className="text-sm font-medium">Property Taxes (Annual)</Label>
-              <Input
-                type="number"
-                value={taxesAnnual}
-                onChange={(e) => setTaxesAnnual(Number(e.target.value || 0))}
-                placeholder="10500"
-                className="mt-1"
-              />
+              <div className="relative mt-1">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                <Input
+                  type="number"
+                  value={taxesAnnual}
+                  onChange={(e) => setTaxesAnnual(Number(e.target.value || 0))}
+                  placeholder="10,500"
+                  className="pl-8 text-lg"
+                />
+              </div>
             </div>
             <div>
               <Label className="text-sm font-medium">Home Insurance (Annual)</Label>
-              <Input
-                type="number"
-                value={insuranceAnnual}
-                onChange={(e) => setInsuranceAnnual(Number(e.target.value || 0))}
-                placeholder="1800"
-                className="mt-1"
-              />
+              <div className="relative mt-1">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                <Input
+                  type="number"
+                  value={insuranceAnnual}
+                  onChange={(e) => setInsuranceAnnual(Number(e.target.value || 0))}
+                  placeholder="1,800"
+                  className="pl-8 text-lg"
+                />
+              </div>
             </div>
             <div>
               <Label className="text-sm font-medium">HOA (Monthly)</Label>
-              <Input
-                type="number"
-                value={hoaMonthly}
-                onChange={(e) => setHoaMonthly(Number(e.target.value || 0))}
-                placeholder="0"
-                className="mt-1"
-              />
+              <div className="relative mt-1">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                <Input
+                  type="number"
+                  value={hoaMonthly}
+                  onChange={(e) => setHoaMonthly(Number(e.target.value || 0))}
+                  placeholder="0"
+                  className="pl-8 text-lg"
+                />
+              </div>
             </div>
             <div>
               <Label className="text-sm font-medium">Monthly Upkeep</Label>
-              <Input
-                type="number"
-                value={maintenanceMonthly}
-                onChange={(e) => setMaintenanceMonthly(Number(e.target.value || 0))}
-                placeholder="250"
-                className="mt-1"
-              />
+              <div className="relative mt-1">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                <Input
+                  type="number"
+                  value={maintenanceMonthly}
+                  onChange={(e) => setMaintenanceMonthly(Number(e.target.value || 0))}
+                  placeholder="250"
+                  className="pl-8 text-lg"
+                />
+              </div>
             </div>
           </div>
           <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>
               <Label className="text-sm font-medium">Monthly Income</Label>
-              <Input
-                type="number"
-                value={monthlyIncome}
-                onChange={(e) => setMonthlyIncome(Number(e.target.value || 0))}
-                placeholder="12000"
-                className="mt-1"
-              />
+              <div className="relative mt-1">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                <Input
+                  type="number"
+                  value={monthlyIncome}
+                  onChange={(e) => setMonthlyIncome(Number(e.target.value || 0))}
+                  placeholder="12,000"
+                  className="pl-8 text-lg"
+                />
+              </div>
             </div>
             <div>
               <Label className="text-sm font-medium">Current Rent</Label>
-              <Input
-                type="number"
-                value={currentRent}
-                onChange={(e) => setCurrentRent(Number(e.target.value || 0))}
-                placeholder="4200"
-                className="mt-1"
-              />
+              <div className="relative mt-1">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                <Input
+                  type="number"
+                  value={currentRent}
+                  onChange={(e) => setCurrentRent(Number(e.target.value || 0))}
+                  placeholder="4,200"
+                  className="pl-8 text-lg"
+                />
+              </div>
             </div>
           </div>
         </CardContent>
@@ -421,11 +442,17 @@ export default function Dashboard({ setupData }: DashboardProps) {
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <div>
                     <Label className="text-xs">Seller credits</Label>
-                    <Input type="number" value={sellerCredits} onChange={(e)=>setSellerCredits(Number(e.target.value||0))} />
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                      <Input type="number" value={sellerCredits} onChange={(e)=>setSellerCredits(Number(e.target.value||0))} className="pl-8" />
+                    </div>
                   </div>
                   <div>
                     <Label className="text-xs">Lender credits</Label>
-                    <Input type="number" value={lenderCredits} onChange={(e)=>setLenderCredits(Number(e.target.value||0))} />
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                      <Input type="number" value={lenderCredits} onChange={(e)=>setLenderCredits(Number(e.target.value||0))} className="pl-8" />
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -447,11 +474,17 @@ export default function Dashboard({ setupData }: DashboardProps) {
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div>
                     <Label>Monthly income</Label>
-                    <Input type="number" value={monthlyIncome} onChange={(e)=>setMonthlyIncome(Number(e.target.value||0))} />
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                      <Input type="number" value={monthlyIncome} onChange={(e)=>setMonthlyIncome(Number(e.target.value||0))} className="pl-8" />
+                    </div>
                   </div>
                   <div>
                     <Label>Current rent</Label>
-                    <Input type="number" value={currentRent} onChange={(e)=>setCurrentRent(Number(e.target.value||0))} />
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                      <Input type="number" value={currentRent} onChange={(e)=>setCurrentRent(Number(e.target.value||0))} className="pl-8" />
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -476,7 +509,10 @@ export default function Dashboard({ setupData }: DashboardProps) {
                     {!downModeDollar ? (
                       <><Input type="number" value={downPercent} onChange={(e) => setDownPercent(Number(e.target.value || 0))} className="w-24" /><Slider value={[downPercent]} onValueChange={([v]) => setDownPercent(v)} min={0} max={100} step={1} className="w-full" /></>
                     ) : (
-                      <><Input type="number" value={downDollar} onChange={(e) => setDownDollar(Number(e.target.value || 0))} className="w-40" /><Slider value={[Math.min(downDollar, homePrice)]} onValueChange={([v]) => setDownDollar(v)} min={0} max={homePrice} step={1000} className="w-full" /></>
+                      <><div className="relative">
+                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                        <Input type="number" value={downDollar} onChange={(e) => setDownDollar(Number(e.target.value || 0))} className="w-52 pl-8" />
+                      </div><Slider value={[Math.min(downDollar, homePrice)]} onValueChange={([v]) => setDownDollar(v)} min={0} max={homePrice} step={1000} className="w-full" /></>
                     )}
                   </div>
                 </div>
