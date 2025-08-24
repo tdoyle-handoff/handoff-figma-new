@@ -28,6 +28,21 @@ import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 const shortCurrency = (n: number) => n.toLocaleString(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 const pct = (n: number) => `${n.toFixed(1)}%`;
 
+// Component for labels with information tooltips
+const LabelWithTooltip = ({ text, tooltip, className = "" }: { text: string; tooltip: string; className?: string }) => (
+  <div className={`flex items-center gap-1 ${className}`}>
+    <Label className="text-sm font-medium">{text}</Label>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <HelpCircle className="h-4 w-4 text-gray-400 hover:text-gray-600 cursor-help" />
+      </TooltipTrigger>
+      <TooltipContent side="top" className="max-w-xs">
+        <p>{tooltip}</p>
+      </TooltipContent>
+    </Tooltip>
+  </div>
+);
+
 function mortgagePmt(principal: number, annualRatePct: number, termYears: number) {
   const r = annualRatePct / 100 / 12;
   const n = termYears * 12;
