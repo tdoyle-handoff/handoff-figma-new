@@ -354,10 +354,25 @@ export default function MyTeam({ setupData }: MyTeamProps) {
 
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className={`grid w-full grid-cols-3 ${isMobile ? 'tab-container-multiline' : ''}`}>
-          <TabsTrigger value="overview" className={isMobile ? 'tab-multiline' : ''}>Team Overview</TabsTrigger>
-          <TabsTrigger value="calendar" className={isMobile ? 'tab-multiline' : ''}>Calendar</TabsTrigger>
-          <TabsTrigger value="directory" className={isMobile ? 'tab-multiline' : ''}>Directory</TabsTrigger>
+        <TabsList className="w-full bg-transparent h-auto p-0 border-b border-gray-200 rounded-none flex justify-start">
+          <TabsTrigger
+            value="overview"
+            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
+          >
+            Team Overview
+          </TabsTrigger>
+          <TabsTrigger
+            value="calendar"
+            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
+          >
+            Calendar
+          </TabsTrigger>
+          <TabsTrigger
+            value="directory"
+            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
+          >
+            Directory
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
