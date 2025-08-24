@@ -22,7 +22,8 @@ import { Slider } from './ui/slider';
 import { Switch } from './ui/switch';
 import { Separator } from './ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { CalendarCheck2, DollarSign, FileBarChart2, Loader2, TrendingUp, Info } from 'lucide-react';
+import { CalendarCheck2, DollarSign, FileBarChart2, Loader2, TrendingUp, Info, HelpCircle } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
 const shortCurrency = (n: number) => n.toLocaleString(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 const pct = (n: number) => `${n.toFixed(1)}%`;
