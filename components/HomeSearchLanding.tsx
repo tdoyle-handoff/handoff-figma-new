@@ -621,43 +621,6 @@ export default function HomeSearchLanding() {
             </div>
           </CardContent>
         </Card>
-
-        {/* Simple AI Search Box */}
-        <Card className="mt-6">
-          <CardContent className="p-6">
-            <div className="text-center space-y-4">
-              <div className="flex items-center justify-center gap-2">
-                <Bot className="w-6 h-6 text-purple-600" />
-                <h3 className="text-lg font-semibold text-gray-900">AI-Powered Home Search</h3>
-              </div>
-              <p className="text-gray-600">
-                Describe your dream home in natural language and let our AI search the MLS for you
-              </p>
-              <div className="max-w-2xl mx-auto">
-                <div className="flex gap-3">
-                  <Input
-                    placeholder="e.g., 'Find me a 3-bedroom home under $500k near good schools in Austin or Dallas'"
-                    value={aiChatInput}
-                    onChange={(e) => setAiChatInput(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleAiChat()}
-                    className="text-base"
-                    size={undefined}
-                  />
-                  <Button onClick={handleAiChat} disabled={!aiChatInput.trim()} size="lg">
-                    <Sparkles className="w-5 h-5 mr-2" />
-                    Search
-                  </Button>
-                </div>
-              </div>
-              {isAiTyping && (
-                <div className="flex items-center justify-center gap-2 text-purple-600">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span className="text-sm">AI is searching the MLS database...</span>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
