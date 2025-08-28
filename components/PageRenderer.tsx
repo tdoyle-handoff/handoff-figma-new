@@ -205,7 +205,14 @@ export function PageRenderer({
             <AttomApiConfigurationTool />
           </Suspense>
         );
-      
+
+      case 'dev-config':
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <DeveloperConfig />
+          </Suspense>
+        );
+
       default:
         return <Dashboard setupData={setupData} />;
     }
