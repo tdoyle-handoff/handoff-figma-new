@@ -24,7 +24,8 @@ import {
   Eye,
   Building,
   BarChart3,
-  ShoppingCart
+  ShoppingCart,
+  Code
 } from 'lucide-react';
 import type { PageType } from '../hooks/useNavigation';
 
