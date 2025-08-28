@@ -59,6 +59,9 @@ export default function DashboardLayout({
   const navigation = useNavigation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
+  // Check if user is a developer (in production, this would check actual permissions)
+  const isDeveloper = process.env.NODE_ENV === 'development' || setupData?.buyerEmail?.includes('dev') || setupData?.buyerEmail?.includes('admin');
+
   // Navigation items organized by workflow categories
   const navigationItems: NavigationItem[] = [
     // Finding your Dream Home
@@ -70,7 +73,12 @@ export default function DashboardLayout({
     { id: 'documents', label: 'Documents & Legal', icon: FileText, category: 'Purchasing Your Home' },
 
     // Support
-    { id: 'resources', label: 'Education Hub', icon: BookOpen, category: 'Support' }
+    { id: 'resources', label: 'Education Hub', icon: BookOpen, category: 'Support' },
+
+    // Developer section (only visible to developers)
+    ...(isDeveloper ? [
+      { id: 'dev-config', label: 'Developer Config', icon: Code, category: 'Developer Tools', description: 'Configure UI elements and features' }
+    ] : [])
   ];
 
   const categoryColors = {
