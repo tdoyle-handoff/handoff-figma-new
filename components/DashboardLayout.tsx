@@ -84,7 +84,8 @@ export default function DashboardLayout({
   const categoryColors = {
     'Finding your Dream Home': 'text-blue-600 bg-blue-50 border-blue-200',
     'Purchasing Your Home': 'text-sky-600 bg-sky-50 border-sky-200',
-    'Support': 'text-indigo-600 bg-indigo-50 border-indigo-200'
+    'Support': 'text-indigo-600 bg-indigo-50 border-indigo-200',
+    'Developer Tools': 'text-purple-600 bg-purple-50 border-purple-200'
   };
 
   const getUserDisplayName = () => {
