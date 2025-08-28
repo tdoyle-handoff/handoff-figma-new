@@ -11,21 +11,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Alert, AlertDescription } from './ui/alert';
 import { Separator } from './ui/separator';
-import { 
-  Search, 
-  Home, 
-  MapPin, 
-  DollarSign, 
-  Bed, 
-  Bath, 
-  Square, 
+import {
+  Search,
+  Home,
+  MapPin,
+  DollarSign,
+  Bed,
+  Bath,
+  Square,
   Calendar,
   Car,
   Trees,
   Wifi,
   Shield,
-  Bot,
-  Sparkles,
   Filter,
   Target,
   Heart,
