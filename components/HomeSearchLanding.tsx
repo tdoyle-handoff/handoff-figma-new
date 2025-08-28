@@ -134,14 +134,8 @@ export default function HomeSearchLanding() {
   });
 
   const [activeTab, setActiveTab] = useState('basics');
-  const [aiChatMessages, setAiChatMessages] = useState([
-    {
-      type: 'ai',
-      message: "👋 Hi! I'm your AI home search assistant. I can help you find the perfect home by understanding your needs and searching the MLS database. What kind of home are you looking for?"
-    }
-  ]);
-  const [aiChatInput, setAiChatInput] = useState('');
-  const [isAiTyping, setIsAiTyping] = useState(false);
+  const [searchInput, setSearchInput] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
   const [newLocationInput, setNewLocationInput] = useState('');
 
   // Handle AI chat
