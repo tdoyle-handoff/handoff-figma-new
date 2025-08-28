@@ -50,6 +50,11 @@ export default function PropertySearchTabs() {
           </TabsTrigger>
         </TabsList>
 
+        {/* Home Search - AI-Powered Landing Page */}
+        <TabsContent value="home-search" className="space-y-6 mt-8">
+          <HomeSearchLanding />
+        </TabsContent>
+
         {/* Get Started */}
         <TabsContent value="get-started" className="space-y-6 mt-8">
           <SimpleOnboardingForm
