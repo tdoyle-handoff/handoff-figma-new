@@ -863,7 +863,7 @@ export default function Documents({ setupData }: DocumentsProps) {
         <div style="margin-bottom: 25px;">
           <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">ALTERNATIVE OPTIONS</h3>
           <p>In lieu of completing the above repairs, Buyer will accept:</p>
-          <p>☐ Credit at closing in the amount of $ _________________________</p>
+          <p>��� Credit at closing in the amount of $ _________________________</p>
           <p>☐ Reduction in purchase price of $ _________________________</p>
           <p>☐ Escrow holdback of $ _________________________ for completion of repairs after closing</p>
         </div>
@@ -1411,7 +1411,8 @@ export default function Documents({ setupData }: DocumentsProps) {
           </div>
         </TabsContent>
 
-        <TabsContent value="shared" className="space-y-6 bg-white">
+        {/* Hidden temporarily - shared tab content */}
+        {/* <TabsContent value="shared" className="space-y-6 bg-white">
           <div className="space-y-4">
             {documents.filter(doc => doc.shared).map((doc) => (
               <Card key={doc.id} className="hover:shadow-md transition-shadow">
@@ -1451,9 +1452,10 @@ export default function Documents({ setupData }: DocumentsProps) {
               </Card>
             ))}
           </div>
-        </TabsContent>
+        </TabsContent> */}
 
-        <TabsContent value="signatures" className="space-y-6 bg-white">
+        {/* Hidden temporarily - signatures tab content */}
+        {/* <TabsContent value="signatures" className="space-y-6 bg-white">
           <div className="space-y-4">
             {documents.filter(doc => doc.status === 'requires_signature').map((doc) => (
               <Card key={doc.id} className="border-orange-200 hover:shadow-md transition-shadow">
@@ -1471,8 +1473,8 @@ export default function Documents({ setupData }: DocumentsProps) {
                       </div>
                     </div>
                     <div className={`flex gap-2 ${isMobile ? 'w-full justify-end' : ''}`}>
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         size={isMobile ? "icon" : "sm"}
                         className={`${isMobile ? 'mobile-button-sm w-9 h-9' : 'mobile-button-sm'}`}
                         title="Review Document"
@@ -1480,7 +1482,7 @@ export default function Documents({ setupData }: DocumentsProps) {
                         <Eye className="w-4 h-4" />
                         {!isMobile && <span className="ml-2">Review</span>}
                       </Button>
-                      <Button 
+                      <Button
                         size="sm"
                         className="mobile-button-sm"
                       >
@@ -1492,7 +1494,7 @@ export default function Documents({ setupData }: DocumentsProps) {
               </Card>
             ))}
           </div>
-        </TabsContent>
+        </TabsContent> */}
 
         <TabsContent value="archive" className="space-y-6 bg-white">
           <Card>
