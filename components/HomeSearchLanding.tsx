@@ -164,28 +164,126 @@ export default function HomeSearchLanding() {
 
   const generateAiResponse = (userMessage: string) => {
     const message = userMessage.toLowerCase();
-    
+
+    // Parse natural language and update search criteria
+    parseAndUpdateCriteria(userMessage);
+
     if (message.includes('bedroom') || message.includes('bed')) {
-      return "I can help you find homes with the right number of bedrooms! Most families look for 3-4 bedrooms. Based on your family size, I'd recommend considering homes with at least 3 bedrooms for comfort and resale value. Would you like me to search for 3+ bedroom homes in your area?";
+      return "I've updated your search criteria based on your bedroom requirements. Most families find 3-4 bedrooms ideal for comfort and resale value. You can see the updated criteria below and modify any details as needed.";
     }
-    
+
     if (message.includes('price') || message.includes('budget') || message.includes('cost')) {
-      return "Let's talk about your budget! I see you're looking in the $200k-$800k range. Remember to factor in closing costs (2-3% of home price), moving expenses, and immediate repairs. I can search for homes within your budget and show you what's available. What's your comfortable monthly payment including taxes and insurance?";
+      return "I've set your price range based on your budget. Remember to factor in closing costs (2-3%), taxes, insurance, and potential repairs. You can adjust the exact range in the criteria below.";
     }
-    
+
     if (message.includes('location') || message.includes('area') || message.includes('neighborhood')) {
-      return "Location is so important! I can search across multiple states and metro areas. I'll consider factors like commute times, school districts, crime rates, and property appreciation. What's most important to you - proximity to work, good schools, or specific amenities? I can pull up comparable data from different areas.";
+      return "I've added your preferred locations to the search criteria. I can search across multiple states and consider factors like schools, commute times, and property values. Feel free to add more locations below.";
     }
-    
+
     if (message.includes('first time') || message.includes('first-time')) {
-      return "Congratulations on your first home purchase! 🎉 I'll help make this easier. For first-time buyers, I recommend focusing on: move-in ready homes, good neighborhoods with appreciation potential, and staying within 28% of gross income for housing costs. I can also identify homes eligible for first-time buyer programs. Want me to search for beginner-friendly properties?";
+      return "Welcome to home buying! 🎉 I've set up beginner-friendly criteria focusing on move-in ready homes with good resale potential. The budget is set to stay within recommended guidelines.";
     }
-    
+
     if (message.includes('school') || message.includes('education')) {
-      return "School districts are crucial for families and resale value! I can filter homes by school ratings and show you district boundaries on the map. I'll also check for nearby private schools and extracurricular opportunities. What grade levels are you most concerned about?";
+      return "I've noted your school district preferences. I'll prioritize areas with highly-rated schools and family-friendly neighborhoods. You can refine specific requirements in the criteria below.";
     }
-    
-    return "I understand you're looking for the perfect home! Based on what you've told me, I can search the MLS database for properties that match your criteria. I'll also provide insights on market trends, neighborhood data, and help you understand if a property is priced fairly. Would you like me to start a search with your current criteria, or would you like to refine anything first?";
+
+    return "I've analyzed your search and updated the criteria below based on what you're looking for. Review the automated selections and adjust anything as needed, then search the MLS database for matching properties.";
+  };
+
+  const parseAndUpdateCriteria = (userMessage: string) => {
+    const message = userMessage.toLowerCase();
+
+    // Extract bedrooms
+    const bedroomMatch = message.match(/(\d+)[\s-]?bedroom|(\d+)[\s-]?bed/);
+    if (bedroomMatch) {
+      const bedrooms = bedroomMatch[1] || bedroomMatch[2];
+      setSearchCriteria(prev => ({ ...prev, bedrooms: `${bedrooms}+` }));
+    }
+
+    // Extract price ranges
+    const priceMatches = message.match(/\$?([\d,]+)k|\$?([\d,]+),000|\$?([\d,]+)/g);
+    if (priceMatches && priceMatches.length >= 1) {
+      let prices = priceMatches.map(p => {
+        const num = p.replace(/[\$,]/g, '');
+        if (p.includes('k')) return parseInt(num) * 1000;
+        if (num.length <= 3) return parseInt(num) * 1000; // assume k if small number
+        return parseInt(num);
+      }).filter(p => p > 10000); // reasonable home prices
+
+      if (prices.length === 1) {
+        if (message.includes('under') || message.includes('below') || message.includes('max')) {
+          setSearchCriteria(prev => ({ ...prev, priceRange: [prev.priceRange[0], prices[0]] }));
+        } else if (message.includes('over') || message.includes('above') || message.includes('min')) {
+          setSearchCriteria(prev => ({ ...prev, priceRange: [prices[0], prev.priceRange[1]] }));
+        }
+      } else if (prices.length >= 2) {
+        setSearchCriteria(prev => ({ ...prev, priceRange: [Math.min(...prices), Math.max(...prices)] }));
+      }
+    }
+
+    // Extract locations (cities, states)
+    const locationKeywords = ['in', 'near', 'around'];
+    const states = ['texas', 'california', 'florida', 'new york', 'austin', 'dallas', 'houston', 'miami', 'orlando', 'los angeles', 'san francisco', 'chicago', 'boston', 'seattle', 'denver', 'atlanta', 'phoenix', 'las vegas', 'portland', 'nashville'];
+
+    states.forEach(state => {
+      if (message.includes(state)) {
+        const formattedLocation = state.split(' ').map(word =>
+          word.charAt(0).toUpperCase() + word.slice(1)
+        ).join(' ');
+
+        setSearchCriteria(prev => ({
+          ...prev,
+          locations: prev.locations.includes(formattedLocation)
+            ? prev.locations
+            : [...prev.locations, formattedLocation]
+        }));
+      }
+    });
+
+    // Extract home types
+    if (message.includes('condo') || message.includes('condominium')) {
+      setSearchCriteria(prev => ({
+        ...prev,
+        homeTypes: prev.homeTypes.includes('condo') ? prev.homeTypes : [...prev.homeTypes, 'condo']
+      }));
+    }
+
+    if (message.includes('townhouse') || message.includes('town house')) {
+      setSearchCriteria(prev => ({
+        ...prev,
+        homeTypes: prev.homeTypes.includes('townhouse') ? prev.homeTypes : [...prev.homeTypes, 'townhouse']
+      }));
+    }
+
+    if (message.includes('single family') || message.includes('house') && !message.includes('townhouse')) {
+      setSearchCriteria(prev => ({
+        ...prev,
+        homeTypes: prev.homeTypes.includes('single-family') ? prev.homeTypes : [...prev.homeTypes, 'single-family']
+      }));
+    }
+
+    // Extract amenities
+    if (message.includes('pool')) {
+      setSearchCriteria(prev => ({
+        ...prev,
+        amenities: prev.amenities.includes('pool') ? prev.amenities : [...prev.amenities, 'pool']
+      }));
+    }
+
+    if (message.includes('garage')) {
+      setSearchCriteria(prev => ({
+        ...prev,
+        amenities: prev.amenities.includes('garage') ? prev.amenities : [...prev.amenities, 'garage']
+      }));
+    }
+
+    if (message.includes('school') || message.includes('education')) {
+      setSearchCriteria(prev => ({
+        ...prev,
+        specialRequirements: prev.specialRequirements.includes('good-schools') ? prev.specialRequirements : [...prev.specialRequirements, 'good-schools']
+      }));
+    }
   };
 
   const handleLocationAdd = () => {
