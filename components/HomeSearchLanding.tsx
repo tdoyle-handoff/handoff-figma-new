@@ -101,6 +101,7 @@ const SPECIAL_REQUIREMENTS = [
   { id: 'wheelchair', label: 'Wheelchair Accessible', icon: Shield },
   { id: 'single-story', label: 'Single Story Only', icon: Home },
   { id: 'pet-friendly', label: 'Pet-Friendly', icon: Heart },
+  { id: 'good-schools', label: 'Excellent School District', icon: '🎓' },
   { id: 'senior-community', label: 'Senior Community', icon: Shield },
   { id: 'gated', label: 'Gated Community', icon: Shield },
   { id: 'waterfront', label: 'Waterfront Property', icon: '🌊' },
