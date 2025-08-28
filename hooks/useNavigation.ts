@@ -1,22 +1,23 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
 
-export type PageType = 
-  | 'overview' 
-  | 'tasks' 
-  | 'property' 
-  | 'legal' 
-  | 'financing' 
-  | 'inspections' 
-  | 'insurance' 
+export type PageType =
+  | 'overview'
+  | 'tasks'
+  | 'property'
+  | 'legal'
+  | 'financing'
+  | 'inspections'
+  | 'insurance'
   | 'vendor-marketplace'
   | 'documents'
-  | 'resources' 
-  | 'team' 
-  | 'communications' 
-  | 'mortgage-calculator' 
-  | 'closing-calculator' 
+  | 'resources'
+  | 'team'
+  | 'communications'
+  | 'mortgage-calculator'
+  | 'closing-calculator'
   | 'settings'
-  | 'dev-tools';
+  | 'dev-tools'
+  | 'dev-config';
 
 interface NavigationState {
   currentPage: PageType;
