@@ -65,9 +65,9 @@ const getSavedPreviousPage = (): PageType | null => {
 const isValidPageType = (page: string): page is PageType => {
   const validPages: PageType[] = [
     'overview', 'tasks', 'property', 'legal', 'financing',
-    'inspections', 'insurance', 'vendor-marketplace', 'documents', 'resources', 
-    'team', 'communications', 'mortgage-calculator', 
-    'closing-calculator', 'settings', 'dev-tools'
+    'inspections', 'insurance', 'vendor-marketplace', 'documents', 'resources',
+    'team', 'communications', 'mortgage-calculator',
+    'closing-calculator', 'settings', 'dev-tools', 'dev-config'
   ];
   return validPages.includes(page as PageType);
 };
