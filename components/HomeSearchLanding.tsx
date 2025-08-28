@@ -611,7 +611,7 @@ export default function HomeSearchLanding() {
                         <div
                           key={req.id}
                           className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer transition-all ${
-                            isSelected ? 'border-purple-500 bg-purple-50' : 'border-gray-200 hover:border-gray-300'
+                            isSelected ? 'border-green-500 bg-green-50' : 'border-gray-200 hover:border-gray-300'
                           }`}
                           onClick={() => setSearchCriteria(prev => ({
                             ...prev,
@@ -624,7 +624,7 @@ export default function HomeSearchLanding() {
                           ) : (
                             <Icon className="w-5 h-5" />
                           )}
-                          <span className={`text-sm ${isSelected ? 'text-purple-600 font-medium' : 'text-gray-600'}`}>
+                          <span className={`text-sm ${isSelected ? 'text-green-600 font-medium' : 'text-gray-600'}`}>
                             {req.label}
                           </span>
                         </div>
