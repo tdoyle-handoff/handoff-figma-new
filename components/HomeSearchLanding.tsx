@@ -323,7 +323,6 @@ export default function HomeSearchLanding() {
         <div className="flex items-center justify-center gap-2">
           <Search className="w-8 h-8 text-blue-600" />
           <h1 className="text-3xl font-bold text-gray-900">Find Your Dream Home</h1>
-          <Bot className="w-8 h-8 text-purple-600" />
         </div>
         <p className="text-gray-600 max-w-2xl mx-auto">
           Search for your dream home using natural language or detailed criteria. Our AI automatically updates your search parameters and finds matching properties across multiple states using live MLS data.
