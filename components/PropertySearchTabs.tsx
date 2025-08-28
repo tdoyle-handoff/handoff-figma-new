@@ -14,6 +14,9 @@ import { ComprehensiveAttomDataSummaryTable } from './ComprehensiveAttomDataSumm
 import BuyerIntakeForm from './BuyerIntakeForm'
 import SimpleOnboardingForm from './SimpleOnboardingForm'
 
+// Home Search Landing Page with AI MLS Integration
+import HomeSearchLanding from './HomeSearchLanding'
+
 export default function PropertySearchTabs() {
   const [tabValue, setTabValue] = React.useState<string>('get-started');
 
