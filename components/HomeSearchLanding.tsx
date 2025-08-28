@@ -359,17 +359,17 @@ export default function HomeSearchLanding() {
               <div className="flex gap-3">
                 <Input
                   placeholder="e.g., 'Find me a 3-bedroom home under $500k near good schools in Austin or Dallas'"
-                  value={aiChatInput}
-                  onChange={(e) => setAiChatInput(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleAiChat()}
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSmartSearch()}
                   className="flex-1"
                 />
-                <Button onClick={handleAiChat} disabled={!aiChatInput.trim()}>
+                <Button onClick={handleSmartSearch} disabled={!searchInput.trim()}>
                   <Search className="w-4 h-4 mr-2" />
                   Search
                 </Button>
               </div>
-              {isAiTyping && (
+              {isProcessing && (
                 <div className="flex items-center gap-2 mt-3 text-blue-600">
                   <Loader2 className="w-4 h-4 animate-spin" />
                   <span className="text-sm">Processing your search and updating criteria below...</span>
