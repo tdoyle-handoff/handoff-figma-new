@@ -192,16 +192,15 @@ export default function DashboardLayout({
         )}
 
         {/* Navigation */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {Object.entries(groupedNavigation).map(([category, items], categoryIndex) => (
-            <div key={category} className={categoryIndex > 0 ? "pt-3" : ""}>
-              {sidebarOpen && category !== 'Finding your Dream Home' && category !== 'Purchasing Your Home' && (
-                <div className="px-3 py-2 text-xs font-medium text-blue-300 uppercase tracking-wide">
-                  {category}
-                </div>
-              )}
-
-              <div className="space-y-1">
+        <div className="flex-1 overflow-y-auto p-4">
+          <div className="space-y-1">
+            {Object.entries(groupedNavigation).map(([category, items]) => (
+              <React.Fragment key={category}>
+                {sidebarOpen && category !== 'Finding your Dream Home' && category !== 'Purchasing Your Home' && (
+                  <div className="px-3 py-2 text-xs font-medium text-blue-300 uppercase tracking-wide">
+                    {category}
+                  </div>
+                )}
                 {items.map((item) => {
                   const Icon = item.icon;
                   const isActive = currentPage === item.id;
@@ -242,14 +241,9 @@ export default function DashboardLayout({
                     </button>
                   );
                 })}
-              </div>
-
-              {/* Add separator between groups except for the last one */}
-              {sidebarOpen && categoryIndex < Object.keys(groupedNavigation).length - 1 && (
-                <div className="mt-4 mx-3 border-t border-blue-700/30"></div>
-              )}
-            </div>
-          ))}
+              </React.Fragment>
+            ))}
+          </div>
         </div>
 
         {/* Footer */}
