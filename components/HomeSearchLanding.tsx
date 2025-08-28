@@ -246,421 +246,381 @@ export default function HomeSearchLanding() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Search Form */}
-        <div className="lg:col-span-2">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Filter className="w-5 h-5" />
-                Search Criteria
-              </CardTitle>
-              <CardDescription>
-                Tell us about your ideal home and we'll search across multiple MLSs to find the best matches.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-4">
-                  <TabsTrigger value="basics">Basics</TabsTrigger>
-                  <TabsTrigger value="details">Details</TabsTrigger>
-                  <TabsTrigger value="features">Features</TabsTrigger>
-                  <TabsTrigger value="budget">Budget</TabsTrigger>
-                </TabsList>
+      {/* Main Search Form */}
+      <div className="max-w-4xl mx-auto">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Filter className="w-5 h-5" />
+              Search Criteria
+            </CardTitle>
+            <CardDescription>
+              Tell us about your ideal home and we'll search across multiple MLSs to find the best matches.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-4">
+                <TabsTrigger value="basics">Basics</TabsTrigger>
+                <TabsTrigger value="details">Details</TabsTrigger>
+                <TabsTrigger value="features">Features</TabsTrigger>
+                <TabsTrigger value="budget">Budget</TabsTrigger>
+              </TabsList>
 
-                {/* Basics Tab */}
-                <TabsContent value="basics" className="space-y-6">
-                  {/* Home Types */}
-                  <div className="space-y-3">
-                    <Label className="text-base font-medium">What type of home are you looking for?</Label>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                      {HOME_TYPES.map(type => {
-                        const Icon = type.icon;
-                        const isSelected = searchCriteria.homeTypes.includes(type.id);
-                        return (
-                          <Card 
-                            key={type.id} 
-                            className={`cursor-pointer transition-all ${isSelected ? 'border-blue-500 bg-blue-50' : 'hover:border-gray-300'}`}
-                            onClick={() => setSearchCriteria(prev => ({
-                              ...prev,
-                              homeTypes: toggleSelection(prev.homeTypes, type.id)
-                            }))}
-                          >
-                            <CardContent className="p-3 text-center">
-                              <Icon className={`w-6 h-6 mx-auto mb-2 ${isSelected ? 'text-blue-600' : 'text-gray-600'}`} />
-                              <p className={`text-sm ${isSelected ? 'text-blue-600 font-medium' : 'text-gray-600'}`}>
-                                {type.label}
-                              </p>
-                            </CardContent>
-                          </Card>
-                        );
-                      })}
-                    </div>
+              {/* Basics Tab */}
+              <TabsContent value="basics" className="space-y-6">
+                {/* Home Types */}
+                <div className="space-y-3">
+                  <Label className="text-base font-medium">What type of home are you looking for?</Label>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {HOME_TYPES.map(type => {
+                      const Icon = type.icon;
+                      const isSelected = searchCriteria.homeTypes.includes(type.id);
+                      return (
+                        <Card
+                          key={type.id}
+                          className={`cursor-pointer transition-all ${isSelected ? 'border-blue-500 bg-blue-50' : 'hover:border-gray-300'}`}
+                          onClick={() => setSearchCriteria(prev => ({
+                            ...prev,
+                            homeTypes: toggleSelection(prev.homeTypes, type.id)
+                          }))}
+                        >
+                          <CardContent className="p-3 text-center">
+                            <Icon className={`w-6 h-6 mx-auto mb-2 ${isSelected ? 'text-blue-600' : 'text-gray-600'}`} />
+                            <p className={`text-sm ${isSelected ? 'text-blue-600 font-medium' : 'text-gray-600'}`}>
+                              {type.label}
+                            </p>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
                   </div>
+                </div>
 
-                  {/* Locations */}
-                  <div className="space-y-3">
-                    <Label className="text-base font-medium">Where would you like to live?</Label>
-                    <div className="flex gap-2">
-                      <div className="flex-1">
-                        <Input
-                          placeholder="Enter city, state, or ZIP code"
-                          value={newLocationInput}
-                          onChange={(e) => setNewLocationInput(e.target.value)}
-                          onKeyPress={(e) => e.key === 'Enter' && handleLocationAdd()}
-                        />
-                      </div>
-                      <Button onClick={handleLocationAdd} disabled={!newLocationInput.trim()}>
-                        <MapPin className="w-4 h-4 mr-2" />
-                        Add
-                      </Button>
-                    </div>
-                    {searchCriteria.locations.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        {searchCriteria.locations.map(location => (
-                          <Badge 
-                            key={location} 
-                            variant="secondary" 
-                            className="cursor-pointer hover:bg-red-100"
-                            onClick={() => removeLocation(location)}
-                          >
-                            {location} ×
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
-                    <p className="text-sm text-gray-500">
-                      💡 Add multiple locations to search across different areas and states
-                    </p>
-                  </div>
-
-                  {/* Price Range */}
-                  <div className="space-y-3">
-                    <Label className="text-base font-medium">Price Range</Label>
-                    <div className="px-3">
-                      <Slider
-                        value={searchCriteria.priceRange}
-                        onValueChange={(value) => setSearchCriteria(prev => ({
-                          ...prev,
-                          priceRange: value as [number, number]
-                        }))}
-                        max={2000000}
-                        min={50000}
-                        step={25000}
-                        className="w-full"
+                {/* Locations */}
+                <div className="space-y-3">
+                  <Label className="text-base font-medium">Where would you like to live?</Label>
+                  <div className="flex gap-2">
+                    <div className="flex-1">
+                      <Input
+                        placeholder="Enter city, state, or ZIP code"
+                        value={newLocationInput}
+                        onChange={(e) => setNewLocationInput(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleLocationAdd()}
                       />
-                      <div className="flex justify-between text-sm text-gray-600 mt-2">
-                        <span>${searchCriteria.priceRange[0].toLocaleString()}</span>
-                        <span>${searchCriteria.priceRange[1].toLocaleString()}</span>
-                      </div>
+                    </div>
+                    <Button onClick={handleLocationAdd} disabled={!newLocationInput.trim()}>
+                      <MapPin className="w-4 h-4 mr-2" />
+                      Add
+                    </Button>
+                  </div>
+                  {searchCriteria.locations.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {searchCriteria.locations.map(location => (
+                        <Badge
+                          key={location}
+                          variant="secondary"
+                          className="cursor-pointer hover:bg-red-100"
+                          onClick={() => removeLocation(location)}
+                        >
+                          {location} ×
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                  <p className="text-sm text-gray-500">
+                    💡 Add multiple locations to search across different areas and states
+                  </p>
+                </div>
+
+                {/* Price Range */}
+                <div className="space-y-3">
+                  <Label className="text-base font-medium">Price Range</Label>
+                  <div className="px-3">
+                    <Slider
+                      value={searchCriteria.priceRange}
+                      onValueChange={(value) => setSearchCriteria(prev => ({
+                        ...prev,
+                        priceRange: value as [number, number]
+                      }))}
+                      max={2000000}
+                      min={50000}
+                      step={25000}
+                      className="w-full"
+                    />
+                    <div className="flex justify-between text-sm text-gray-600 mt-2">
+                      <span>${searchCriteria.priceRange[0].toLocaleString()}</span>
+                      <span>${searchCriteria.priceRange[1].toLocaleString()}</span>
                     </div>
                   </div>
-                </TabsContent>
+                </div>
+              </TabsContent>
 
-                {/* Details Tab */}
-                <TabsContent value="details" className="space-y-6">
+              {/* Details Tab */}
+              <TabsContent value="details" className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Bedrooms */}
+                  <div className="space-y-2">
+                    <Label>Bedrooms</Label>
+                    <Select value={searchCriteria.bedrooms} onValueChange={(value) =>
+                      setSearchCriteria(prev => ({ ...prev, bedrooms: value }))
+                    }>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Any" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="any">Any</SelectItem>
+                        <SelectItem value="1+">1+</SelectItem>
+                        <SelectItem value="2+">2+</SelectItem>
+                        <SelectItem value="3+">3+</SelectItem>
+                        <SelectItem value="4+">4+</SelectItem>
+                        <SelectItem value="5+">5+</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Bathrooms */}
+                  <div className="space-y-2">
+                    <Label>Bathrooms</Label>
+                    <Select value={searchCriteria.bathrooms} onValueChange={(value) =>
+                      setSearchCriteria(prev => ({ ...prev, bathrooms: value }))
+                    }>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Any" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="any">Any</SelectItem>
+                        <SelectItem value="1+">1+</SelectItem>
+                        <SelectItem value="1.5+">1.5+</SelectItem>
+                        <SelectItem value="2+">2+</SelectItem>
+                        <SelectItem value="2.5+">2.5+</SelectItem>
+                        <SelectItem value="3+">3+</SelectItem>
+                        <SelectItem value="4+">4+</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Square Footage */}
+                <div className="space-y-3">
+                  <Label>Square Footage</Label>
+                  <div className="px-3">
+                    <Slider
+                      value={searchCriteria.squareFootage}
+                      onValueChange={(value) => setSearchCriteria(prev => ({
+                        ...prev,
+                        squareFootage: value as [number, number]
+                      }))}
+                      max={8000}
+                      min={500}
+                      step={100}
+                      className="w-full"
+                    />
+                    <div className="flex justify-between text-sm text-gray-600 mt-2">
+                      <span>{searchCriteria.squareFootage[0].toLocaleString()} sq ft</span>
+                      <span>{searchCriteria.squareFootage[1].toLocaleString()} sq ft</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Year Built */}
+                <div className="space-y-3">
+                  <Label>Year Built</Label>
+                  <div className="px-3">
+                    <Slider
+                      value={searchCriteria.yearBuilt}
+                      onValueChange={(value) => setSearchCriteria(prev => ({
+                        ...prev,
+                        yearBuilt: value as [number, number]
+                      }))}
+                      max={2024}
+                      min={1900}
+                      step={5}
+                      className="w-full"
+                    />
+                    <div className="flex justify-between text-sm text-gray-600 mt-2">
+                      <span>{searchCriteria.yearBuilt[0]}</span>
+                      <span>{searchCriteria.yearBuilt[1]}</span>
+                    </div>
+                  </div>
+                </div>
+              </TabsContent>
+
+              {/* Features Tab */}
+              <TabsContent value="features" className="space-y-6">
+                {/* Amenities */}
+                <div className="space-y-3">
+                  <Label className="text-base font-medium">Desired Amenities</Label>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {AMENITIES.map(amenity => {
+                      const isSelected = searchCriteria.amenities.includes(amenity.id);
+                      return (
+                        <div
+                          key={amenity.id}
+                          className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer transition-all ${
+                            isSelected ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                          onClick={() => setSearchCriteria(prev => ({
+                            ...prev,
+                            amenities: toggleSelection(prev.amenities, amenity.id)
+                          }))}
+                        >
+                          <Checkbox checked={isSelected} readOnly />
+                          <span className="text-lg">{amenity.icon}</span>
+                          <span className={`text-sm ${isSelected ? 'text-blue-600 font-medium' : 'text-gray-600'}`}>
+                            {amenity.label}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Special Requirements */}
+                <div className="space-y-3">
+                  <Label className="text-base font-medium">Special Requirements</Label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {SPECIAL_REQUIREMENTS.map(req => {
+                      const isSelected = searchCriteria.specialRequirements.includes(req.id);
+                      const Icon = req.icon;
+                      return (
+                        <div
+                          key={req.id}
+                          className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer transition-all ${
+                            isSelected ? 'border-purple-500 bg-purple-50' : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                          onClick={() => setSearchCriteria(prev => ({
+                            ...prev,
+                            specialRequirements: toggleSelection(prev.specialRequirements, req.id)
+                          }))}
+                        >
+                          <Checkbox checked={isSelected} readOnly />
+                          {typeof req.icon === 'string' ? (
+                            <span className="text-lg">{req.icon}</span>
+                          ) : (
+                            <Icon className="w-5 h-5" />
+                          )}
+                          <span className={`text-sm ${isSelected ? 'text-purple-600 font-medium' : 'text-gray-600'}`}>
+                            {req.label}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </TabsContent>
+
+              {/* Budget Tab */}
+              <TabsContent value="budget" className="space-y-6">
+                <div className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Bedrooms */}
                     <div className="space-y-2">
-                      <Label>Bedrooms</Label>
-                      <Select value={searchCriteria.bedrooms} onValueChange={(value) => 
-                        setSearchCriteria(prev => ({ ...prev, bedrooms: value }))
-                      }>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Any" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="any">Any</SelectItem>
-                          <SelectItem value="1+">1+</SelectItem>
-                          <SelectItem value="2+">2+</SelectItem>
-                          <SelectItem value="3+">3+</SelectItem>
-                          <SelectItem value="4+">4+</SelectItem>
-                          <SelectItem value="5+">5+</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {/* Bathrooms */}
-                    <div className="space-y-2">
-                      <Label>Bathrooms</Label>
-                      <Select value={searchCriteria.bathrooms} onValueChange={(value) => 
-                        setSearchCriteria(prev => ({ ...prev, bathrooms: value }))
-                      }>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Any" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="any">Any</SelectItem>
-                          <SelectItem value="1+">1+</SelectItem>
-                          <SelectItem value="1.5+">1.5+</SelectItem>
-                          <SelectItem value="2+">2+</SelectItem>
-                          <SelectItem value="2.5+">2.5+</SelectItem>
-                          <SelectItem value="3+">3+</SelectItem>
-                          <SelectItem value="4+">4+</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  {/* Square Footage */}
-                  <div className="space-y-3">
-                    <Label>Square Footage</Label>
-                    <div className="px-3">
-                      <Slider
-                        value={searchCriteria.squareFootage}
-                        onValueChange={(value) => setSearchCriteria(prev => ({
+                      <Label>Down Payment</Label>
+                      <Input
+                        type="number"
+                        placeholder="60000"
+                        value={searchCriteria.budget.downPayment}
+                        onChange={(e) => setSearchCriteria(prev => ({
                           ...prev,
-                          squareFootage: value as [number, number]
+                          budget: { ...prev.budget, downPayment: Number(e.target.value) }
                         }))}
-                        max={8000}
-                        min={500}
-                        step={100}
-                        className="w-full"
                       />
-                      <div className="flex justify-between text-sm text-gray-600 mt-2">
-                        <span>{searchCriteria.squareFootage[0].toLocaleString()} sq ft</span>
-                        <span>{searchCriteria.squareFootage[1].toLocaleString()} sq ft</span>
-                      </div>
                     </div>
-                  </div>
-
-                  {/* Year Built */}
-                  <div className="space-y-3">
-                    <Label>Year Built</Label>
-                    <div className="px-3">
-                      <Slider
-                        value={searchCriteria.yearBuilt}
-                        onValueChange={(value) => setSearchCriteria(prev => ({
-                          ...prev,
-                          yearBuilt: value as [number, number]
-                        }))}
-                        max={2024}
-                        min={1900}
-                        step={5}
-                        className="w-full"
-                      />
-                      <div className="flex justify-between text-sm text-gray-600 mt-2">
-                        <span>{searchCriteria.yearBuilt[0]}</span>
-                        <span>{searchCriteria.yearBuilt[1]}</span>
-                      </div>
-                    </div>
-                  </div>
-                </TabsContent>
-
-                {/* Features Tab */}
-                <TabsContent value="features" className="space-y-6">
-                  {/* Amenities */}
-                  <div className="space-y-3">
-                    <Label className="text-base font-medium">Desired Amenities</Label>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                      {AMENITIES.map(amenity => {
-                        const isSelected = searchCriteria.amenities.includes(amenity.id);
-                        return (
-                          <div 
-                            key={amenity.id} 
-                            className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer transition-all ${
-                              isSelected ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
-                            }`}
-                            onClick={() => setSearchCriteria(prev => ({
-                              ...prev,
-                              amenities: toggleSelection(prev.amenities, amenity.id)
-                            }))}
-                          >
-                            <Checkbox checked={isSelected} readOnly />
-                            <span className="text-lg">{amenity.icon}</span>
-                            <span className={`text-sm ${isSelected ? 'text-blue-600 font-medium' : 'text-gray-600'}`}>
-                              {amenity.label}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Special Requirements */}
-                  <div className="space-y-3">
-                    <Label className="text-base font-medium">Special Requirements</Label>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {SPECIAL_REQUIREMENTS.map(req => {
-                        const isSelected = searchCriteria.specialRequirements.includes(req.id);
-                        const Icon = req.icon;
-                        return (
-                          <div 
-                            key={req.id} 
-                            className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer transition-all ${
-                              isSelected ? 'border-purple-500 bg-purple-50' : 'border-gray-200 hover:border-gray-300'
-                            }`}
-                            onClick={() => setSearchCriteria(prev => ({
-                              ...prev,
-                              specialRequirements: toggleSelection(prev.specialRequirements, req.id)
-                            }))}
-                          >
-                            <Checkbox checked={isSelected} readOnly />
-                            {typeof req.icon === 'string' ? (
-                              <span className="text-lg">{req.icon}</span>
-                            ) : (
-                              <Icon className="w-5 h-5" />
-                            )}
-                            <span className={`text-sm ${isSelected ? 'text-purple-600 font-medium' : 'text-gray-600'}`}>
-                              {req.label}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </TabsContent>
-
-                {/* Budget Tab */}
-                <TabsContent value="budget" className="space-y-6">
-                  <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <Label>Down Payment</Label>
-                        <Input
-                          type="number"
-                          placeholder="60000"
-                          value={searchCriteria.budget.downPayment}
-                          onChange={(e) => setSearchCriteria(prev => ({
-                            ...prev,
-                            budget: { ...prev.budget, downPayment: Number(e.target.value) }
-                          }))}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Max Monthly Payment</Label>
-                        <Input
-                          type="number"
-                          placeholder="3500"
-                          value={searchCriteria.budget.monthlyPayment}
-                          onChange={(e) => setSearchCriteria(prev => ({
-                            ...prev,
-                            budget: { ...prev.budget, monthlyPayment: Number(e.target.value) }
-                          }))}
-                        />
-                      </div>
-                    </div>
-
                     <div className="space-y-2">
-                      <Label>Purchase Timeline</Label>
-                      <Select value={searchCriteria.timeline} onValueChange={(value) => 
-                        setSearchCriteria(prev => ({ ...prev, timeline: value }))
-                      }>
-                        <SelectTrigger>
-                          <SelectValue placeholder="When are you looking to buy?" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="asap">As soon as possible</SelectItem>
-                          <SelectItem value="3months">Within 3 months</SelectItem>
-                          <SelectItem value="6months">Within 6 months</SelectItem>
-                          <SelectItem value="1year">Within 1 year</SelectItem>
-                          <SelectItem value="exploring">Just exploring</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <Alert>
-                      <DollarSign className="h-4 w-4" />
-                      <AlertDescription>
-                        <strong>Budget Tip:</strong> Remember to factor in closing costs (2-3%), property taxes, 
-                        insurance, and potential HOA fees when determining your budget.
-                      </AlertDescription>
-                    </Alert>
-                  </div>
-                </TabsContent>
-              </Tabs>
-
-              <Separator className="my-6" />
-
-              {/* Search Button */}
-              <div className="flex gap-3">
-                <Button onClick={handleSearch} className="flex-1" size="lg">
-                  <Search className="w-5 h-5 mr-2" />
-                  Search MLS Database
-                </Button>
-                <Button variant="outline" size="lg">
-                  <Heart className="w-5 h-5 mr-2" />
-                  Save Search
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* AI Assistant Chat */}
-        <div className="lg:col-span-1">
-          <Card className="h-fit">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Bot className="w-5 h-5 text-purple-600" />
-                AI Search Assistant
-                <Badge variant="secondary" className="ml-auto">Live</Badge>
-              </CardTitle>
-              <CardDescription>
-                Get personalized recommendations and MLS insights
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Chat Messages */}
-              <div className="h-64 overflow-y-auto space-y-3 p-3 bg-gray-50 rounded-lg">
-                {aiChatMessages.map((msg, index) => (
-                  <div key={index} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[80%] p-3 rounded-lg ${
-                      msg.type === 'user' 
-                        ? 'bg-blue-600 text-white' 
-                        : 'bg-white border shadow-sm'
-                    }`}>
-                      <p className="text-sm">{msg.message}</p>
+                      <Label>Max Monthly Payment</Label>
+                      <Input
+                        type="number"
+                        placeholder="3500"
+                        value={searchCriteria.budget.monthlyPayment}
+                        onChange={(e) => setSearchCriteria(prev => ({
+                          ...prev,
+                          budget: { ...prev.budget, monthlyPayment: Number(e.target.value) }
+                        }))}
+                      />
                     </div>
                   </div>
-                ))}
-                {isAiTyping && (
-                  <div className="flex justify-start">
-                    <div className="bg-white border shadow-sm p-3 rounded-lg">
-                      <div className="flex items-center gap-1">
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        <span className="text-sm text-gray-500">AI is typing...</span>
-                      </div>
-                    </div>
+
+                  <div className="space-y-2">
+                    <Label>Purchase Timeline</Label>
+                    <Select value={searchCriteria.timeline} onValueChange={(value) =>
+                      setSearchCriteria(prev => ({ ...prev, timeline: value }))
+                    }>
+                      <SelectTrigger>
+                        <SelectValue placeholder="When are you looking to buy?" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="asap">As soon as possible</SelectItem>
+                        <SelectItem value="3months">Within 3 months</SelectItem>
+                        <SelectItem value="6months">Within 6 months</SelectItem>
+                        <SelectItem value="1year">Within 1 year</SelectItem>
+                        <SelectItem value="exploring">Just exploring</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
-                )}
-              </div>
 
-              {/* Chat Input */}
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Ask me about homes, neighborhoods, or market trends..."
-                  value={aiChatInput}
-                  onChange={(e) => setAiChatInput(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleAiChat()}
-                />
-                <Button onClick={handleAiChat} size="sm" disabled={!aiChatInput.trim()}>
-                  <Send className="w-4 h-4" />
-                </Button>
-              </div>
+                  <Alert>
+                    <DollarSign className="h-4 w-4" />
+                    <AlertDescription>
+                      <strong>Budget Tip:</strong> Remember to factor in closing costs (2-3%), property taxes,
+                      insurance, and potential HOA fees when determining your budget.
+                    </AlertDescription>
+                  </Alert>
+                </div>
+              </TabsContent>
+            </Tabs>
 
-              {/* AI Features */}
-              <div className="space-y-2">
-                <p className="text-sm font-medium text-gray-700">AI can help with:</p>
-                <div className="grid grid-cols-1 gap-2">
-                  {[
-                    'MLS property search',
-                    'Neighborhood analysis',
-                    'Market trends & pricing',
-                    'School district info',
-                    'Commute calculations',
-                    'Investment potential'
-                  ].map((feature, index) => (
-                    <div key={index} className="flex items-center gap-2 text-xs text-gray-600">
-                      <Sparkles className="w-3 h-3 text-purple-500" />
-                      {feature}
-                    </div>
-                  ))}
+            <Separator className="my-6" />
+
+            {/* Search Button */}
+            <div className="flex gap-3">
+              <Button onClick={handleSearch} className="flex-1" size="lg">
+                <Search className="w-5 h-5 mr-2" />
+                Search MLS Database
+              </Button>
+              <Button variant="outline" size="lg">
+                <Heart className="w-5 h-5 mr-2" />
+                Save Search
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Simple AI Search Box */}
+        <Card className="mt-6">
+          <CardContent className="p-6">
+            <div className="text-center space-y-4">
+              <div className="flex items-center justify-center gap-2">
+                <Bot className="w-6 h-6 text-purple-600" />
+                <h3 className="text-lg font-semibold text-gray-900">AI-Powered Home Search</h3>
+              </div>
+              <p className="text-gray-600">
+                Describe your dream home in natural language and let our AI search the MLS for you
+              </p>
+              <div className="max-w-2xl mx-auto">
+                <div className="flex gap-3">
+                  <Input
+                    placeholder="e.g., 'Find me a 3-bedroom home under $500k near good schools in Austin or Dallas'"
+                    value={aiChatInput}
+                    onChange={(e) => setAiChatInput(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleAiChat()}
+                    className="text-base"
+                    size={undefined}
+                  />
+                  <Button onClick={handleAiChat} disabled={!aiChatInput.trim()} size="lg">
+                    <Sparkles className="w-5 h-5 mr-2" />
+                    Search
+                  </Button>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        </div>
+              {isAiTyping && (
+                <div className="flex items-center justify-center gap-2 text-purple-600">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span className="text-sm">AI is searching the MLS database...</span>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
