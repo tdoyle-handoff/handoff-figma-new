@@ -326,8 +326,7 @@ export default function HomeSearchLanding() {
           <Bot className="w-8 h-8 text-purple-600" />
         </div>
         <p className="text-gray-600 max-w-2xl mx-auto">
-          Our AI-powered search helps you discover the perfect home across multiple states using advanced MLS integration. 
-          Tell us what you're looking for, and we'll find homes that match your exact needs.
+          Search for your dream home using natural language or detailed criteria. Our AI automatically updates your search parameters and finds matching properties across multiple states using live MLS data.
         </p>
         <div className="flex items-center justify-center gap-4 text-sm text-gray-500">
           <div className="flex items-center gap-1">
