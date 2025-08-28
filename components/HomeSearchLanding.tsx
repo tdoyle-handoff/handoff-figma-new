@@ -353,7 +353,7 @@ export default function HomeSearchLanding() {
               Search Criteria
             </CardTitle>
             <CardDescription>
-              Tell us about your ideal home and we'll search across multiple MLSs to find the best matches.
+              Use the AI search above or fill out detailed criteria below. We'll search across multiple MLSs to find your perfect home.
             </CardDescription>
           </CardHeader>
           <CardContent>
