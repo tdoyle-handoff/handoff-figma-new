@@ -1279,20 +1279,21 @@ export default function Documents({ setupData }: DocumentsProps) {
           >
             Offer Builder
           </TabsTrigger>
-          <TabsTrigger
+          {/* Hidden temporarily - signatures and shared tabs */}
+          {/* <TabsTrigger
             value="shared"
             className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
           >
             Shared
-          </TabsTrigger>
+          </TabsTrigger> */}
           {!isMobile && (
             <>
-              <TabsTrigger
+              {/* <TabsTrigger
                 value="signatures"
                 className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
               >
                 Signatures Needed
-              </TabsTrigger>
+              </TabsTrigger> */}
               <TabsTrigger
                 value="templates"
                 className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
