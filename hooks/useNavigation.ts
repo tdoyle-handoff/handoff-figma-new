@@ -120,6 +120,7 @@ export function useNavigation(): NavigationState & NavigationActions {
     'closing-calculator': 'Closing Calculator - Handoff',
     'settings': 'Settings - Handoff',
     'dev-tools': 'Developer Tools - Handoff',
+    'dev-config': 'Developer Configuration - Handoff',
   } as const), []);
 
   const pageDescriptions = useMemo(() => ({
@@ -139,6 +140,7 @@ export function useNavigation(): NavigationState & NavigationActions {
     'closing-calculator': 'Estimate closing costs and final transaction expenses',
     'settings': 'Account preferences, notifications, and application settings',
     'dev-tools': 'Development and debugging tools for technical support',
+    'dev-config': 'Configure UI elements and feature visibility for development',
   } as const), []);
 
   // Save current page to localStorage whenever it changes
