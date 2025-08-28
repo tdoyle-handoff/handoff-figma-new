@@ -67,11 +67,8 @@ export default function DashboardLayout({
     // Purchasing Your Home
     { id: 'tasks', label: 'Transaction Checklist', icon: CheckSquare, category: 'Purchasing Your Home' },
     { id: 'documents', label: 'Documents & Legal', icon: FileText, category: 'Purchasing Your Home' },
-    { id: 'vendor-marketplace', label: 'Vendor Marketplace', icon: ShoppingCart, category: 'Purchasing Your Home' },
 
     // Support
-    { id: 'communications', label: 'Communications', icon: MessageSquare, category: 'Support' },
-    { id: 'team', label: 'My Team', icon: Users, category: 'Support' },
     { id: 'resources', label: 'Education Hub', icon: BookOpen, category: 'Support' }
   ];
 
