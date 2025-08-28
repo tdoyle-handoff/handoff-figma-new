@@ -259,6 +259,43 @@ export default function HomeSearchLanding() {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {/* AI Search Bar at top of criteria */}
+            <div className="mb-6 p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg border border-purple-200">
+              <div className="flex items-center gap-2 mb-3">
+                <Bot className="w-5 h-5 text-purple-600" />
+                <h3 className="font-medium text-gray-900">AI-Powered Search</h3>
+                <Badge variant="secondary" className="bg-purple-100 text-purple-700">Smart</Badge>
+              </div>
+              <p className="text-sm text-gray-600 mb-3">
+                Describe your dream home in natural language or use the detailed criteria below
+              </p>
+              <div className="flex gap-3">
+                <Input
+                  placeholder="e.g., 'Find me a 3-bedroom home under $500k near good schools in Austin or Dallas'"
+                  value={aiChatInput}
+                  onChange={(e) => setAiChatInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleAiChat()}
+                  className="flex-1"
+                />
+                <Button onClick={handleAiChat} disabled={!aiChatInput.trim()}>
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  AI Search
+                </Button>
+              </div>
+              {isAiTyping && (
+                <div className="flex items-center gap-2 mt-3 text-purple-600">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span className="text-sm">AI is processing your search and updating criteria below...</span>
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center gap-3 mb-4">
+              <Separator className="flex-1" />
+              <span className="text-sm text-gray-500 font-medium">OR USE DETAILED SEARCH</span>
+              <Separator className="flex-1" />
+            </div>
+
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="basics">Basics</TabsTrigger>
