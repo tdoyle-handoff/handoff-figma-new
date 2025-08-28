@@ -18,7 +18,7 @@ import SimpleOnboardingForm from './SimpleOnboardingForm'
 import HomeSearchLanding from './HomeSearchLanding'
 
 export default function PropertySearchTabs() {
-  const [tabValue, setTabValue] = React.useState<string>('get-started');
+  const [tabValue, setTabValue] = React.useState<string>('home-search');
 
   return (
     <div className="w-full max-w-7xl mx-auto p-4 md:p-6">
