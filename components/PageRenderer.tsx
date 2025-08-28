@@ -43,6 +43,7 @@ const AttomApiConfigurationTool = React.lazy(async () => {
   const module = await import('./AttomApiConfigurationTool');
   return { default: module.AttomApiConfigurationTool };
 });
+const DeveloperConfig = React.lazy(() => import('./DeveloperConfig'));
 
 // Loading component
 const LoadingSpinner = () => (
