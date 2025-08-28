@@ -138,24 +138,22 @@ export default function HomeSearchLanding() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [newLocationInput, setNewLocationInput] = useState('');
 
-  // Handle AI chat
-  const handleAiChat = async () => {
-    if (!aiChatInput.trim()) return;
+  // Handle smart search
+  const handleSmartSearch = async () => {
+    if (!searchInput.trim()) return;
 
-    const userMessage = aiChatInput;
-    setAiChatInput('');
-    setAiChatMessages(prev => [...prev, { type: 'user', message: userMessage }]);
-    setIsAiTyping(true);
+    const userMessage = searchInput;
+    setSearchInput('');
+    setIsProcessing(true);
 
-    // Simulate AI processing
+    // Process search and update criteria
     setTimeout(() => {
-      const aiResponse = generateAiResponse(userMessage);
-      setAiChatMessages(prev => [...prev, { type: 'ai', message: aiResponse }]);
-      setIsAiTyping(false);
+      generateSearchResponse(userMessage);
+      setIsProcessing(false);
     }, 1500);
   };
 
-  const generateAiResponse = (userMessage: string) => {
+  const generateSearchResponse = (userMessage: string) => {
     const message = userMessage.toLowerCase();
 
     // Parse natural language and update search criteria
