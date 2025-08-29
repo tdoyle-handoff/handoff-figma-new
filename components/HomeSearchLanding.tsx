@@ -93,30 +93,30 @@ const HOME_TYPES = [
 ];
 
 const AMENITIES = [
-  { id: 'pool', label: 'Swimming Pool', icon: '🏊' },
-  { id: 'garage', label: 'Garage/Parking', icon: '🚗' },
-  { id: 'yard', label: 'Large Yard', icon: '🌳' },
-  { id: 'updated-kitchen', label: 'Updated Kitchen', icon: '🍳' },
-  { id: 'hardwood', label: 'Hardwood Floors', icon: '🪵' },
-  { id: 'fireplace', label: 'Fireplace', icon: '🔥' },
-  { id: 'master-suite', label: 'Master Suite', icon: '🛏️' },
-  { id: 'basement', label: 'Finished Basement', icon: '🏠' },
-  { id: 'walk-in-closet', label: 'Walk-in Closets', icon: '👔' },
-  { id: 'laundry', label: 'Laundry Room', icon: '🧺' },
-  { id: 'ac', label: 'Central Air', icon: '❄️' },
-  { id: 'security', label: 'Security System', icon: '🔒' }
+  { id: 'pool', label: 'Swimming Pool' },
+  { id: 'garage', label: 'Garage/Parking' },
+  { id: 'yard', label: 'Large Yard' },
+  { id: 'updated-kitchen', label: 'Updated Kitchen' },
+  { id: 'hardwood', label: 'Hardwood Floors' },
+  { id: 'fireplace', label: 'Fireplace' },
+  { id: 'master-suite', label: 'Master Suite' },
+  { id: 'basement', label: 'Finished Basement' },
+  { id: 'walk-in-closet', label: 'Walk-in Closets' },
+  { id: 'laundry', label: 'Laundry Room' },
+  { id: 'ac', label: 'Central Air' },
+  { id: 'security', label: 'Security System' }
 ];
 
 const SPECIAL_REQUIREMENTS = [
   { id: 'wheelchair', label: 'Wheelchair Accessible', icon: Shield },
   { id: 'single-story', label: 'Single Story Only', icon: Home },
   { id: 'pet-friendly', label: 'Pet-Friendly', icon: Heart },
-  { id: 'good-schools', label: 'Excellent School District', icon: '🎓' },
+  { id: 'good-schools', label: 'Excellent School District', icon: Shield },
   { id: 'senior-community', label: 'Senior Community', icon: Shield },
   { id: 'gated', label: 'Gated Community', icon: Shield },
-  { id: 'waterfront', label: 'Waterfront Property', icon: '🌊' },
-  { id: 'mountain-view', label: 'Mountain Views', icon: '🏔️' },
-  { id: 'new-construction', label: 'New Construction Only', icon: '🔨' }
+  { id: 'waterfront', label: 'Waterfront Property', icon: Shield },
+  { id: 'mountain-view', label: 'Mountain Views', icon: Shield },
+  { id: 'new-construction', label: 'New Construction Only', icon: Shield }
 ];
 
 const PRICE_PRESETS = [
@@ -216,7 +216,7 @@ export default function HomeSearchLanding() {
     }
 
     if (message.includes('first time') || message.includes('first-time')) {
-      return "Welcome to home buying! 🎉 I've set up beginner-friendly criteria focusing on move-in ready homes with good resale potential. The budget is set to stay within recommended guidelines.";
+      return "Welcome to home buying! I've set up beginner-friendly criteria focusing on move-in ready homes with good resale potential. The budget is set to stay within recommended guidelines.";
     }
 
     if (message.includes('school') || message.includes('education')) {
@@ -524,10 +524,10 @@ export default function HomeSearchLanding() {
       URL.revokeObjectURL(url);
 
       // Show success message
-      alert('✅ Profile downloaded successfully!');
+      alert('Profile downloaded successfully!');
     } catch (error) {
       console.error('Error downloading profile:', error);
-      alert('❌ Error downloading profile. Please try again.');
+      alert('Error downloading profile. Please try again.');
     }
   };
 
@@ -546,16 +546,16 @@ export default function HomeSearchLanding() {
       setShowEmailDialog(false);
       setEmailAddress('');
 
-      alert('✅ Email client opened with your profile data!');
+      alert('Email client opened with your profile data!');
     } catch (error) {
       console.error('Error sending email:', error);
-      alert('❌ Error opening email client. Please try again.');
+      alert('Error opening email client. Please try again.');
     }
   };
 
   const handleSearch = () => {
     // In a real implementation, this would trigger MLS search
-    alert('🔍 Searching MLS database with your criteria...\n\nThis would integrate with your MLS API to find matching properties across multiple states.');
+    alert('Searching MLS database with your criteria...\n\nThis would integrate with your MLS API to find matching properties across multiple states.');
     console.log('Search Criteria:', searchCriteria);
   };
 
