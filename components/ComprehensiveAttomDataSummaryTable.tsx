@@ -63,12 +63,29 @@ interface SectionData {
   }>;
 }
 
-export function ComprehensiveAttomDataSummaryTable({ 
+export function ComprehensiveAttomDataSummaryTable({
   className = '',
   defaultAddress = '586 Franklin Ave, Brooklyn, NY',
   autoFetch = false
 }: ComprehensiveAttomDataSummaryTableProps) {
-  const [address, setAddress] = useState(defaultAddress);
+  // Parse default address
+  const parseDefaultAddress = (addr: string) => {
+    const parts = addr.split(',').map(p => p.trim());
+    return {
+      street: parts[0] || '',
+      city: parts[1] || '',
+      state: parts[2]?.split(' ')[0] || '',
+      zipCode: parts[2]?.split(' ')[1] || ''
+    };
+  };
+
+  const defaultParsed = parseDefaultAddress(defaultAddress);
+  const [addressFields, setAddressFields] = useState({
+    street: defaultParsed.street,
+    city: defaultParsed.city,
+    state: defaultParsed.state,
+    zipCode: defaultParsed.zipCode
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [apiResponses, setApiResponses] = useState<Record<string, ApiResponse>>({});
   const [mergedData, setMergedData] = useState<ComprehensivePropertyData | null>(null);
@@ -263,16 +280,32 @@ export function ComprehensiveAttomDataSummaryTable({
     },
   ];
 
+  const getFullAddress = () => {
+    const { street, city, state, zipCode } = addressFields;
+    return `${street}, ${city}, ${state} ${zipCode}`.trim();
+  };
+
+  const updateAddressField = (field: keyof typeof addressFields, value: string) => {
+    setAddressFields(prev => ({ ...prev, [field]: value }));
+  };
+
+  const isAddressComplete = () => {
+    return addressFields.street.trim() && addressFields.city.trim() &&
+           addressFields.state.trim() && addressFields.zipCode.trim();
+  };
+
   const fetchAllData = async () => {
-    if (!address.trim()) return;
+    if (!isAddressComplete()) {
+      alert('Please fill in all address fields');
+      return;
+    }
 
     setIsLoading(true);
     const responses: Record<string, ApiResponse> = {};
 
     try {
-      const addressParts = address.split(',');
-      const address1 = addressParts[0]?.trim() || '';
-      const address2 = addressParts.slice(1).join(',').trim() || '';
+      const address1 = addressFields.street.trim();
+      const address2 = `${addressFields.city}, ${addressFields.state} ${addressFields.zipCode}`.trim();
 
       if (!address1 || !address2) {
         throw new Error('Please provide a complete address');
@@ -476,24 +509,78 @@ export function ComprehensiveAttomDataSummaryTable({
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex gap-2">
-            <Input
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              placeholder="Enter property address..."
-              className="flex-1"
-            />
-            <Button 
-              onClick={fetchAllData} 
-              disabled={isLoading || !address.trim()}
-            >
-              {isLoading ? (
-                <RefreshCw className="w-4 h-4 animate-spin mr-2" />
-              ) : (
-                <Database className="w-4 h-4 mr-2" />
-              )}
-              Search
-            </Button>
+          <div className="space-y-3">
+            <div className="grid grid-cols-1 gap-3">
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">
+                  Street Address
+                </label>
+                <Input
+                  value={addressFields.street}
+                  onChange={(e) => updateAddressField('street', e.target.value)}
+                  placeholder="123 Main Street"
+                  className="w-full"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">
+                  City
+                </label>
+                <Input
+                  value={addressFields.city}
+                  onChange={(e) => updateAddressField('city', e.target.value)}
+                  placeholder="Brooklyn"
+                  className="w-full"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">
+                  State
+                </label>
+                <Input
+                  value={addressFields.state}
+                  onChange={(e) => updateAddressField('state', e.target.value)}
+                  placeholder="NY"
+                  className="w-full"
+                  maxLength={2}
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">
+                  ZIP Code
+                </label>
+                <Input
+                  value={addressFields.zipCode}
+                  onChange={(e) => updateAddressField('zipCode', e.target.value)}
+                  placeholder="11238"
+                  className="w-full"
+                  maxLength={10}
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-2 items-center">
+              <div className="text-sm text-gray-600 flex-1">
+                {isAddressComplete() && (
+                  <span>📍 {getFullAddress()}</span>
+                )}
+              </div>
+              <Button
+                onClick={fetchAllData}
+                disabled={isLoading || !isAddressComplete()}
+                className="min-w-24"
+              >
+                {isLoading ? (
+                  <RefreshCw className="w-4 h-4 animate-spin mr-2" />
+                ) : (
+                  <Database className="w-4 h-4 mr-2" />
+                )}
+                Search
+              </Button>
+            </div>
           </div>
 
           {/* Data Status Summary */}
