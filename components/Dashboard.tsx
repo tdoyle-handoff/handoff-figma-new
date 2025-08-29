@@ -283,7 +283,7 @@ export default function Dashboard({ setupData }: DashboardProps) {
   return (
     <div className="mx-auto max-w-7xl p-8">
       {/* Data Persistence Notification */}
-      <DataPersistenceNotification className="mb-6" />
+      {userProfile !== undefined && <DataPersistenceNotification className="mb-6" />}
 
       {/* Property Input Form */}
       <Card className="shadow-sm mb-8">
