@@ -110,24 +110,40 @@ export function useAuth() {
           localStorage.setItem('handoff-user-profile', JSON.stringify(guestProfile));
           localStorage.setItem('handoff-setup-data', JSON.stringify(guestSetupData));
 
-          setAuthState({
-            isAuthenticated: true,
-            isLoading: false,
-            userProfile: guestProfile,
-            setupData: guestSetupData,
-            authError: null,
-            isOfflineMode: true,
-            isGuestMode: true,
-            isQuestionnaireComplete: false,
-            showQuestionnairePrompt: false,
-          });
+          if (mountedRef.current) {
+            setAuthState({
+              isAuthenticated: true,
+              isLoading: false,
+              userProfile: guestProfile,
+              setupData: guestSetupData,
+              authError: null,
+              isOfflineMode: true,
+              isGuestMode: true,
+              isQuestionnaireComplete: false,
+              showQuestionnairePrompt: false,
+            });
+          }
 
           console.log('✅ Guest mode enabled automatically');
           return;
         }
 
+        // Add safety timeout for auth initialization
+        const authTimeout = setTimeout(() => {
+          if (mountedRef.current) {
+            console.warn('⚠️ Auth initialization timeout - forcing guest mode');
+            setAuthState(prev => ({
+              ...prev,
+              isLoading: false,
+              authError: 'Authentication timeout. Please try refreshing the page.',
+            }));
+          }
+        }, 10000); // 10 second timeout
+
         // Set up optimized auth state listener
         authUnsubscribe = await authStateManager.addAuthListener(async (session: AuthSession | null) => {
+          // Clear timeout once we get a response
+          clearTimeout(authTimeout);
           if (!mountedRef.current) return;
 
           if (session && session.user) {
