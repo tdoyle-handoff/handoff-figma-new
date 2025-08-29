@@ -224,88 +224,84 @@ export default function OfferBuilder() {
     return earnestMode === "percent" ? base * (Number(earnest) || 0) / 100 : (Number(earnest) || 0);
   }, [earnestMode, earnest, offerPrice, listPrice]);
 
-  // Convert offer data to purchase agreement format
-  const buildPurchaseAgreementData = (): PurchaseAgreementData => ({
-    // Parties
-    sellerName: "", // To be filled by user in template
-    sellerAddress: "", // To be filled by user in template
-    buyerName: buyerName,
-    buyerAddress: "", // Could be added to offer builder in future
-    
-    // Property
-    propertyAddress: `${address}, ${city}, ${stateUS} ${zip}`,
-    city: city,
-    county: "", // Could be derived or added to form
-    state: stateUS || "New York",
-    lotSize: "", // Could be added to offer builder
-    
-    // Items
-    itemsIncluded: "", // To be filled in template
-    itemsExcluded: "", // To be filled in template
-    
-    // Purchase Price
-    purchasePrice: offerPrice,
-    depositAmount: earnestDollar,
-    additionalDeposit: 0, // Could be enhanced
-    additionalDepositDate: "", // Could be enhanced
-    cashAtClosing: dpDollar,
-    otherPayment: sellerConcessions || "",
-    
-    // Mortgage
-    mortgageAmount: loanAmount,
-    mortgageTerm: termYears,
-    interestRate: interestRate,
-    mortgageType: financingType.toLowerCase() as 'conventional' | 'fha' | 'va',
-    businessDaysToApply: financingDays,
-    mortgageContingencyDate: "", // Could calculate from financing days
-    sellerContribution: 0, // Could be parsed from concessions
-    
-    // Other Terms
-    otherTerms: hasEscalation ? 
-      `Escalation clause: Buyer will increase offer by $${escalationIncrement.toLocaleString()} increments up to a maximum of $${escalationCap.toLocaleString()} if competing offers are received.` : 
-      "",
-    
-    // Title and Survey
-    titleInsurance: "purchaser" as const,
-    intendedUse: "primary residence", // Could be enhanced
-    
-    // Deed
-    deedType: "Warranty Deed",
-    
-    // Closing
-    closingDate: closingDate,
-    
-    // Deposits
-    listingBroker: "", // To be filled in template
-    
-    // Time Period
-    offerExpirationDate: "", // Could be enhanced
-    offerExpirationTime: "",
-    
-    // Brokers
-    realEstateBroker: "", // To be filled in template
-    cooperatingBroker: "",
-    cooperatingBrokerCommission: 0,
-    
-    // Attorney Approval
-    attorneyApprovalDate: "", // Could be enhanced
-    
-    // Inspections
-    structuralInspection: inspection,
-    pestInspection: false, // Could be enhanced
-    septicInspection: false, // Could be enhanced
-    wellWaterTest: false, // Could be enhanced
-    radonInspection: false, // Could be enhanced
-    inspectionDate: "", // Could calculate from inspection days
-    
-    // Contact Information
-    purchaserAttorney: "",
-    sellerAttorney: "",
-    purchaserEmail: buyerEmail,
-    sellerEmail: "",
-    purchaserPhone: buyerPhone,
-    sellerPhone: ""
-  });
+  // Generate purchase agreement using Documents template
+  const generatePurchaseAgreementFromTemplate = () => {
+    const template = `
+      <div style="font-family: 'Times New Roman', serif; padding: 40px; max-width: 800px; margin: 0 auto; line-height: 1.6;">
+        <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #000; padding-bottom: 20px;">
+          <h1 style="margin: 0; font-size: 24px; font-weight: bold;">RESIDENTIAL PURCHASE AGREEMENT</h1>
+          <p style="margin: 10px 0 0 0; font-size: 12px;">This document constitutes a legally binding agreement</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">PROPERTY INFORMATION</h3>
+          <p><strong>Property Address:</strong> ${address || '_________________________________'}, ${city || '[City]'}, ${stateUS || '[State]'} ${zip || '[ZIP]'}</p>
+          <p><strong>Legal Description:</strong> To be inserted from title report</p>
+          <p><strong>Assessor's Parcel Number (APN):</strong> _________________</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">BUYER INFORMATION</h3>
+          <p><strong>Buyer Name:</strong> ${buyerName || '[BUYER NAME]'}</p>
+          <p><strong>Email:</strong> ${buyerEmail || '[BUYER EMAIL]'}</p>
+          <p><strong>Phone:</strong> ${buyerPhone || '_________________________________'}</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">PURCHASE TERMS</h3>
+          <p><strong>Purchase Price:</strong> ${formatMoney(offerPrice)}</p>
+          <p><strong>Earnest Money Deposit:</strong> ${formatMoney(earnestDollar)} to be deposited within 3 business days</p>
+          <p><strong>Down Payment:</strong> ${formatMoney(dpDollar)}</p>
+          <p><strong>Loan Amount:</strong> ${formatMoney(loanAmount)}</p>
+          <p><strong>Financing Type:</strong> ${financingType}</p>
+          <p><strong>Closing Date:</strong> ${closingDate || '_________________________'}</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">CONTINGENCIES</h3>
+          <p>${inspection ? '☑' : '☐'} <strong>Inspection Contingency:</strong> Buyer has ${inspectionDays} days to complete inspections</p>
+          <p>${appraisal ? '☑' : '☐'} <strong>Appraisal Contingency:</strong> Property must appraise for at least the purchase price</p>
+          <p>${financingCont ? '☑' : '☐'} <strong>Financing Contingency:</strong> Buyer has ${financingDays} days to obtain loan approval</p>
+          <p>${homeSale ? '☑' : '☐'} <strong>Home Sale Contingency:</strong> Sale contingent upon buyer's existing home sale</p>
+          ${hasEscalation ? `<p>☑ <strong>Escalation Clause:</strong> Buyer will increase offer by ${formatMoney(escalationIncrement)} increments up to ${formatMoney(escalationCap)}</p>` : ''}
+        </div>
+
+        ${sellerConcessions ? `<div style="margin-bottom: 25px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">SELLER CONCESSIONS</h3>
+          <p>${sellerConcessions}</p>
+        </div>` : ''}
+
+        <div style="margin-bottom: 40px; border: 2px solid #000; padding: 15px;">
+          <p style="font-weight: bold; font-size: 14px; margin-bottom: 10px;">LEGAL NOTICE:</p>
+          <p style="font-size: 12px; margin-bottom: 8px;">This is a legally binding contract. If not understood, seek competent legal advice before signing.</p>
+          <p style="font-size: 12px;">Time is of the essence. All deadlines in this agreement are strictly enforced.</p>
+        </div>
+
+        <div style="margin-bottom: 30px;">
+          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 15px;">SIGNATURES</h3>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 40px;">
+            <div style="width: 45%;">
+              <p><strong>BUYER:</strong></p>
+              <div style="border-bottom: 1px solid #000; height: 30px; margin-bottom: 5px;"></div>
+              <p style="font-size: 12px;">${buyerName || '[Print Name]'}</p>
+              <p style="font-size: 12px;">Date: _______________</p>
+            </div>
+            <div style="width: 45%;">
+              <p><strong>SELLER:</strong></p>
+              <div style="border-bottom: 1px solid #000; height: 30px; margin-bottom: 5px;"></div>
+              <p style="font-size: 12px;">[Seller Name]</p>
+              <p style="font-size: 12px;">Date: _______________</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align: center; font-size: 10px; color: #666; border-top: 1px solid #ccc; padding-top: 15px;">
+          <p>Document generated on ${new Date().toLocaleDateString()} • Handoff Real Estate Platform</p>
+        </div>
+      </div>
+    `;
+    return template;
+  };
 
   // Enhanced compliance flags with state-specific requirements
   const flags = useMemo(() => {
@@ -888,11 +884,10 @@ export default function OfferBuilder() {
       {/* Left: main content */}
       <div className="lg:col-span-2 space-y-4">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-semibold">Offer Builder</h1>
+          <h1 className="text-xl sm:text-2xl font-semibold">Offer Builder</h1>
           <div className="flex items-center gap-2">
-            <span className="hidden md:inline text-xs text-muted-foreground mr-2">{savedText}</span>
-            <Button variant="secondary" size="sm" onClick={handleSaveDraft}>Save draft</Button>
-            <Button variant="outline" size="sm">Help</Button>
+            <span className="hidden sm:inline text-xs text-muted-foreground mr-2">{savedText}</span>
+            <Button variant="secondary" size="sm" onClick={handleSaveDraft} className="text-xs sm:text-sm">Save draft</Button>
           </div>
         </div>
 
@@ -916,40 +911,40 @@ export default function OfferBuilder() {
         {step === 0 && (
           <Card>
             <CardHeader>
-              <CardTitle>Property details</CardTitle>
+              <CardTitle className="text-lg sm:text-xl">Property Details for Purchase Agreement</CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label>Address</Label>
-                <Input value={address} onChange={e=>setAddress(e.target.value)} placeholder="123 Main St" />
+            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="sm:col-span-2">
+                <Label className="text-sm sm:text-base">Property Address (as it will appear on the purchase agreement)</Label>
+                <Input value={address} onChange={e=>setAddress(e.target.value)} placeholder="123 Main Street" className="text-sm sm:text-base" />
               </div>
               <div>
-                <Label>City</Label>
-                <Input value={city} onChange={e=>setCity(e.target.value)} placeholder="Anytown" />
+                <Label className="text-sm sm:text-base">City</Label>
+                <Input value={city} onChange={e=>setCity(e.target.value)} placeholder="City Name" className="text-sm sm:text-base" />
               </div>
               <div>
-                <Label>State</Label>
-                <Input value={stateUS} onChange={e=>setStateUS(e.target.value)} placeholder="NY" />
+                <Label className="text-sm sm:text-base">State</Label>
+                <Input value={stateUS} onChange={e=>setStateUS(e.target.value)} placeholder="NY" className="text-sm sm:text-base" />
               </div>
               <div>
-                <Label>ZIP</Label>
-                <Input value={zip} onChange={e=>setZip(e.target.value)} placeholder="10001" />
+                <Label className="text-sm sm:text-base">ZIP Code</Label>
+                <Input value={zip} onChange={e=>setZip(e.target.value)} placeholder="12345" className="text-sm sm:text-base" />
               </div>
               <div>
-                <Label>List price</Label>
-                <Input type="number" value={listPrice} onChange={e=>setListPrice(Number(e.target.value))} />
+                <Label className="text-sm sm:text-base">Seller's Listed Price</Label>
+                <Input type="number" value={listPrice} onChange={e=>setListPrice(Number(e.target.value))} className="text-sm sm:text-base" />
               </div>
               <div>
-                <Label>HOA monthly</Label>
-                <Input type="number" value={hoaMonthly} onChange={e=>setHoaMonthly(Number(e.target.value))} />
+                <Label className="text-sm sm:text-base">HOA Fees (Monthly)</Label>
+                <Input type="number" value={hoaMonthly} onChange={e=>setHoaMonthly(Number(e.target.value))} placeholder="0" className="text-sm sm:text-base" />
               </div>
               <div>
-                <Label>Taxes per year</Label>
-                <Input type="number" value={taxesAnnual} onChange={e=>setTaxesAnnual(Number(e.target.value))} />
+                <Label className="text-sm sm:text-base">Property Taxes (Annual)</Label>
+                <Input type="number" value={taxesAnnual} onChange={e=>setTaxesAnnual(Number(e.target.value))} className="text-sm sm:text-base" />
               </div>
               <div>
-                <Label>Insurance per year</Label>
-                <Input type="number" value={insuranceAnnual} onChange={e=>setInsuranceAnnual(Number(e.target.value))} />
+                <Label className="text-sm sm:text-base">Homeowner's Insurance (Annual)</Label>
+                <Input type="number" value={insuranceAnnual} onChange={e=>setInsuranceAnnual(Number(e.target.value))} className="text-sm sm:text-base" />
               </div>
             </CardContent>
 
@@ -999,20 +994,20 @@ export default function OfferBuilder() {
         {step === 1 && (
           <Card>
             <CardHeader>
-              <CardTitle>Buyer & financing</CardTitle>
+              <CardTitle className="text-lg sm:text-xl">Buyer Information & Financing Terms</CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="md:col-span-2">
-                <Label>Buyer full name</Label>
-                <Input value={buyerName} onChange={e=>setBuyerName(e.target.value)} placeholder="Jane Doe" />
+            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="sm:col-span-2">
+                <Label className="text-sm sm:text-base">Buyer's Legal Name (as it will appear on the purchase agreement)</Label>
+                <Input value={buyerName} onChange={e=>setBuyerName(e.target.value)} placeholder="John and Jane Doe" className="text-sm sm:text-base" />
               </div>
               <div>
-                <Label>Email</Label>
-                <Input value={buyerEmail} onChange={e=>setBuyerEmail(e.target.value)} placeholder="jane@email.com" />
+                <Label className="text-sm sm:text-base">Contact Email</Label>
+                <Input value={buyerEmail} onChange={e=>setBuyerEmail(e.target.value)} placeholder="buyer@email.com" className="text-sm sm:text-base" />
               </div>
               <div>
-                <Label>Phone</Label>
-                <Input value={buyerPhone} onChange={e=>setBuyerPhone(e.target.value)} placeholder="(555) 555-5555" />
+                <Label className="text-sm sm:text-base">Phone Number</Label>
+                <Input value={buyerPhone} onChange={e=>setBuyerPhone(e.target.value)} placeholder="(555) 555-5555" className="text-sm sm:text-base" />
               </div>
 
               <div>
@@ -1112,17 +1107,17 @@ export default function OfferBuilder() {
         {step === 2 && (
           <Card>
             <CardHeader>
-              <CardTitle>Offer terms</CardTitle>
+              <CardTitle className="text-lg sm:text-xl">Purchase Agreement Terms</CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <Label>Offer price</Label>
-                <Input type="number" value={offerPrice} onChange={e=>setOfferPrice(Number(e.target.value))} />
+                <Label className="text-sm sm:text-base">Purchase Price Offered</Label>
+                <Input type="number" value={offerPrice} onChange={e=>setOfferPrice(Number(e.target.value))} className="text-sm sm:text-base" />
               </div>
 
               <div>
-                <Label>Closing date</Label>
-                <Input type="date" value={closingDate} onChange={e=>setClosingDate(e.target.value)} />
+                <Label className="text-sm sm:text-base">Proposed Closing Date</Label>
+                <Input type="date" value={closingDate} onChange={e=>setClosingDate(e.target.value)} className="text-sm sm:text-base" />
               </div>
 
               <div>
@@ -1176,9 +1171,9 @@ export default function OfferBuilder() {
         {step === 3 && (
           <Card>
             <CardHeader>
-              <CardTitle>Contingencies</CardTitle>
+              <CardTitle className="text-lg sm:text-xl">Purchase Agreement Contingencies</CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex items-center gap-2">
                 <Checkbox id="insp" checked={inspection} onCheckedChange={(v)=> setInspection(Boolean(v))} />
                 <Label htmlFor="insp">Inspection contingency</Label>
@@ -1227,7 +1222,7 @@ export default function OfferBuilder() {
         {step === 4 && (
           <Card>
             <CardHeader>
-              <CardTitle>Review & submit</CardTitle>
+              <CardTitle className="text-lg sm:text-xl">Review Purchase Agreement & Submit</CardTitle>
             </CardHeader>
             <CardContent>
               {/* Summary */}
@@ -1281,16 +1276,39 @@ export default function OfferBuilder() {
             </CardContent>
             <CardFooter className="justify-between">
               <Button variant="ghost" onClick={back}><ArrowLeft className="w-4 h-4 mr-2"/>Back</Button>
-              <div className="flex items-center gap-2">
-                <Button variant="outline" onClick={handleCreatePurchaseAgreement}>
+              <div className="flex flex-col sm:flex-row items-center gap-2">
+                <Button variant="outline" onClick={() => {
+                  const w = window.open('', '_blank');
+                  if (!w) return;
+                  const template = generatePurchaseAgreementFromTemplate();
+                  w.document.write(`
+                    <html>
+                      <head>
+                        <title>Purchase Agreement - ${address || 'Property'}</title>
+                        <style>
+                          @page { margin: 0.5in; }
+                          body { margin: 0; }
+                          @media print {
+                            body { -webkit-print-color-adjust: exact; }
+                            .no-print { display: none; }
+                          }
+                        </style>
+                      </head>
+                      <body>
+                        ${template}
+                        <div class="no-print" style="text-align: center; margin: 20px; page-break-before: always;">
+                          <button onclick="window.print()" style="background: #2563eb; color: white; padding: 12px 24px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer;">Print Purchase Agreement</button>
+                          <p style="margin-top: 10px; font-size: 14px; color: #666;">This purchase agreement can be printed or saved as PDF for signing and submission.</p>
+                        </div>
+                      </body>
+                    </html>
+                  `);
+                  w.document.close();
+                }} className="w-full sm:w-auto text-xs sm:text-sm">
                   <FileText className="w-4 h-4 mr-2"/>
-                  Create Purchase Agreement
+                  Generate Purchase Agreement
                 </Button>
-                <Button variant="outline" onClick={handleGenerateLegalDocument}>
-                  <Download className="w-4 h-4 mr-2"/>
-                  Quick Preview
-                </Button>
-                <Button><Mail className="w-4 h-4 mr-2"/>Submit Offer</Button>
+                <Button className="w-full sm:w-auto text-xs sm:text-sm"><Mail className="w-4 h-4 mr-2"/>Submit Offer</Button>
               </div>
             </CardFooter>
           </Card>
@@ -1370,8 +1388,8 @@ export default function OfferBuilder() {
               )}
             </div>
             <div className="p-3 border rounded-lg bg-blue-50">
-              <h6 className="font-medium text-sm mb-1">Purchase Agreement</h6>
-              <p className="text-xs text-blue-800">Generate a complete MLS-compliant purchase agreement with your offer data pre-populated.</p>
+              <h6 className="font-medium text-sm mb-1">Purchase Agreement Template</h6>
+              <p className="text-xs text-blue-800">All your offer details will automatically populate the official purchase agreement template when generated.</p>
             </div>
             <Button variant="destructive" onClick={handleClearDraft}>Clear saved (autosave) draft</Button>
           </CardContent>
