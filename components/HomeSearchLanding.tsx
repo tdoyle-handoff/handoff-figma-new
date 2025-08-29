@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Alert, AlertDescription } from './ui/alert';
 import { Separator } from './ui/separator';
+import SimpleOnboardingForm from './SimpleOnboardingForm';
 import {
   Search,
   Home,
@@ -31,7 +32,10 @@ import {
   CheckCircle2,
   MessageCircle,
   Send,
-  Loader2
+  Loader2,
+  Download,
+  Mail,
+  FileText
 } from 'lucide-react';
 
 interface LocationCriteria {
@@ -173,6 +177,10 @@ export default function HomeSearchLanding() {
   const [selectedState, setSelectedState] = useState('');
   const [zipCodeInput, setZipCodeInput] = useState('');
   const [zipCodeDistance, setZipCodeDistance] = useState(25);
+  const [onboardingCompleted, setOnboardingCompleted] = useState(false);
+  const [onboardingData, setOnboardingData] = useState<any>(null);
+  const [emailAddress, setEmailAddress] = useState('');
+  const [showEmailDialog, setShowEmailDialog] = useState(false);
 
   // Handle smart search
   const handleSmartSearch = async () => {
@@ -491,12 +499,76 @@ export default function HomeSearchLanding() {
             </div>
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-5">
+                <TabsTrigger value="get-started">Get Started</TabsTrigger>
                 <TabsTrigger value="basics">Basics</TabsTrigger>
                 <TabsTrigger value="details">Details</TabsTrigger>
                 <TabsTrigger value="features">Features</TabsTrigger>
                 <TabsTrigger value="budget">Budget</TabsTrigger>
               </TabsList>
+
+              {/* Get Started Tab */}
+              <TabsContent value="get-started" className="space-y-6">
+                {!onboardingCompleted ? (
+                  <SimpleOnboardingForm
+                    onComplete={handleOnboardingComplete}
+                    onSkip={() => setActiveTab('basics')}
+                  />
+                ) : (
+                  <div className="space-y-6">
+                    <div className="text-center">
+                      <CheckCircle2 className="w-16 h-16 text-green-600 mx-auto mb-4" />
+                      <h3 className="text-2xl font-semibold text-gray-900 mb-2">Profile Complete!</h3>
+                      <p className="text-gray-600 mb-6">Your responses have been saved. You can now download them or email them to your agent.</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-md mx-auto">
+                      <Button onClick={downloadPDF} className="flex items-center gap-2" size="lg">
+                        <Download className="w-5 h-5" />
+                        Download PDF
+                      </Button>
+                      <Button onClick={() => setShowEmailDialog(true)} variant="outline" className="flex items-center gap-2" size="lg">
+                        <Mail className="w-5 h-5" />
+                        Email to Agent
+                      </Button>
+                    </div>
+
+                    {showEmailDialog && (
+                      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                        <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+                          <h3 className="text-lg font-semibold mb-4">Email to Agent</h3>
+                          <div className="space-y-4">
+                            <div>
+                              <Label htmlFor="email">Agent's Email Address</Label>
+                              <Input
+                                id="email"
+                                type="email"
+                                placeholder="agent@realestate.com"
+                                value={emailAddress}
+                                onChange={(e) => setEmailAddress(e.target.value)}
+                              />
+                            </div>
+                            <div className="flex gap-3">
+                              <Button onClick={() => setShowEmailDialog(false)} variant="outline" className="flex-1">
+                                Cancel
+                              </Button>
+                              <Button onClick={sendEmail} disabled={!emailAddress.trim()} className="flex-1">
+                                Send Email
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="text-center mt-6">
+                      <Button onClick={() => setActiveTab('basics')} variant="outline">
+                        Continue to Home Search
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </TabsContent>
 
               {/* Basics Tab */}
               <TabsContent value="basics" className="space-y-6">
