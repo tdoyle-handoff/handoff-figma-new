@@ -14,9 +14,9 @@ interface AuthTestData {
 
 export function SupabaseAuthTest() {
   const [authData, setAuthData] = useState<AuthTestData>({
-    email: 'test@handoff.demo',
-    password: 'testpassword123',
-    fullName: 'Test User'
+    email: '',
+    password: '',
+    fullName: ''
   });
 
   const { testResults, isRunning, currentUserSession, runFullTest, clearTests } = useAuthTestRunner();
