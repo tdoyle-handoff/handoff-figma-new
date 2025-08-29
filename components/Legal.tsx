@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, FileText, AlertTriangle, CheckCircle, Download, Upload, Eye, Bot, Star, MapPin, Phone, Mail, ExternalLink, DollarSign, Calendar, Clock, Shield, FileX, AlertCircle, TrendingUp, Users, Scale, ChevronRight, User, HelpCircle } from 'lucide-react';
+import { Search, FileText, AlertTriangle, CheckCircle, Download, Upload, Eye, Bot, ExternalLink, DollarSign, Calendar, Clock, Shield, FileX, AlertCircle, TrendingUp, Users, Scale, ChevronRight, User, HelpCircle } from 'lucide-react';
 import ContractAnalysis from './ContractAnalysis';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
