@@ -840,9 +840,6 @@ export default function Legal() {
           <LegalProgressTracker />
         </TabsContent>
 
-        <TabsContent value="attorney" className="space-y-6 bg-white">
-          <LawyerSearch />
-        </TabsContent>
 
         <TabsContent value="contract" className="space-y-6 bg-white">
           <ContractAnalysis />
