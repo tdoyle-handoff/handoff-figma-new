@@ -330,8 +330,6 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
       priority: 'high',
       status: isUnderContract ? 'completed' : 'pending',
       estimatedTime: '1-2 days',
-      linkedPage: 'legal',
-      actionLabel: 'Find Attorney',
       assignedTo: 'Buyer'
     },
 
