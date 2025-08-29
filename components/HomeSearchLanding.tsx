@@ -93,7 +93,7 @@ const AMENITIES = [
   { id: 'garage', label: 'Garage/Parking', icon: '🚗' },
   { id: 'yard', label: 'Large Yard', icon: '🌳' },
   { id: 'updated-kitchen', label: 'Updated Kitchen', icon: '🍳' },
-  { id: 'hardwood', label: 'Hardwood Floors', icon: '��' },
+  { id: 'hardwood', label: 'Hardwood Floors', icon: '🪵' },
   { id: 'fireplace', label: 'Fireplace', icon: '🔥' },
   { id: 'master-suite', label: 'Master Suite', icon: '🛏️' },
   { id: 'basement', label: 'Finished Basement', icon: '🏠' },
@@ -534,65 +534,148 @@ export default function HomeSearchLanding() {
                 </div>
 
                 {/* Locations */}
-                <div className="space-y-3">
+                <div className="space-y-4">
                   <Label className="text-base font-medium">Location</Label>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div className="space-y-2">
-                      <Select value={locationRegion} onValueChange={setLocationRegion}>
-                        <SelectTrigger>
+
+                  {/* Regions */}
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-700">Regions</Label>
+                    <div className="flex gap-2">
+                      <Select value={selectedRegion} onValueChange={setSelectedRegion}>
+                        <SelectTrigger className="flex-1">
                           <SelectValue placeholder="Select Region" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="northeast">Northeast</SelectItem>
-                          <SelectItem value="southeast">Southeast</SelectItem>
-                          <SelectItem value="midwest">Midwest</SelectItem>
-                          <SelectItem value="southwest">Southwest</SelectItem>
-                          <SelectItem value="west">West</SelectItem>
-                          <SelectItem value="pacific">Pacific</SelectItem>
+                          {REGIONS.map(region => (
+                            <SelectItem key={region.id} value={region.id}>{region.label}</SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
+                      <Button onClick={addRegion} disabled={!selectedRegion} size="sm">
+                        Add
+                      </Button>
                     </div>
-                    <div className="space-y-2">
-                      <Select value={locationState} onValueChange={setLocationState}>
-                        <SelectTrigger>
+                    {searchCriteria.locationCriteria.regions.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {searchCriteria.locationCriteria.regions.map(region => (
+                          <Badge
+                            key={region}
+                            variant="outline"
+                            className="cursor-pointer hover:bg-red-100 border-blue-300 text-blue-700"
+                            onClick={() => removeRegion(region)}
+                          >
+                            {REGIONS.find(r => r.id === region)?.label} ×
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* States */}
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-700">States</Label>
+                    <div className="flex gap-2">
+                      <Select value={selectedState} onValueChange={setSelectedState}>
+                        <SelectTrigger className="flex-1">
                           <SelectValue placeholder="Select State" />
                         </SelectTrigger>
                         <SelectContent>
                           {US_STATES.map(state => (
-                            <SelectItem key={state} value={state.toLowerCase().replace(' ', '-')}>{state}</SelectItem>
+                            <SelectItem key={state} value={state}>{state}</SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
+                      <Button onClick={addState} disabled={!selectedState} size="sm">
+                        Add
+                      </Button>
                     </div>
+                    {searchCriteria.locationCriteria.states.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {searchCriteria.locationCriteria.states.map(state => (
+                          <Badge
+                            key={state}
+                            variant="outline"
+                            className="cursor-pointer hover:bg-red-100 border-green-300 text-green-700"
+                            onClick={() => removeState(state)}
+                          >
+                            {state} ×
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                  <div className="flex gap-2">
-                    <div className="flex-1">
+
+                  {/* Cities */}
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-700">Cities</Label>
+                    <div className="flex gap-2">
                       <Input
-                        placeholder="City name or ZIP code"
+                        className="flex-1"
+                        placeholder="Enter city name"
                         value={newLocationInput}
                         onChange={(e) => setNewLocationInput(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && handleLocationAdd()}
+                        onKeyPress={(e) => e.key === 'Enter' && addCity()}
                       />
+                      <Button onClick={addCity} disabled={!newLocationInput.trim()} size="sm">
+                        Add
+                      </Button>
                     </div>
-                    <Button onClick={handleLocationAdd} disabled={!newLocationInput.trim()}>
-                      <MapPin className="w-4 h-4 mr-2" />
-                      Add
-                    </Button>
+                    {searchCriteria.locationCriteria.cities.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {searchCriteria.locationCriteria.cities.map(city => (
+                          <Badge
+                            key={city}
+                            variant="outline"
+                            className="cursor-pointer hover:bg-red-100 border-purple-300 text-purple-700"
+                            onClick={() => removeCity(city)}
+                          >
+                            {city} ×
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                  {searchCriteria.locations.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {searchCriteria.locations.map(location => (
-                        <Badge
-                          key={location}
-                          variant="secondary"
-                          className="cursor-pointer hover:bg-red-100"
-                          onClick={() => removeLocation(location)}
-                        >
-                          {location} ×
-                        </Badge>
-                      ))}
+
+                  {/* ZIP Codes with Distance */}
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-700">ZIP Codes with Distance</Label>
+                    <div className="grid grid-cols-3 gap-2">
+                      <Input
+                        placeholder="ZIP code"
+                        value={zipCodeInput}
+                        onChange={(e) => setZipCodeInput(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && addZipCode()}
+                        maxLength={10}
+                      />
+                      <Select value={zipCodeDistance.toString()} onValueChange={(value) => setZipCodeDistance(Number(value))}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {DISTANCE_OPTIONS.map(distance => (
+                            <SelectItem key={distance} value={distance.toString()}>{distance} miles</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Button onClick={addZipCode} disabled={!zipCodeInput.trim()} size="sm">
+                        Add
+                      </Button>
                     </div>
-                  )}
+                    {searchCriteria.locationCriteria.zipCodes.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {searchCriteria.locationCriteria.zipCodes.map(zip => (
+                          <Badge
+                            key={zip.code}
+                            variant="outline"
+                            className="cursor-pointer hover:bg-red-100 border-orange-300 text-orange-700"
+                            onClick={() => removeZipCode(zip.code)}
+                          >
+                            {zip.code} ({zip.distance} mi) ×
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Price Range */}
