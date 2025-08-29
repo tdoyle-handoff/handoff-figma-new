@@ -278,64 +278,83 @@ export default function MyTeam({ setupData }: MyTeamProps) {
           <div>
             <h2 className="text-lg font-semibold mb-4">Your Active Team</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {teamMembers.filter(member => member.status === 'active').map((member) => (
-                <Card key={member.id} className="hover:shadow-md transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex items-start gap-4">
-                      <Avatar className="w-12 h-12">
-                        <AvatarImage src={member.photo} alt={member.name} />
-                        <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between mb-2">
-                          <div>
-                            <h3 className="font-semibold">{member.name}</h3>
-                            <p className="text-sm text-muted-foreground">{member.role}</p>
-                            <p className="text-sm text-muted-foreground">{member.company}</p>
-                          </div>
-                          <Badge className={getStatusColor(member.status)}>
-                            {member.status}
-                          </Badge>
-                        </div>
-                        
-                        <div className="flex items-center gap-2 mb-3">
-                          <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                          <span className="text-sm">{member.rating}</span>
-                          <span className="text-sm text-muted-foreground">({member.reviewCount} reviews)</span>
-                        </div>
-
-                        {member.nextAction && (
-                          <div className="bg-blue-50 p-3 rounded-lg mb-3">
-                            <p className="text-sm font-medium text-blue-800">Next Action:</p>
-                            <p className="text-sm text-blue-600">{member.nextAction}</p>
-                          </div>
-                        )}
-
-                        <div className="flex gap-2 mobile-device:mobile-stack-buttons">
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => handleCallMember(member)}
-                            className="mobile-button-sm"
-                          >
-                            <Phone className="w-4 h-4 mr-2" />
-                            Call
-                          </Button>
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => handleEmailMember(member)}
-                            className="mobile-button-sm"
-                          >
-                            <Mail className="w-4 h-4 mr-2" />
-                            Email
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
+              {teamMembers.filter(member => member.status === 'active').length === 0 ? (
+                <Card className="md:col-span-2">
+                  <CardContent className="flex flex-col items-center justify-center py-12">
+                    <User className="w-12 h-12 text-gray-400 mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">No active team members</h3>
+                    <p className="text-gray-500 text-center max-w-sm">
+                      Add professionals to your transaction team to collaborate on your real estate deals.
+                    </p>
+                    <Button
+                      className="mt-4"
+                      onClick={() => setShowAddMember(true)}
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Team Member
+                    </Button>
                   </CardContent>
                 </Card>
-              ))}
+              ) : (
+                teamMembers.filter(member => member.status === 'active').map((member) => (
+                  <Card key={member.id} className="hover:shadow-md transition-shadow">
+                    <CardContent className="p-6">
+                      <div className="flex items-start gap-4">
+                        <Avatar className="w-12 h-12">
+                          <AvatarImage src={member.photo} alt={member.name} />
+                          <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between mb-2">
+                            <div>
+                              <h3 className="font-semibold">{member.name}</h3>
+                              <p className="text-sm text-muted-foreground">{member.role}</p>
+                              <p className="text-sm text-muted-foreground">{member.company}</p>
+                            </div>
+                            <Badge className={getStatusColor(member.status)}>
+                              {member.status}
+                            </Badge>
+                          </div>
+
+                          <div className="flex items-center gap-2 mb-3">
+                            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                            <span className="text-sm">{member.rating}</span>
+                            <span className="text-sm text-muted-foreground">({member.reviewCount} reviews)</span>
+                          </div>
+
+                          {member.nextAction && (
+                            <div className="bg-blue-50 p-3 rounded-lg mb-3">
+                              <p className="text-sm font-medium text-blue-800">Next Action:</p>
+                              <p className="text-sm text-blue-600">{member.nextAction}</p>
+                            </div>
+                          )}
+
+                          <div className="flex gap-2 mobile-device:mobile-stack-buttons">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleCallMember(member)}
+                              className="mobile-button-sm"
+                            >
+                              <Phone className="w-4 h-4 mr-2" />
+                              Call
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleEmailMember(member)}
+                              className="mobile-button-sm"
+                            >
+                              <Mail className="w-4 h-4 mr-2" />
+                              Email
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              )}
             </div>
           </div>
 
