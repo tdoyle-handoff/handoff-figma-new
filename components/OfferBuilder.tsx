@@ -2,7 +2,7 @@
 WIREFRAME: Buyer Offer Builder (Web)
 
 [Header]
-┌──────────────────────────────────────────────────────��──────────┐
+┌─────────────────────────────────────────────────────────────────┐
 │ Offer Builder  | Step 1 of 5  | Save Draft | Help            │
 └─────���────────────────────────────────────────────────────────┘
 
@@ -47,7 +47,7 @@ WIREFRAME: Buyer Offer Builder (Web)
    - E-sign + Generate PDF + Send to listing agent
 */
 
-import React, { useMemo, useState, useEffect, useRef } from "react";
+import React, { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -60,12 +60,13 @@ import { Slider } from "./ui/slider";
 import { Badge } from "./ui/badge";
 import { Separator } from "./ui/separator";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./ui/dialog";
-import { AlertCircle, ArrowLeft, ArrowRight, DollarSign, FileText, Mail, Percent, Shield, Download } from "lucide-react";
+import { AlertCircle, ArrowLeft, ArrowRight, DollarSign, FileText, Mail, Percent, Shield, Download, Cloud, CloudCheck, Loader2 } from "lucide-react";
 import { supabase } from "../utils/supabase/client";
 import { DocumentTemplateForm } from "./documents/DocumentTemplateForm";
 import { getTemplateById } from "../utils/documentTemplates";
 import { generateDocumentPDF } from "../utils/pdfGenerator";
 import type { PurchaseAgreementData, GeneratedDocument } from "../types/documentTemplates";
+import { useAuth } from "../hooks/useAuth";
 
 // Utility helpers
 function formatMoney(n: number | string) {
@@ -146,6 +147,11 @@ type OfferDraft = {
 
 // Types kept inline for brevity
 export default function OfferBuilder() {
+  const { userProfile, updateUserProfile, isGuestMode } = useAuth();
+  const [isCloudSaving, setIsCloudSaving] = useState(false);
+  const [cloudSaveTime, setCloudSaveTime] = useState<string | null>(null);
+  const [dataLoaded, setDataLoaded] = useState(false);
+
   const [step, setStep] = useState(0); // 0..4
 
   // Property
@@ -557,24 +563,108 @@ export default function OfferBuilder() {
     if (d.id) setCurrentDraftId(d.id);
   };
 
-  // Load draft on mount
+  // Load saved offer data from user profile or localStorage
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(LS_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw) as OfferDraft;
-        applyDraft(parsed);
-      }
-    } catch {}
-  }, []);
+    if (userProfile && !dataLoaded) {
+      try {
+        // First check if there's cloud-saved data in user profile
+        const cloudData = userProfile.preferences?.offerBuilderData as Partial<OfferDraft>;
 
-  // Autosave draft whenever inputs change
+        if (cloudData && Object.keys(cloudData).length > 0) {
+          console.log('📋 Loading cloud-saved offer data for user:', userProfile.email);
+          applyDraft(cloudData);
+          setCloudSaveTime(cloudData.savedAt || null);
+        } else {
+          // Fallback to localStorage for migration or guest data
+          const localData = localStorage.getItem(LS_KEY);
+          if (localData) {
+            console.log('📋 Loading local offer data and migrating to cloud');
+            const parsed = JSON.parse(localData) as OfferDraft;
+            applyDraft(parsed);
+
+            // Migrate to cloud if user is authenticated
+            if (!isGuestMode) {
+              setTimeout(() => saveToCloud(parsed), 1000);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error loading offer data:', error);
+        // Fallback to localStorage
+        try {
+          const raw = localStorage.getItem(LS_KEY);
+          if (raw) {
+            const parsed = JSON.parse(raw) as OfferDraft;
+            applyDraft(parsed);
+          }
+        } catch {}
+      }
+
+      setDataLoaded(true);
+    } else if (!userProfile && !dataLoaded) {
+      // No user profile, load from localStorage only
+      try {
+        const raw = localStorage.getItem(LS_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw) as OfferDraft;
+          applyDraft(parsed);
+        }
+      } catch {}
+      setDataLoaded(true);
+    }
+  }, [userProfile, dataLoaded, isGuestMode]);
+
+  // Save offer data to cloud
+  const saveToCloud = useCallback(async (draftData?: OfferDraft) => {
+    if (!userProfile || isGuestMode || !dataLoaded) return;
+
+    try {
+      setIsCloudSaving(true);
+
+      const dataToSave = draftData || buildDraft();
+      const timestamp = new Date().toISOString();
+
+      const updatedPreferences = {
+        ...userProfile.preferences,
+        offerBuilderData: {
+          ...dataToSave,
+          savedAt: timestamp,
+        },
+      };
+
+      await updateUserProfile({
+        preferences: updatedPreferences
+      });
+
+      setCloudSaveTime(timestamp);
+      console.log('☁️ Offer data saved to cloud successfully');
+    } catch (error) {
+      console.error('Error saving offer data to cloud:', error);
+    } finally {
+      setIsCloudSaving(false);
+    }
+  }, [userProfile, isGuestMode, dataLoaded, updateUserProfile, buildDraft]);
+
+  // Autosave draft whenever inputs change (local + cloud)
   useEffect(() => {
+    if (!dataLoaded) return;
+
     const draft = buildDraft();
+
+    // Always save to localStorage for quick access
     try {
       localStorage.setItem(LS_KEY, JSON.stringify(draft));
       setSavedAt(draft.savedAt!);
     } catch {}
+
+    // Debounced cloud save for authenticated users
+    if (userProfile && !isGuestMode) {
+      const timeoutId = setTimeout(() => {
+        saveToCloud(draft);
+      }, 3000); // Save to cloud 3 seconds after user stops typing
+
+      return () => clearTimeout(timeoutId);
+    }
     // Exclude savedAt from deps to avoid double runs
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -585,7 +675,10 @@ export default function OfferBuilder() {
     financingType, interestRate, termYears, dpMode, downPayment, preApprovalAttached,
     offerPrice, earnestMode, earnest, closingDate, hasEscalation, escalationCap, escalationIncrement, sellerConcessions,
     inspection, inspectionDays, appraisal, financingCont, financingDays, homeSale, homeSaleDays,
-    attachments
+    attachments, sellerName, sellerAddress, buyerAddress, county, lotSize, itemsIncluded, itemsExcluded,
+    intendedUse, deedType, titleInsuranceType, offerExpirationDate, offerExpirationTime,
+    listingBroker, cooperatingBroker, inspectionDate, attorneyApprovalDate,
+    dataLoaded, userProfile, isGuestMode, saveToCloud
   ]);
 
   // Multiple drafts support
@@ -610,21 +703,31 @@ export default function OfferBuilder() {
 
   const draftKey = (id: string) => `${LS_KEY}:${id}`;
 
-  const handleSaveDraft = () => {
+  const handleSaveDraft = async () => {
     const id = currentDraftId || randomId();
     const name = currentDraftName || `Draft ${new Date().toLocaleString()}`;
     const draft = { ...buildDraft(), id, name };
+
     try {
+      // Save to localStorage
       localStorage.setItem(draftKey(id), JSON.stringify(draft));
       setSavedAt(draft.savedAt!);
       setCurrentDraftId(id);
       setCurrentDraftName(name);
+
       // update list
       const meta: DraftMeta = { id, name, savedAt: draft.savedAt! };
       const others = drafts.filter(d => d.id !== id);
       const updated = [meta, ...others].sort((a,b)=> (b.savedAt > a.savedAt ? 1 : -1));
       persistDraftsList(updated);
-    } catch {}
+
+      // Also save to cloud if authenticated
+      if (userProfile && !isGuestMode) {
+        await saveToCloud(draft);
+      }
+    } catch (error) {
+      console.error('Error saving draft:', error);
+    }
   };
 
   const handleSaveAs = () => {
@@ -1008,7 +1111,27 @@ export default function OfferBuilder() {
         <div className="flex items-center justify-between">
           <h1 className="text-xl sm:text-2xl font-semibold">Offer Builder</h1>
           <div className="flex items-center gap-2">
-            <span className="hidden sm:inline text-xs text-muted-foreground mr-2">{savedText}</span>
+            <div className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground mr-2">
+              <span>{savedText}</span>
+              {isCloudSaving ? (
+                <div className="flex items-center gap-1">
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                  <span>Syncing...</span>
+                </div>
+              ) : cloudSaveTime && !isGuestMode ? (
+                <div className="flex items-center gap-1 text-green-600">
+                  <CloudCheck className="w-3 h-3" />
+                  <span>Synced {new Date(cloudSaveTime).toLocaleTimeString()}</span>
+                </div>
+              ) : !isGuestMode ? (
+                <div className="flex items-center gap-1">
+                  <Cloud className="w-3 h-3" />
+                  <span>Auto-sync enabled</span>
+                </div>
+              ) : (
+                <span>Local storage only</span>
+              )}
+            </div>
             <Button variant="secondary" size="sm" onClick={handleSaveDraft} className="text-xs sm:text-sm">Save draft</Button>
           </div>
         </div>
