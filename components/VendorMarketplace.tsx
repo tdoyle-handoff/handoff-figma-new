@@ -43,7 +43,7 @@ interface VendorMarketplaceProps {
   defaultTab?: TabKey;
 }
 
-const INITIAL_QUOTES: InsuranceQuote[] = [
+const INITIAL_QUOTES: InsuranceQuote[] = [ // Empty for production
   {
     id: '1',
     providerId: '1',
@@ -136,7 +136,7 @@ const INITIAL_QUOTES: InsuranceQuote[] = [
 
 export default function VendorMarketplace({ defaultTab = 'attorneys' }: VendorMarketplaceProps) {
   const [tabValue, setTabValue] = React.useState<TabKey>(defaultTab);
-  const [quotes, setQuotes] = React.useState<InsuranceQuote[]>(INITIAL_QUOTES);
+  const [quotes, setQuotes] = React.useState<InsuranceQuote[]>([]);
   const [lastRequestedType, setLastRequestedType] = React.useState<InsuranceType>('home');
 
   const handleRequestQuote = (req: InsuranceQuoteRequest) => {
