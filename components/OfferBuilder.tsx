@@ -2,7 +2,7 @@
 WIREFRAME: Buyer Offer Builder (Web)
 
 [Header]
-┌─────────────────────────────────────────────────────────���────┐
+┌─────────────────────────────────────────────────────────────────┐
 │ Offer Builder  | Step 1 of 5  | Save Draft | Help            │
 └──────────────────────────────────────────────────────────────┘
 
@@ -59,8 +59,13 @@ import { Textarea } from "./ui/textarea";
 import { Slider } from "./ui/slider";
 import { Badge } from "./ui/badge";
 import { Separator } from "./ui/separator";
-import { AlertCircle, ArrowLeft, ArrowRight, DollarSign, FileText, Mail, Percent, Shield } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./ui/dialog";
+import { AlertCircle, ArrowLeft, ArrowRight, DollarSign, FileText, Mail, Percent, Shield, Download } from "lucide-react";
 import { supabase } from "../utils/supabase/client";
+import { DocumentTemplateForm } from "./documents/DocumentTemplateForm";
+import { getTemplateById } from "../utils/documentTemplates";
+import { generateDocumentPDF } from "../utils/pdfGenerator";
+import type { PurchaseAgreementData, GeneratedDocument } from "../types/documentTemplates";
 
 // Utility helpers
 function formatMoney(n: number | string) {
@@ -184,6 +189,10 @@ export default function OfferBuilder() {
   const [homeSale, setHomeSale] = useState<boolean>(false);
   const [homeSaleDays, setHomeSaleDays] = useState<number>(30);
 
+  // Document template integration
+  const [showTemplateDialog, setShowTemplateDialog] = useState(false);
+  const [generatedDocuments, setGeneratedDocuments] = useState<GeneratedDocument[]>([]);
+
   // Draft persistence state
   const [savedAt, setSavedAt] = useState<string | null>(null);
   const importRef = useRef<HTMLInputElement>(null);
@@ -214,6 +223,89 @@ export default function OfferBuilder() {
     const base = offerPrice || listPrice || 0;
     return earnestMode === "percent" ? base * (Number(earnest) || 0) / 100 : (Number(earnest) || 0);
   }, [earnestMode, earnest, offerPrice, listPrice]);
+
+  // Convert offer data to purchase agreement format
+  const buildPurchaseAgreementData = (): PurchaseAgreementData => ({
+    // Parties
+    sellerName: "", // To be filled by user in template
+    sellerAddress: "", // To be filled by user in template
+    buyerName: buyerName,
+    buyerAddress: "", // Could be added to offer builder in future
+    
+    // Property
+    propertyAddress: `${address}, ${city}, ${stateUS} ${zip}`,
+    city: city,
+    county: "", // Could be derived or added to form
+    state: stateUS || "New York",
+    lotSize: "", // Could be added to offer builder
+    
+    // Items
+    itemsIncluded: "", // To be filled in template
+    itemsExcluded: "", // To be filled in template
+    
+    // Purchase Price
+    purchasePrice: offerPrice,
+    depositAmount: earnestDollar,
+    additionalDeposit: 0, // Could be enhanced
+    additionalDepositDate: "", // Could be enhanced
+    cashAtClosing: dpDollar,
+    otherPayment: sellerConcessions || "",
+    
+    // Mortgage
+    mortgageAmount: loanAmount,
+    mortgageTerm: termYears,
+    interestRate: interestRate,
+    mortgageType: financingType.toLowerCase() as 'conventional' | 'fha' | 'va',
+    businessDaysToApply: financingDays,
+    mortgageContingencyDate: "", // Could calculate from financing days
+    sellerContribution: 0, // Could be parsed from concessions
+    
+    // Other Terms
+    otherTerms: hasEscalation ? 
+      `Escalation clause: Buyer will increase offer by $${escalationIncrement.toLocaleString()} increments up to a maximum of $${escalationCap.toLocaleString()} if competing offers are received.` : 
+      "",
+    
+    // Title and Survey
+    titleInsurance: "purchaser" as const,
+    intendedUse: "primary residence", // Could be enhanced
+    
+    // Deed
+    deedType: "Warranty Deed",
+    
+    // Closing
+    closingDate: closingDate,
+    
+    // Deposits
+    listingBroker: "", // To be filled in template
+    
+    // Time Period
+    offerExpirationDate: "", // Could be enhanced
+    offerExpirationTime: "",
+    
+    // Brokers
+    realEstateBroker: "", // To be filled in template
+    cooperatingBroker: "",
+    cooperatingBrokerCommission: 0,
+    
+    // Attorney Approval
+    attorneyApprovalDate: "", // Could be enhanced
+    
+    // Inspections
+    structuralInspection: inspection,
+    pestInspection: false, // Could be enhanced
+    septicInspection: false, // Could be enhanced
+    wellWaterTest: false, // Could be enhanced
+    radonInspection: false, // Could be enhanced
+    inspectionDate: "", // Could calculate from inspection days
+    
+    // Contact Information
+    purchaserAttorney: "",
+    sellerAttorney: "",
+    purchaserEmail: buyerEmail,
+    sellerEmail: "",
+    purchaserPhone: buyerPhone,
+    sellerPhone: ""
+  });
 
   // Enhanced compliance flags with state-specific requirements
   const flags = useMemo(() => {
@@ -384,7 +476,6 @@ export default function OfferBuilder() {
   const [currentDraftId, setCurrentDraftId] = useState<string | null>(null);
   const [currentDraftName, setCurrentDraftName] = useState<string | null>(null);
 
-
   // Load drafts list
   useEffect(() => {
     try {
@@ -454,6 +545,44 @@ export default function OfferBuilder() {
       localStorage.removeItem(LS_KEY);
       setSavedAt(null);
     } catch {}
+  };
+
+  // Handle Purchase Agreement Template Generation
+  const handleCreatePurchaseAgreement = () => {
+    setShowTemplateDialog(true);
+  };
+
+  const handleSaveDocument = async (data: any, isDraft: boolean) => {
+    const template = getTemplateById('purchase-agreement');
+    if (!template) return;
+
+    const now = new Date().toISOString();
+    const newDocument: GeneratedDocument = {
+      id: `doc_${Date.now()}`,
+      templateId: 'purchase-agreement',
+      templateName: template.name,
+      fileName: `Purchase_Agreement_${address.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
+      data,
+      createdAt: now,
+      status: isDraft ? 'draft' : 'completed'
+    };
+
+    // Save to localStorage (in a real app, this would save to your backend)
+    const existingDocs = JSON.parse(localStorage.getItem('generatedDocuments') || '[]');
+    const updatedDocs = [...existingDocs, newDocument];
+    localStorage.setItem('generatedDocuments', JSON.stringify(updatedDocs));
+    setGeneratedDocuments(updatedDocs);
+
+    if (!isDraft) {
+      setShowTemplateDialog(false);
+    }
+  };
+
+  const handleGeneratePDF = async (data: any): Promise<string> => {
+    const template = getTemplateById('purchase-agreement');
+    if (!template) throw new Error('Purchase agreement template not found');
+
+    return await generateDocumentPDF(template, data);
   };
 
   // State-specific legal requirements database
@@ -1153,7 +1282,14 @@ export default function OfferBuilder() {
             <CardFooter className="justify-between">
               <Button variant="ghost" onClick={back}><ArrowLeft className="w-4 h-4 mr-2"/>Back</Button>
               <div className="flex items-center gap-2">
-                <Button variant="outline" onClick={handleGenerateLegalDocument}><FileText className="w-4 h-4 mr-2"/>Generate Legal Document</Button>
+                <Button variant="outline" onClick={handleCreatePurchaseAgreement}>
+                  <FileText className="w-4 h-4 mr-2"/>
+                  Create Purchase Agreement
+                </Button>
+                <Button variant="outline" onClick={handleGenerateLegalDocument}>
+                  <Download className="w-4 h-4 mr-2"/>
+                  Quick Preview
+                </Button>
                 <Button><Mail className="w-4 h-4 mr-2"/>Submit Offer</Button>
               </div>
             </CardFooter>
@@ -1234,13 +1370,35 @@ export default function OfferBuilder() {
               )}
             </div>
             <div className="p-3 border rounded-lg bg-blue-50">
-              <h6 className="font-medium text-sm mb-1">Legal Documents</h6>
-              <p className="text-xs text-blue-800">Your completed offer will include all required state-specific forms and disclosures.</p>
+              <h6 className="font-medium text-sm mb-1">Purchase Agreement</h6>
+              <p className="text-xs text-blue-800">Generate a complete MLS-compliant purchase agreement with your offer data pre-populated.</p>
             </div>
             <Button variant="destructive" onClick={handleClearDraft}>Clear saved (autosave) draft</Button>
           </CardContent>
         </Card>
       </div>
+
+      {/* Purchase Agreement Template Dialog */}
+      <Dialog open={showTemplateDialog} onOpenChange={setShowTemplateDialog}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden flex flex-col">
+          <DialogHeader>
+            <DialogTitle>Purchase Agreement</DialogTitle>
+            <DialogDescription>
+              Complete your purchase agreement with data from your offer builder
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex-1 overflow-auto">
+            {showTemplateDialog && (
+              <DocumentTemplateForm
+                template={getTemplateById('purchase-agreement')!}
+                initialData={buildPurchaseAgreementData()}
+                onSave={handleSaveDocument}
+                onGeneratePDF={handleGeneratePDF}
+              />
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
