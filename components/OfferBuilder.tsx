@@ -67,6 +67,7 @@ import { getTemplateById } from "../utils/documentTemplates";
 import { generateDocumentPDF } from "../utils/pdfGenerator";
 import type { PurchaseAgreementData, GeneratedDocument } from "../types/documentTemplates";
 import { useAuth } from "../hooks/useAuth";
+import { DataPersistenceNotification } from './DataPersistenceNotification';
 
 // Utility helpers
 function formatMoney(n: number | string) {
@@ -1105,6 +1106,9 @@ export default function OfferBuilder() {
 
   return (
     <div className="mx-auto max-w-7xl p-4 sm:p-6">
+      {/* Data Persistence Notification */}
+      <DataPersistenceNotification className="mb-4" />
+
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-4 lg:gap-6">
         {/* Left: main content */}
         <div className="xl:col-span-3 space-y-4">
