@@ -25,6 +25,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { CalendarCheck2, DollarSign, FileBarChart2, Loader2, TrendingUp, Info, HelpCircle, Save, CheckCircle2 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { useAuth } from '../hooks/useAuth';
+import { DataPersistenceNotification } from './DataPersistenceNotification';
 
 const shortCurrency = (n: number) => n.toLocaleString(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 const pct = (n: number) => `${n.toFixed(1)}%`;
@@ -279,6 +280,9 @@ export default function Dashboard({ setupData }: DashboardProps) {
 
   return (
     <div className="mx-auto max-w-7xl p-8">
+      {/* Data Persistence Notification */}
+      <DataPersistenceNotification className="mb-6" />
+
       {/* Property Input Form */}
       <Card className="shadow-sm mb-8">
         <CardHeader>
