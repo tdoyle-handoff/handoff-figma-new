@@ -21,7 +21,7 @@ export default function ChecklistInspectionTabs({ onNavigate, selectedTask }: Pr
   const [tab, setTab] = useState<'scheduled' | 'results' | 'negotiations'>('scheduled');
 
   // Auto-switch to relevant tab based on selected task
-  React.useEffect(() => {
+  useEffect(() => {
     if (selectedTask?.subcategory === 'inspections') {
       // Map task titles to appropriate tabs
       if (selectedTask.title.toLowerCase().includes('schedule') || selectedTask.title.toLowerCase().includes('home inspection')) {
