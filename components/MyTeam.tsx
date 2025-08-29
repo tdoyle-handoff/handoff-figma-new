@@ -61,108 +61,12 @@ export default function MyTeam({ setupData }: MyTeamProps) {
   });
   const isMobile = useIsMobile();
 
-  // Base team members (mock data)
-  const baseTeamMembers: TeamMember[] = [
-    {
-      id: '2',
-      name: 'Mike Johnson',
-      role: 'Loan Officer',
-      company: 'Wells Fargo',
-      phone: '(555) 234-5678',
-      email: 'mike.johnson@wellsfargo.com',
-      photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
-      rating: 4.8,
-      reviewCount: 324,
-      yearsExperience: 12,
-      specialties: ['Conventional loans', 'FHA', 'VA loans', 'Jumbo loans'],
-      license: 'NMLS #987654321',
-      status: 'active',
-      lastContact: '2025-02-13',
-      nextAction: 'Submit additional documents',
-      location: 'San Francisco, CA'
-    },
-    {
-      id: '3',
-      name: 'David Chen',
-      role: 'Home Inspector',
-      company: 'Bay Area Inspections',
-      phone: '(555) 345-6789',
-      email: 'david@bayareainspections.com',
-      photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
-      rating: 4.7,
-      reviewCount: 189,
-      yearsExperience: 15,
-      specialties: ['General inspection', 'Structural', 'Environmental'],
-      license: 'CREIA #INS12345',
-      status: 'pending',
-      lastContact: '2025-02-10',
-      nextAction: 'Schedule inspection appointment',
-      location: 'San Francisco, CA'
-    },
-    {
-      id: '4',
-      name: 'Jennifer Kim',
-      role: 'Insurance Agent',
-      company: 'State Farm',
-      phone: '(555) 456-7890',
-      email: 'jennifer.kim@statefarm.com',
-      photo: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
-      rating: 4.6,
-      reviewCount: 156,
-      yearsExperience: 7,
-      specialties: ['Homeowners', 'Flood', 'Umbrella policies'],
-      license: 'CA INS LIC #0A12345',
-      status: 'pending',
-      lastContact: '2025-02-08',
-      nextAction: 'Review insurance quotes',
-      location: 'San Francisco, CA'
-    },
-    {
-      id: '5',
-      name: 'Robert Taylor',
-      role: 'Title Officer',
-      company: 'First American Title',
-      phone: '(555) 567-8901',
-      email: 'robert.taylor@firstam.com',
-      photo: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop&crop=face',
-      rating: 4.8,
-      reviewCount: 98,
-      yearsExperience: 20,
-      specialties: ['Title insurance', 'Escrow services', 'Commercial'],
-      status: 'active',
-      lastContact: '2025-02-12',
-      nextAction: 'Review preliminary title report',
-      location: 'San Francisco, CA'
-    }
-  ];
+  // Base team members (empty for production)
+  const baseTeamMembers: TeamMember[] = [];
 
-  // Create team members array with default agent (no setup data needed)
+  // Create team members array (empty for production)
   const teamMembers: TeamMember[] = React.useMemo(() => {
-    const members = [...baseTeamMembers];
-    
-    // Add default agent
-    const defaultAgent: TeamMember = {
-      id: '1',
-      name: 'Sarah Johnson',
-      role: 'Real Estate Agent',
-      company: 'Keller Williams Realty',
-      phone: '(555) 123-4567',
-      email: 'sarah.johnson@kw.com',
-      photo: 'https://images.unsplash.com/photo-1494790108755-2616b612b890?w=150&h=150&fit=crop&crop=face',
-      rating: 4.9,
-      reviewCount: 247,
-      yearsExperience: 8,
-      specialties: ['First-time buyers', 'Investment properties', 'Luxury homes'],
-      license: 'CA DRE #01234567',
-      status: 'active',
-      lastContact: '2025-02-14',
-      nextAction: 'Schedule showing appointment',
-      location: 'San Francisco, CA'
-    };
-    
-    members.unshift(defaultAgent);
-    
-    return members;
+    return [...baseTeamMembers];
   }, []);
 
   const roles = [
