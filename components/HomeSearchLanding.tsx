@@ -107,6 +107,13 @@ const SPECIAL_REQUIREMENTS = [
   { id: 'new-construction', label: 'New Construction Only', icon: '🔨' }
 ];
 
+const PRICE_PRESETS = [
+  { label: 'Under 300K', range: [0, 300000] as [number, number] },
+  { label: '300K-500K', range: [300000, 500000] as [number, number] },
+  { label: '500K-800K', range: [500000, 800000] as [number, number] },
+  { label: '800K+', range: [800000, 2000000] as [number, number] }
+];
+
 export default function HomeSearchLanding() {
   const [searchCriteria, setSearchCriteria] = useState<SearchCriteria>({
     homeTypes: [],
@@ -137,6 +144,8 @@ export default function HomeSearchLanding() {
   const [searchInput, setSearchInput] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [newLocationInput, setNewLocationInput] = useState('');
+  const [locationRegion, setLocationRegion] = useState('');
+  const [locationState, setLocationState] = useState('');
 
   // Handle smart search
   const handleSmartSearch = async () => {
@@ -298,6 +307,10 @@ export default function HomeSearchLanding() {
     return array.includes(item) 
       ? array.filter(i => i !== item)
       : [...array, item];
+  };
+
+  const isPricePresetActive = (preset: { range: [number, number] }) => {
+    return searchCriteria.priceRange[0] === preset.range[0] && searchCriteria.priceRange[1] === preset.range[1];
   };
 
   const handleSearch = () => {
