@@ -6,7 +6,7 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
 import { Badge } from '../ui/badge';
-import { useTaskContext } from '../TaskContext';
+import { useTaskContext, Task } from '../TaskContext';
 import InsuranceCalculator from '../vendor/InsuranceCalculator';
 import { Calculator as CalcIcon, FileText, Upload, Plus, Trash2, Calendar, DollarSign } from 'lucide-react';
 
@@ -24,9 +24,26 @@ interface Policy {
   documentUrl?: string;
 }
 
-interface Props { onNavigate?: (page: string) => void }
-export default function ChecklistInsuranceTabs({ onNavigate }: Props) {
+interface Props {
+  onNavigate?: (page: string) => void;
+  selectedTask?: Task | null;
+}
+export default function ChecklistInsuranceTabs({ onNavigate, selectedTask }: Props) {
   const [tab, setTab] = React.useState<'calculator' | 'policies'>('policies');
+
+  // Auto-switch to relevant tab based on selected task
+  React.useEffect(() => {
+    if (selectedTask?.subcategory === 'insurance') {
+      // Map task titles to appropriate tabs
+      if (selectedTask.title.toLowerCase().includes('homeowners') || selectedTask.title.toLowerCase().includes('secure')) {
+        setTab('policies');
+      } else if (selectedTask.title.toLowerCase().includes('calculat') || selectedTask.title.toLowerCase().includes('quote')) {
+        setTab('calculator');
+      } else {
+        setTab('policies');
+      }
+    }
+  }, [selectedTask]);
   const [policies, setPolicies] = React.useState<Policy[]>([]);
   const [showAddForm, setShowAddForm] = React.useState(false);
   const [newPolicy, setNewPolicy] = React.useState<Omit<Policy, 'id'>>({
