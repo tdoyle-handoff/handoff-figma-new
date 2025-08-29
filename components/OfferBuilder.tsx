@@ -634,10 +634,8 @@ export default function OfferBuilder() {
     }
   }, [userProfile, isGuestMode, dataLoaded, updateUserProfile, buildDraft]);
 
-  // Autosave draft whenever inputs change (local + cloud)
+  // Autosave draft whenever inputs change (simplified for performance)
   useEffect(() => {
-    if (!dataLoaded) return;
-
     const draft = buildDraft();
 
     // Always save to localStorage for quick access
@@ -647,27 +645,20 @@ export default function OfferBuilder() {
     } catch {}
 
     // Debounced cloud save for authenticated users
-    if (userProfile && !isGuestMode) {
-      const timeoutId = setTimeout(() => {
+    const timeoutId = setTimeout(() => {
+      if (userProfile && !isGuestMode && dataLoaded) {
         saveToCloud(draft);
-      }, 3000); // Save to cloud 3 seconds after user stops typing
+      }
+    }, 4000); // Increased to 4 seconds to reduce API calls
 
-      return () => clearTimeout(timeoutId);
-    }
-    // Exclude savedAt from deps to avoid double runs
+    return () => clearTimeout(timeoutId);
+    // Simplified dependencies - exclude functions to prevent re-renders
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    step,
-    address, city, stateUS, zip,
-    listPrice, hoaMonthly, taxesAnnual, insuranceAnnual,
-    buyerName, buyerEmail, buyerPhone,
-    financingType, interestRate, termYears, dpMode, downPayment, preApprovalAttached,
-    offerPrice, earnestMode, earnest, closingDate, hasEscalation, escalationCap, escalationIncrement, sellerConcessions,
-    inspection, inspectionDays, appraisal, financingCont, financingDays, homeSale, homeSaleDays,
-    attachments, sellerName, sellerAddress, buyerAddress, county, lotSize, itemsIncluded, itemsExcluded,
-    intendedUse, deedType, titleInsuranceType, offerExpirationDate, offerExpirationTime,
-    listingBroker, cooperatingBroker, inspectionDate, attorneyApprovalDate,
-    dataLoaded, userProfile, isGuestMode, saveToCloud
+    step, address, city, stateUS, zip, listPrice, hoaMonthly, taxesAnnual, insuranceAnnual,
+    buyerName, buyerEmail, buyerPhone, financingType, interestRate, termYears, dpMode, downPayment,
+    offerPrice, earnestMode, earnest, closingDate, hasEscalation, escalationCap, escalationIncrement,
+    inspection, inspectionDays, appraisal, financingCont, financingDays, homeSale, homeSaleDays
   ]);
 
   // Multiple drafts support
