@@ -349,7 +349,7 @@ export default function Tasks({ onNavigate }: TasksProps) {
   
   return (
     <div className="space-y-8 max-w-none">
-      <Tabs defaultValue="checklist" className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="w-full bg-transparent h-auto p-0 border-b border-gray-200 rounded-none flex justify-start">
           <TabsTrigger
             value="checklist"
@@ -386,7 +386,7 @@ export default function Tasks({ onNavigate }: TasksProps) {
                 selectedPhaseId={selectedPhaseId}
                 selectedTaskId={selectedTaskId}
                 onSelectPhase={(id) => setSelectedPhaseId(id)}
-                onSelectTask={(taskId) => setSelectedTaskId(taskId)}
+                onSelectTask={handleSelectTask}
                 onUpdateTask={handleUpdateTask}
               />
             </div>
@@ -557,15 +557,15 @@ export default function Tasks({ onNavigate }: TasksProps) {
         </TabsContent>
 
         <TabsContent value="legal" className="space-y-6 mt-6 bg-white">
-          <ChecklistLegalTabs />
+          <ChecklistLegalTabs selectedTask={selectedTask} />
         </TabsContent>
 
         <TabsContent value="inspections" className="space-y-6 mt-6 bg-white">
-          <ChecklistInspectionTabs />
+          <ChecklistInspectionTabs selectedTask={selectedTask} />
         </TabsContent>
 
         <TabsContent value="insurance" className="space-y-6 mt-6 bg-white">
-          <ChecklistInsuranceTabs />
+          <ChecklistInsuranceTabs selectedTask={selectedTask} />
         </TabsContent>
       </Tabs>
     </div>
