@@ -34,9 +34,17 @@ import {
   Loader2
 } from 'lucide-react';
 
+interface LocationCriteria {
+  regions: string[];
+  states: string[];
+  cities: string[];
+  zipCodes: { code: string; distance?: number }[];
+}
+
 interface SearchCriteria {
   homeTypes: string[];
   locations: string[];
+  locationCriteria: LocationCriteria;
   priceRange: [number, number];
   bedrooms: string;
   bathrooms: string;
@@ -114,10 +122,27 @@ const PRICE_PRESETS = [
   { label: '800K+', range: [800000, 2000000] as [number, number] }
 ];
 
+const REGIONS = [
+  { id: 'northeast', label: 'Northeast' },
+  { id: 'southeast', label: 'Southeast' },
+  { id: 'midwest', label: 'Midwest' },
+  { id: 'southwest', label: 'Southwest' },
+  { id: 'west', label: 'West' },
+  { id: 'pacific', label: 'Pacific' }
+];
+
+const DISTANCE_OPTIONS = [5, 10, 15, 25, 50, 100];
+
 export default function HomeSearchLanding() {
   const [searchCriteria, setSearchCriteria] = useState<SearchCriteria>({
     homeTypes: [],
     locations: [],
+    locationCriteria: {
+      regions: [],
+      states: [],
+      cities: [],
+      zipCodes: []
+    },
     priceRange: [200000, 800000],
     bedrooms: '',
     bathrooms: '',
@@ -144,8 +169,10 @@ export default function HomeSearchLanding() {
   const [searchInput, setSearchInput] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [newLocationInput, setNewLocationInput] = useState('');
-  const [locationRegion, setLocationRegion] = useState('');
-  const [locationState, setLocationState] = useState('');
+  const [selectedRegion, setSelectedRegion] = useState('');
+  const [selectedState, setSelectedState] = useState('');
+  const [zipCodeInput, setZipCodeInput] = useState('');
+  const [zipCodeDistance, setZipCodeDistance] = useState(25);
 
   // Handle smart search
   const handleSmartSearch = async () => {
