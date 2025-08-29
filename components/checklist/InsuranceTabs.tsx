@@ -135,18 +135,230 @@ export default function ChecklistInsuranceTabs({ onNavigate }: Props) {
 
       {/* Center Content */}
       <div className="lg:col-span-9 space-y-3">
-        {tab === 'quotes' && <InsuranceQuotes />}
-        {tab === 'providers' && <InsuranceProviders />}
         {tab === 'calculator' && <InsuranceCalculator />}
         {tab === 'policies' && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Current Policies</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-muted-foreground">
-              You don't have any active policies yet. Once you select and purchase insurance, your policies will appear here.
-            </CardContent>
-          </Card>
+          <div className="space-y-4">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle className="text-base">Current Policies</CardTitle>
+                <Button onClick={() => setShowAddForm(true)} className="flex items-center gap-2">
+                  <Plus className="w-4 h-4" />
+                  Add Policy
+                </Button>
+              </CardHeader>
+              <CardContent>
+                {policies.length === 0 ? (
+                  <div className="text-center py-8">
+                    <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-sm text-muted-foreground mb-4">
+                      No policies added yet. Add your insurance policies to keep track of coverage and renewals.
+                    </p>
+                    <Button onClick={() => setShowAddForm(true)} variant="outline">
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Your First Policy
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {policies.map(policy => (
+                      <Card key={policy.id} className="border-l-4 border-l-blue-500">
+                        <CardContent className="p-4">
+                          <div className="flex justify-between items-start mb-3">
+                            <div>
+                              <h4 className="font-medium text-lg">{policy.name}</h4>
+                              <p className="text-sm text-muted-foreground">{policy.provider}</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Badge variant="outline">{policy.coverage}</Badge>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDeletePolicy(policy.id)}
+                                className="text-red-500 hover:text-red-700"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                            <div>
+                              <span className="text-muted-foreground">Policy #:</span>
+                              <p className="font-medium">{policy.policyNumber}</p>
+                            </div>
+                            <div>
+                              <span className="text-muted-foreground">Premium:</span>
+                              <p className="font-medium">${policy.premium.toLocaleString()}/year</p>
+                            </div>
+                            <div>
+                              <span className="text-muted-foreground">Deductible:</span>
+                              <p className="font-medium">${policy.deductible.toLocaleString()}</p>
+                            </div>
+                            <div>
+                              <span className="text-muted-foreground">Expires:</span>
+                              <p className="font-medium">{new Date(policy.endDate).toLocaleDateString()}</p>
+                            </div>
+                          </div>
+                          {policy.notes && (
+                            <div className="mt-3 p-3 bg-gray-50 rounded">
+                              <p className="text-sm">{policy.notes}</p>
+                            </div>
+                          )}
+                          {policy.documentUrl && (
+                            <div className="mt-3">
+                              <p className="text-sm text-blue-600">📄 {policy.documentUrl}</p>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Add Policy Form */}
+            {showAddForm && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Add New Policy</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="name">Policy Name</Label>
+                        <Input
+                          id="name"
+                          value={newPolicy.name}
+                          onChange={(e) => setNewPolicy({ ...newPolicy, name: e.target.value })}
+                          placeholder="e.g., Homeowner's Insurance"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="provider">Provider</Label>
+                        <Input
+                          id="provider"
+                          value={newPolicy.provider}
+                          onChange={(e) => setNewPolicy({ ...newPolicy, provider: e.target.value })}
+                          placeholder="e.g., State Farm"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="policyNumber">Policy Number</Label>
+                        <Input
+                          id="policyNumber"
+                          value={newPolicy.policyNumber}
+                          onChange={(e) => setNewPolicy({ ...newPolicy, policyNumber: e.target.value })}
+                          placeholder="Policy number"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="coverage">Coverage Type</Label>
+                        <Input
+                          id="coverage"
+                          value={newPolicy.coverage}
+                          onChange={(e) => setNewPolicy({ ...newPolicy, coverage: e.target.value })}
+                          placeholder="e.g., Comprehensive"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="premium">Annual Premium ($)</Label>
+                        <Input
+                          id="premium"
+                          type="number"
+                          value={newPolicy.premium}
+                          onChange={(e) => setNewPolicy({ ...newPolicy, premium: Number(e.target.value) })}
+                          placeholder="2400"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="deductible">Deductible ($)</Label>
+                        <Input
+                          id="deductible"
+                          type="number"
+                          value={newPolicy.deductible}
+                          onChange={(e) => setNewPolicy({ ...newPolicy, deductible: Number(e.target.value) })}
+                          placeholder="1000"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="startDate">Start Date</Label>
+                        <Input
+                          id="startDate"
+                          type="date"
+                          value={newPolicy.startDate}
+                          onChange={(e) => setNewPolicy({ ...newPolicy, startDate: e.target.value })}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="endDate">End Date</Label>
+                        <Input
+                          id="endDate"
+                          type="date"
+                          value={newPolicy.endDate}
+                          onChange={(e) => setNewPolicy({ ...newPolicy, endDate: e.target.value })}
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="notes">Notes (Optional)</Label>
+                      <Textarea
+                        id="notes"
+                        value={newPolicy.notes}
+                        onChange={(e) => setNewPolicy({ ...newPolicy, notes: e.target.value })}
+                        placeholder="Additional notes about this policy..."
+                        rows={3}
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="document">Upload Policy Document (Optional)</Label>
+                      <div className="flex items-center gap-2">
+                        <Input
+                          id="document"
+                          type="file"
+                          accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                          onChange={handleFileUpload}
+                          className="hidden"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => document.getElementById('document')?.click()}
+                          className="flex items-center gap-2"
+                        >
+                          <Upload className="w-4 h-4" />
+                          Upload Document
+                        </Button>
+                        {newPolicy.documentUrl && (
+                          <span className="text-sm text-green-600">✓ {newPolicy.documentUrl}</span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex gap-3 pt-4">
+                      <Button onClick={handleAddPolicy} disabled={!newPolicy.name || !newPolicy.provider}>
+                        Add Policy
+                      </Button>
+                      <Button variant="outline" onClick={() => setShowAddForm(false)}>
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
         )}
       </div>
 
