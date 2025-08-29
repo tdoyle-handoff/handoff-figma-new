@@ -1195,7 +1195,7 @@ export default function Documents({ setupData }: DocumentsProps) {
                 Upload Document
               </Button>
             </DialogTrigger>
-            <DialogContent aria-describedby="upload-dialog-description" className="bg-white border border-gray-300 shadow-xl">
+            <DialogContent aria-describedby="upload-dialog-description" className="bg-white border-gray-200 shadow-xl">
               <DialogHeader>
                 <DialogTitle>Upload Document</DialogTitle>
                 <DialogDescription id="upload-dialog-description">
@@ -1557,7 +1557,7 @@ export default function Documents({ setupData }: DocumentsProps) {
 
       {/* Manage Access Dialog */}
       <Dialog open={showManageAccessDialog} onOpenChange={setShowManageAccessDialog}>
-        <DialogContent className="max-w-2xl bg-white shadow-xl border border-gray-200">
+        <DialogContent className="max-w-2xl bg-white border-gray-200 shadow-xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Users className="w-5 h-5" />
@@ -1782,7 +1782,7 @@ export default function Documents({ setupData }: DocumentsProps) {
 
       {/* Share Dialog */}
       <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
-        <DialogContent className="bg-white shadow-xl border border-gray-200">
+        <DialogContent className="bg-white border-gray-200 shadow-xl">
           <DialogHeader>
             <DialogTitle>Share Document</DialogTitle>
             <DialogDescription>
