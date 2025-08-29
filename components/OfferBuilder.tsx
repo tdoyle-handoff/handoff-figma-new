@@ -219,6 +219,29 @@ export default function OfferBuilder() {
   const insM = (insuranceAnnual || 0) / 12;
   const estMonthly = financingType === "Cash" ? (hoaMonthly + taxesM + insM) : (pi + taxesM + insM + hoaMonthly);
 
+  // Real estate contract costs
+  const ltvRatio = offerPrice > 0 ? (loanAmount / offerPrice) * 100 : 0;
+  const closingCosts = offerPrice * 0.025; // Typical 2-3% of purchase price
+  const titleInsurance = offerPrice * 0.005; // ~0.5% of purchase price
+  const appraisalFee = 500; // Typical range $400-600
+  const inspectionFee = 500; // Typical range $300-700
+  const attorneyFees = financingType === 'Cash' ? 800 : 1200; // Higher for financed deals
+  const recordingFees = 150;
+  const surveyFee = 400;
+
+  // Calculate total closing costs
+  const totalClosingCosts = closingCosts + titleInsurance + appraisalFee + inspectionFee + attorneyFees + recordingFees + surveyFee;
+
+  // Total cash needed at closing
+  const totalCashNeeded = dpDollar + earnestDollar + totalClosingCosts;
+
+  // PMI calculation (if down payment < 20% and not FHA/VA)
+  const needsPMI = financingType === 'Conventional' && dpPercent < 20;
+  const pmiMonthly = needsPMI ? (loanAmount * 0.005) / 12 : 0; // ~0.5% annually
+
+  // Total monthly payment including PMI
+  const totalMonthlyPayment = estMonthly + pmiMonthly;
+
   const earnestDollar = useMemo(() => {
     const base = offerPrice || listPrice || 0;
     return earnestMode === "percent" ? base * (Number(earnest) || 0) / 100 : (Number(earnest) || 0);
@@ -1319,16 +1342,48 @@ export default function OfferBuilder() {
       <div className="space-y-4">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Affordability</CardTitle>
+            <CardTitle className="text-base">Contract & Closing Costs</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
-            <div className="flex justify-between"><span>Offer price</span><span>{formatMoney(offerPrice)}</span></div>
-            <div className="flex justify-between"><span>Down payment</span><span>{formatMoney(dpDollar)} ({dpPercent.toFixed(1)}%)</span></div>
-            <div className="flex justify-between"><span>Loan amount</span><span>{formatMoney(loanAmount)}</span></div>
-            {financingType !== 'Cash' && <div className="flex justify-between"><span>P&I</span><span>{formatMoney(pi)}</span></div>}
-            <div className="flex justify-between"><span>Taxes</span><span>{formatMoney(taxesM)}</span></div>
-            <div className="flex justify-between"><span>Insurance</span><span>{formatMoney(insM)}</span></div>
-            <div className="flex justify-between font-medium"><span>Est. monthly</span><span>{formatMoney(estMonthly)}</span></div>
+            <div className="space-y-1 border-b pb-2 mb-2">
+              <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Purchase Terms</div>
+              <div className="flex justify-between"><span>Offer Price</span><span className="font-medium">{formatMoney(offerPrice)}</span></div>
+              <div className="flex justify-between"><span>Down Payment</span><span>{formatMoney(dpDollar)} ({dpPercent.toFixed(1)}%)</span></div>
+              <div className="flex justify-between"><span>Earnest Money</span><span>{formatMoney(earnestDollar)}</span></div>
+              <div className="flex justify-between"><span>Loan Amount</span><span>{formatMoney(loanAmount)}</span></div>
+              {financingType !== 'Cash' && <div className="flex justify-between text-xs"><span>LTV Ratio</span><span>{ltvRatio.toFixed(1)}%</span></div>}
+            </div>
+
+            <div className="space-y-1 border-b pb-2 mb-2">
+              <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Closing Costs</div>
+              <div className="flex justify-between text-xs"><span>Lender/Escrow Fees</span><span>{formatMoney(closingCosts)}</span></div>
+              <div className="flex justify-between text-xs"><span>Title Insurance</span><span>{formatMoney(titleInsurance)}</span></div>
+              <div className="flex justify-between text-xs"><span>Appraisal</span><span>{formatMoney(appraisalFee)}</span></div>
+              <div className="flex justify-between text-xs"><span>Home Inspection</span><span>{formatMoney(inspectionFee)}</span></div>
+              <div className="flex justify-between text-xs"><span>Attorney Fees</span><span>{formatMoney(attorneyFees)}</span></div>
+              <div className="flex justify-between text-xs"><span>Recording/Survey</span><span>{formatMoney(recordingFees + surveyFee)}</span></div>
+              <div className="flex justify-between font-medium border-t pt-1"><span>Total Closing Costs</span><span>{formatMoney(totalClosingCosts)}</span></div>
+            </div>
+
+            <div className="space-y-1 border-b pb-2 mb-2">
+              <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Monthly Payment</div>
+              {financingType !== 'Cash' && <div className="flex justify-between"><span>Principal & Interest</span><span>{formatMoney(pi)}</span></div>}
+              <div className="flex justify-between"><span>Property Taxes</span><span>{formatMoney(taxesM)}</span></div>
+              <div className="flex justify-between"><span>Insurance</span><span>{formatMoney(insM)}</span></div>
+              {hoaMonthly > 0 && <div className="flex justify-between"><span>HOA Fees</span><span>{formatMoney(hoaMonthly)}</span></div>}
+              {needsPMI && <div className="flex justify-between text-xs"><span>PMI (until 20% equity)</span><span>{formatMoney(pmiMonthly)}</span></div>}
+              <div className="flex justify-between font-medium border-t pt-1"><span>Total Monthly</span><span>{formatMoney(totalMonthlyPayment)}</span></div>
+            </div>
+
+            <div className="bg-blue-50 p-2 rounded-lg">
+              <div className="flex justify-between font-bold text-blue-900">
+                <span>Total Cash Needed</span>
+                <span>{formatMoney(totalCashNeeded)}</span>
+              </div>
+              <div className="text-xs text-blue-700 mt-1">
+                Down payment + Earnest money + Closing costs
+              </div>
+            </div>
           </CardContent>
         </Card>
 
@@ -1353,8 +1408,9 @@ export default function OfferBuilder() {
           </CardHeader>
           <CardContent className="flex flex-col gap-2">
             <Button variant="secondary" onClick={()=>{ setOfferPrice(listPrice); }}>Set offer = list price</Button>
-            <Button variant="secondary" onClick={()=>{ setDpMode('percent'); setDownPayment(20); }}>20% down</Button>
-            <Button variant="secondary" onClick={()=>{ setEarnestMode('percent'); setEarnest(3); }}>3% earnest</Button>
+            <Button variant="secondary" onClick={()=>{ setDpMode('percent'); setDownPayment(20); }}>20% down (no PMI)</Button>
+            <Button variant="secondary" onClick={()=>{ setEarnestMode('percent'); setEarnest(3); }}>3% earnest money</Button>
+            <Button variant="secondary" onClick={()=>{ setDpMode('percent'); setDownPayment(10); setEarnestMode('percent'); setEarnest(5); }}>10% down, 5% earnest</Button>
             <Separator className="my-2" />
             <div className="text-xs text-muted-foreground">Draft</div>
             <div className="flex items-center gap-2">
