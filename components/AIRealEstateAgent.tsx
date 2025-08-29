@@ -118,7 +118,8 @@ export function AIRealEstateAgent() {
   }, []);
 
   const initializeAgentServices = () => {
-    const services: AIAgentService[] = [
+    // Services will be loaded from backend or configuration
+    const services: AIAgentService[] = [ // Empty for production
       {
         id: "property-search",
         name: "Property Search & Discovery",
