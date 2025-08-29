@@ -362,58 +362,70 @@ export default function MyTeam({ setupData }: MyTeamProps) {
           <div>
             <h2 className="text-lg font-semibold mb-4">Pending Actions</h2>
             <div className="space-y-4">
-              {teamMembers.filter(member => member.status === 'pending').map((member) => (
-                <Card key={member.id} className="border-yellow-200">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <Avatar className="w-10 h-10">
-                          <AvatarImage src={member.photo} alt={member.name} />
-                          <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <h3 className="font-medium">{member.name}</h3>
-                          <p className="text-sm text-muted-foreground">{member.role} • {member.company}</p>
-                          {member.nextAction && (
-                            <p className="text-sm text-orange-600 font-medium">{member.nextAction}</p>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex gap-2 mobile-device:mobile-stack-buttons">
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => handleCallMember(member)}
-                          className="mobile-button-sm"
-                        >
-                          <Phone className="w-4 h-4 mr-2" />
-                          Contact
-                        </Button>
-                        <Button
-                          size="sm"
-                          onClick={() => {
-                            // Open action dialog or navigate to task specific to this member
-                            const actions = {
-                              'David Chen': 'Schedule inspection appointment',
-                              'Jennifer Kim': 'Review insurance quotes',
-                              'Mike Johnson': 'Submit additional documents'
-                            };
-                            const action = actions[member.name as keyof typeof actions] || 'Follow up with team member';
-
-                            if (confirm(`Ready to: ${action}?`)) {
-                              // In a real app, this would navigate or open a task-specific interface
-                              window.open(`mailto:${member.email}?subject=Action Required: ${action}&body=Hi ${member.name},%0A%0AI wanted to follow up regarding: ${action}%0A%0APlease let me know if you need any additional information.%0A%0AThank you!`, '_blank');
-                            }
-                          }}
-                          className="mobile-button-sm"
-                        >
-                          Take Action
-                        </Button>
-                      </div>
-                    </div>
+              {teamMembers.filter(member => member.status === 'pending').length === 0 ? (
+                <Card>
+                  <CardContent className="flex flex-col items-center justify-center py-12">
+                    <Clock className="w-12 h-12 text-gray-400 mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">No pending actions</h3>
+                    <p className="text-gray-500 text-center max-w-sm">
+                      All team members are up to date. New pending actions will appear here when they require your attention.
+                    </p>
                   </CardContent>
                 </Card>
-              ))}
+              ) : (
+                teamMembers.filter(member => member.status === 'pending').map((member) => (
+                  <Card key={member.id} className="border-yellow-200">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <Avatar className="w-10 h-10">
+                            <AvatarImage src={member.photo} alt={member.name} />
+                            <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <h3 className="font-medium">{member.name}</h3>
+                            <p className="text-sm text-muted-foreground">{member.role} • {member.company}</p>
+                            {member.nextAction && (
+                              <p className="text-sm text-orange-600 font-medium">{member.nextAction}</p>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex gap-2 mobile-device:mobile-stack-buttons">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleCallMember(member)}
+                            className="mobile-button-sm"
+                          >
+                            <Phone className="w-4 h-4 mr-2" />
+                            Contact
+                          </Button>
+                          <Button
+                            size="sm"
+                            onClick={() => {
+                              // Open action dialog or navigate to task specific to this member
+                              const actions = {
+                                'David Chen': 'Schedule inspection appointment',
+                                'Jennifer Kim': 'Review insurance quotes',
+                                'Mike Johnson': 'Submit additional documents'
+                              };
+                              const action = actions[member.name as keyof typeof actions] || 'Follow up with team member';
+
+                              if (confirm(`Ready to: ${action}?`)) {
+                                // In a real app, this would navigate or open a task-specific interface
+                                window.open(`mailto:${member.email}?subject=Action Required: ${action}&body=Hi ${member.name},%0A%0AI wanted to follow up regarding: ${action}%0A%0APlease let me know if you need any additional information.%0A%0AThank you!`, '_blank');
+                              }
+                            }}
+                            className="mobile-button-sm"
+                          >
+                            Take Action
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              )}
             </div>
           </div>
         </TabsContent>
