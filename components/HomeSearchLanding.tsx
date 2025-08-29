@@ -173,10 +173,6 @@ export default function HomeSearchLanding() {
   const [selectedState, setSelectedState] = useState('');
   const [zipCodeInput, setZipCodeInput] = useState('');
   const [zipCodeDistance, setZipCodeDistance] = useState(25);
-  const [onboardingCompleted, setOnboardingCompleted] = useState(false);
-  const [onboardingData, setOnboardingData] = useState<any>(null);
-  const [emailAddress, setEmailAddress] = useState('');
-  const [showEmailDialog, setShowEmailDialog] = useState(false);
 
   // Handle smart search
   const handleSmartSearch = async () => {
