@@ -983,81 +983,103 @@ export default function Documents({ setupData }: DocumentsProps) {
           </div>
 
           {/* Documents List */}
-          <div className="space-y-4">
-            {filteredDocuments.map((doc) => (
-              <Card key={doc.id} className="hover:shadow-md transition-shadow">
-                <CardContent className="p-4">
-                  <div className={`flex items-start ${isMobile ? 'flex-col gap-3' : 'justify-between'}`}>
-                    <div className={`flex items-start gap-4 ${isMobile ? 'w-full' : 'flex-1'}`}>
-                      <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <span className="text-lg">{getFileTypeIcon(doc.type)}</span>
+          {documents.length === 0 ? (
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12">
+                <FileText className="w-12 h-12 text-gray-400 mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No documents uploaded yet</h3>
+                <p className="text-gray-500 text-center max-w-sm">
+                  Upload your first document using the "Upload Document" button above.
+                </p>
+              </CardContent>
+            </Card>
+          ) : filteredDocuments.length === 0 ? (
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12">
+                <FileText className="w-12 h-12 text-gray-400 mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No documents match your search</h3>
+                <p className="text-gray-500 text-center max-w-sm">
+                  Try adjusting your search or filter criteria.
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-4">
+              {filteredDocuments.map((doc) => (
+                <Card key={doc.id} className="hover:shadow-md transition-shadow">
+                  <CardContent className="p-4">
+                    <div className={`flex items-start ${isMobile ? 'flex-col gap-3' : 'justify-between'}`}>
+                      <div className={`flex items-start gap-4 ${isMobile ? 'w-full' : 'flex-1'}`}>
+                        <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                          <span className="text-lg">{getFileTypeIcon(doc.type)}</span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className="font-medium truncate">{doc.name}</h3>
+                            {doc.required && <Badge variant="secondary">Required</Badge>}
+                            {doc.shared && <Badge variant="outline">Shared</Badge>}
+                            {doc.category === 'agent-agreements' && <Badge className="bg-blue-100 text-blue-800">Setup</Badge>}
+                          </div>
+                          {doc.description && (
+                            <p className="text-sm text-muted-foreground mb-2">{doc.description}</p>
+                          )}
+                          <div className={`flex items-center ${isMobile ? 'flex-wrap' : 'gap-4'} text-sm text-muted-foreground ${isMobile ? 'gap-2' : ''}`}>
+                            <div className="flex items-center gap-1">
+                              {getStatusIcon(doc.status)}
+                              <Badge className={getStatusColor(doc.status)}>
+                                {doc.status.replace('_', ' ')}
+                              </Badge>
+                            </div>
+                            <span>{doc.size}</span>
+                            <div className="flex items-center gap-1">
+                              <Calendar className="w-4 h-4" />
+                              <span>{new Date(doc.uploadDate).toLocaleDateString()}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <User className="w-4 h-4" />
+                              <span className={isMobile ? 'truncate max-w-32' : ''}>{doc.uploadedBy}</span>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-medium truncate">{doc.name}</h3>
-                          {doc.required && <Badge variant="secondary">Required</Badge>}
-                          {doc.shared && <Badge variant="outline">Shared</Badge>}
-                          {doc.category === 'agent-agreements' && <Badge className="bg-blue-100 text-blue-800">Setup</Badge>}
-                        </div>
-                        {doc.description && (
-                          <p className="text-sm text-muted-foreground mb-2">{doc.description}</p>
-                        )}
-                        <div className={`flex items-center ${isMobile ? 'flex-wrap' : 'gap-4'} text-sm text-muted-foreground ${isMobile ? 'gap-2' : ''}`}>
-                          <div className="flex items-center gap-1">
-                            {getStatusIcon(doc.status)}
-                            <Badge className={getStatusColor(doc.status)}>
-                              {doc.status.replace('_', ' ')}
-                            </Badge>
-                          </div>
-                          <span>{doc.size}</span>
-                          <div className="flex items-center gap-1">
-                            <Calendar className="w-4 h-4" />
-                            <span>{new Date(doc.uploadDate).toLocaleDateString()}</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <User className="w-4 h-4" />
-                            <span className={isMobile ? 'truncate max-w-32' : ''}>{doc.uploadedBy}</span>
-                          </div>
-                        </div>
+                      <div className={`flex items-center gap-2 ${isMobile ? 'w-full justify-end' : 'ml-4'}`}>
+                        <Button
+                          variant={isMobile ? "action-view" : "action-view"}
+                          size={isMobile ? "icon" : "sm"}
+                          className={`${isMobile ? 'mobile-button-sm w-9 h-9' : 'mobile-button-sm'}`}
+                          title="View Document"
+                          onClick={() => handleViewDocument(doc)}
+                        >
+                          <Eye className="w-4 h-4" />
+                          {!isMobile && <span className="ml-2">View</span>}
+                        </Button>
+                        <Button
+                          variant="action-download"
+                          size={isMobile ? "icon" : "sm"}
+                          className={`${isMobile ? 'mobile-button-sm w-9 h-9' : 'mobile-button-sm'}`}
+                          title="Download Document"
+                          onClick={() => handleDownloadDocument(doc)}
+                        >
+                          <ChevronDown className="w-4 h-4" />
+                          {!isMobile && <span className="ml-2">Download</span>}
+                        </Button>
+                        <Button
+                          variant="action-share"
+                          size={isMobile ? "icon" : "sm"}
+                          className={`${isMobile ? 'mobile-button-sm w-9 h-9' : 'mobile-button-sm'}`}
+                          title="Share Document"
+                          onClick={() => handleShare(doc)}
+                        >
+                          <Share className="w-4 h-4" />
+                          {!isMobile && <span className="ml-2">Share</span>}
+                        </Button>
                       </div>
                     </div>
-                    <div className={`flex items-center gap-2 ${isMobile ? 'w-full justify-end' : 'ml-4'}`}>
-                      <Button
-                        variant={isMobile ? "action-view" : "action-view"}
-                        size={isMobile ? "icon" : "sm"}
-                        className={`${isMobile ? 'mobile-button-sm w-9 h-9' : 'mobile-button-sm'}`}
-                        title="View Document"
-                        onClick={() => handleViewDocument(doc)}
-                      >
-                        <Eye className="w-4 h-4" />
-                        {!isMobile && <span className="ml-2">View</span>}
-                      </Button>
-                      <Button
-                        variant="action-download"
-                        size={isMobile ? "icon" : "sm"}
-                        className={`${isMobile ? 'mobile-button-sm w-9 h-9' : 'mobile-button-sm'}`}
-                        title="Download Document"
-                        onClick={() => handleDownloadDocument(doc)}
-                      >
-                        <ChevronDown className="w-4 h-4" />
-                        {!isMobile && <span className="ml-2">Download</span>}
-                      </Button>
-                      <Button
-                        variant="action-share"
-                        size={isMobile ? "icon" : "sm"}
-                        className={`${isMobile ? 'mobile-button-sm w-9 h-9' : 'mobile-button-sm'}`}
-                        title="Share Document"
-                        onClick={() => handleShare(doc)}
-                      >
-                        <Share className="w-4 h-4" />
-                        {!isMobile && <span className="ml-2">Share</span>}
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </TabsContent>
 
         {/* Hidden temporarily - shared tab content */}
