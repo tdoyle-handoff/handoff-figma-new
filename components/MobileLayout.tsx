@@ -227,6 +227,7 @@ export default function MobileLayout({
                         className="h-10 w-auto"
                       />
                       <div>
+                        <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                         <SheetDescription className="flex items-center gap-1 text-xs">
                           <TrendingUp className="w-3 h-3" />
                           {navigation.getPageDescription(currentPage)}
