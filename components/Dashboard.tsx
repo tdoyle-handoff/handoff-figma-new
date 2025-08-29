@@ -36,7 +36,7 @@ const LabelWithTooltip = ({ text, tooltip, className = "" }: { text: string; too
       <TooltipTrigger asChild>
         <HelpCircle className="h-4 w-4 text-gray-400 hover:text-gray-600 cursor-help" />
       </TooltipTrigger>
-      <TooltipContent side="top" className="max-w-xs">
+      <TooltipContent side="top" className="max-w-xs bg-slate-900 text-white border border-slate-700 shadow-lg">
         <p>{tooltip}</p>
       </TooltipContent>
     </Tooltip>
@@ -326,27 +326,47 @@ export default function Dashboard({ setupData }: DashboardProps) {
             <CardContent className="p-8">
               <div className="grid grid-cols-1 gap-8 md:grid-cols-3 lg:grid-cols-5">
                 <div>
-                  <div className="text-sm text-muted-foreground mb-1">Bank & lender fees</div>
+                  <LabelWithTooltip
+                    text="Bank & lender fees"
+                    tooltip="Fees charged by your lender for processing and underwriting your loan. Includes origination fees, processing fees, and underwriting costs. Typically 1-2% of loan amount."
+                    className="text-sm text-muted-foreground mb-1"
+                  />
                   <div className="text-lg font-semibold">{shortCurrency(closingBreakdown[0].value)}</div>
                   <div className="w-full bg-blue-200 h-1 rounded mt-2"></div>
                 </div>
                 <div>
-                  <div className="text-sm text-muted-foreground mb-1">Title & legal</div>
+                  <LabelWithTooltip
+                    text="Title & legal"
+                    tooltip="Title insurance, title search, and attorney fees. Title insurance protects you and the lender against title defects or ownership disputes. Required by most lenders."
+                    className="text-sm text-muted-foreground mb-1"
+                  />
                   <div className="text-lg font-semibold">{shortCurrency(closingBreakdown[1].value)}</div>
                   <div className="w-full bg-yellow-200 h-1 rounded mt-2"></div>
                 </div>
                 <div>
-                  <div className="text-sm text-muted-foreground mb-1">Prepaid taxes/insurance</div>
+                  <LabelWithTooltip
+                    text="Prepaid taxes/insurance"
+                    tooltip="Property taxes and insurance premiums paid in advance at closing. Usually includes 2-6 months of property taxes and 1 year of homeowner's insurance to establish escrow accounts."
+                    className="text-sm text-muted-foreground mb-1"
+                  />
                   <div className="text-lg font-semibold">{shortCurrency(closingBreakdown[2].value)}</div>
                   <div className="w-full bg-green-200 h-1 rounded mt-2"></div>
                 </div>
                 <div>
-                  <div className="text-sm text-muted-foreground mb-1">Gov. & recording</div>
+                  <LabelWithTooltip
+                    text="Gov. & recording"
+                    tooltip="Government recording fees, transfer taxes, and document stamps required to legally transfer property ownership. Varies by state and local jurisdiction."
+                    className="text-sm text-muted-foreground mb-1"
+                  />
                   <div className="text-lg font-semibold">{shortCurrency(closingBreakdown[3].value)}</div>
                   <div className="w-full bg-purple-200 h-1 rounded mt-2"></div>
                 </div>
                 <div>
-                  <div className="text-sm text-muted-foreground mb-1">Other</div>
+                  <LabelWithTooltip
+                    text="Other"
+                    tooltip="Miscellaneous closing costs including home inspection fees, appraisal fees, survey costs, and other third-party services required for your loan approval."
+                    className="text-sm text-muted-foreground mb-1"
+                  />
                   <div className="text-lg font-semibold">{shortCurrency(closingBreakdown[4].value)}</div>
                   <div className="w-full bg-gray-200 h-1 rounded mt-2"></div>
                 </div>
@@ -358,18 +378,30 @@ export default function Dashboard({ setupData }: DashboardProps) {
                 <div>
                   <div className="text-sm text-muted-foreground mb-2">Credits</div>
                   <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-sm">Seller</span>
+                    <div className="flex justify-between items-center">
+                      <LabelWithTooltip
+                        text="Seller"
+                        tooltip="Amount the seller agrees to pay toward your closing costs. This is negotiated as part of your purchase offer and can help reduce your out-of-pocket expenses at closing."
+                        className="text-sm"
+                      />
                       <Input type="number" value={sellerCredits} onChange={(e)=>setSellerCredits(Number(e.target.value||0))} className="w-24 h-8 text-right" />
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm">Lender</span>
+                    <div className="flex justify-between items-center">
+                      <LabelWithTooltip
+                        text="Lender"
+                        tooltip="Credits from your lender to help pay closing costs, usually offered in exchange for accepting a slightly higher interest rate. Also called 'lender paid closing costs'."
+                        className="text-sm"
+                      />
                       <Input type="number" value={lenderCredits} onChange={(e)=>setLenderCredits(Number(e.target.value||0))} className="w-24 h-8 text-right" />
                     </div>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm text-muted-foreground mb-1">Money needed at closing</div>
+                  <LabelWithTooltip
+                    text="Money needed at closing"
+                    tooltip="Total cash you need to bring to closing. This is your down payment plus all closing costs, minus any credits from seller or lender. Some costs may be financed into your loan."
+                    className="text-sm text-muted-foreground mb-1 justify-end"
+                  />
                   <div className="text-2xl font-bold">{shortCurrency(moneyNeeded)}</div>
                 </div>
               </div>
@@ -420,9 +452,13 @@ export default function Dashboard({ setupData }: DashboardProps) {
                     </div>
 
                     <div className="mt-4">
-                      <div className="text-sm text-muted-foreground mb-1">Rent comparison</div>
-                      <div className="text-sm font-medium text-orange-600">{rentDeltaCopy}</div>
-                    </div>
+                    <LabelWithTooltip
+                      text="Rent comparison"
+                      tooltip="How your total monthly housing costs (including mortgage, taxes, insurance, HOA, and maintenance) compare to your current rent payment."
+                      className="text-sm text-muted-foreground mb-1"
+                    />
+                    <div className="text-sm font-medium text-orange-600">{rentDeltaCopy}</div>
+                  </div>
                   </div>
 
                   {/* Right side - Pie Chart */}
@@ -530,7 +566,11 @@ export default function Dashboard({ setupData }: DashboardProps) {
               </CardHeader>
               <CardContent className="p-6">
                 <div className="flex items-center justify-between rounded-xl bg-muted p-3">
-                  <div className="text-sm text-muted-foreground">Your housing share</div>
+                  <LabelWithTooltip
+                    text="Your housing share"
+                    tooltip="Percentage of your gross monthly income going to housing costs (mortgage, taxes, insurance, HOA). Lenders prefer this to be below 28-33% for loan approval."
+                    className="text-sm text-muted-foreground"
+                  />
                   <div className={`text-xl font-semibold ${budgetShare>33? budgetShare>40? 'text-red-600':'text-orange-600' : ''}`}>{budgetShare.toFixed(1)}%</div>
                 </div>
                 <Progress value={Math.min((budgetShare/50)*100,100)} className="mt-2 h-2" />
@@ -613,7 +653,14 @@ export default function Dashboard({ setupData }: DashboardProps) {
                   </div>
                 </div>
                 <Separator />
-                <div className="text-sm text-muted-foreground">Tip: Putting in {shortCurrency(5_000)} more could lower your monthly by about {shortCurrency(tipMonthlySave)}.</div>
+                <div className="flex items-start gap-1">
+                  <LabelWithTooltip
+                    text="Tip:"
+                    tooltip="Increasing your down payment reduces your loan amount, which lowers both your monthly payment and the total interest you'll pay over the life of the loan."
+                    className="text-sm text-muted-foreground font-medium"
+                  />
+                  <span className="text-sm text-muted-foreground">Putting in {shortCurrency(5_000)} more could lower your monthly by about {shortCurrency(tipMonthlySave)}.</span>
+                </div>
               </CardContent>
             </Card>
 
@@ -624,7 +671,11 @@ export default function Dashboard({ setupData }: DashboardProps) {
               </CardHeader>
               <CardContent className="h-[320px] p-6">
                 <div className="text-2xl font-semibold">{shortCurrency(equity5)}</div>
-                <div className="text-xs text-muted-foreground">This is from paying down your loan. Home price changes not included.</div>
+                <LabelWithTooltip
+                  text="Equity explanation"
+                  tooltip="This shows only the equity built from paying down your mortgage principal over 5 years. It doesn't include potential home value appreciation or depreciation, which can significantly impact your total equity."
+                  className="text-xs text-muted-foreground"
+                />
                 <div className="mt-3 h-[200px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={fiveYear.rows.map(r=>({month:r.month, balance:r.balance}))}>
@@ -647,9 +698,21 @@ export default function Dashboard({ setupData }: DashboardProps) {
               <CardDescription>Quick tips in plain language.</CardDescription>
             </CardHeader>
             <CardContent className="grid gap-6 text-sm text-muted-foreground md:grid-cols-3 p-6">
-              <div>"Monthly Home Cost" includes mortgage, taxes, insurance, HOA, and upkeep.</div>
-              <div>"Money Needed at Closing" is your down payment plus one‑time fees. Credits can reduce it.</div>
-              <div>Healthy budget rule: try to keep home costs at or under one‑third of your gross income.</div>
+              <LabelWithTooltip
+                text="Monthly Home Cost explanation"
+                tooltip="Your total monthly housing expense including mortgage principal & interest, property taxes, homeowner's insurance, HOA fees, and estimated maintenance costs."
+                className="text-sm text-muted-foreground"
+              />
+              <LabelWithTooltip
+                text="Money Needed explanation"
+                tooltip="Total cash required at closing including down payment and all closing costs, reduced by any seller or lender credits you negotiate."
+                className="text-sm text-muted-foreground"
+              />
+              <LabelWithTooltip
+                text="Budget rule explanation"
+                tooltip="Financial experts recommend keeping total housing costs below 28-33% of gross monthly income to maintain financial health and qualify for most loan programs."
+                className="text-sm text-muted-foreground"
+              />
             </CardContent>
           </Card>
         </div>
