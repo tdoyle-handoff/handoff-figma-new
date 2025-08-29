@@ -406,10 +406,10 @@ export function ComprehensiveAttomDataSummaryTable({
   };
 
   useEffect(() => {
-    if (autoFetch && address) {
+    if (autoFetch && isAddressComplete()) {
       fetchAllData();
     }
-  }, [autoFetch, address]);
+  }, [autoFetch, addressFields]);
 
   const formatValue = (value: any, type?: string, customFormat?: (value: any) => string): string => {
     if (customFormat) return customFormat(value);
