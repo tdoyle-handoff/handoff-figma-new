@@ -74,9 +74,6 @@ interface DocumentsProps {
 }
 
 export default function Documents({ setupData }: DocumentsProps) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [showUpload, setShowUpload] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [showManageAccessDialog, setShowManageAccessDialog] = useState(false);
   const [shareDocument, setShareDocument] = useState<Document | null>(null);
@@ -552,7 +549,7 @@ export default function Documents({ setupData }: DocumentsProps) {
           <p>Mold/Mildew: ☐ Yes ☐ No ☐ Unknown   Details: _________________________</p>
           <p>Pest Infestation: �� Yes ☐ No ☐ Unknown   Details: _________________________</p>
           <p>Asbestos: ☐ Yes ☐ No ☐ Unknown   Details: _________________________</p>
-          <p>Lead Paint: ☐ Yes ☐ No ☐ Unknown   Details: _________________________</p>
+          <p>Lead Paint: ☐ Yes ��� No ☐ Unknown   Details: _________________________</p>
         </div>
 
         <div style="margin-bottom: 25px;">
