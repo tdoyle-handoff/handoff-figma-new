@@ -564,56 +564,44 @@ export default function OfferBuilder() {
     if (d.id) setCurrentDraftId(d.id);
   };
 
-  // Load saved offer data from user profile or localStorage
+  // Load saved offer data from user profile or localStorage (non-blocking)
   useEffect(() => {
-    if (userProfile && !dataLoaded) {
+    // Set as loaded immediately to prevent blocking UI
+    setDataLoaded(true);
+
+    // Load data asynchronously without blocking render
+    setTimeout(() => {
       try {
-        // First check if there's cloud-saved data in user profile
-        const cloudData = userProfile.preferences?.offerBuilderData as Partial<OfferDraft>;
+        if (userProfile) {
+          // First check if there's cloud-saved data in user profile
+          const cloudData = userProfile.preferences?.offerBuilderData as Partial<OfferDraft>;
 
-        if (cloudData && Object.keys(cloudData).length > 0) {
-          console.log('📋 Loading cloud-saved offer data for user:', userProfile.email);
-          applyDraft(cloudData);
-          setCloudSaveTime(cloudData.savedAt || null);
-        } else {
-          // Fallback to localStorage for migration or guest data
-          const localData = localStorage.getItem(LS_KEY);
-          if (localData) {
-            console.log('📋 Loading local offer data and migrating to cloud');
-            const parsed = JSON.parse(localData) as OfferDraft;
-            applyDraft(parsed);
-
-            // Migrate to cloud if user is authenticated
-            if (!isGuestMode) {
-              setTimeout(() => saveToCloud(parsed), 1000);
+          if (cloudData && Object.keys(cloudData).length > 0) {
+            console.log('📋 Loading cloud-saved offer data for user:', userProfile.email);
+            applyDraft(cloudData);
+            setCloudSaveTime(cloudData.savedAt || null);
+          } else {
+            // Fallback to localStorage for migration or guest data
+            const localData = localStorage.getItem(LS_KEY);
+            if (localData) {
+              console.log('📋 Loading local offer data');
+              const parsed = JSON.parse(localData) as OfferDraft;
+              applyDraft(parsed);
             }
           }
-        }
-      } catch (error) {
-        console.error('Error loading offer data:', error);
-        // Fallback to localStorage
-        try {
+        } else {
+          // No user profile, load from localStorage only
           const raw = localStorage.getItem(LS_KEY);
           if (raw) {
             const parsed = JSON.parse(raw) as OfferDraft;
             applyDraft(parsed);
           }
-        } catch {}
-      }
-
-      setDataLoaded(true);
-    } else if (!userProfile && !dataLoaded) {
-      // No user profile, load from localStorage only
-      try {
-        const raw = localStorage.getItem(LS_KEY);
-        if (raw) {
-          const parsed = JSON.parse(raw) as OfferDraft;
-          applyDraft(parsed);
         }
-      } catch {}
-      setDataLoaded(true);
-    }
-  }, [userProfile, dataLoaded, isGuestMode]);
+      } catch (error) {
+        console.error('Error loading offer data:', error);
+      }
+    }, 150); // Small delay to not block initial render
+  }, [userProfile]);
 
   // Save offer data to cloud
   const saveToCloud = useCallback(async (draftData?: OfferDraft) => {
