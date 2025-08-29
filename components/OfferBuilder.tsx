@@ -247,79 +247,177 @@ export default function OfferBuilder() {
     return earnestMode === "percent" ? base * (Number(earnest) || 0) / 100 : (Number(earnest) || 0);
   }, [earnestMode, earnest, offerPrice, listPrice]);
 
-  // Generate purchase agreement using Documents template
-  const generatePurchaseAgreementFromTemplate = () => {
+  // Additional state for NY State contract fields
+  const [sellerName, setSellerName] = useState("");
+  const [sellerAddress, setSellerAddress] = useState("");
+  const [buyerAddress, setBuyerAddress] = useState("");
+  const [county, setCounty] = useState("");
+  const [lotSize, setLotSize] = useState("");
+  const [itemsIncluded, setItemsIncluded] = useState("");
+  const [itemsExcluded, setItemsExcluded] = useState("");
+  const [intendedUse, setIntendedUse] = useState("residential");
+  const [deedType, setDeedType] = useState("Warranty Deed");
+  const [titleInsuranceType, setTitleInsuranceType] = useState("fee title insurance policy");
+  const [offerExpirationDate, setOfferExpirationDate] = useState("");
+  const [offerExpirationTime, setOfferExpirationTime] = useState("");
+  const [listingBroker, setListingBroker] = useState("");
+  const [cooperatingBroker, setCooperatingBroker] = useState("");
+  const [inspectionDate, setInspectionDate] = useState("");
+  const [attorneyApprovalDate, setAttorneyApprovalDate] = useState("");
+
+  // Generate official NY State MLS Purchase Contract
+  const generateNYStatePurchaseContract = () => {
+    const today = new Date();
+    const offerExpDate = offerExpirationDate || new Date(today.getTime() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]; // 3 days from now
+    const inspDate = inspectionDate || new Date(today.getTime() + inspectionDays * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    const attorneyDate = attorneyApprovalDate || new Date(today.getTime() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
     const template = `
-      <div style="font-family: 'Times New Roman', serif; padding: 40px; max-width: 800px; margin: 0 auto; line-height: 1.6;">
-        <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #000; padding-bottom: 20px;">
-          <h1 style="margin: 0; font-size: 24px; font-weight: bold;">RESIDENTIAL PURCHASE AGREEMENT</h1>
-          <p style="margin: 10px 0 0 0; font-size: 12px;">This document constitutes a legally binding agreement</p>
+      <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 8.5in; margin: 0 auto; line-height: 1.4; font-size: 11px;">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <h1 style="margin: 0; font-size: 16px; font-weight: bold;">Standard Form Contract for Purchase and Sale of Real Estate</h1>
+          <p style="margin: 10px 0; font-weight: bold; text-transform: uppercase;">THIS IS A LEGALLY BINDING CONTRACT. IF NOT FULLY UNDERSTOOD, WE RECOMMEND<br/>ALL PARTIES TO THE CONTRACT CONSULT AN ATTORNEY BEFORE SIGNING.</p>
         </div>
 
-        <div style="margin-bottom: 25px;">
-          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">PROPERTY INFORMATION</h3>
-          <p><strong>Property Address:</strong> ${address || '_________________________________'}, ${city || '[City]'}, ${stateUS || '[State]'} ${zip || '[ZIP]'}</p>
-          <p><strong>Legal Description:</strong> To be inserted from title report</p>
-          <p><strong>Assessor's Parcel Number (APN):</strong> _________________</p>
+        <div style="margin-bottom: 15px;">
+          <h3 style="font-size: 12px; font-weight: bold; margin-bottom: 8px;">1. IDENTIFICATION OF PARTIES TO THE CONTRACT</h3>
+          <p><strong>A. SELLER</strong> - The seller is <u>${sellerName || '_'.repeat(50)}</u></p>
+          <p><strong>B. Residing at</strong> <u>${sellerAddress || '_'.repeat(60)}</u></p>
+          <p style="font-size: 10px; margin: 5px 0;">(The word "Seller" refers to each and all parties who have an ownership interest in the property.)</p>
+          <p><strong>C. PURCHASER</strong> - The purchaser is <u>${buyerName || '_'.repeat(50)}</u></p>
+          <p><strong>D. Residing at</strong> <u>${buyerAddress || '_'.repeat(60)}</u></p>
+          <p style="font-size: 10px; margin: 5px 0;">(The word "Purchaser" refers to each and all of those who signed below as Purchaser.)</p>
         </div>
 
-        <div style="margin-bottom: 25px;">
-          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">BUYER INFORMATION</h3>
-          <p><strong>Buyer Name:</strong> ${buyerName || '[BUYER NAME]'}</p>
-          <p><strong>Email:</strong> ${buyerEmail || '[BUYER EMAIL]'}</p>
-          <p><strong>Phone:</strong> ${buyerPhone || '_________________________________'}</p>
+        <div style="margin-bottom: 15px;">
+          <h3 style="font-size: 12px; font-weight: bold; margin-bottom: 8px;">2. PROPERTY TO BE SOLD</h3>
+          <p>The property and improvements which the Seller is agreeing to sell and which the Purchaser is agreeing to purchase is known as</p>
+          <p><u>${address || '_'.repeat(60)}</u>, located in the city, village or town</p>
+          <p>of <u>${city || '_'.repeat(20)}</u> in <u>${county || '_'.repeat(15)}</u> County, in the State of New York. This property includes</p>
+          <p>all the Seller's rights and privileges, if any, to all land, water, streets and roads annexed to, and on all sides of the property.</p>
+          <p>The lot size of the property is approximately <u>${lotSize || '_'.repeat(15)}</u>.</p>
         </div>
 
-        <div style="margin-bottom: 25px;">
-          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">PURCHASE TERMS</h3>
-          <p><strong>Purchase Price:</strong> ${formatMoney(offerPrice)}</p>
-          <p><strong>Earnest Money Deposit:</strong> ${formatMoney(earnestDollar)} to be deposited within 3 business days</p>
-          <p><strong>Down Payment:</strong> ${formatMoney(dpDollar)}</p>
-          <p><strong>Loan Amount:</strong> ${formatMoney(loanAmount)}</p>
-          <p><strong>Financing Type:</strong> ${financingType}</p>
-          <p><strong>Closing Date:</strong> ${closingDate || '_________________________'}</p>
+        <div style="margin-bottom: 15px;">
+          <h3 style="font-size: 12px; font-weight: bold; margin-bottom: 8px;">3. ITEMS INCLUDED IN SALE:</h3>
+          <p><u>${itemsIncluded || '_'.repeat(120)}</u></p>
+          <p><u>${'_'.repeat(120)}</u></p>
+          <p>The items listed above if now in or on said premises, and owned by the Seller free from all liens and encumbrances, are included in the sale "as is",</p>
+          <p>on the date of this offer, together with the following items: <u>${'_'.repeat(50)}</u>.</p>
         </div>
 
-        <div style="margin-bottom: 25px;">
-          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">CONTINGENCIES</h3>
-          <p>${inspection ? '☑' : '☐'} <strong>Inspection Contingency:</strong> Buyer has ${inspectionDays} days to complete inspections</p>
-          <p>${appraisal ? '☑' : '☐'} <strong>Appraisal Contingency:</strong> Property must appraise for at least the purchase price</p>
-          <p>${financingCont ? '☑' : '☐'} <strong>Financing Contingency:</strong> Buyer has ${financingDays} days to obtain loan approval</p>
-          <p>${homeSale ? '☑' : '☐'} <strong>Home Sale Contingency:</strong> Sale contingent upon buyer's existing home sale</p>
-          ${hasEscalation ? `<p>☑ <strong>Escalation Clause:</strong> Buyer will increase offer by ${formatMoney(escalationIncrement)} increments up to ${formatMoney(escalationCap)}</p>` : ''}
+        <div style="margin-bottom: 15px;">
+          <h3 style="font-size: 12px; font-weight: bold; margin-bottom: 8px;">4. ITEMS EXCLUDED FROM SALE</h3>
+          <p>The following items are excluded from the sale: <u>${itemsExcluded || '_'.repeat(60)}</u>.</p>
         </div>
 
-        ${sellerConcessions ? `<div style="margin-bottom: 25px;">
-          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">SELLER CONCESSIONS</h3>
-          <p>${sellerConcessions}</p>
-        </div>` : ''}
-
-        <div style="margin-bottom: 40px; border: 2px solid #000; padding: 15px;">
-          <p style="font-weight: bold; font-size: 14px; margin-bottom: 10px;">LEGAL NOTICE:</p>
-          <p style="font-size: 12px; margin-bottom: 8px;">This is a legally binding contract. If not understood, seek competent legal advice before signing.</p>
-          <p style="font-size: 12px;">Time is of the essence. All deadlines in this agreement are strictly enforced.</p>
+        <div style="margin-bottom: 15px;">
+          <h3 style="font-size: 12px; font-weight: bold; margin-bottom: 8px;">5. PURCHASE PRICE</h3>
+          <p>The purchase price is <u>${formatMoney(offerPrice).replace('$', '').toUpperCase()}</u> DOLLARS</p>
+          <p>(<u>$${offerPrice.toLocaleString()}</u>) The Purchaser shall pay the purchase price as follows:</p>
+          <p><strong>A.</strong> $<u>${earnestDollar.toLocaleString()}</u> Deposit with this contract and held pursuant to paragraph 16 herein</p>
+          <p><strong>B.</strong> $<u>{'_'.repeat(15)}</u> Additional deposit on <u>{'_'.repeat(15)}</u>,</p>
+          <p><strong>C.</strong> $<u>${(dpDollar + (totalClosingCosts || 0)).toLocaleString()}</u> In cash, certified check, bank draft or attorney escrow account check at closing</p>
+          <p><strong>D.</strong> $<u>${sellerConcessions ? '5,000' : '_'.repeat(15)}</u> (Other) <u>${sellerConcessions || '_'.repeat(30)}</u>.</p>
         </div>
 
-        <div style="margin-bottom: 30px;">
-          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 15px;">SIGNATURES</h3>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 40px;">
+        <div style="margin-bottom: 15px;">
+          <h3 style="font-size: 12px; font-weight: bold; margin-bottom: 8px;">6. MORTGAGE CONTINGENCY</h3>
+          <p><strong>A.</strong> This agreement is contingent upon Purchaser obtaining approval of a <u>${financingType}</u>, FHA or VA (if FHA or VA, see</p>
+          <p>attached required addendum) or mortgage loan of $<u>${loanAmount.toLocaleString()}</u> for a term of no more than <u>${termYears}</u> years</p>
+          <p>at an initial fixed or adjustable nominal interest rate not to exceed <u>${interestRate}</u>% (percent). Purchaser agrees to use diligent</p>
+          <p>efforts to obtain said approval and shall apply for the mortgage loan within <u>${financingDays}</u> business days after the Seller has accepted this</p>
+          <p>contract.</p>
+          <p>Purchaser agrees to apply for such mortgage loan to at least one lending institution or licensed mortgage broker. Upon receipt of a written</p>
+          <p>mortgage commitment or in the event Purchaser chooses to waive this mortgage contingency, Purchaser shall provide notice in writing to</p>
+          <p><u>${listingBroker || '_'.repeat(30)}</u> of Purchaser's receipt of the mortgage commitment or of</p>
+          <p>Purchaser's waiving of this contingency. Upon receipt of such notice this contingency shall be deemed waived or satisfied as the case may</p>
+          <p>be. In the event notice as called for in the preceding sentence has not been received on or before <u>${new Date(new Date(closingDate).getTime() - financingDays * 24 * 60 * 60 * 1000).toLocaleDateString()}</u>, <u>20${new Date().getFullYear().toString().slice(-2)}</u>,</p>
+          <p>then either Purchaser or Seller may within five business days of such date terminate, or the parties may mutually agree to extend, this</p>
+          <p>contract by written notice to <u>${listingBroker || '_'.repeat(20)}</u>. Upon receipt of</p>
+          <p>termination notice from either party, and in the case of notice by the Purchaser, proof of Purchaser's inability to obtain said mortgage approval,</p>
+          <p>this agreement shall be cancelled, null and void, and all deposits made hereunder shall be returned to the Purchaser.</p>
+          <p><strong>B. Seller's Contribution:</strong> At closing, as a credit toward prepaids, closing costs and/or points, Seller shall credit to Purchaser $<u>${sellerConcessions ? '5,000' : '0'}</u></p>
+          <p>or <u>{'_'.repeat(5)}</u>% (percent) of the purchase price or $<u>{'_'.repeat(10)}</u> mortgage amount.</p>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+          <h3 style="font-size: 12px; font-weight: bold; margin-bottom: 8px;">10. CONDITIONS AFFECTING TITLE</h3>
+          <p>The Seller shall convey and the Purchaser shall accept the property subject to all covenants, conditions, restrictions and easements of record</p>
+          <p>and zoning and environmental protection laws so long as the property is not in violation thereof and any of the foregoing does not prevent the</p>
+          <p>intended use of the property for the purpose of <u>${intendedUse}</u>; also subject to any existing tenancies, any unpaid</p>
+          <p>installments of street and other improvement assessments payable after the date of the transfer of title to the property, and any state of facts</p>
+          <p>which an inspection and/or accurate survey may show, provided that nothing in this paragraph renders the title to the property unmarketable.</p>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+          <h3 style="font-size: 12px; font-weight: bold; margin-bottom: 8px;">11. DEED</h3>
+          <p>The property shall be transferred from Seller to Purchaser by means of a <u>${deedType}</u>, with Lien Covenant, or</p>
+          <p><u>{'_'.repeat(20)}</u> deed, furnished by the Seller. The deed and real property transfer gains tax affidavit will be properly prepared and signed so that it will be</p>
+          <p>accepted for recording by the County Clerk in the County in which the property is located.</p>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+          <h3 style="font-size: 12px; font-weight: bold; margin-bottom: 8px;">15. TRANSFER OF TITLE/POSSESSION</h3>
+          <p>The transfer of title to the property from Seller to Purchaser will take place at the office of the lender's attorney if the Purchaser obtains a</p>
+          <p>mortgage loan from a lending institution. Otherwise, the closing will be at the office of the attorney for the Seller. The closing will be on or before</p>
+          <p><u>${closingDate ? new Date(closingDate).toLocaleDateString() : '_'.repeat(15)}</u> (Date), 20<u>${new Date().getFullYear().toString().slice(-2)}</u>. Possession shall be granted upon transfer of title unless otherwise mutually agreed upon in</p>
+          <p>writing signed by both parties.</p>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+          <h3 style="font-size: 12px; font-weight: bold; margin-bottom: 8px;">17. TIME PERIOD OFFER</h3>
+          <p>Purchaser and Seller understand and agree that, unless earlier withdrawn, this offer is good until <u>${offerExpirationTime || '11:59'}</u> a.m. p.m.</p>
+          <p><u>${new Date(offerExpDate).toLocaleDateString()}</u>, 20<u>${new Date().getFullYear().toString().slice(-2)}</u>, and if not accepted by the Seller prior to that time, then this offer becomes null and void.</p>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+          <h3 style="font-size: 12px; font-weight: bold; margin-bottom: 8px;">19. ATTORNEY APPROVAL</h3>
+          <p>This agreement is contingent upon Purchaser and Seller obtaining approval of this agreement by their attorney as to all matters, without</p>
+          <p>limitation. This contingency shall be deemed waived unless Purchaser's or Seller's attorney on behalf of their client notifies</p>
+          <p><u>${listingBroker || '_'.repeat(20)}</u> in writing, as called for in paragraph "23", of their disapproval of the agreement no later than</p>
+          <p><u>${new Date(attorneyDate).toLocaleDateString()}</u>, <u>20${new Date().getFullYear().toString().slice(-2)}</u>. If Purchaser's or Seller's attorney so notifies, then this agreement shall be deemed cancelled, null and</p>
+          <p>void, and all deposits shall be returned to the Purchaser.</p>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+          <h3 style="font-size: 12px; font-weight: bold; margin-bottom: 8px;">21. INSPECTIONS</h3>
+          <p>This agreement is contingent upon all of the following provisions marked with the parties' initials. All those provisions marked with "NA" shall not apply.</p>
+          <p><strong>${inspection ? 'PC SS' : 'NA NA'}</strong> <strong>STRUCTURAL INSPECTION:</strong> A determination, by a New York State licensed home inspector, registered architect or</p>
+          <p>licensed engineer, or a third party who is <u>{'_'.repeat(20)}</u>, or other qualified person, that the</p>
+          <p>premises are free from any substantial structural, mechanical, electrical, plumbing, roof covering, water or sewer</p>
+          <p>defects. The term substantial to refer to any individual repair which will reasonably cost over $1,500 to correct.</p>
+          <p>The following buildings or items on the premises are excluded from this inspection:</p>
+          <p><u>{'_'.repeat(60)}</u>.</p>
+          <br/>
+          <p>All tests and/or inspections contemplated pursuant to this paragraph "21" shall be completed on or before <u>${new Date(inspDate).toLocaleDateString()}</u>,</p>
+          <p>and at Purchaser's expense, and shall be deemed waived unless Purchaser shall notify <u>${listingBroker || '_'.repeat(20)}</u> of failure of</p>
+          <p>any of these tests and/or inspections.</p>
+        </div>
+
+        <div style="margin-bottom: 30px; border: 1px solid #000; padding: 10px;">
+          <p style="text-align: center; font-weight: bold; margin-bottom: 15px;">SIGNATURE SECTION</p>
+          <div style="display: flex; justify-content: space-between;">
             <div style="width: 45%;">
-              <p><strong>BUYER:</strong></p>
-              <div style="border-bottom: 1px solid #000; height: 30px; margin-bottom: 5px;"></div>
-              <p style="font-size: 12px;">${buyerName || '[Print Name]'}</p>
-              <p style="font-size: 12px;">Date: _______________</p>
+              <p><u>${'_'.repeat(25)}</u> <u>${'_'.repeat(15)}</u></p>
+              <p style="text-align: center; font-size: 10px;">Date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Time</p>
+              <br/>
+              <p><u>${buyerName || '_'.repeat(35)}</u></p>
+              <p style="text-align: center; font-size: 10px;">Purchaser</p>
             </div>
             <div style="width: 45%;">
-              <p><strong>SELLER:</strong></p>
-              <div style="border-bottom: 1px solid #000; height: 30px; margin-bottom: 5px;"></div>
-              <p style="font-size: 12px;">[Seller Name]</p>
-              <p style="font-size: 12px;">Date: _______________</p>
+              <p><u>${'_'.repeat(25)}</u> <u>${'_'.repeat(15)}</u></p>
+              <p style="text-align: center; font-size: 10px;">Date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Time</p>
+              <br/>
+              <p><u>${sellerName || '_'.repeat(35)}</u></p>
+              <p style="text-align: center; font-size: 10px;">Seller</p>
             </div>
           </div>
         </div>
 
         <div style="text-align: center; font-size: 10px; color: #666; border-top: 1px solid #ccc; padding-top: 15px;">
-          <p>Document generated on ${new Date().toLocaleDateString()} • Handoff Real Estate Platform</p>
+          <p>Document generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
+          <p>Generated by Handoff Real Estate Platform • Official NY State MLS Form</p>
         </div>
       </div>
     `;
@@ -938,20 +1036,24 @@ export default function OfferBuilder() {
             </CardHeader>
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="sm:col-span-2">
-                <Label className="text-sm sm:text-base">Property Address (as it will appear on the purchase agreement)</Label>
+                <Label className="text-sm sm:text-base">Property Address (as it will appear on NY State MLS contract)</Label>
                 <Input value={address} onChange={e=>setAddress(e.target.value)} placeholder="123 Main Street" className="text-sm sm:text-base" />
               </div>
               <div>
                 <Label className="text-sm sm:text-base">City</Label>
-                <Input value={city} onChange={e=>setCity(e.target.value)} placeholder="City Name" className="text-sm sm:text-base" />
+                <Input value={city} onChange={e=>setCity(e.target.value)} placeholder="Buffalo" className="text-sm sm:text-base" />
               </div>
               <div>
-                <Label className="text-sm sm:text-base">State</Label>
-                <Input value={stateUS} onChange={e=>setStateUS(e.target.value)} placeholder="NY" className="text-sm sm:text-base" />
+                <Label className="text-sm sm:text-base">County</Label>
+                <Input value={county} onChange={e=>setCounty(e.target.value)} placeholder="Erie" className="text-sm sm:text-base" />
               </div>
               <div>
                 <Label className="text-sm sm:text-base">ZIP Code</Label>
-                <Input value={zip} onChange={e=>setZip(e.target.value)} placeholder="12345" className="text-sm sm:text-base" />
+                <Input value={zip} onChange={e=>setZip(e.target.value)} placeholder="14201" className="text-sm sm:text-base" />
+              </div>
+              <div>
+                <Label className="text-sm sm:text-base">Lot Size</Label>
+                <Input value={lotSize} onChange={e=>setLotSize(e.target.value)} placeholder="0.25 acres" className="text-sm sm:text-base" />
               </div>
               <div>
                 <Label className="text-sm sm:text-base">Seller's Listed Price</Label>
@@ -968,6 +1070,25 @@ export default function OfferBuilder() {
               <div>
                 <Label className="text-sm sm:text-base">Homeowner's Insurance (Annual)</Label>
                 <Input type="number" value={insuranceAnnual} onChange={e=>setInsuranceAnnual(Number(e.target.value))} className="text-sm sm:text-base" />
+              </div>
+              <div>
+                <Label className="text-sm sm:text-base">Items Included in Sale</Label>
+                <Input value={itemsIncluded} onChange={e=>setItemsIncluded(e.target.value)} placeholder="All fixtures, appliances, window treatments" className="text-sm sm:text-base" />
+              </div>
+              <div>
+                <Label className="text-sm sm:text-base">Items Excluded from Sale</Label>
+                <Input value={itemsExcluded} onChange={e=>setItemsExcluded(e.target.value)} placeholder="Personal property, artwork" className="text-sm sm:text-base" />
+              </div>
+              <div>
+                <Label className="text-sm sm:text-base">Intended Use</Label>
+                <Select value={intendedUse} onValueChange={setIntendedUse}>
+                  <SelectTrigger className="text-sm sm:text-base"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="residential">Residential</SelectItem>
+                    <SelectItem value="investment property">Investment Property</SelectItem>
+                    <SelectItem value="vacation home">Vacation Home</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </CardContent>
 
@@ -1021,8 +1142,12 @@ export default function OfferBuilder() {
             </CardHeader>
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="sm:col-span-2">
-                <Label className="text-sm sm:text-base">Buyer's Legal Name (as it will appear on the purchase agreement)</Label>
+                <Label className="text-sm sm:text-base">Buyer's Legal Name (as it will appear on NY State contract)</Label>
                 <Input value={buyerName} onChange={e=>setBuyerName(e.target.value)} placeholder="John and Jane Doe" className="text-sm sm:text-base" />
+              </div>
+              <div className="sm:col-span-2">
+                <Label className="text-sm sm:text-base">Buyer's Address</Label>
+                <Input value={buyerAddress} onChange={e=>setBuyerAddress(e.target.value)} placeholder="123 Current Street, Current City, ST 12345" className="text-sm sm:text-base" />
               </div>
               <div>
                 <Label className="text-sm sm:text-base">Contact Email</Label>
@@ -1031,6 +1156,14 @@ export default function OfferBuilder() {
               <div>
                 <Label className="text-sm sm:text-base">Phone Number</Label>
                 <Input value={buyerPhone} onChange={e=>setBuyerPhone(e.target.value)} placeholder="(555) 555-5555" className="text-sm sm:text-base" />
+              </div>
+              <div className="sm:col-span-2">
+                <Label className="text-sm sm:text-base">Seller's Name (if known)</Label>
+                <Input value={sellerName} onChange={e=>setSellerName(e.target.value)} placeholder="Current Owner Name" className="text-sm sm:text-base" />
+              </div>
+              <div className="sm:col-span-2">
+                <Label className="text-sm sm:text-base">Seller's Address (if known)</Label>
+                <Input value={sellerAddress} onChange={e=>setSellerAddress(e.target.value)} placeholder="Seller's mailing address" className="text-sm sm:text-base" />
               </div>
 
               <div>
@@ -1144,6 +1277,26 @@ export default function OfferBuilder() {
               </div>
 
               <div>
+                <Label className="text-sm sm:text-base">Offer Expiration Date</Label>
+                <Input type="date" value={offerExpirationDate} onChange={e=>setOfferExpirationDate(e.target.value)} className="text-sm sm:text-base" />
+              </div>
+
+              <div>
+                <Label className="text-sm sm:text-base">Offer Expiration Time</Label>
+                <Input value={offerExpirationTime} onChange={e=>setOfferExpirationTime(e.target.value)} placeholder="11:59 PM" className="text-sm sm:text-base" />
+              </div>
+
+              <div>
+                <Label className="text-sm sm:text-base">Listing Broker</Label>
+                <Input value={listingBroker} onChange={e=>setListingBroker(e.target.value)} placeholder="ABC Realty" className="text-sm sm:text-base" />
+              </div>
+
+              <div>
+                <Label className="text-sm sm:text-base">Cooperating Broker (if applicable)</Label>
+                <Input value={cooperatingBroker} onChange={e=>setCooperatingBroker(e.target.value)} placeholder="XYZ Realty" className="text-sm sm:text-base" />
+              </div>
+
+              <div>
                 <Label>Earnest money</Label>
                 <div className="flex items-center gap-2">
                   <Select value={earnestMode} onValueChange={(v: any)=> setEarnestMode(v)}>
@@ -1199,14 +1352,20 @@ export default function OfferBuilder() {
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex items-center gap-2">
                 <Checkbox id="insp" checked={inspection} onCheckedChange={(v)=> setInspection(Boolean(v))} />
-                <Label htmlFor="insp">Inspection contingency</Label>
+                <Label htmlFor="insp" className="text-sm sm:text-base">Structural Inspection (NY State required)</Label>
               </div>
               {inspection && (
                 <div>
-                  <Label>Inspection period (days)</Label>
-                  <Input type="number" value={inspectionDays} onChange={e=>setInspectionDays(Number(e.target.value))} />
+                  <Label className="text-sm sm:text-base">Inspection Completion Date</Label>
+                  <Input type="date" value={inspectionDate} onChange={e=>setInspectionDate(e.target.value)} className="text-sm sm:text-base" />
                 </div>
               )}
+
+              <div className="sm:col-span-2">
+                <Label className="text-sm sm:text-base">Attorney Approval Date</Label>
+                <Input type="date" value={attorneyApprovalDate} onChange={e=>setAttorneyApprovalDate(e.target.value)} className="text-sm sm:text-base" />
+                <p className="text-xs text-muted-foreground mt-1">Required in NY - Deadline for attorney approval of contract</p>
+              </div>
 
               <div className="flex items-center gap-2">
                 <Checkbox id="appr" checked={appraisal} onCheckedChange={(v)=> setAppraisal(Boolean(v))} />
@@ -1303,11 +1462,11 @@ export default function OfferBuilder() {
                 <Button variant="outline" onClick={() => {
                   const w = window.open('', '_blank');
                   if (!w) return;
-                  const template = generatePurchaseAgreementFromTemplate();
+                  const template = generateNYStatePurchaseContract();
                   w.document.write(`
                     <html>
                       <head>
-                        <title>Purchase Agreement - ${address || 'Property'}</title>
+                        <title>NY State MLS Purchase Contract - ${address || 'Property'}</title>
                         <style>
                           @page { margin: 0.5in; }
                           body { margin: 0; }
@@ -1320,8 +1479,8 @@ export default function OfferBuilder() {
                       <body>
                         ${template}
                         <div class="no-print" style="text-align: center; margin: 20px; page-break-before: always;">
-                          <button onclick="window.print()" style="background: #2563eb; color: white; padding: 12px 24px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer;">Print Purchase Agreement</button>
-                          <p style="margin-top: 10px; font-size: 14px; color: #666;">This purchase agreement can be printed or saved as PDF for signing and submission.</p>
+                          <button onclick="window.print()" style="background: #2563eb; color: white; padding: 12px 24px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer;">Print NY State MLS Contract</button>
+                          <p style="margin-top: 10px; font-size: 14px; color: #666;">This is the official NY State MLS Standard Form Contract ready for signatures.</p>
                         </div>
                       </body>
                     </html>
@@ -1329,7 +1488,7 @@ export default function OfferBuilder() {
                   w.document.close();
                 }} className="w-full sm:w-auto text-xs sm:text-sm">
                   <FileText className="w-4 h-4 mr-2"/>
-                  Generate Purchase Agreement
+                  Generate NY State MLS Contract
                 </Button>
                 <Button className="w-full sm:w-auto text-xs sm:text-sm"><Mail className="w-4 h-4 mr-2"/>Submit Offer</Button>
               </div>
@@ -1443,9 +1602,9 @@ export default function OfferBuilder() {
                 </ul>
               )}
             </div>
-            <div className="p-3 border rounded-lg bg-blue-50">
-              <h6 className="font-medium text-sm mb-1">Purchase Agreement Template</h6>
-              <p className="text-xs text-blue-800">All your offer details will automatically populate the official purchase agreement template when generated.</p>
+            <div className="p-3 border rounded-lg bg-green-50">
+              <h6 className="font-medium text-sm mb-1">NY State MLS Official Contract</h6>
+              <p className="text-xs text-green-800">Your offer data automatically fills the official NY State MLS Standard Form Contract for Purchase and Sale of Real Estate.</p>
             </div>
             <Button variant="destructive" onClick={handleClearDraft}>Clear saved (autosave) draft</Button>
           </CardContent>
