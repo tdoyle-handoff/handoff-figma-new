@@ -29,35 +29,10 @@ interface ComparisonResult {
   recommendation: string;
 }
 
-const SAMPLE_ADDRESSES = [
-  {
-    name: 'ATTOM Documentation Example',
-    address1: '586 Franklin Ave',
-    address2: 'Brooklyn, NY 11238',
-    description: 'Official example from ATTOM API documentation'
-  },
-  {
-    name: 'Deep River, CT Test',
-    address1: '11 Village Street',
-    address2: 'Deep River, CT 06412',
-    description: 'Our current test address'
-  },
-  {
-    name: 'Greenwich, CT Example',
-    address1: '5 Whitney Drive',
-    address2: 'Greenwich, CT 06831',
-    description: 'Connecticut address for testing'
-  },
-  {
-    name: 'Simple Format Test',
-    address1: '123 Main Street',
-    address2: 'Anytown, CA 90210',
-    description: 'Basic address format test'
-  }
-];
+const SAMPLE_ADDRESSES: any[] = [];
 
 export function AttomOfficialApiTester() {
-  const [address1, setAddress1] = useState('586 Franklin Ave');
+  const [address1, setAddress1] = useState('');
   const [address2, setAddress2] = useState('Brooklyn, NY 11238');
   const [isTestingCurrent, setIsTestingCurrent] = useState(false);
   const [isTestingOfficial, setIsTestingOfficial] = useState(false);
@@ -249,7 +224,7 @@ export function AttomOfficialApiTester() {
     setIsComparingAll(false);
   };
 
-  const loadSampleAddress = (sample: typeof SAMPLE_ADDRESSES[0]) => {
+  const loadSampleAddress = (sample: any) => {
     setAddress1(sample.address1);
     setAddress2(sample.address2);
   };
@@ -499,23 +474,35 @@ export function AttomOfficialApiTester() {
         {/* Sample Addresses Tab */}
         <TabsContent value="samples" className="space-y-4">
           <div className="grid gap-4">
-            {SAMPLE_ADDRESSES.map((sample, index) => (
-              <Card key={index} className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => loadSampleAddress(sample)}>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg">{sample.name}</CardTitle>
-                    <Button size="sm" variant="outline">Use This Address</Button>
-                  </div>
-                  <CardDescription>{sample.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-1 text-sm">
-                    <div><strong>Address 1:</strong> {sample.address1}</div>
-                    <div><strong>Address 2:</strong> {sample.address2}</div>
-                  </div>
+            {SAMPLE_ADDRESSES.length === 0 ? (
+              <Card>
+                <CardContent className="flex flex-col items-center justify-center py-12">
+                  <MapPin className="w-12 h-12 text-gray-400 mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No sample addresses available</h3>
+                  <p className="text-gray-500 text-center max-w-sm">
+                    Sample addresses can be configured by developers for testing purposes.
+                  </p>
                 </CardContent>
               </Card>
-            ))}
+            ) : (
+              SAMPLE_ADDRESSES.map((sample, index) => (
+                <Card key={index} className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => loadSampleAddress(sample)}>
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-lg">{sample.name}</CardTitle>
+                      <Button size="sm" variant="outline">Use This Address</Button>
+                    </div>
+                    <CardDescription>{sample.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-1 text-sm">
+                      <div><strong>Address 1:</strong> {sample.address1}</div>
+                      <div><strong>Address 2:</strong> {sample.address2}</div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </div>
         </TabsContent>
       </Tabs>
