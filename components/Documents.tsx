@@ -55,15 +55,6 @@ interface SharedUser {
   lastAccessed?: string;
 }
 
-interface UploadedDocument {
-  id: string;
-  name: string;
-  size: number;
-  type: string;
-  uploadDate: Date;
-  file?: File | null;
-}
-
 interface SetupData {
   buyerEmail: string;
   buyerName: string;
