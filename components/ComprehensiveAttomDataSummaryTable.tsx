@@ -550,7 +550,7 @@ export function ComprehensiveAttomDataSummaryTable({
             <div className="flex gap-2 items-center">
               <div className="text-sm text-gray-600 flex-1">
                 {isAddressComplete() && (
-                  <span>📍 {getFullAddress()}</span>
+                  <span>{getFullAddress()}</span>
                 )}
               </div>
               <Button
