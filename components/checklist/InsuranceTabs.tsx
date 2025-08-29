@@ -1,15 +1,46 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Progress } from '../ui/progress';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Textarea } from '../ui/textarea';
+import { Badge } from '../ui/badge';
 import { useTaskContext } from '../TaskContext';
-import InsuranceQuotes from '../vendor/InsuranceQuotes';
-import InsuranceProviders from '../vendor/InsuranceProviders';
 import InsuranceCalculator from '../vendor/InsuranceCalculator';
-import { Shield, DollarSign, Calculator as CalcIcon, FileText } from 'lucide-react';
+import { Calculator as CalcIcon, FileText, Upload, Plus, Trash2, Calendar, DollarSign } from 'lucide-react';
+
+interface Policy {
+  id: string;
+  name: string;
+  provider: string;
+  policyNumber: string;
+  coverage: string;
+  premium: number;
+  deductible: number;
+  startDate: string;
+  endDate: string;
+  notes: string;
+  documentUrl?: string;
+}
 
 interface Props { onNavigate?: (page: string) => void }
 export default function ChecklistInsuranceTabs({ onNavigate }: Props) {
-  const [tab, setTab] = React.useState<'quotes' | 'providers' | 'calculator' | 'policies'>('quotes');
+  const [tab, setTab] = React.useState<'calculator' | 'policies'>('policies');
+  const [policies, setPolicies] = React.useState<Policy[]>([]);
+  const [showAddForm, setShowAddForm] = React.useState(false);
+  const [newPolicy, setNewPolicy] = React.useState<Omit<Policy, 'id'>>({
+    name: '',
+    provider: '',
+    policyNumber: '',
+    coverage: '',
+    premium: 0,
+    deductible: 0,
+    startDate: '',
+    endDate: '',
+    notes: '',
+    documentUrl: ''
+  });
   const taskContext = useTaskContext();
   const insuranceTasks = taskContext.tasks.filter(t => t.category === 'insurance' || t.subcategory === 'insurance');
   const completed = insuranceTasks.filter(t => t.status === 'completed').length;
@@ -17,11 +48,43 @@ export default function ChecklistInsuranceTabs({ onNavigate }: Props) {
   const progress = total > 0 ? (completed / total) * 100 : 0;
 
   const sections = [
-    { key: 'quotes', label: 'Quotes', icon: DollarSign },
-    { key: 'providers', label: 'Providers', icon: Shield },
-    { key: 'calculator', label: 'Calculator', icon: CalcIcon },
     { key: 'policies', label: 'Policies', icon: FileText },
+    { key: 'calculator', label: 'Calculator', icon: CalcIcon },
   ] as const;
+
+  const handleAddPolicy = () => {
+    const policy: Policy = {
+      ...newPolicy,
+      id: Date.now().toString()
+    };
+    setPolicies([...policies, policy]);
+    setNewPolicy({
+      name: '',
+      provider: '',
+      policyNumber: '',
+      coverage: '',
+      premium: 0,
+      deductible: 0,
+      startDate: '',
+      endDate: '',
+      notes: '',
+      documentUrl: ''
+    });
+    setShowAddForm(false);
+  };
+
+  const handleDeletePolicy = (id: string) => {
+    setPolicies(policies.filter(p => p.id !== id));
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // In a real implementation, you'd upload to a server
+      // For now, we'll just store the filename
+      setNewPolicy({ ...newPolicy, documentUrl: file.name });
+    }
+  };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
