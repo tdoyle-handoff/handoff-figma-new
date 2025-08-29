@@ -33,7 +33,7 @@ const SAMPLE_ADDRESSES: any[] = [];
 
 export function AttomOfficialApiTester() {
   const [address1, setAddress1] = useState('');
-  const [address2, setAddress2] = useState('Brooklyn, NY 11238');
+  const [address2, setAddress2] = useState('');
   const [isTestingCurrent, setIsTestingCurrent] = useState(false);
   const [isTestingOfficial, setIsTestingOfficial] = useState(false);
   const [isComparingAll, setIsComparingAll] = useState(false);
