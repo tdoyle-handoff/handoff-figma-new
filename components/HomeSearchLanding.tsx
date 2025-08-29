@@ -463,11 +463,6 @@ export default function HomeSearchLanding() {
           <CardContent>
             {/* Smart Search Bar at top of criteria */}
             <div className="mb-6 p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg border border-gray-200">
-              <div className="flex items-center gap-2 mb-3">
-                <Target className="w-5 h-5 text-blue-600" />
-                <h3 className="font-medium text-gray-900">Smart Search</h3>
-                <Badge variant="secondary" className="bg-blue-100 text-blue-700">Intelligent</Badge>
-              </div>
               <div className="flex gap-3">
                 <Input
                   placeholder="e.g., 'Find me a 3-bedroom home under $500k near good schools in Austin or Dallas'"
