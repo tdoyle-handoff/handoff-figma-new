@@ -501,8 +501,7 @@ export function ComprehensiveAttomDataSummaryTable({
       {/* Header and Controls */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Database className="w-5 h-5 text-primary" />
+          <CardTitle>
             Find out more details about a home
           </CardTitle>
         </CardHeader>
@@ -561,9 +560,7 @@ export function ComprehensiveAttomDataSummaryTable({
               >
                 {isLoading ? (
                   <RefreshCw className="w-4 h-4 animate-spin mr-2" />
-                ) : (
-                  <Database className="w-4 h-4 mr-2" />
-                )}
+                ) : null}
                 Search
               </Button>
             </div>
