@@ -207,7 +207,7 @@ export default function MobileLayout({
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Mobile Header */}
-      <header className="sticky top-0 z-40 bg-card border-b border-border px-4 py-3 safe-area-inset-top">
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-border px-4 py-3 safe-area-inset-top shadow-sm">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
@@ -217,9 +217,9 @@ export default function MobileLayout({
                 </Button>
               </SheetTrigger>
               <img src={handoffLogo} alt="Handoff" className="ml-2 h-6 w-auto" />
-              <SheetContent side="left" className="w-80 p-0">
+              <SheetContent side="left" className="w-80 p-0 bg-white/98 backdrop-blur-md">
                 <div className="flex flex-col h-full">
-                  <SheetHeader className="p-6 border-b border-border text-left">
+                  <SheetHeader className="p-6 border-b border-border text-left bg-white">
                     <div className="flex items-center gap-3">
                       <img
                         src={handoffLogo}
@@ -237,7 +237,7 @@ export default function MobileLayout({
                   </SheetHeader>
 
                   {/* User Profile in Mobile Menu */}
-                  <div className="p-4 border-b border-border bg-muted/30">
+                  <div className="p-4 border-b border-border bg-gray-50">
                     <div className="flex items-center gap-3 mb-3">
                       <Avatar className="h-10 w-10">
                         <AvatarImage src="" />
@@ -361,7 +361,7 @@ export default function MobileLayout({
       </main>
 
       {/* Bottom Navigation */}
-      <nav className="sticky bottom-0 bg-card border-t border-border px-2 py-2 safe-area-inset-bottom">
+      <nav className="sticky bottom-0 bg-white/95 backdrop-blur-md border-t border-border px-2 py-2 safe-area-inset-bottom shadow-lg">
         <div className="flex items-center justify-around">
           {bottomNavItems.map((item) => {
             const Icon = item.icon;
