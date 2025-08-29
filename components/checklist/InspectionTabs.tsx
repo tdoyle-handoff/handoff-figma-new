@@ -176,6 +176,21 @@ export default function ChecklistInspectionTabs({ onNavigate, selectedTask }: Pr
       </div>
 
       <div className="lg:col-span-9 space-y-3">
+        {/* Selected Task Indicator */}
+        {selectedTask?.subcategory === 'inspections' && (
+          <Card className="bg-blue-50 border-blue-200">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                <div>
+                  <h4 className="font-medium text-blue-900">{selectedTask.title}</h4>
+                  <p className="text-sm text-blue-700">{selectedTask.description}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {tab === 'scheduled' && (
           <Card className="shadow-sm">
             <CardHeader className="pb-4">
