@@ -286,12 +286,12 @@ interface TasksProps {
 export default function Tasks({ onNavigate }: TasksProps) {
   const isMobile = useIsMobile();
   const taskContext = useTaskContext();
-  
+
   // Feature flags for visibility
   const SHOW_TASK_CATEGORIES = false;
   const SHOW_QUICK_ACTIONS = false;
   const SHOW_PROGRESS_COUNTS = false;
-  
+
   const { taskPhases } = taskContext;
   const totalTasks = taskContext.getTotalTasksCount();
   const completedTasks = taskContext.getCompletedTasksCount();
@@ -302,11 +302,40 @@ export default function Tasks({ onNavigate }: TasksProps) {
     taskContext.updateTaskStatus(taskId, status);
   };
 
+  // Tab state management
+  const [activeTab, setActiveTab] = useState<string>('checklist');
+
   // selection state for sidebar -> detail
   const [selectedPhaseId, setSelectedPhaseId] = useState<string | undefined>(taskPhases.find(p => p.status === 'active')?.id);
   const flatTasks = taskPhases.flatMap(p => p.tasks);
   const firstActiveTask = flatTasks.find(t => ['active','in-progress','overdue'].includes(t.status)) || flatTasks[0] || null;
   const [selectedTaskId, setSelectedTaskId] = useState<string | undefined>(firstActiveTask?.id);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+
+  // Handle task selection and tab synchronization
+  const handleSelectTask = (taskId: string) => {
+    setSelectedTaskId(taskId);
+    const task = flatTasks.find(t => t.id === taskId);
+    setSelectedTask(task || null);
+
+    // Auto-switch to appropriate tab based on task subcategory
+    if (task?.subcategory) {
+      switch (task.subcategory) {
+        case 'legal':
+          setActiveTab('legal');
+          break;
+        case 'inspections':
+          setActiveTab('inspections');
+          break;
+        case 'insurance':
+          setActiveTab('insurance');
+          break;
+        default:
+          // Stay on checklist tab for general tasks
+          break;
+      }
+    }
+  };
   
   // Get active tasks for quick actions
   const activeTasksForAlert = taskPhases.flatMap(phase => phase.tasks).filter(task => 
