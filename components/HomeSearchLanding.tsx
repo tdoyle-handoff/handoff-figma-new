@@ -314,23 +314,6 @@ export default function HomeSearchLanding() {
           <Search className="w-8 h-8 text-blue-600" />
           <h1 className="text-3xl font-bold text-gray-900">Find Your Dream Home</h1>
         </div>
-        <p className="text-gray-600 max-w-2xl mx-auto">
-          Search for your dream home using natural language or detailed criteria. Our smart search automatically updates your parameters and finds matching properties across multiple states using live MLS data.
-        </p>
-        <div className="flex items-center justify-center gap-4 text-sm text-gray-500">
-          <div className="flex items-center gap-1">
-            <CheckCircle2 className="w-4 h-4 text-green-600" />
-            <span>Multi-State Search</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <CheckCircle2 className="w-4 h-4 text-green-600" />
-            <span>Smart Matching</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <CheckCircle2 className="w-4 h-4 text-green-600" />
-            <span>Live MLS Data</span>
-          </div>
-        </div>
       </div>
 
       {/* Main Search Form */}
@@ -341,9 +324,6 @@ export default function HomeSearchLanding() {
               <Filter className="w-5 h-5" />
               Search Criteria
             </CardTitle>
-            <CardDescription>
-              Use the AI search above or fill out detailed criteria below. We'll search across multiple MLSs to find your perfect home.
-            </CardDescription>
           </CardHeader>
           <CardContent>
             {/* Smart Search Bar at top of criteria */}
@@ -353,9 +333,6 @@ export default function HomeSearchLanding() {
                 <h3 className="font-medium text-gray-900">Smart Search</h3>
                 <Badge variant="secondary" className="bg-blue-100 text-blue-700">Intelligent</Badge>
               </div>
-              <p className="text-sm text-gray-600 mb-3">
-                Describe your dream home in natural language or use the detailed criteria below
-              </p>
               <div className="flex gap-3">
                 <Input
                   placeholder="e.g., 'Find me a 3-bedroom home under $500k near good schools in Austin or Dallas'"
@@ -395,7 +372,7 @@ export default function HomeSearchLanding() {
               <TabsContent value="basics" className="space-y-6">
                 {/* Home Types */}
                 <div className="space-y-3">
-                  <Label className="text-base font-medium">What type of home are you looking for?</Label>
+                  <Label className="text-base font-medium">Home Type</Label>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {HOME_TYPES.map(type => {
                       const Icon = type.icon;
@@ -423,11 +400,40 @@ export default function HomeSearchLanding() {
 
                 {/* Locations */}
                 <div className="space-y-3">
-                  <Label className="text-base font-medium">Where would you like to live?</Label>
+                  <Label className="text-base font-medium">Location</Label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="space-y-2">
+                      <Select value={locationRegion} onValueChange={setLocationRegion}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Region" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="northeast">Northeast</SelectItem>
+                          <SelectItem value="southeast">Southeast</SelectItem>
+                          <SelectItem value="midwest">Midwest</SelectItem>
+                          <SelectItem value="southwest">Southwest</SelectItem>
+                          <SelectItem value="west">West</SelectItem>
+                          <SelectItem value="pacific">Pacific</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Select value={locationState} onValueChange={setLocationState}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select State" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {US_STATES.map(state => (
+                            <SelectItem key={state} value={state.toLowerCase().replace(' ', '-')}>{state}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
                   <div className="flex gap-2">
                     <div className="flex-1">
                       <Input
-                        placeholder="Enter city, state, or ZIP code"
+                        placeholder="City name or ZIP code"
                         value={newLocationInput}
                         onChange={(e) => setNewLocationInput(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && handleLocationAdd()}
@@ -452,30 +458,57 @@ export default function HomeSearchLanding() {
                       ))}
                     </div>
                   )}
-                  <p className="text-sm text-gray-500">
-                    💡 Add multiple locations to search across different areas and states
-                  </p>
                 </div>
 
                 {/* Price Range */}
                 <div className="space-y-3">
                   <Label className="text-base font-medium">Price Range</Label>
-                  <div className="px-3">
-                    <Slider
-                      value={searchCriteria.priceRange}
-                      onValueChange={(value) => setSearchCriteria(prev => ({
-                        ...prev,
-                        priceRange: value as [number, number]
-                      }))}
-                      max={2000000}
-                      min={50000}
-                      step={25000}
-                      className="w-full"
-                    />
-                    <div className="flex justify-between text-sm text-gray-600 mt-2">
-                      <span>${searchCriteria.priceRange[0].toLocaleString()}</span>
-                      <span>${searchCriteria.priceRange[1].toLocaleString()}</span>
+                  <div className="grid grid-cols-4 gap-2 mb-3">
+                    {PRICE_PRESETS.map(preset => (
+                      <Button
+                        key={preset.label}
+                        variant={isPricePresetActive(preset) ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setSearchCriteria(prev => ({ ...prev, priceRange: preset.range }))}
+                      >
+                        {preset.label}
+                      </Button>
+                    ))}
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <Label className="text-sm">Min Price</Label>
+                      <Input
+                        type="number"
+                        placeholder="50,000"
+                        value={searchCriteria.priceRange[0]}
+                        onChange={(e) => {
+                          const value = Number(e.target.value) || 0;
+                          setSearchCriteria(prev => ({
+                            ...prev,
+                            priceRange: [value, prev.priceRange[1]]
+                          }));
+                        }}
+                      />
                     </div>
+                    <div className="space-y-1">
+                      <Label className="text-sm">Max Price</Label>
+                      <Input
+                        type="number"
+                        placeholder="800,000"
+                        value={searchCriteria.priceRange[1]}
+                        onChange={(e) => {
+                          const value = Number(e.target.value) || 0;
+                          setSearchCriteria(prev => ({
+                            ...prev,
+                            priceRange: [prev.priceRange[0], value]
+                          }));
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div className="text-center text-sm text-gray-600">
+                    ${searchCriteria.priceRange[0].toLocaleString()} - ${searchCriteria.priceRange[1].toLocaleString()}
                   </div>
                 </div>
               </TabsContent>
@@ -574,7 +607,7 @@ export default function HomeSearchLanding() {
               <TabsContent value="features" className="space-y-6">
                 {/* Amenities */}
                 <div className="space-y-3">
-                  <Label className="text-base font-medium">Desired Amenities</Label>
+                  <Label className="text-base font-medium">Amenities</Label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {AMENITIES.map(amenity => {
                       const isSelected = searchCriteria.amenities.includes(amenity.id);
@@ -602,7 +635,7 @@ export default function HomeSearchLanding() {
 
                 {/* Special Requirements */}
                 <div className="space-y-3">
-                  <Label className="text-base font-medium">Special Requirements</Label>
+                  <Label className="text-base font-medium">Requirements</Label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {SPECIAL_REQUIREMENTS.map(req => {
                       const isSelected = searchCriteria.specialRequirements.includes(req.id);
@@ -682,13 +715,6 @@ export default function HomeSearchLanding() {
                     </Select>
                   </div>
 
-                  <Alert>
-                    <DollarSign className="h-4 w-4" />
-                    <AlertDescription>
-                      <strong>Budget Tip:</strong> Remember to factor in closing costs (2-3%), property taxes,
-                      insurance, and potential HOA fees when determining your budget.
-                    </AlertDescription>
-                  </Alert>
                 </div>
               </TabsContent>
             </Tabs>
