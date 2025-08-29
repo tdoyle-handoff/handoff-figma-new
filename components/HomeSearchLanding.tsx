@@ -93,7 +93,7 @@ const AMENITIES = [
   { id: 'garage', label: 'Garage/Parking', icon: '🚗' },
   { id: 'yard', label: 'Large Yard', icon: '🌳' },
   { id: 'updated-kitchen', label: 'Updated Kitchen', icon: '🍳' },
-  { id: 'hardwood', label: 'Hardwood Floors', icon: '🪵' },
+  { id: 'hardwood', label: 'Hardwood Floors', icon: '��' },
   { id: 'fireplace', label: 'Fireplace', icon: '🔥' },
   { id: 'master-suite', label: 'Master Suite', icon: '🛏️' },
   { id: 'basement', label: 'Finished Basement', icon: '🏠' },
@@ -311,6 +311,101 @@ export default function HomeSearchLanding() {
         specialRequirements: prev.specialRequirements.includes('good-schools') ? prev.specialRequirements : [...prev.specialRequirements, 'good-schools']
       }));
     }
+  };
+
+  const addRegion = () => {
+    if (selectedRegion && !searchCriteria.locationCriteria.regions.includes(selectedRegion)) {
+      setSearchCriteria(prev => ({
+        ...prev,
+        locationCriteria: {
+          ...prev.locationCriteria,
+          regions: [...prev.locationCriteria.regions, selectedRegion]
+        }
+      }));
+      setSelectedRegion('');
+    }
+  };
+
+  const addState = () => {
+    if (selectedState && !searchCriteria.locationCriteria.states.includes(selectedState)) {
+      setSearchCriteria(prev => ({
+        ...prev,
+        locationCriteria: {
+          ...prev.locationCriteria,
+          states: [...prev.locationCriteria.states, selectedState]
+        }
+      }));
+      setSelectedState('');
+    }
+  };
+
+  const addCity = () => {
+    if (newLocationInput.trim() && !searchCriteria.locationCriteria.cities.includes(newLocationInput.trim())) {
+      setSearchCriteria(prev => ({
+        ...prev,
+        locationCriteria: {
+          ...prev.locationCriteria,
+          cities: [...prev.locationCriteria.cities, newLocationInput.trim()]
+        }
+      }));
+      setNewLocationInput('');
+    }
+  };
+
+  const addZipCode = () => {
+    if (zipCodeInput.trim() && /^\d{5}(-\d{4})?$/.test(zipCodeInput.trim())) {
+      const exists = searchCriteria.locationCriteria.zipCodes.find(z => z.code === zipCodeInput.trim());
+      if (!exists) {
+        setSearchCriteria(prev => ({
+          ...prev,
+          locationCriteria: {
+            ...prev.locationCriteria,
+            zipCodes: [...prev.locationCriteria.zipCodes, { code: zipCodeInput.trim(), distance: zipCodeDistance }]
+          }
+        }));
+        setZipCodeInput('');
+      }
+    }
+  };
+
+  const removeRegion = (region: string) => {
+    setSearchCriteria(prev => ({
+      ...prev,
+      locationCriteria: {
+        ...prev.locationCriteria,
+        regions: prev.locationCriteria.regions.filter(r => r !== region)
+      }
+    }));
+  };
+
+  const removeState = (state: string) => {
+    setSearchCriteria(prev => ({
+      ...prev,
+      locationCriteria: {
+        ...prev.locationCriteria,
+        states: prev.locationCriteria.states.filter(s => s !== state)
+      }
+    }));
+  };
+
+  const removeCity = (city: string) => {
+    setSearchCriteria(prev => ({
+      ...prev,
+      locationCriteria: {
+        ...prev.locationCriteria,
+        cities: prev.locationCriteria.cities.filter(c => c !== city)
+      }
+    }));
+  };
+
+  const removeZipCode = (zipCode: string) => {
+    setSearchCriteria(prev => ({
+      ...prev,
+      locationCriteria: {
+        ...prev.locationCriteria,
+        zipCodes: prev.locationCriteria.zipCodes.filter(z => z.code !== zipCode)
+      }
+    }));
   };
 
   const handleLocationAdd = () => {
