@@ -817,12 +817,6 @@ export default function Legal() {
             Progress
           </TabsTrigger>
           <TabsTrigger
-            value="attorney"
-            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200"
-          >
-            Attorney
-          </TabsTrigger>
-          <TabsTrigger
             value="contract"
             className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200"
           >
