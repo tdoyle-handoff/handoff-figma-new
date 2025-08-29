@@ -2,7 +2,7 @@
 WIREFRAME: Buyer Offer Builder (Web)
 
 [Header]
-┌─────────────────────────────────────────────────────────────────┐
+┌───────────────────────────────────────��─────────────────────────┐
 │ Offer Builder  | Step 1 of 5  | Save Draft | Help            │
 └─────���────────────────────────────────────────────────────────┘
 
@@ -1086,7 +1086,7 @@ export default function OfferBuilder() {
   return (
     <div className="mx-auto max-w-7xl p-4 sm:p-6">
       {/* Data Persistence Notification */}
-      <DataPersistenceNotification className="mb-4" />
+      {userProfile !== undefined && <DataPersistenceNotification className="mb-4" />}
 
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-4 lg:gap-6">
         {/* Left: main content */}
