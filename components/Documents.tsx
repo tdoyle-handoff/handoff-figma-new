@@ -178,51 +178,8 @@ export default function Documents({ setupData }: DocumentsProps) {
   const completedRequired = requiredDocs.filter(doc => doc.status === 'approved' || doc.status === 'signed');
   const completionPercentage = requiredDocs.length > 0 ? (completedRequired.length / requiredDocs.length) * 100 : 100;
 
-  // Document templates with real content
-  const documentTemplates = [
-    {
-      id: 'purchase-agreement',
-      name: 'Purchase Agreement',
-      description: 'Standard residential purchase agreement template',
-      category: 'contracts',
-      content: generatePurchaseAgreementTemplate
-    },
-    {
-      id: 'counter-offer',
-      name: 'Counter Offer',
-      description: 'Counter offer form for purchase negotiations',
-      category: 'contracts',
-      content: generateCounterOfferTemplate
-    },
-    {
-      id: 'inspection-addendum',
-      name: 'Inspection Addendum',
-      description: 'Property inspection addendum form',
-      category: 'inspections',
-      content: generateInspectionAddendumTemplate
-    },
-    {
-      id: 'repair-request',
-      name: 'Repair Request',
-      description: 'Request for repairs based on inspection findings',
-      category: 'inspections',
-      content: generateRepairRequestTemplate
-    },
-    {
-      id: 'disclosure-statement',
-      name: 'Property Disclosure Statement',
-      description: 'Seller property disclosure form',
-      category: 'disclosures',
-      content: generateDisclosureStatementTemplate
-    },
-    {
-      id: 'financing-contingency',
-      name: 'Financing Contingency Addendum',
-      description: 'Addendum for financing contingency terms',
-      category: 'financing',
-      content: generateFinancingContingencyTemplate
-    }
-  ];
+  // Document templates (empty for now)
+  const documentTemplates: any[] = [];
 
   // Template generation functions
   function generatePurchaseAgreementTemplate() {
@@ -898,15 +855,6 @@ export default function Documents({ setupData }: DocumentsProps) {
       </div>
 
 
-      {/* Agent Agreement Documents Alert */}
-      {agentAgreementDocs.length > 0 && (
-        <Alert className="bg-green-50 border-green-200">
-          <CheckCircle className="h-4 w-4 text-green-600" />
-          <AlertDescription>
-            <strong>Agent Agreement Documents:</strong> {agentAgreementDocs.length} document{agentAgreementDocs.length !== 1 ? 's' : ''} from your setup process {agentAgreementDocs.length === 1 ? 'is' : 'are'} now available in your document library.
-          </AlertDescription>
-        </Alert>
-      )}
 
       <Tabs defaultValue="all" className="w-full">
         <TabsList className="w-full bg-transparent h-auto p-0 border-b border-gray-200 rounded-none flex justify-start overflow-x-auto">
