@@ -4,11 +4,30 @@ import { Progress } from '../ui/progress';
 import { LegalProgressTracker, TitleSearch, SettlementReview } from '../Legal';
 import ContractAnalysis from '../ContractAnalysis';
 import { Scale, FileText, Search, CheckCircle } from 'lucide-react';
-import { useTaskContext } from '../TaskContext';
+import { useTaskContext, Task } from '../TaskContext';
 
-interface Props { onNavigate?: (page: string) => void }
-export default function ChecklistLegalTabs({ onNavigate }: Props) {
+interface Props {
+  onNavigate?: (page: string) => void;
+  selectedTask?: Task | null;
+}
+export default function ChecklistLegalTabs({ onNavigate, selectedTask }: Props) {
   const [tab, setTab] = React.useState<'progress' | 'contract' | 'title' | 'settlement'>('progress');
+
+  // Auto-switch to relevant tab based on selected task
+  React.useEffect(() => {
+    if (selectedTask?.subcategory === 'legal') {
+      // Map task titles/categories to appropriate tabs
+      if (selectedTask.title.toLowerCase().includes('contract') || selectedTask.title.toLowerCase().includes('review')) {
+        setTab('contract');
+      } else if (selectedTask.title.toLowerCase().includes('title') || selectedTask.title.toLowerCase().includes('search')) {
+        setTab('title');
+      } else if (selectedTask.title.toLowerCase().includes('settlement') || selectedTask.title.toLowerCase().includes('closing')) {
+        setTab('settlement');
+      } else {
+        setTab('progress');
+      }
+    }
+  }, [selectedTask]);
   const taskContext = useTaskContext();
   const legalTasks = taskContext.tasks.filter(t => ['legal','contract','offer','closing'].includes(t.category));
   const completed = legalTasks.filter(t => t.status === 'completed').length;
