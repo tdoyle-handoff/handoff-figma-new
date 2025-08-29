@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Alert, AlertDescription } from './ui/alert';
 import { Separator } from './ui/separator';
-import SimpleOnboardingForm from './SimpleOnboardingForm';
+import { SimpleOnboardingForm } from './SimpleOnboardingForm';
 import {
   Search,
   Home,
