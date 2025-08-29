@@ -13,69 +13,6 @@ import { Alert, AlertDescription } from './ui/alert';
 import { useTaskContext, Task } from './TaskContext';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
 
-interface Lawyer {
-  id: string;
-  name: string;
-  firm: string;
-  experience: number;
-  rating: number;
-  reviewCount: number;
-  location: string;
-  phone: string;
-  email: string;
-  specialties: string[];
-  hourlyRate: number;
-  photo: string;
-  verified: boolean;
-}
-
-const mockLawyers: Lawyer[] = [
-  {
-    id: '1',
-    name: 'Sarah Mitchell',
-    firm: 'Mitchell & Associates',
-    experience: 12,
-    rating: 4.9,
-    reviewCount: 127,
-    location: 'Riverside Heights, CA',
-    phone: '(555) 123-4567',
-    email: 'sarah@mitchelllaw.com',
-    specialties: ['Real Estate Law', 'Property Transactions', 'Title Issues'],
-    hourlyRate: 350,
-    photo: 'https://images.unsplash.com/photo-1494790108755-2616c56495e2?w=64&h=64&fit=crop&crop=face',
-    verified: true,
-  },
-  {
-    id: '2',
-    name: 'Michael Chen',
-    firm: 'Chen Law Group',
-    experience: 8,
-    rating: 4.7,
-    reviewCount: 89,
-    location: 'Riverside Heights, CA',
-    phone: '(555) 987-6543',
-    email: 'mchen@chenlawgroup.com',
-    specialties: ['Real Estate Law', 'Contract Review', 'Closings'],
-    hourlyRate: 295,
-    photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=64&h=64&fit=crop&crop=face',
-    verified: true,
-  },
-  {
-    id: '3',
-    name: 'Jennifer Rodriguez',
-    firm: 'Rodriguez Legal Services',
-    experience: 15,
-    rating: 4.8,
-    reviewCount: 203,
-    location: 'Downtown, CA',
-    phone: '(555) 456-7890',
-    email: 'j.rodriguez@rlslaw.com',
-    specialties: ['Real Estate Law', 'Litigation', 'Title Defense'],
-    hourlyRate: 425,
-    photo: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=64&h=64&fit=crop&crop=face',
-    verified: true,
-  },
-];
 
 // Task Instruction Card Component
 const TaskInstructionCard = ({ task }: { task: Task }) => {
