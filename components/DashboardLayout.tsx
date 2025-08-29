@@ -70,15 +70,15 @@ export default function DashboardLayout({
 
     // Purchasing Your Home
     { id: 'tasks', label: 'Transaction Checklist', icon: CheckSquare, category: 'Purchasing Your Home' },
-    { id: 'documents', label: 'Documents & Legal', icon: FileText, category: 'Purchasing Your Home' },
+    { id: 'documents', label: 'Contract Builder', icon: FileText, category: 'Purchasing Your Home' },
 
     // Support
     { id: 'resources', label: 'Education Hub', icon: BookOpen, category: 'Support' },
 
-    // Developer section (only visible to developers)
-    ...(isDeveloper ? [
-      { id: 'dev-config', label: 'Developer Config', icon: Code, category: 'Developer Tools', description: 'Configure UI elements and features' }
-    ] : [])
+    // Developer section (hidden)
+    // ...(isDeveloper ? [
+    //   { id: 'dev-config', label: 'Developer Config', icon: Code, category: 'Developer Tools', description: 'Configure UI elements and features' }
+    // ] : [])
   ];
 
   const categoryColors = {
@@ -196,7 +196,7 @@ export default function DashboardLayout({
           <div className="space-y-1">
             {Object.entries(groupedNavigation).map(([category, items]) => (
               <React.Fragment key={category}>
-                {sidebarOpen && category !== 'Finding your Dream Home' && category !== 'Purchasing Your Home' && (
+                {sidebarOpen && category !== 'Finding your Dream Home' && category !== 'Purchasing Your Home' && category !== 'Support' && (
                   <div className="px-3 py-2 text-xs font-medium text-blue-300 uppercase tracking-wide">
                     {category}
                   </div>
