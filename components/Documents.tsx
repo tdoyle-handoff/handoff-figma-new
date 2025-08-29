@@ -1,5 +1,5 @@
 import React, { useState, Suspense } from 'react';
-import { Folder, Users, Copy, Mail, Link, Globe, Lock, Settings, UserPlus, UserMinus, Shield, ChevronDown, AlertCircle } from 'lucide-react';
+import { Folder, Users, Copy, Mail, Link, Globe, Lock, Settings, UserPlus, UserMinus, Shield, ChevronDown, AlertCircle, Share } from 'lucide-react';
 import { DownloadButton, DarkDownloadButton } from './ui/download-button';
 import ContractAnalysis from './ContractAnalysis';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
