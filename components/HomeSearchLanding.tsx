@@ -1046,11 +1046,7 @@ export default function HomeSearchLanding() {
                           }))}
                         >
                           <Checkbox checked={isSelected} readOnly />
-                          {typeof req.icon === 'string' ? (
-                            <span className="text-lg">{req.icon}</span>
-                          ) : (
-                            <Icon className="w-5 h-5" />
-                          )}
+                          <Icon className="w-5 h-5" />
                           <span className={`text-sm ${isSelected ? 'text-green-600 font-medium' : 'text-gray-600'}`}>
                             {req.label}
                           </span>
