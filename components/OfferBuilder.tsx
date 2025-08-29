@@ -1380,7 +1380,7 @@ export default function OfferBuilder() {
 
       {/* Purchase Agreement Template Dialog */}
       <Dialog open={showTemplateDialog} onOpenChange={setShowTemplateDialog}>
-        <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden flex flex-col">
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden flex flex-col bg-white border-gray-200 shadow-xl">
           <DialogHeader>
             <DialogTitle>Purchase Agreement</DialogTitle>
             <DialogDescription>
