@@ -91,12 +91,6 @@ export default function ContractAnalysis({ onNavigate }: ContractAnalysisProps) 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const isMobile = useIsMobile();
 
-  // Load sample contract on component mount
-  React.useEffect(() => {
-    const sampleContract = generateSamplePurchaseAgreement();
-    setContracts([sampleContract]);
-    setSelectedContract(sampleContract);
-  }, []);
 
   const handleFileUpload = async (files: FileList | File[]) => {
     const fileArray = Array.from(files);
@@ -127,11 +121,11 @@ export default function ContractAnalysis({ onNavigate }: ContractAnalysisProps) 
       setContracts(prev => [...prev, newContract]);
       setAnalyzing(true);
 
-      // Simulate analysis
+      // Simulate analysis (placeholder for real AI analysis)
       setTimeout(() => {
-        setContracts(prev => prev.map(contract => 
-          contract.id === newContract.id 
-            ? { ...contract, status: 'analyzed', analysisComplete: true, keyPoints: generateSamplePurchaseAgreement().keyPoints }
+        setContracts(prev => prev.map(contract =>
+          contract.id === newContract.id
+            ? { ...contract, status: 'analyzed', analysisComplete: true }
             : contract
         ));
         setAnalyzing(false);
