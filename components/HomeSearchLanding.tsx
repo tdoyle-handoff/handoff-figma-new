@@ -1018,7 +1018,6 @@ export default function HomeSearchLanding() {
                           }))}
                         >
                           <Checkbox checked={isSelected} readOnly />
-                          <span className="text-lg">{amenity.icon}</span>
                           <span className={`text-sm ${isSelected ? 'text-blue-600 font-medium' : 'text-gray-600'}`}>
                             {amenity.label}
                           </span>
