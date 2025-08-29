@@ -17,6 +17,7 @@ import { Switch } from './ui/switch';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { useIsMobile } from './ui/use-mobile';
+import { DocumentTemplateManager } from './documents/DocumentTemplateManager';
 
 const OfferBuilder = React.lazy(() => import('./OfferBuilder'));
 
