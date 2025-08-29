@@ -10,12 +10,31 @@ import { Badge } from '../ui/badge';
 import { Textarea } from '../ui/textarea';
 import { Search, ClipboardCheck, AlertTriangle, FileText, Home, Plus, Upload, Download, Calendar, Clock, Phone, DollarSign } from 'lucide-react';
 import { DownloadButton } from '../ui/download-button';
-import { useTaskContext } from '../TaskContext';
+import { useTaskContext, Task } from '../TaskContext';
 import { useInspectionStore, Inspection } from '../InspectionContext';
 
-interface Props { onNavigate?: (page: string) => void }
-export default function ChecklistInspectionTabs({ onNavigate }: Props) {
+interface Props {
+  onNavigate?: (page: string) => void;
+  selectedTask?: Task | null;
+}
+export default function ChecklistInspectionTabs({ onNavigate, selectedTask }: Props) {
   const [tab, setTab] = useState<'scheduled' | 'results' | 'negotiations'>('scheduled');
+
+  // Auto-switch to relevant tab based on selected task
+  React.useEffect(() => {
+    if (selectedTask?.subcategory === 'inspections') {
+      // Map task titles to appropriate tabs
+      if (selectedTask.title.toLowerCase().includes('schedule') || selectedTask.title.toLowerCase().includes('home inspection')) {
+        setTab('scheduled');
+      } else if (selectedTask.title.toLowerCase().includes('report') || selectedTask.title.toLowerCase().includes('result')) {
+        setTab('results');
+      } else if (selectedTask.title.toLowerCase().includes('negotiat') || selectedTask.title.toLowerCase().includes('repair')) {
+        setTab('negotiations');
+      } else {
+        setTab('scheduled');
+      }
+    }
+  }, [selectedTask]);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [uploadedReports, setUploadedReports] = useState<{[key: string]: {file: string, summary: string, uploadDate: string}}>({});
   const taskContext = useTaskContext();
