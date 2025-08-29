@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import {
   Bar,
   BarChart,
@@ -22,8 +22,9 @@ import { Slider } from './ui/slider';
 import { Switch } from './ui/switch';
 import { Separator } from './ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { CalendarCheck2, DollarSign, FileBarChart2, Loader2, TrendingUp, Info, HelpCircle } from 'lucide-react';
+import { CalendarCheck2, DollarSign, FileBarChart2, Loader2, TrendingUp, Info, HelpCircle, Save, CheckCircle2 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import { useAuth } from '../hooks/useAuth';
 
 const shortCurrency = (n: number) => n.toLocaleString(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 const pct = (n: number) => `${n.toFixed(1)}%`;
@@ -75,22 +76,165 @@ const STAGES = [
 
 interface DashboardProps { setupData: any }
 
+// Dashboard data interface for persistence
+interface DashboardData {
+  homePrice: number;
+  downModeDollar: boolean;
+  downPercent: number;
+  downDollar: number;
+  rate: number;
+  term: number;
+  taxesAnnual: number;
+  insuranceAnnual: number;
+  hoaMonthly: number;
+  maintenanceMonthly: number;
+  stageIdx: number;
+  monthlyIncome: number;
+  currentRent: number;
+  sellerCredits: number;
+  lenderCredits: number;
+  lastSaved?: string;
+}
+
+// Default dashboard data
+const defaultDashboardData: DashboardData = {
+  homePrice: 750_000,
+  downModeDollar: false,
+  downPercent: 20,
+  downDollar: 150_000,
+  rate: 6.25,
+  term: 30,
+  taxesAnnual: 10_500,
+  insuranceAnnual: 1_800,
+  hoaMonthly: 0,
+  maintenanceMonthly: 250,
+  stageIdx: 2,
+  monthlyIncome: 12_000,
+  currentRent: 4_200,
+  sellerCredits: 0,
+  lenderCredits: 0,
+};
+
 export default function Dashboard({ setupData }: DashboardProps) {
-  const [homePrice, setHomePrice] = useState(750_000);
-  const [downModeDollar, setDownModeDollar] = useState(false);
-  const [downPercent, setDownPercent] = useState(20);
-  const [downDollar, setDownDollar] = useState(150_000);
-  const [rate, setRate] = useState(6.25);
-  const [term, setTerm] = useState(30);
-  const [taxesAnnual, setTaxesAnnual] = useState(10_500);
-  const [insuranceAnnual, setInsuranceAnnual] = useState(1_800);
-  const [hoaMonthly, setHoaMonthly] = useState(0);
-  const [maintenanceMonthly, setMaintenanceMonthly] = useState(250);
-  const [stageIdx, setStageIdx] = useState(2);
-  const [monthlyIncome, setMonthlyIncome] = useState(12_000);
-  const [currentRent, setCurrentRent] = useState(4_200);
-  const [sellerCredits, setSellerCredits] = useState(0);
-  const [lenderCredits, setLenderCredits] = useState(0);
+  const { userProfile, updateUserProfile, isGuestMode } = useAuth();
+  // Auto-save status
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<string | null>(null);
+  const [dataLoaded, setDataLoaded] = useState(false);
+
+  // Dashboard state
+  const [homePrice, setHomePrice] = useState(defaultDashboardData.homePrice);
+  const [downModeDollar, setDownModeDollar] = useState(defaultDashboardData.downModeDollar);
+  const [downPercent, setDownPercent] = useState(defaultDashboardData.downPercent);
+  const [downDollar, setDownDollar] = useState(defaultDashboardData.downDollar);
+  const [rate, setRate] = useState(defaultDashboardData.rate);
+  const [term, setTerm] = useState(defaultDashboardData.term);
+  const [taxesAnnual, setTaxesAnnual] = useState(defaultDashboardData.taxesAnnual);
+  const [insuranceAnnual, setInsuranceAnnual] = useState(defaultDashboardData.insuranceAnnual);
+  const [hoaMonthly, setHoaMonthly] = useState(defaultDashboardData.hoaMonthly);
+  const [maintenanceMonthly, setMaintenanceMonthly] = useState(defaultDashboardData.maintenanceMonthly);
+  const [stageIdx, setStageIdx] = useState(defaultDashboardData.stageIdx);
+  const [monthlyIncome, setMonthlyIncome] = useState(defaultDashboardData.monthlyIncome);
+  const [currentRent, setCurrentRent] = useState(defaultDashboardData.currentRent);
+  const [sellerCredits, setSellerCredits] = useState(defaultDashboardData.sellerCredits);
+  const [lenderCredits, setLenderCredits] = useState(defaultDashboardData.lenderCredits);
+
+  // Load saved dashboard data when user profile is available
+  useEffect(() => {
+    if (userProfile && !dataLoaded) {
+      const savedData = userProfile.preferences?.dashboardData as DashboardData;
+
+      if (savedData) {
+        console.log('📊 Loading saved dashboard data for user:', userProfile.email);
+        setHomePrice(savedData.homePrice || defaultDashboardData.homePrice);
+        setDownModeDollar(savedData.downModeDollar ?? defaultDashboardData.downModeDollar);
+        setDownPercent(savedData.downPercent || defaultDashboardData.downPercent);
+        setDownDollar(savedData.downDollar || defaultDashboardData.downDollar);
+        setRate(savedData.rate || defaultDashboardData.rate);
+        setTerm(savedData.term || defaultDashboardData.term);
+        setTaxesAnnual(savedData.taxesAnnual || defaultDashboardData.taxesAnnual);
+        setInsuranceAnnual(savedData.insuranceAnnual || defaultDashboardData.insuranceAnnual);
+        setHoaMonthly(savedData.hoaMonthly || defaultDashboardData.hoaMonthly);
+        setMaintenanceMonthly(savedData.maintenanceMonthly || defaultDashboardData.maintenanceMonthly);
+        setStageIdx(savedData.stageIdx || defaultDashboardData.stageIdx);
+        setMonthlyIncome(savedData.monthlyIncome || defaultDashboardData.monthlyIncome);
+        setCurrentRent(savedData.currentRent || defaultDashboardData.currentRent);
+        setSellerCredits(savedData.sellerCredits || defaultDashboardData.sellerCredits);
+        setLenderCredits(savedData.lenderCredits || defaultDashboardData.lenderCredits);
+        setLastSaved(savedData.lastSaved || null);
+        console.log('✅ Dashboard data loaded successfully');
+      } else {
+        console.log('📊 No saved dashboard data found, using defaults');
+      }
+
+      setDataLoaded(true);
+    }
+  }, [userProfile, dataLoaded]);
+
+  // Auto-save dashboard data when values change
+  const saveDashboardData = useCallback(async () => {
+    if (!userProfile || !dataLoaded) return;
+
+    try {
+      setIsAutoSaving(true);
+
+      const dashboardData: DashboardData = {
+        homePrice,
+        downModeDollar,
+        downPercent,
+        downDollar,
+        rate,
+        term,
+        taxesAnnual,
+        insuranceAnnual,
+        hoaMonthly,
+        maintenanceMonthly,
+        stageIdx,
+        monthlyIncome,
+        currentRent,
+        sellerCredits,
+        lenderCredits,
+        lastSaved: new Date().toISOString(),
+      };
+
+      const updatedPreferences = {
+        ...userProfile.preferences,
+        dashboardData,
+      };
+
+      await updateUserProfile({
+        preferences: updatedPreferences
+      });
+
+      setLastSaved(dashboardData.lastSaved);
+      console.log('💾 Dashboard data auto-saved successfully');
+    } catch (error) {
+      console.error('Error saving dashboard data:', error);
+    } finally {
+      setIsAutoSaving(false);
+    }
+  }, [
+    userProfile, dataLoaded, updateUserProfile,
+    homePrice, downModeDollar, downPercent, downDollar, rate, term,
+    taxesAnnual, insuranceAnnual, hoaMonthly, maintenanceMonthly,
+    stageIdx, monthlyIncome, currentRent, sellerCredits, lenderCredits
+  ]);
+
+  // Debounced auto-save effect
+  useEffect(() => {
+    if (!dataLoaded) return;
+
+    const timeoutId = setTimeout(() => {
+      saveDashboardData();
+    }, 2000); // Save 2 seconds after user stops typing
+
+    return () => clearTimeout(timeoutId);
+  }, [
+    homePrice, downModeDollar, downPercent, downDollar, rate, term,
+    taxesAnnual, insuranceAnnual, hoaMonthly, maintenanceMonthly,
+    stageIdx, monthlyIncome, currentRent, sellerCredits, lenderCredits,
+    saveDashboardData, dataLoaded
+  ]);
 
   const downPayment = useMemo(() => (downModeDollar ? Math.min(downDollar, homePrice) : (downPercent / 100) * homePrice), [downModeDollar, downDollar, downPercent, homePrice]);
   const loanAmount = Math.max(homePrice - downPayment, 0);
@@ -138,8 +282,30 @@ export default function Dashboard({ setupData }: DashboardProps) {
       {/* Property Input Form */}
       <Card className="shadow-sm mb-8">
         <CardHeader>
-          <CardTitle>Property Information</CardTitle>
-          <CardDescription>Enter your property details to calculate costs and payments.</CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Property Information</CardTitle>
+              <CardDescription>Enter your property details to calculate costs and payments.</CardDescription>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              {isAutoSaving ? (
+                <div className="flex items-center gap-2">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Saving...</span>
+                </div>
+              ) : lastSaved ? (
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-green-600" />
+                  <span>Saved {new Date(lastSaved).toLocaleTimeString()}</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Save className="w-4 h-4" />
+                  <span>{isGuestMode ? 'Auto-save (local)' : 'Auto-save enabled'}</span>
+                </div>
+              )}
+            </div>
+          </div>
         </CardHeader>
         <CardContent className="p-8">
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
