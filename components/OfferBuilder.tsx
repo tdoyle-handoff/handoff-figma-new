@@ -2,7 +2,7 @@
 WIREFRAME: Buyer Offer Builder (Web)
 
 [Header]
-┌─────────────────────────────────────────────────────────────────┐
+┌──────────────────────────────────────────────────────��──────────┐
 │ Offer Builder  | Step 1 of 5  | Save Draft | Help            │
 └─────���────────────────────────────────────────────────────────┘
 
@@ -1001,9 +1001,10 @@ export default function OfferBuilder() {
   };
 
   return (
-    <div className="mx-auto max-w-6xl p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-      {/* Left: main content */}
-      <div className="lg:col-span-2 space-y-4">
+    <div className="mx-auto max-w-7xl p-4 sm:p-6">
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-4 lg:gap-6">
+        {/* Left: main content */}
+        <div className="xl:col-span-3 space-y-4">
         <div className="flex items-center justify-between">
           <h1 className="text-xl sm:text-2xl font-semibold">Offer Builder</h1>
           <div className="flex items-center gap-2">
@@ -1498,43 +1499,53 @@ export default function OfferBuilder() {
       </div>
 
       {/* Right sidebar */}
-      <div className="space-y-4">
-        <Card>
+      <div className="xl:col-span-1 space-y-4 xl:sticky xl:top-4 xl:self-start">
+        <Card className="h-fit">
           <CardHeader>
             <CardTitle className="text-base">Contract & Closing Costs</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2 text-sm">
-            <div className="space-y-1 border-b pb-2 mb-2">
+          <CardContent className="space-y-3 text-sm">
+            <div className="space-y-2">
               <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Purchase Terms</div>
-              <div className="flex justify-between"><span>Offer Price</span><span className="font-medium">{formatMoney(offerPrice)}</span></div>
-              <div className="flex justify-between"><span>Down Payment</span><span>{formatMoney(dpDollar)} ({dpPercent.toFixed(1)}%)</span></div>
-              <div className="flex justify-between"><span>Earnest Money</span><span>{formatMoney(earnestDollar)}</span></div>
-              <div className="flex justify-between"><span>Loan Amount</span><span>{formatMoney(loanAmount)}</span></div>
-              {financingType !== 'Cash' && <div className="flex justify-between text-xs"><span>LTV Ratio</span><span>{ltvRatio.toFixed(1)}%</span></div>}
+              <div className="space-y-1">
+                <div className="flex justify-between"><span>Offer Price</span><span className="font-medium">{formatMoney(offerPrice)}</span></div>
+                <div className="flex justify-between"><span>Down Payment</span><span>{formatMoney(dpDollar)} ({dpPercent.toFixed(1)}%)</span></div>
+                <div className="flex justify-between"><span>Earnest Money</span><span>{formatMoney(earnestDollar)}</span></div>
+                <div className="flex justify-between"><span>Loan Amount</span><span>{formatMoney(loanAmount)}</span></div>
+                {financingType !== 'Cash' && <div className="flex justify-between text-xs"><span>LTV Ratio</span><span>{ltvRatio.toFixed(1)}%</span></div>}
+              </div>
             </div>
 
-            <div className="space-y-1 border-b pb-2 mb-2">
+            <Separator />
+
+            <div className="space-y-2">
               <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Closing Costs</div>
-              <div className="flex justify-between text-xs"><span>Lender/Escrow Fees</span><span>{formatMoney(closingCosts)}</span></div>
-              <div className="flex justify-between text-xs"><span>Title Insurance</span><span>{formatMoney(titleInsurance)}</span></div>
-              <div className="flex justify-between text-xs"><span>Appraisal</span><span>{formatMoney(appraisalFee)}</span></div>
-              <div className="flex justify-between text-xs"><span>Home Inspection</span><span>{formatMoney(inspectionFee)}</span></div>
-              <div className="flex justify-between text-xs"><span>Attorney Fees</span><span>{formatMoney(attorneyFees)}</span></div>
-              <div className="flex justify-between text-xs"><span>Recording/Survey</span><span>{formatMoney(recordingFees + surveyFee)}</span></div>
-              <div className="flex justify-between font-medium border-t pt-1"><span>Total Closing Costs</span><span>{formatMoney(totalClosingCosts)}</span></div>
+              <div className="space-y-1">
+                <div className="flex justify-between text-xs"><span>Lender/Escrow Fees</span><span>{formatMoney(closingCosts)}</span></div>
+                <div className="flex justify-between text-xs"><span>Title Insurance</span><span>{formatMoney(titleInsurance)}</span></div>
+                <div className="flex justify-between text-xs"><span>Appraisal</span><span>{formatMoney(appraisalFee)}</span></div>
+                <div className="flex justify-between text-xs"><span>Home Inspection</span><span>{formatMoney(inspectionFee)}</span></div>
+                <div className="flex justify-between text-xs"><span>Attorney Fees</span><span>{formatMoney(attorneyFees)}</span></div>
+                <div className="flex justify-between text-xs"><span>Recording/Survey</span><span>{formatMoney(recordingFees + surveyFee)}</span></div>
+                <div className="flex justify-between font-medium border-t pt-2 mt-2"><span>Total Closing Costs</span><span>{formatMoney(totalClosingCosts)}</span></div>
+              </div>
             </div>
 
-            <div className="space-y-1 border-b pb-2 mb-2">
+            <Separator />
+
+            <div className="space-y-2">
               <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Monthly Payment</div>
-              {financingType !== 'Cash' && <div className="flex justify-between"><span>Principal & Interest</span><span>{formatMoney(pi)}</span></div>}
-              <div className="flex justify-between"><span>Property Taxes</span><span>{formatMoney(taxesM)}</span></div>
-              <div className="flex justify-between"><span>Insurance</span><span>{formatMoney(insM)}</span></div>
-              {hoaMonthly > 0 && <div className="flex justify-between"><span>HOA Fees</span><span>{formatMoney(hoaMonthly)}</span></div>}
-              {needsPMI && <div className="flex justify-between text-xs"><span>PMI (until 20% equity)</span><span>{formatMoney(pmiMonthly)}</span></div>}
-              <div className="flex justify-between font-medium border-t pt-1"><span>Total Monthly</span><span>{formatMoney(totalMonthlyPayment)}</span></div>
+              <div className="space-y-1">
+                {financingType !== 'Cash' && <div className="flex justify-between"><span>Principal & Interest</span><span>{formatMoney(pi)}</span></div>}
+                <div className="flex justify-between"><span>Property Taxes</span><span>{formatMoney(taxesM)}</span></div>
+                <div className="flex justify-between"><span>Insurance</span><span>{formatMoney(insM)}</span></div>
+                {hoaMonthly > 0 && <div className="flex justify-between"><span>HOA Fees</span><span>{formatMoney(hoaMonthly)}</span></div>}
+                {needsPMI && <div className="flex justify-between text-xs"><span>PMI (until 20% equity)</span><span>{formatMoney(pmiMonthly)}</span></div>}
+                <div className="flex justify-between font-medium border-t pt-2 mt-2"><span>Total Monthly</span><span>{formatMoney(totalMonthlyPayment)}</span></div>
+              </div>
             </div>
 
-            <div className="bg-blue-50 p-2 rounded-lg">
+            <div className="bg-blue-50 p-3 rounded-lg">
               <div className="flex justify-between font-bold text-blue-900">
                 <span>Total Cash Needed</span>
                 <span>{formatMoney(totalCashNeeded)}</span>
@@ -1546,69 +1557,80 @@ export default function OfferBuilder() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="h-fit">
           <CardHeader>
-            <CardTitle className="text-base">Compliance check</CardTitle>
+            <CardTitle className="text-base">Compliance Check</CardTitle>
           </CardHeader>
           <CardContent className="text-sm">
             {flags.length === 0 ? (
-              <div className="text-muted-foreground">Looks good.</div>
+              <div className="text-muted-foreground flex items-center gap-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                All requirements met
+              </div>
             ) : (
-              <ul className="list-disc pl-5 space-y-1">
-                {flags.map(f => <li key={f}>{f}</li>)}
-              </ul>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-amber-600">
+                  <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
+                  <span className="font-medium">{flags.length} item(s) need attention</span>
+                </div>
+                <ul className="space-y-1 text-xs">
+                  {flags.map(f => <li key={f} className="flex items-start gap-2"><span className="text-amber-500 mt-1">•</span><span>{f}</span></li>)}
+                </ul>
+              </div>
             )}
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="h-fit">
           <CardHeader>
-            <CardTitle className="text-base">Shortcuts & Drafts</CardTitle>
+            <CardTitle className="text-base">Quick Actions</CardTitle>
           </CardHeader>
-          <CardContent className="flex flex-col gap-2">
-            <Button variant="secondary" onClick={()=>{ setOfferPrice(listPrice); }}>Set offer = list price</Button>
-            <Button variant="secondary" onClick={()=>{ setDpMode('percent'); setDownPayment(20); }}>20% down (no PMI)</Button>
-            <Button variant="secondary" onClick={()=>{ setEarnestMode('percent'); setEarnest(3); }}>3% earnest money</Button>
-            <Button variant="secondary" onClick={()=>{ setDpMode('percent'); setDownPayment(10); setEarnestMode('percent'); setEarnest(5); }}>10% down, 5% earnest</Button>
-            <Separator className="my-2" />
-            <div className="text-xs text-muted-foreground">Draft</div>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" onClick={handleSaveDraft}>Save</Button>
-              <Button variant="outline" onClick={handleSaveAs}>Save As</Button>
+          <CardContent className="space-y-3">
+            <div className="grid grid-cols-1 gap-2">
+              <Button variant="secondary" size="sm" onClick={()=>{ setOfferPrice(listPrice); }}>Set offer = list price</Button>
+              <Button variant="secondary" size="sm" onClick={()=>{ setDpMode('percent'); setDownPayment(20); }}>20% down (no PMI)</Button>
+              <Button variant="secondary" size="sm" onClick={()=>{ setEarnestMode('percent'); setEarnest(3); }}>3% earnest money</Button>
+              <Button variant="secondary" size="sm" onClick={()=>{ setDpMode('percent'); setDownPayment(10); setEarnestMode('percent'); setEarnest(5); }}>10% down, 5% earnest</Button>
             </div>
-            <div className="space-y-1">
-              <div className="text-xs text-muted-foreground">My drafts</div>
-              {drafts.length === 0 ? (
-                <div className="text-xs text-muted-foreground">No drafts yet</div>
-              ) : (
-                <ul className="space-y-1 max-h-40 overflow-auto">
-                  {drafts.map(d => (
-                    <li key={d.id} className="flex items-center justify-between text-xs">
-                      <button className={`text-left truncate ${currentDraftId===d.id?'font-medium':''}`} onClick={()=> handleLoadDraft(d.id)} title={d.name}>
-                        {d.name}
-                      </button>
-                      <div className="flex gap-2">
-                        <button className="text-muted-foreground hover:underline" onClick={()=> {
-                          const n = window.prompt('Rename draft', d.name);
-                          if (!n) return;
-                          const updated = drafts.map(x => x.id===d.id? {...x, name:n }: x);
-                          persistDraftsList(updated);
-                          if (currentDraftId===d.id) setCurrentDraftName(n);
-                        }}>rename</button>
-                        <button className="text-destructive hover:underline" onClick={()=> handleDeleteDraft(d.id)}>delete</button>
+
+            <Separator />
+
+            <div className="space-y-2">
+              <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Draft Management</div>
+              <div className="grid grid-cols-2 gap-2">
+                <Button variant="outline" size="sm" onClick={handleSaveDraft}>Save</Button>
+                <Button variant="outline" size="sm" onClick={handleSaveAs}>Save As</Button>
+              </div>
+
+              {drafts.length > 0 && (
+                <div className="space-y-1">
+                  <div className="text-xs text-muted-foreground">Recent drafts</div>
+                  <div className="max-h-32 overflow-auto space-y-1">
+                    {drafts.slice(0, 3).map(d => (
+                      <div key={d.id} className="flex items-center justify-between text-xs p-2 bg-muted/30 rounded">
+                        <button className={`text-left truncate flex-1 ${currentDraftId===d.id?'font-medium':''}`} onClick={()=> handleLoadDraft(d.id)} title={d.name}>
+                          {d.name}
+                        </button>
+                        <button className="text-destructive hover:underline ml-2" onClick={()=> handleDeleteDraft(d.id)}>×</button>
                       </div>
-                    </li>
-                  ))}
-                </ul>
+                    ))}
+                    {drafts.length > 3 && (
+                      <div className="text-xs text-muted-foreground text-center">+{drafts.length - 3} more drafts</div>
+                    )}
+                  </div>
+                </div>
               )}
             </div>
+
             <div className="p-3 border rounded-lg bg-green-50">
               <h6 className="font-medium text-sm mb-1">Official Purchase Contract</h6>
-              <p className="text-xs text-green-800">Your offer data automatically fills the official Standard Form Contract for Purchase and Sale of Real Estate.</p>
+              <p className="text-xs text-green-800">Your data fills the official Standard Form Contract automatically.</p>
             </div>
-            <Button variant="destructive" onClick={handleClearDraft}>Clear saved (autosave) draft</Button>
+
+            <Button variant="destructive" size="sm" onClick={handleClearDraft} className="w-full">Clear Draft</Button>
           </CardContent>
         </Card>
+      </div>
       </div>
 
       {/* Purchase Agreement Template Dialog */}
