@@ -74,8 +74,7 @@ export function ComprehensiveAttomDataSummaryTable({
     return {
       street: parts[0] || '',
       city: parts[1] || '',
-      state: parts[2]?.split(' ')[0] || '',
-      zipCode: parts[2]?.split(' ')[1] || ''
+      state: parts[2]?.split(' ')[0] || ''
     };
   };
 
@@ -83,8 +82,7 @@ export function ComprehensiveAttomDataSummaryTable({
   const [addressFields, setAddressFields] = useState({
     street: defaultParsed.street,
     city: defaultParsed.city,
-    state: defaultParsed.state,
-    zipCode: defaultParsed.zipCode
+    state: defaultParsed.state
   });
   const [isLoading, setIsLoading] = useState(false);
   const [apiResponses, setApiResponses] = useState<Record<string, ApiResponse>>({});
@@ -281,8 +279,8 @@ export function ComprehensiveAttomDataSummaryTable({
   ];
 
   const getFullAddress = () => {
-    const { street, city, state, zipCode } = addressFields;
-    return `${street}, ${city}, ${state} ${zipCode}`.trim();
+    const { street, city, state } = addressFields;
+    return `${street}, ${city}, ${state}`.trim();
   };
 
   const updateAddressField = (field: keyof typeof addressFields, value: string) => {
@@ -291,7 +289,7 @@ export function ComprehensiveAttomDataSummaryTable({
 
   const isAddressComplete = () => {
     return addressFields.street.trim() && addressFields.city.trim() &&
-           addressFields.state.trim() && addressFields.zipCode.trim();
+           addressFields.state.trim();
   };
 
   const fetchAllData = async () => {
@@ -305,7 +303,7 @@ export function ComprehensiveAttomDataSummaryTable({
 
     try {
       const address1 = addressFields.street.trim();
-      const address2 = `${addressFields.city}, ${addressFields.state} ${addressFields.zipCode}`.trim();
+      const address2 = `${addressFields.city}, ${addressFields.state}`.trim();
 
       if (!address1 || !address2) {
         throw new Error('Please provide a complete address');
@@ -524,7 +522,7 @@ export function ComprehensiveAttomDataSummaryTable({
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
                 <label className="text-sm font-medium text-gray-700 mb-1 block">
                   City
@@ -546,18 +544,6 @@ export function ComprehensiveAttomDataSummaryTable({
                   placeholder="NY"
                   className="w-full"
                   maxLength={2}
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-700 mb-1 block">
-                  ZIP Code
-                </label>
-                <Input
-                  value={addressFields.zipCode}
-                  onChange={(e) => updateAddressField('zipCode', e.target.value)}
-                  placeholder="11238"
-                  className="w-full"
-                  maxLength={10}
                 />
               </div>
             </div>
