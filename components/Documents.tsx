@@ -1539,78 +1539,16 @@ export default function Documents({ setupData }: DocumentsProps) {
           <>
 
             <TabsContent value="templates" className="space-y-6 bg-white">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Document Templates</CardTitle>
-                  <CardDescription>Professional real estate forms ready for download and customization</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {documentTemplates.map((template) => (
-                      <Card key={template.id} className="border-dashed hover:shadow-md transition-shadow">
-                        <CardContent className="p-4">
-                          <div className="flex items-start justify-between mb-3">
-                            <div className="flex-1">
-                              <div className="font-medium mb-1">{template.name}</div>
-                              <div className="text-sm text-muted-foreground mb-2">{template.description}</div>
-                              <Badge variant="outline" className="text-xs">
-                                {template.category.charAt(0).toUpperCase() + template.category.slice(1)}
-                              </Badge>
-                            </div>
-                          </div>
-                          <div className="flex gap-2">
-                            <Button
-                              variant="action-view"
-                              size="sm"
-                              className="flex-1"
-                              onClick={() => {
-                                const htmlContent = template.content();
-                                const previewWindow = window.open('', '_blank');
-                                if (previewWindow) {
-                                  previewWindow.document.write(`
-                                    <html>
-                                      <head><title>${template.name} - Preview</title></head>
-                                      <body style="padding: 20px;">
-                                        ${htmlContent}
-                                        <div style="text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #ccc;">
-                                          <button onclick="window.close()" style="background: #6b7280; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer;">Close Preview</button>
-                                        </div>
-                                      </body>
-                                    </html>
-                                  `);
-                                  previewWindow.document.close();
-                                }
-                              }}
-                            >
-                              <Eye className="w-4 h-4 mr-2" />
-                              Preview
-                            </Button>
-                            <Button
-                              variant="action-download"
-                              size="sm"
-                              className="flex-1"
-                              onClick={() => downloadTemplate(template)}
-                            >
-                              <ChevronDown className="w-4 h-4 mr-2" />
-                              Download
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-
-                  <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                    <h4 className="font-medium text-blue-900 mb-2">How to Use Templates</h4>
-                    <ul className="text-sm text-blue-800 space-y-1">
-                      <li>• Click "Preview" to view the template content</li>
-                      <li>• Click "Download" to open in a new window for printing or saving as PDF</li>
-                      <li>• Templates automatically include your buyer information when available</li>
-                      <li>• All templates are legally compliant and professionally formatted</li>
-                    </ul>
-                  </div>
-                </CardContent>
-              </Card>
+              <DocumentTemplateManager
+                onDocumentCreated={(document) => {
+                  console.log('Document created:', document);
+                  // In a real app, you would add this to your documents state
+                }}
+                onDocumentUpdated={(document) => {
+                  console.log('Document updated:', document);
+                  // In a real app, you would update this in your documents state
+                }}
+              />
             </TabsContent>
 
           </>
