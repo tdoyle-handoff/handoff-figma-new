@@ -1,5 +1,5 @@
 import React, { useState, Suspense } from 'react';
-import { FileText, Upload, Download, Share, Eye, Trash2, Plus, Search, Filter, Calendar, User, CheckCircle, Clock, AlertCircle, Folder, Users, Copy, Mail, Link, Globe, Lock, Settings, UserPlus, UserMinus, Shield, ChevronDown } from 'lucide-react';
+import { Folder, Users, Copy, Mail, Link, Globe, Lock, Settings, UserPlus, UserMinus, Shield, ChevronDown } from 'lucide-react';
 import { DownloadButton, DarkDownloadButton } from './ui/download-button';
 import ContractAnalysis from './ContractAnalysis';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
@@ -191,7 +191,7 @@ export default function Documents({ setupData }: DocumentsProps) {
           <p>☐ <strong>Closing Date:</strong> _________________________</p>
           <p>☐ <strong>Earnest Money:</strong> $ _________________________</p>
           <p>☐ <strong>Inspection Period:</strong> _____ days</p>
-          <p>�� <strong>Financing Contingency:</strong> _____ days</p>
+          <p>☐ <strong>Financing Contingency:</strong> _____ days</p>
           <br>
           <p><strong>Additional Terms:</strong></p>
           <div style="border: 1px solid #ccc; min-height: 100px; padding: 10px; margin: 10px 0;">
