@@ -4,7 +4,7 @@ WIREFRAME: Buyer Offer Builder (Web)
 [Header]
 ┌─────────────────────────────────────────────────────────────────┐
 │ Offer Builder  | Step 1 of 5  | Save Draft | Help            │
-└──────────────────────────────────────────────────────────────┘
+└─────���────────────────────────────────────────────────────────┘
 
 [Stepper]
 ● Property  →  ● Buyer & Financing  →  ● Offer Terms  →  ● Contingencies  →  ● Review & Submit
@@ -213,6 +213,11 @@ export default function OfferBuilder() {
     return dpMode === "percent" ? (Number(downPayment) || 0) : 100 * (Number(downPayment) || 0) / base;
   }, [dpMode, downPayment, offerPrice, listPrice]);
 
+  const earnestDollar = useMemo(() => {
+    const base = offerPrice || listPrice || 0;
+    return earnestMode === "percent" ? base * (Number(earnest) || 0) / 100 : (Number(earnest) || 0);
+  }, [earnestMode, earnest, offerPrice, listPrice]);
+
   const loanAmount = Math.max(0, (offerPrice || 0) - (dpDollar || 0));
   const pi = monthlyPI(loanAmount, financingType === "Cash" ? 0 : interestRate, financingType === "Cash" ? 1 : termYears);
   const taxesM = (taxesAnnual || 0) / 12;
@@ -241,11 +246,6 @@ export default function OfferBuilder() {
 
   // Total monthly payment including PMI
   const totalMonthlyPayment = estMonthly + pmiMonthly;
-
-  const earnestDollar = useMemo(() => {
-    const base = offerPrice || listPrice || 0;
-    return earnestMode === "percent" ? base * (Number(earnest) || 0) / 100 : (Number(earnest) || 0);
-  }, [earnestMode, earnest, offerPrice, listPrice]);
 
   // Additional state for NY State contract fields
   const [sellerName, setSellerName] = useState("");
