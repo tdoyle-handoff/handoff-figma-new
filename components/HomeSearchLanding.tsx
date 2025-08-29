@@ -169,7 +169,7 @@ export default function HomeSearchLanding() {
     }
   });
 
-  const [activeTab, setActiveTab] = useState('basics');
+  const [activeTab, setActiveTab] = useState('get-started');
   const [searchInput, setSearchInput] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [newLocationInput, setNewLocationInput] = useState('');
