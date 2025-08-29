@@ -491,7 +491,7 @@ export function ComprehensiveAttomDataSummaryTable({
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `property-data-${address.replace(/[^a-zA-Z0-9]/g, '-')}.${format}`;
+    link.download = `property-data-${getFullAddress().replace(/[^a-zA-Z0-9]/g, '-')}.${format}`;
     link.click();
     URL.revokeObjectURL(url);
   };
