@@ -86,94 +86,6 @@ export default function Documents({ setupData }: DocumentsProps) {
   const [linkExpiration, setLinkExpiration] = useState<string>('7days');
   const isMobile = useIsMobile();
 
-  // Function to handle viewing documents
-  const handleViewDocument = (doc: Document) => {
-    // In a real application, this would open the actual document
-    alert(`This would open the document: ${doc.name}`);
-  };
-
-
-  // Function to download document
-  const handleDownloadDocument = (doc: Document) => {
-    // In a real application, this would download the actual document
-    alert(`This would download the document: ${doc.name}`);
-  };
-
-  const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-  };
-
-  const getFileTypeFromMimeType = (mimeType: string): 'pdf' | 'doc' | 'image' | 'other' => {
-    if (mimeType.includes('pdf')) return 'pdf';
-    if (mimeType.includes('word') || mimeType.includes('document')) return 'doc';
-    if (mimeType.includes('image')) return 'image';
-    return 'other';
-  };
-
-  // No agent agreement documents from setup wizard anymore
-  const agentAgreementDocs: Document[] = [];
-
-  const baseDocuments: Document[] = [];
-
-  // Combine base documents with agent agreement documents
-  const documents = [...baseDocuments, ...agentAgreementDocs];
-
-  const categories = [
-    { value: 'all', label: 'All Documents', count: documents.length },
-    { value: 'contracts', label: 'Contracts', count: documents.filter(d => d.category === 'contracts').length },
-    { value: 'disclosures', label: 'Disclosures', count: documents.filter(d => d.category === 'disclosures').length },
-    { value: 'financing', label: 'Financing', count: documents.filter(d => d.category === 'financing').length },
-    { value: 'inspections', label: 'Inspections', count: documents.filter(d => d.category === 'inspections').length },
-    { value: 'insurance', label: 'Insurance', count: documents.filter(d => d.category === 'insurance').length },
-    { value: 'title', label: 'Title & Escrow', count: documents.filter(d => d.category === 'title').length },
-    { value: 'agent-agreements', label: 'Agent Agreements', count: documents.filter(d => d.category === 'agent-agreements').length }
-  ].filter(cat => cat.count > 0); // Only show categories with documents
-
-  const filteredDocuments = documents.filter(doc => {
-    const matchesSearch = doc.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         doc.description?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || doc.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'approved': return 'bg-green-100 text-green-800';
-      case 'signed': return 'bg-blue-100 text-blue-800';
-      case 'requires_signature': return 'bg-orange-100 text-orange-800';
-      case 'needs_review': return 'bg-yellow-100 text-yellow-800';
-      case 'pending': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'approved': return <CheckCircle className="w-4 h-4 text-green-600" />;
-      case 'signed': return <CheckCircle className="w-4 h-4 text-blue-600" />;
-      case 'requires_signature': return <AlertCircle className="w-4 h-4 text-orange-600" />;
-      case 'needs_review': return <Clock className="w-4 h-4 text-yellow-600" />;
-      case 'pending': return <Clock className="w-4 h-4 text-gray-600" />;
-      default: return <FileText className="w-4 h-4 text-gray-600" />;
-    }
-  };
-
-  const getFileTypeIcon = (type: string) => {
-    switch (type) {
-      case 'pdf': return '📄';
-      case 'doc': return '📝';
-      case 'image': return '🖼️';
-      default: return '📎';
-    }
-  };
-
-  const requiredDocs = documents.filter(doc => doc.required);
-  const completedRequired = requiredDocs.filter(doc => doc.status === 'approved' || doc.status === 'signed');
-  const completionPercentage = requiredDocs.length > 0 ? (completedRequired.length / requiredDocs.length) * 100 : 100;
 
   // Document templates (empty for now)
   const documentTemplates: any[] = [];
@@ -279,7 +191,7 @@ export default function Documents({ setupData }: DocumentsProps) {
           <p>☐ <strong>Closing Date:</strong> _________________________</p>
           <p>☐ <strong>Earnest Money:</strong> $ _________________________</p>
           <p>☐ <strong>Inspection Period:</strong> _____ days</p>
-          <p>☐ <strong>Financing Contingency:</strong> _____ days</p>
+          <p>�� <strong>Financing Contingency:</strong> _____ days</p>
           <br>
           <p><strong>Additional Terms:</strong></p>
           <div style="border: 1px solid #ccc; min-height: 100px; padding: 10px; margin: 10px 0;">
@@ -549,7 +461,7 @@ export default function Documents({ setupData }: DocumentsProps) {
           <p>Mold/Mildew: ☐ Yes ☐ No ☐ Unknown   Details: _________________________</p>
           <p>Pest Infestation: �� Yes ☐ No ☐ Unknown   Details: _________________________</p>
           <p>Asbestos: ☐ Yes ☐ No ☐ Unknown   Details: _________________________</p>
-          <p>Lead Paint: ☐ Yes ��� No ☐ Unknown   Details: _________________________</p>
+          <p>Lead Paint: ☐ Yes ☐ No ☐ Unknown   Details: _________________________</p>
         </div>
 
         <div style="margin-bottom: 25px;">
