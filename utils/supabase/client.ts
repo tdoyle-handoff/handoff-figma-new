@@ -98,9 +98,7 @@ if (hasPlaceholderCredentials) {
   console.warn('To connect to a real database:');
   console.warn('1. Connect to Neon or set up Supabase');
   console.warn('2. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY');
-}
-
-if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+} else if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
   console.error('Missing Supabase configuration:');
   console.error('- URL:', SUPABASE_URL ? '✓' : '❌');
   console.error('- publicAnonKey:', SUPABASE_ANON_KEY ? '✓' : '❌');

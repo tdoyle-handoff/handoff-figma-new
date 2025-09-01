@@ -140,37 +140,39 @@ export default function Dashboard({ setupData }: DashboardProps) {
   const [sellerCredits, setSellerCredits] = useState(defaultDashboardData.sellerCredits);
   const [lenderCredits, setLenderCredits] = useState(defaultDashboardData.lenderCredits);
 
-  // Load saved dashboard data when user profile is available
+  // Load saved dashboard data when user profile is available (non-blocking)
   useEffect(() => {
-    if (userProfile && !dataLoaded) {
-      const savedData = userProfile.preferences?.dashboardData as DashboardData;
+    // Set as loaded immediately to prevent blocking UI
+    setDataLoaded(true);
 
-      if (savedData) {
-        console.log('📊 Loading saved dashboard data for user:', userProfile.email);
-        setHomePrice(savedData.homePrice || defaultDashboardData.homePrice);
-        setDownModeDollar(savedData.downModeDollar ?? defaultDashboardData.downModeDollar);
-        setDownPercent(savedData.downPercent || defaultDashboardData.downPercent);
-        setDownDollar(savedData.downDollar || defaultDashboardData.downDollar);
-        setRate(savedData.rate || defaultDashboardData.rate);
-        setTerm(savedData.term || defaultDashboardData.term);
-        setTaxesAnnual(savedData.taxesAnnual || defaultDashboardData.taxesAnnual);
-        setInsuranceAnnual(savedData.insuranceAnnual || defaultDashboardData.insuranceAnnual);
-        setHoaMonthly(savedData.hoaMonthly || defaultDashboardData.hoaMonthly);
-        setMaintenanceMonthly(savedData.maintenanceMonthly || defaultDashboardData.maintenanceMonthly);
-        setStageIdx(savedData.stageIdx || defaultDashboardData.stageIdx);
-        setMonthlyIncome(savedData.monthlyIncome || defaultDashboardData.monthlyIncome);
-        setCurrentRent(savedData.currentRent || defaultDashboardData.currentRent);
-        setSellerCredits(savedData.sellerCredits || defaultDashboardData.sellerCredits);
-        setLenderCredits(savedData.lenderCredits || defaultDashboardData.lenderCredits);
-        setLastSaved(savedData.lastSaved || null);
-        console.log('✅ Dashboard data loaded successfully');
-      } else {
-        console.log('📊 No saved dashboard data found, using defaults');
-      }
+    // Load data asynchronously without blocking render
+    if (userProfile) {
+      setTimeout(() => {
+        const savedData = userProfile.preferences?.dashboardData as DashboardData;
 
-      setDataLoaded(true);
+        if (savedData) {
+          console.log('📊 Loading saved dashboard data for user:', userProfile.email);
+          setHomePrice(savedData.homePrice || defaultDashboardData.homePrice);
+          setDownModeDollar(savedData.downModeDollar ?? defaultDashboardData.downModeDollar);
+          setDownPercent(savedData.downPercent || defaultDashboardData.downPercent);
+          setDownDollar(savedData.downDollar || defaultDashboardData.downDollar);
+          setRate(savedData.rate || defaultDashboardData.rate);
+          setTerm(savedData.term || defaultDashboardData.term);
+          setTaxesAnnual(savedData.taxesAnnual || defaultDashboardData.taxesAnnual);
+          setInsuranceAnnual(savedData.insuranceAnnual || defaultDashboardData.insuranceAnnual);
+          setHoaMonthly(savedData.hoaMonthly || defaultDashboardData.hoaMonthly);
+          setMaintenanceMonthly(savedData.maintenanceMonthly || defaultDashboardData.maintenanceMonthly);
+          setStageIdx(savedData.stageIdx || defaultDashboardData.stageIdx);
+          setMonthlyIncome(savedData.monthlyIncome || defaultDashboardData.monthlyIncome);
+          setCurrentRent(savedData.currentRent || defaultDashboardData.currentRent);
+          setSellerCredits(savedData.sellerCredits || defaultDashboardData.sellerCredits);
+          setLenderCredits(savedData.lenderCredits || defaultDashboardData.lenderCredits);
+          setLastSaved(savedData.lastSaved || null);
+          console.log('✅ Dashboard data loaded successfully');
+        }
+      }, 100); // Small delay to not block initial render
     }
-  }, [userProfile, dataLoaded]);
+  }, [userProfile]);
 
   // Auto-save dashboard data when values change
   const saveDashboardData = useCallback(async () => {
@@ -221,20 +223,20 @@ export default function Dashboard({ setupData }: DashboardProps) {
     stageIdx, monthlyIncome, currentRent, sellerCredits, lenderCredits
   ]);
 
-  // Debounced auto-save effect
+  // Debounced auto-save effect (with shorter dependencies list for performance)
   useEffect(() => {
-    if (!dataLoaded) return;
-
     const timeoutId = setTimeout(() => {
-      saveDashboardData();
-    }, 2000); // Save 2 seconds after user stops typing
+      if (userProfile && dataLoaded) {
+        saveDashboardData();
+      }
+    }, 3000); // Increased to 3 seconds to reduce API calls
 
     return () => clearTimeout(timeoutId);
   }, [
     homePrice, downModeDollar, downPercent, downDollar, rate, term,
     taxesAnnual, insuranceAnnual, hoaMonthly, maintenanceMonthly,
-    stageIdx, monthlyIncome, currentRent, sellerCredits, lenderCredits,
-    saveDashboardData, dataLoaded
+    stageIdx, monthlyIncome, currentRent, sellerCredits, lenderCredits
+    // Removed saveDashboardData and other functions from deps for performance
   ]);
 
   const downPayment = useMemo(() => (downModeDollar ? Math.min(downDollar, homePrice) : (downPercent / 100) * homePrice), [downModeDollar, downDollar, downPercent, homePrice]);
@@ -281,7 +283,7 @@ export default function Dashboard({ setupData }: DashboardProps) {
   return (
     <div className="mx-auto max-w-7xl p-8">
       {/* Data Persistence Notification */}
-      <DataPersistenceNotification className="mb-6" />
+      {userProfile !== undefined && <DataPersistenceNotification className="mb-6" />}
 
       {/* Property Input Form */}
       <Card className="shadow-sm mb-8">

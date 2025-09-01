@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Alert, AlertDescription } from './ui/alert';
 import { Button } from './ui/button';
 import { CloudOff, Cloud, CloudCheck, UserPlus } from 'lucide-react';

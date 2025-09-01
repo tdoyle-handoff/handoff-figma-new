@@ -2,7 +2,7 @@
 WIREFRAME: Buyer Offer Builder (Web)
 
 [Header]
-┌─────────────────────────────────────────────────────────────────┐
+┌───────────────────────────────────────��─────────────────────────┐
 │ Offer Builder  | Step 1 of 5  | Save Draft | Help            │
 └─────���────────────────────────────────────────────────────────┘
 
@@ -564,56 +564,44 @@ export default function OfferBuilder() {
     if (d.id) setCurrentDraftId(d.id);
   };
 
-  // Load saved offer data from user profile or localStorage
+  // Load saved offer data from user profile or localStorage (non-blocking)
   useEffect(() => {
-    if (userProfile && !dataLoaded) {
+    // Set as loaded immediately to prevent blocking UI
+    setDataLoaded(true);
+
+    // Load data asynchronously without blocking render
+    setTimeout(() => {
       try {
-        // First check if there's cloud-saved data in user profile
-        const cloudData = userProfile.preferences?.offerBuilderData as Partial<OfferDraft>;
+        if (userProfile) {
+          // First check if there's cloud-saved data in user profile
+          const cloudData = userProfile.preferences?.offerBuilderData as Partial<OfferDraft>;
 
-        if (cloudData && Object.keys(cloudData).length > 0) {
-          console.log('📋 Loading cloud-saved offer data for user:', userProfile.email);
-          applyDraft(cloudData);
-          setCloudSaveTime(cloudData.savedAt || null);
-        } else {
-          // Fallback to localStorage for migration or guest data
-          const localData = localStorage.getItem(LS_KEY);
-          if (localData) {
-            console.log('📋 Loading local offer data and migrating to cloud');
-            const parsed = JSON.parse(localData) as OfferDraft;
-            applyDraft(parsed);
-
-            // Migrate to cloud if user is authenticated
-            if (!isGuestMode) {
-              setTimeout(() => saveToCloud(parsed), 1000);
+          if (cloudData && Object.keys(cloudData).length > 0) {
+            console.log('📋 Loading cloud-saved offer data for user:', userProfile.email);
+            applyDraft(cloudData);
+            setCloudSaveTime(cloudData.savedAt || null);
+          } else {
+            // Fallback to localStorage for migration or guest data
+            const localData = localStorage.getItem(LS_KEY);
+            if (localData) {
+              console.log('📋 Loading local offer data');
+              const parsed = JSON.parse(localData) as OfferDraft;
+              applyDraft(parsed);
             }
           }
-        }
-      } catch (error) {
-        console.error('Error loading offer data:', error);
-        // Fallback to localStorage
-        try {
+        } else {
+          // No user profile, load from localStorage only
           const raw = localStorage.getItem(LS_KEY);
           if (raw) {
             const parsed = JSON.parse(raw) as OfferDraft;
             applyDraft(parsed);
           }
-        } catch {}
-      }
-
-      setDataLoaded(true);
-    } else if (!userProfile && !dataLoaded) {
-      // No user profile, load from localStorage only
-      try {
-        const raw = localStorage.getItem(LS_KEY);
-        if (raw) {
-          const parsed = JSON.parse(raw) as OfferDraft;
-          applyDraft(parsed);
         }
-      } catch {}
-      setDataLoaded(true);
-    }
-  }, [userProfile, dataLoaded, isGuestMode]);
+      } catch (error) {
+        console.error('Error loading offer data:', error);
+      }
+    }, 150); // Small delay to not block initial render
+  }, [userProfile]);
 
   // Save offer data to cloud
   const saveToCloud = useCallback(async (draftData?: OfferDraft) => {
@@ -646,10 +634,8 @@ export default function OfferBuilder() {
     }
   }, [userProfile, isGuestMode, dataLoaded, updateUserProfile, buildDraft]);
 
-  // Autosave draft whenever inputs change (local + cloud)
+  // Autosave draft whenever inputs change (simplified for performance)
   useEffect(() => {
-    if (!dataLoaded) return;
-
     const draft = buildDraft();
 
     // Always save to localStorage for quick access
@@ -659,27 +645,20 @@ export default function OfferBuilder() {
     } catch {}
 
     // Debounced cloud save for authenticated users
-    if (userProfile && !isGuestMode) {
-      const timeoutId = setTimeout(() => {
+    const timeoutId = setTimeout(() => {
+      if (userProfile && !isGuestMode && dataLoaded) {
         saveToCloud(draft);
-      }, 3000); // Save to cloud 3 seconds after user stops typing
+      }
+    }, 4000); // Increased to 4 seconds to reduce API calls
 
-      return () => clearTimeout(timeoutId);
-    }
-    // Exclude savedAt from deps to avoid double runs
+    return () => clearTimeout(timeoutId);
+    // Simplified dependencies - exclude functions to prevent re-renders
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    step,
-    address, city, stateUS, zip,
-    listPrice, hoaMonthly, taxesAnnual, insuranceAnnual,
-    buyerName, buyerEmail, buyerPhone,
-    financingType, interestRate, termYears, dpMode, downPayment, preApprovalAttached,
-    offerPrice, earnestMode, earnest, closingDate, hasEscalation, escalationCap, escalationIncrement, sellerConcessions,
-    inspection, inspectionDays, appraisal, financingCont, financingDays, homeSale, homeSaleDays,
-    attachments, sellerName, sellerAddress, buyerAddress, county, lotSize, itemsIncluded, itemsExcluded,
-    intendedUse, deedType, titleInsuranceType, offerExpirationDate, offerExpirationTime,
-    listingBroker, cooperatingBroker, inspectionDate, attorneyApprovalDate,
-    dataLoaded, userProfile, isGuestMode, saveToCloud
+    step, address, city, stateUS, zip, listPrice, hoaMonthly, taxesAnnual, insuranceAnnual,
+    buyerName, buyerEmail, buyerPhone, financingType, interestRate, termYears, dpMode, downPayment,
+    offerPrice, earnestMode, earnest, closingDate, hasEscalation, escalationCap, escalationIncrement,
+    inspection, inspectionDays, appraisal, financingCont, financingDays, homeSale, homeSaleDays
   ]);
 
   // Multiple drafts support
@@ -1107,7 +1086,7 @@ export default function OfferBuilder() {
   return (
     <div className="mx-auto max-w-7xl p-4 sm:p-6">
       {/* Data Persistence Notification */}
-      <DataPersistenceNotification className="mb-4" />
+      {userProfile !== undefined && <DataPersistenceNotification className="mb-4" />}
 
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-4 lg:gap-6">
         {/* Left: main content */}
