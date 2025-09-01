@@ -70,15 +70,6 @@ export default function DeveloperConfig() {
   const [config, setConfig] = useState<UIToggleConfig[]>([
     // Navigation items
     {
-      id: 'nav-vendor-marketplace',
-      name: 'Vendor Marketplace Tab',
-      description: 'Access to vendor marketplace functionality',
-      category: 'navigation',
-      enabled: false,
-      icon: ShoppingCart,
-      affectedComponents: ['DashboardLayout.tsx']
-    },
-    {
       id: 'nav-communications',
       name: 'Communications Tab',
       description: 'Main communications and messaging section',
