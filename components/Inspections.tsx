@@ -657,7 +657,7 @@ export default function Inspections() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl md:text-2xl font-semibold">Vendor Marketplace</h1>
+          <h1 className="text-xl md:text-2xl font-semibold">Inspections</h1>
           <p className="text-muted-foreground">
             Schedule and track all property inspections for your new home
           </p>
