@@ -82,13 +82,6 @@ export default function MobileLayout({
       category: 'Core'
     },
 
-    // Transaction Details
-    {
-      id: 'vendor-marketplace',
-      label: 'Vendor Marketplace',
-      icon: Eye,
-      category: 'Transaction Details'
-    },
     
     // Additional Services
     {
