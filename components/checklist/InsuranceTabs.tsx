@@ -7,7 +7,7 @@ import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
 import { Badge } from '../ui/badge';
 import { useTaskContext, Task } from '../TaskContext';
-import InsuranceCalculator from '../vendor/InsuranceCalculator';
+import InsuranceCalculator from '../InsuranceCalculator';
 import { Calculator as CalcIcon, FileText, Upload, Plus, Trash2, Calendar, DollarSign } from 'lucide-react';
 
 interface Policy {
