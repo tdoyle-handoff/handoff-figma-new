@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Alert, AlertDescription } from './ui/alert';
 import { Button } from './ui/button';
-import { CloudOff, Cloud, CloudCheck, UserPlus } from 'lucide-react';
+import { CloudOff, Cloud, Check, UserPlus } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
 interface DataPersistenceNotificationProps {
@@ -18,7 +18,7 @@ export function DataPersistenceNotification({
   if (isAuthenticated && !isGuestMode) {
     return (
       <Alert className={`border-green-200 bg-green-50 ${className}`}>
-        <CloudCheck className="h-4 w-4 text-green-600" />
+        <Check className="h-4 w-4 text-green-600" />
         <AlertDescription className="text-green-800">
           <strong>Your data is automatically saved</strong> to your account and synced across all your devices.
           Welcome back, {userProfile?.full_name}!
