@@ -1,11 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import './line-clamp.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Line clamp utilities */
-@import './line-clamp.css';
 
 /* Brand font: Inter to match the reference UI */
 
