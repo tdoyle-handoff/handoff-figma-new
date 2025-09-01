@@ -60,7 +60,7 @@ import { Slider } from "./ui/slider";
 import { Badge } from "./ui/badge";
 import { Separator } from "./ui/separator";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./ui/dialog";
-import { AlertCircle, ArrowLeft, ArrowRight, DollarSign, FileText, Mail, Percent, Shield, Download, Cloud, CloudCheck, Loader2 } from "lucide-react";
+import { AlertCircle, ArrowLeft, ArrowRight, DollarSign, FileText, Mail, Percent, Shield, Download, Cloud, Check, Loader2 } from "lucide-react";
 import { supabase } from "../utils/supabase/client";
 import { DocumentTemplateForm } from "./documents/DocumentTemplateForm";
 import { getTemplateById } from "../utils/documentTemplates";
@@ -1103,7 +1103,7 @@ export default function OfferBuilder() {
                 </div>
               ) : cloudSaveTime && !isGuestMode ? (
                 <div className="flex items-center gap-1 text-green-600">
-                  <CloudCheck className="w-3 h-3" />
+                  <Check className="w-3 h-3" />
                   <span>Synced {new Date(cloudSaveTime).toLocaleTimeString()}</span>
                 </div>
               ) : !isGuestMode ? (
