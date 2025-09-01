@@ -13,7 +13,6 @@ const Inspections = React.lazy(() => import('./Inspections'));
 const Insurance = React.lazy(() => import('./Insurance'));
 const Communications = React.lazy(() => import('./Communications'));
 const Settings = React.lazy(() => import('./Settings'));
-const VendorMarketplace = React.lazy(() => import('./VendorMarketplace'));
 
 // Property Search page with tabs (Home Search, ATTOM Summary, Onboarding)
 const PropertySearchTabs = React.lazy(() => import('./PropertySearchTabs'));
@@ -120,30 +119,24 @@ export function PageRenderer({
       case 'legal':
         return (
           <Suspense fallback={<LoadingSpinner />}>
-            <VendorMarketplace defaultTab="attorneys" />
+            <Legal />
           </Suspense>
         );
       
       case 'inspections':
         return (
           <Suspense fallback={<LoadingSpinner />}>
-            <VendorMarketplace defaultTab="inspectors" />
+            <Inspections />
           </Suspense>
         );
       
       case 'insurance':
         return (
           <Suspense fallback={<LoadingSpinner />}>
-            <VendorMarketplace defaultTab="insurance-providers" />
+            <Insurance />
           </Suspense>
         );
       
-      case 'vendor-marketplace':
-        return (
-          <Suspense fallback={<LoadingSpinner />}>
-            <VendorMarketplace />
-          </Suspense>
-        );
       
       case 'communications':
         return (
