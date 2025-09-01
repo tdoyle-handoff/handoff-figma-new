@@ -8,7 +8,6 @@ export type PageType =
   | 'financing'
   | 'inspections'
   | 'insurance'
-  | 'vendor-marketplace'
   | 'documents'
   | 'resources'
   | 'team'
@@ -65,7 +64,7 @@ const getSavedPreviousPage = (): PageType | null => {
 const isValidPageType = (page: string): page is PageType => {
   const validPages: PageType[] = [
     'overview', 'tasks', 'property', 'legal', 'financing',
-    'inspections', 'insurance', 'vendor-marketplace', 'documents', 'resources',
+    'inspections', 'insurance', 'documents', 'resources',
     'team', 'communications', 'mortgage-calculator',
     'closing-calculator', 'settings', 'dev-tools', 'dev-config'
   ];
@@ -111,8 +110,7 @@ export function useNavigation(): NavigationState & NavigationActions {
     'financing': 'Financing - Handoff',
     'inspections': 'Inspections - Handoff',
     'insurance': 'Insurance - Handoff',
-    'vendor-marketplace': 'Vendor Marketplace - Handoff',
-'documents': 'Offer & Document Hub - Handoff',
+    'documents': 'Offer & Document Hub - Handoff',
     'resources': 'Education Hub - Handoff',
     'team': 'My Team - Handoff',
     'communications': 'Communication Suite - Handoff',
@@ -131,7 +129,6 @@ export function useNavigation(): NavigationState & NavigationActions {
     'financing': 'Mortgage applications, loan tracking, and financial calculations',
     'inspections': 'Schedule inspections, review reports, and manage contingencies',
     'insurance': 'Compare insurance providers and manage policy requirements',
-    'vendor-marketplace': 'Find and connect with real estate professionals and services',
     'documents': 'Create offers, manage contracts, and store important documents',
     'resources': 'Educational content, guides, and helpful tools for home buyers',
     'team': 'Manage your real estate team and professional connections',
