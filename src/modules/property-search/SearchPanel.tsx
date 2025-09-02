@@ -7,9 +7,16 @@ export function SearchPanel() {
   const [query, setQuery] = useState({ location: '', minPrice: '', maxPrice: '', beds: '', baths: '', type: '', dom: '' })
   const [selectedProperty, setSelectedProperty] = useState<any>(null)
   const [activeTab, setActiveTab] = useState<'attom' | 'mls'>('attom')
+
+  // AI/NL search states (existing)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [results, setResults] = useState<any[]>([])
+
+  // Direct MLS search states (new)
+  const [loadingMLS, setLoadingMLS] = useState(false)
+  const [errorMLS, setErrorMLS] = useState<string | null>(null)
+  const [resultsMLS, setResultsMLS] = useState<any[]>([])
 
   const composedQuery = useMemo(() => {
     const parts: string[] = []
@@ -23,6 +30,7 @@ export function SearchPanel() {
     return parts.join(', ')
   }, [query])
 
+  // Existing path: AI parser + Trestle
   const onSearch = useCallback(async () => {
     try {
       setLoading(true)
@@ -47,6 +55,49 @@ export function SearchPanel() {
       setLoading(false)
     }
   }, [composedQuery, query])
+
+  // New path: direct Trestle (no OpenAI)
+  const onSearchMLS = useCallback(async () => {
+    try {
+      setLoadingMLS(true)
+      setErrorMLS(null)
+      setResultsMLS([])
+      setSelectedProperty(null)
+
+      const payload: any = {}
+      if (query.location) payload.location = query.location
+      const toNum = (s: string) => (s && !Number.isNaN(Number(s)) ? Number(s) : undefined)
+      const mp = toNum(query.minPrice)
+      const xp = toNum(query.maxPrice)
+      const bd = toNum(query.beds)
+      const ba = toNum(query.baths)
+      const dm = toNum(query.dom)
+      if (typeof mp === 'number') payload.minPrice = mp
+      if (typeof xp === 'number') payload.maxPrice = xp
+      if (typeof bd === 'number') payload.bedsMin = bd
+      if (typeof ba === 'number') payload.bathsMin = ba
+      if (typeof dm === 'number') payload.daysOnMarketMax = dm
+      if (query.type) payload.propertyType = query.type
+      payload.top = 50
+      payload.skip = 0
+
+      const r = await fetch('/api/mls-search-direct', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      if (!r.ok) {
+        const text = await r.text()
+        throw new Error(text || `Request failed with status ${r.status}`)
+      }
+      const data = await r.json()
+      setResultsMLS(Array.isArray(data?.results) ? data.results : [])
+    } catch (e: any) {
+      setErrorMLS(e?.message || 'MLS search failed')
+    } finally {
+      setLoadingMLS(false)
+    }
+  }, [query])
 
   return (
     <div className="grid gap-4">
@@ -74,7 +125,6 @@ export function SearchPanel() {
             loading={loading}
             error={error || undefined}
             onSelect={(listing) => {
-              // Create a lightweight wrapper to satisfy the ListingInformation UI
               const wrapped = {
                 attom: { address: listing?.UnparsedAddress || [listing?.StreetNumber, listing?.StreetName, listing?.City, listing?.StateOrProvince, listing?.PostalCode].filter(Boolean).join(' ') },
                 mls: { status: listing?.StandardStatus || '—' },
@@ -88,12 +138,25 @@ export function SearchPanel() {
           )}
         </>
       ) : (
-        <div className="border rounded p-4">
-          <div className="font-medium mb-2">MLS Listing Information</div>
-          <p className="text-sm text-muted-foreground">
-            MLS RETS/RESO integration will appear here. This tab is intentionally separate and not wired yet.
-          </p>
-        </div>
+        <>
+          <Filters value={query} onChange={setQuery} onSearch={onSearchMLS} />
+          <ResultsList
+            items={resultsMLS}
+            loading={loadingMLS}
+            error={errorMLS || undefined}
+            onSelect={(listing) => {
+              const wrapped = {
+                attom: { address: listing?.UnparsedAddress || [listing?.StreetNumber, listing?.StreetName, listing?.City, listing?.StateOrProvince, listing?.PostalCode].filter(Boolean).join(' ') },
+                mls: { status: listing?.StandardStatus || '—' },
+                raw: listing,
+              }
+              setSelectedProperty(wrapped)
+            }}
+          />
+          {selectedProperty && (
+            <ListingInformation property={selectedProperty} />
+          )}
+        </>
       )}
     </div>
   )
