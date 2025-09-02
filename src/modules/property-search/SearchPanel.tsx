@@ -6,7 +6,7 @@ import { ListingInformation } from './ListingInformation'
 export function SearchPanel() {
   const [query, setQuery] = useState({ location: '', minPrice: '', maxPrice: '', beds: '', baths: '', type: '', dom: '' })
   const [selectedProperty, setSelectedProperty] = useState<any>(null)
-  const [activeTab, setActiveTab] = useState<'attom' | 'mls'>('attom')
+  const [activeTab, setActiveTab] = useState<'ai' | 'mls'>('ai')
 
   // AI/NL search states (existing)
   const [loading, setLoading] = useState(false)
@@ -104,20 +104,20 @@ export function SearchPanel() {
       {/* Tabs */}
       <div className="flex gap-2">
         <button
-          className={`px-3 py-2 border rounded ${activeTab === 'attom' ? 'bg-muted' : ''}`}
-          onClick={() => setActiveTab('attom')}
+          className={`px-3 py-2 border rounded ${activeTab === 'ai' ? 'bg-muted' : ''}`}
+          onClick={() => setActiveTab('ai')}
         >
-          ATTOM
+          AI Search
         </button>
         <button
           className={`px-3 py-2 border rounded ${activeTab === 'mls' ? 'bg-muted' : ''}`}
           onClick={() => setActiveTab('mls')}
         >
-          MLS (RETS/RESO)
+          Detailed MLS
         </button>
       </div>
 
-      {activeTab === 'attom' ? (
+      {activeTab === 'ai' ? (
         <>
           <Filters value={query} onChange={setQuery} onSearch={onSearch} />
           <ResultsList
@@ -125,11 +125,7 @@ export function SearchPanel() {
             loading={loading}
             error={error || undefined}
             onSelect={(listing) => {
-              const wrapped = {
-                attom: { address: listing?.UnparsedAddress || [listing?.StreetNumber, listing?.StreetName, listing?.City, listing?.StateOrProvince, listing?.PostalCode].filter(Boolean).join(' ') },
-                mls: { status: listing?.StandardStatus || '—' },
-                raw: listing,
-              }
+              const wrapped = { raw: listing }
               setSelectedProperty(wrapped)
             }}
           />
@@ -145,11 +141,7 @@ export function SearchPanel() {
             loading={loadingMLS}
             error={errorMLS || undefined}
             onSelect={(listing) => {
-              const wrapped = {
-                attom: { address: listing?.UnparsedAddress || [listing?.StreetNumber, listing?.StreetName, listing?.City, listing?.StateOrProvince, listing?.PostalCode].filter(Boolean).join(' ') },
-                mls: { status: listing?.StandardStatus || '—' },
-                raw: listing,
-              }
+              const wrapped = { raw: listing }
               setSelectedProperty(wrapped)
             }}
           />

@@ -20,9 +20,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const TRESTLE_TOKEN = process.env.TRESTLE_API_KEY
+  const TRESTLE_TOKEN = process.env.TRESTLE_API_KEY || process.env.MLS_API_KEY || process.env.IDX_API_KEY || process.env.CORELOGIC_TRESTLE_API_KEY
   if (!TRESTLE_TOKEN) {
-    return res.status(500).json({ error: 'Missing TRESTLE_API_KEY' })
+    return res.status(500).json({ error: 'Missing TRESTLE_API_KEY (or MLS_API_KEY/IDX_API_KEY/CORELOGIC_TRESTLE_API_KEY)' })
   }
 
   try {
