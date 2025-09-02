@@ -143,3 +143,4 @@ figma-exports/
 *.fig
 Handoff-Figma-Download/
 handoff-figma-new/
+.vercel
