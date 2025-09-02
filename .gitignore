@@ -144,3 +144,4 @@ figma-exports/
 Handoff-Figma-Download/
 handoff-figma-new/
 .vercel
+.env*.local

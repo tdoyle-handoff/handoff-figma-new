@@ -24,7 +24,7 @@ const FiltersSchema = z.object({
 
 type Filters = z.infer<typeof FiltersSchema>
 
-const TRESTLE_BASE = 'https://api-trestle.corelogic.com/reso/odata'
+const TRESTLE_BASE = process.env.TRESTLE_BASE || 'https://api-prod.corelogic.com/trestle/odata'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   setCors(res)
@@ -46,21 +46,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const ai = new OpenAI({ apiKey: OPENAI_API_KEY })
 
-    // Parse request body
-    let q: string | undefined
-    try {
-      const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {})
-      q = body.q
-    } catch {
-      // ignore
-    }
+  // Parse request body
+  let q: string | undefined
+  let listingKey: string | undefined
+  try {
+    const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {})
+    q = body.q
+    if (body.listingKey) listingKey = String(body.listingKey)
+  } catch {
+    // ignore
+  }
 
-    if (!q || typeof q !== 'string') {
-      return res.status(400).json({ error: 'q required' })
-    }
+  // If listingKey is provided, skip AI parsing and fetch that listing directly
+  // Otherwise, require q
+  if (!listingKey && (!q || typeof q !== 'string')) {
+    return res.status(400).json({ error: 'q required (or provide listingKey)' })
+  }
 
-    // 1) Parse natural language -> MLS-ready filters via OpenAI
-    let filters: Filters = {}
+  // 1) Parse natural language -> MLS-ready filters via OpenAI
+  let filters: Filters = {}
     try {
       const prompt = `Extract MLS filters from: "${q}"\nReturn ONLY a JSON object with optional keys: location (string), minPrice (number), maxPrice (number), beds (number), baths (number), propertyType (string), features (string[]), daysOnMarketMax (number). Use USD for prices. Omit fields you are not confident about.`
       const parsed = await ai.responses.create({
@@ -76,8 +80,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       filters = {}
     }
 
-    // 2) Build OData $filter
-    const clauses: string[] = []
+  // 2) Build OData $filter
+  const clauses: string[] = []
+  if (listingKey) {
+    const safe = String(listingKey).replace(/'/g, "''")
+    clauses.push(`ListingKey eq '${safe}'`)
+  } else {
     if (filters.minPrice) clauses.push(`ListPrice ge ${Math.floor(filters.minPrice)}`)
     if (filters.maxPrice) clauses.push(`ListPrice le ${Math.floor(filters.maxPrice)}`)
     if (filters.beds) clauses.push(`BedroomsTotal ge ${Math.floor(filters.beds)}`)
@@ -89,17 +97,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
     if (filters.daysOnMarketMax) clauses.push(`DaysOnMarket le ${Math.floor(filters.daysOnMarketMax)}`)
     if (filters.propertyType) clauses.push(`PropertyType eq '${(filters.propertyType || '').replace(/'/g, "''")}'`)
+  }
 
-    const url = new URL(`${TRESTLE_BASE}/Property`)
-    if (clauses.length) url.searchParams.set('$filter', clauses.join(' and '))
-    url.searchParams.set('$top', '50')
-    url.searchParams.set('$orderby', 'ModificationTimestamp desc')
-    url.searchParams.set('$select', [
-      'ListingId','StandardStatus','PropertyType','ListingKey',
-      'UnparsedAddress','StreetNumber','StreetName','City','StateOrProvince','PostalCode',
-      'ListPrice','BedroomsTotal','BathroomsTotalInteger','LivingArea','YearBuilt',
-      'Latitude','Longitude','PublicRemarks','Media'
-    ].join(','))
+  const url = new URL(`${TRESTLE_BASE}/Property`)
+  if (clauses.length) url.searchParams.set('$filter', clauses.join(' and '))
+  url.searchParams.set('$top', '50')
+  url.searchParams.set('$orderby', 'ModificationTimestamp desc')
+  url.searchParams.set('$select', [
+    'ListingId','StandardStatus','PropertyType','ListingKey',
+    'UnparsedAddress','StreetNumber','StreetName','City','StateOrProvince','PostalCode',
+    'ListPrice','BedroomsTotal','BathroomsTotalInteger','LivingArea','YearBuilt',
+    'Latitude','Longitude','PublicRemarks','Media'
+  ].join(','))
 
     // 3) Fetch IDX results
     const resp = await fetch(url.toString(), {
