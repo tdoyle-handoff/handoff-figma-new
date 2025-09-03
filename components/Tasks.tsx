@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Label } from './ui/label';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './ui/select';
 import ChecklistLegalTabs from './checklist/LegalTabs';
 import ChecklistInspectionTabs from './checklist/InspectionTabs';
 import ChecklistInsuranceTabs from './checklist/InsuranceTabs';
@@ -80,6 +81,19 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
   // Local editable state
   const [editTitle, setEditTitle] = useState<string>(task.title);
   const [editAssignedTo, setEditAssignedTo] = useState<string>(task.assignedTo || '');
+  const [editDocuments, setEditDocuments] = useState<string[]>(task.documents || []);
+  const [attachments, setAttachments] = useState<Array<{ name: string; url?: string; type?: string; size?: number }>>(
+    (task.customFields?.attachments as any) || []
+  );
+
+  // Contract-specific state for offer submission
+  const [contractPdfUrl, setContractPdfUrl] = useState<string | undefined>((task.customFields?.contractPdfUrl as any) || undefined);
+  const [contractPrice, setContractPrice] = useState<string>((task.customFields?.contractDetails?.purchasePrice as any) || '');
+  const [contractEarnest, setContractEarnest] = useState<string>((task.customFields?.contractDetails?.earnestAmount as any) || '');
+  const [contractAcceptance, setContractAcceptance] = useState<string>((task.customFields?.contractDetails?.acceptanceDate as any) || '');
+  const [contractClosing, setContractClosing] = useState<string>((task.customFields?.contractDetails?.closingDate as any) || '');
+  const [contractInspectionDays, setContractInspectionDays] = useState<string>((task.customFields?.contractDetails?.inspectionDays as any) || '');
+  const [contractFinancingDays, setContractFinancingDays] = useState<string>((task.customFields?.contractDetails?.financingDays as any) || '');
   const [editDueDate, setEditDueDate] = useState<string>(task.dueDate || '');
   const [editNotes, setEditNotes] = useState<string>(task.notes || '');
   const currentAttorney = (task.contacts || []).find(c => c.role.toLowerCase().includes('attorney'));
@@ -386,7 +400,20 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
               </div>
               <div>
                 <Label className="text-xs">Assigned to</Label>
-                <Input value={editAssignedTo} onChange={(e) => setEditAssignedTo(e.target.value)} placeholder="Buyer / Agent / Lender" />
+                <Select value={editAssignedTo || ''} onValueChange={(v) => setEditAssignedTo(v)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select assignee" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Buyer">Buyer</SelectItem>
+                    <SelectItem value="Agent">Agent</SelectItem>
+                    <SelectItem value="Lender">Lender</SelectItem>
+                    <SelectItem value="Attorney">Attorney</SelectItem>
+                    <SelectItem value="Title Company">Title Company</SelectItem>
+                    <SelectItem value="Buyer & Agent">Buyer & Agent</SelectItem>
+                    <SelectItem value="All Parties">All Parties</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <Label className="text-xs">Due date</Label>
@@ -488,6 +515,94 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
               </div>
             )}
 
+            {/* Offer/Contract helpers */}
+            {task.id === 'task-submit-offer' && (
+              <div className="flex flex-col gap-3">
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" onClick={() => { try { window.location.hash = '#offer'; } catch {} onNavigate('documents'); }}>
+                    Open Contract Builder
+                  </Button>
+                  {contractPdfUrl && (
+                    <Button size="sm" variant="outline" onClick={() => window.open(contractPdfUrl, '_blank')}>View Contract PDF</Button>
+                  )}
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <Label className="text-xs">Upload Contract PDF</Label>
+                    <Input type="file" accept="application/pdf" onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (!f) return;
+                      const url = URL.createObjectURL(f);
+                      setContractPdfUrl(url);
+                      setEditDocuments((prev) => Array.from(new Set([...(prev || []), f.name])));
+                      setAttachments((prev) => [...prev, { name: f.name, type: f.type, size: f.size, url }]);
+                    }} />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div>
+                    <Label className="text-xs">Purchase Price ($)</Label>
+                    <Input value={contractPrice} onChange={(e) => setContractPrice(e.target.value)} placeholder="e.g. 500000" />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Earnest Money ($)</Label>
+                    <Input value={contractEarnest} onChange={(e) => setContractEarnest(e.target.value)} placeholder="e.g. 15000" />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Inspection Days</Label>
+                    <Input value={contractInspectionDays} onChange={(e) => setContractInspectionDays(e.target.value)} placeholder="e.g. 7" />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Financing Days</Label>
+                    <Input value={contractFinancingDays} onChange={(e) => setContractFinancingDays(e.target.value)} placeholder="e.g. 21" />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Offer Accepted Date</Label>
+                    <Input type="date" value={contractAcceptance} onChange={(e) => setContractAcceptance(e.target.value)} />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Closing Date</Label>
+                    <Input type="date" value={contractClosing} onChange={(e) => setContractClosing(e.target.value)} />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Documents (attachments) */}
+            {(['offer','contract','diligence','closing'].includes(task.category) || (task.instructions?.requiredDocuments?.length || 0) > 0) && (
+              <div className="space-y-2">
+                <Label className="text-xs">Documents</Label>
+                <div className="flex flex-wrap gap-2">
+                  <Input type="file" multiple onChange={(e) => {
+                    const files = Array.from(e.target.files || []);
+                    if (files.length === 0) return;
+                    const names: string[] = [];
+                    const newAtts: Array<{name:string;url?:string;type?:string;size?:number}> = [];
+                    files.forEach((f) => {
+                      names.push(f.name);
+                      const url = URL.createObjectURL(f);
+                      newAtts.push({ name: f.name, type: f.type, size: f.size, url });
+                    });
+                    setEditDocuments((prev) => Array.from(new Set([...(prev || []), ...names])));
+                    setAttachments((prev) => [...prev, ...newAtts]);
+                  }} />
+                </div>
+                {editDocuments && editDocuments.length > 0 && (
+                  <ul className="list-disc ml-5 space-y-1">
+                    {editDocuments.map((name) => (
+                      <li key={name} className="text-xs text-gray-700 flex items-center gap-2">
+                        <span className="truncate max-w-[260px]" title={name}>{name}</span>
+                        <Button variant="ghost" size="sm" className="h-6 px-2" onClick={() => {
+                          setEditDocuments((prev) => (prev || []).filter((n) => n !== name));
+                          setAttachments((prev) => prev.filter((a) => a.name !== name));
+                        }}>Remove</Button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
+
             <div className="flex items-center justify-between gap-3">
               <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">
                 <div className="flex items-center gap-1">
@@ -517,7 +632,36 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                     dueDate: editDueDate || undefined,
                     dueDateLocked: editDueDate ? dueLocked : false,
                     notes: editNotes,
+                    documents: editDocuments,
+                    customFields: {
+                      ...(task as any).customFields,
+                      attachments,
+                      ...(contractPdfUrl ? { contractPdfUrl } : {}),
+                    } as any,
                   };
+
+                  // Contract details + schedule anchors
+                  if (task.id === 'task-submit-offer') {
+                    const details: any = {
+                      purchasePrice: contractPrice,
+                      earnestAmount: contractEarnest,
+                      acceptanceDate: contractAcceptance,
+                      closingDate: contractClosing,
+                      inspectionDays: contractInspectionDays,
+                      financingDays: contractFinancingDays,
+                    };
+                    (updates as any).customFields = {
+                      ...((updates as any).customFields || (task as any).customFields),
+                      contractDetails: details,
+                    };
+                    try {
+                      if (contractAcceptance || contractClosing) {
+                        // Update anchors so due dates recompute
+                        const ev = new CustomEvent('updateScheduleAnchors', { detail: { offerAcceptedDate: contractAcceptance || undefined, closingDate: contractClosing || undefined } });
+                        window.dispatchEvent(ev);
+                      }
+                    } catch {}
+                  }
 
                   // Merge agent details
                   if (task.id === 'task-agent-selection') {
@@ -579,6 +723,11 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
               >
                 Save
               </Button>
+              {task.status === 'completed' && (
+                <Button size="sm" variant="outline" onClick={() => onUpdateTask?.(task.id, 'active')}>
+                  Mark incomplete
+                </Button>
+              )}
               <Button
                 size="sm"
                 variant="outline"
@@ -588,6 +737,16 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                   setEditDueDate(task.dueDate || '');
                   setDueLocked(!!task.dueDateLocked);
                   setEditNotes(task.notes || '');
+                  setEditDocuments(task.documents || []);
+                  setAttachments(((task as any).customFields?.attachments) || []);
+                  setContractPdfUrl(((task as any).customFields?.contractPdfUrl) || undefined);
+                  const cd = ((task as any).customFields?.contractDetails) || {};
+                  setContractPrice(cd.purchasePrice || '');
+                  setContractEarnest(cd.earnestAmount || '');
+                  setContractAcceptance(cd.acceptanceDate || '');
+                  setContractClosing(cd.closingDate || '');
+                  setContractInspectionDays(cd.inspectionDays || '');
+                  setContractFinancingDays(cd.financingDays || '');
                   const cur = (task.contacts || []).find(c => c.role.toLowerCase().includes('attorney'));
                   setAttorneyName(cur?.name || '');
                   setAttorneyEmail(cur?.email || '');
@@ -893,8 +1052,17 @@ const [checklistSubtab, setChecklistSubtab] = useState<'cards' | 'board'>('cards
         } catch {}
       }
     };
+    const onAnchors = (e: any) => {
+      try {
+        taskContext.setScheduleAnchors(e.detail || {});
+      } catch {}
+    };
     window.addEventListener('message', onMsg);
-    return () => window.removeEventListener('message', onMsg);
+    window.addEventListener('updateScheduleAnchors', onAnchors as any);
+    return () => {
+      window.removeEventListener('message', onMsg);
+      window.removeEventListener('updateScheduleAnchors', onAnchors as any);
+    };
   }, [taskContext, onNavigate]);
   
   return (
@@ -1182,6 +1350,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'cards' | 'board'>('cards
               onUpdateTask={handleUpdateTask}
               onUpdateTaskFields={handleUpdateTaskFields}
               tasksById={tasksById}
+              minimal
               forceOpen
             />
           </div>
