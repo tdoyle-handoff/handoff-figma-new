@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, useRe
 import { UserProfile } from '../utils/supabase/client';
 import { PropertyData } from './PropertyContext';
 import { useAuth } from '../hooks/useAuth';
+import { applyScenarios } from '../utils/scenarioEngine';
 
 export interface Task {
   id: string;
@@ -1116,12 +1117,25 @@ export function TaskProvider({ children, userProfile }: TaskProviderProps) {
     return merged;
   };
 
+  // Recompute tasks/phases applying selected scenarios, merging saved state
+  const recomputeFromSources = (propertyData?: PropertyData | null, savedOverride?: Task[]) => {
+    const pd = propertyData ?? getPropertyData();
+    const base = generateRealEstateTransactionTasks(pd || {} as PropertyData);
+    const scenarioBase = applyScenarios(base);
+    const saved = savedOverride ?? loadSavedTasks();
+    const effectiveTasks = saved.length > 0 ? mergeTasks(scenarioBase, saved) : scenarioBase;
+    const phases = generateRealEstateTaskPhases(effectiveTasks, pd);
+    setTasks(effectiveTasks);
+    setTaskPhases(phases);
+  };
+
   // Initialize tasks based on property data
   useEffect(() => {
     const propertyData = getPropertyData();
-    const generatedTasks = generateRealEstateTransactionTasks(propertyData || {} as PropertyData);
+    const base = generateRealEstateTransactionTasks(propertyData || {} as PropertyData);
+    const scenarioBase = applyScenarios(base);
     const saved = loadSavedTasks();
-    const effectiveTasks = saved.length > 0 ? mergeTasks(generatedTasks, saved) : generatedTasks;
+    const effectiveTasks = saved.length > 0 ? mergeTasks(scenarioBase, saved) : scenarioBase;
     const phases = generateRealEstateTaskPhases(effectiveTasks, propertyData);
 
     setTasks(effectiveTasks);
@@ -1145,36 +1159,45 @@ export function TaskProvider({ children, userProfile }: TaskProviderProps) {
     };
   }, []);
 
-  // Re-generate tasks when storage changes
+  // Re-generate tasks when storage changes (e.g., scenario toggles or profile prefs)
   useEffect(() => {
     const handleStorageChange = () => {
       const propertyData = getPropertyData();
-      if (propertyData) {
-        const generatedTasks = generateRealEstateTransactionTasks(propertyData);
-        const phases = generateRealEstateTaskPhases(generatedTasks, propertyData);
-        setTasks(generatedTasks);
-        setTaskPhases(phases);
-      }
+      recomputeFromSources(propertyData);
     };
 
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  const generatePersonalizedTasks = (propertyData: PropertyData) => {
-    const generatedTasks = generateRealEstateTransactionTasks(propertyData);
-    const phases = generateRealEstateTaskPhases(generatedTasks, propertyData);
-    setTasks(generatedTasks);
+  // Listen for custom scenariosUpdated events to recompute tasks immediately
+  useEffect(() => {
+    const handleScenariosUpdated = () => {
+      const propertyData = getPropertyData();
+      recomputeFromSources(propertyData);
+    };
+    window.addEventListener('scenariosUpdated', handleScenariosUpdated as EventListener);
+    return () => window.removeEventListener('scenariosUpdated', handleScenariosUpdated as EventListener);
+  }, []);
+
+   const generatePersonalizedTasks = (propertyData: PropertyData) => {
+    const base = generateRealEstateTransactionTasks(propertyData);
+    const scenarioBase = applyScenarios(base);
+    const saved = loadSavedTasks();
+    const effectiveTasks = saved.length > 0 ? mergeTasks(scenarioBase, saved) : scenarioBase;
+    const phases = generateRealEstateTaskPhases(effectiveTasks, propertyData);
+    setTasks(effectiveTasks);
     setTaskPhases(phases);
   };
 
   // Recompute due dates from current anchors (non-destructive to other fields)
   const recomputeDueDates = () => {
     const propertyData = getPropertyData();
-    // Recreate baseline tasks then merge existing field values back in
+    // Recreate baseline tasks (scenario-aware) then merge existing field values back in
     const base = generateRealEstateTransactionTasks(propertyData || {} as PropertyData);
+    const scenarioBase = applyScenarios(base);
     const byId: Record<string, Task> = {};
-    base.forEach((t) => { byId[t.id] = t; });
+    scenarioBase.forEach((t) => { byId[t.id] = t; });
     const updated = tasks.map((t) => {
       if (t.dueDateLocked) return t; // respect manual lock
       const computed = byId[t.id]?.dueDate;
