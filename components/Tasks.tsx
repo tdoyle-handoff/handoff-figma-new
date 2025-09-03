@@ -8,6 +8,9 @@ import { Alert, AlertDescription } from './ui/alert';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
 import { useIsMobile } from './ui/use-mobile';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { Input } from './ui/input';
+import { Textarea } from './ui/textarea';
+import { Label } from './ui/label';
 import ChecklistLegalTabs from './checklist/LegalTabs';
 import ChecklistInspectionTabs from './checklist/InspectionTabs';
 import ChecklistInsuranceTabs from './checklist/InsuranceTabs';
@@ -56,15 +59,26 @@ const formatDate = (dateStr: string) => {
   return date.toLocaleDateString();
 };
 
-const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask }: {
+const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields }: {
   task: Task;
   onNavigate: (page: string) => void;
   onUpdateTask?: (taskId: string, status: Task['status']) => void;
+  onUpdateTaskFields?: (taskId: string, updates: Partial<Task>) => void;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const isCompleted = task.status === 'completed';
   const isActive = ['active', 'in-progress', 'overdue'].includes(task.status);
   const isOverdue = task.status === 'overdue';
+
+  // Local editable state
+  const [editTitle, setEditTitle] = useState<string>(task.title);
+  const [editAssignedTo, setEditAssignedTo] = useState<string>(task.assignedTo || '');
+  const [editDueDate, setEditDueDate] = useState<string>(task.dueDate || '');
+  const [editNotes, setEditNotes] = useState<string>(task.notes || '');
+  const currentAttorney = (task.contacts || []).find(c => c.role.toLowerCase().includes('attorney'));
+  const [attorneyName, setAttorneyName] = useState<string>(currentAttorney?.name || '');
+  const [attorneyEmail, setAttorneyEmail] = useState<string>(currentAttorney?.email || '');
+  const [attorneyPhone, setAttorneyPhone] = useState<string>(currentAttorney?.phone || '');
 
   const handleNavigation = () => {
     if (task.linkedPage) {
@@ -139,12 +153,48 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask }: {
         <CollapsibleContent className="px-5 pb-5">
           <div className="ml-8 space-y-4 pt-3 border-t border-gray-100">
             <p className="text-sm text-gray-600">{task.description}</p>
-            
-            <div className="flex items-start justify-between gap-3">
+
+            {/* Editable fields */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label className="text-xs">Title</Label>
+                <Input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} />
+              </div>
+              <div>
+                <Label className="text-xs">Assigned to</Label>
+                <Input value={editAssignedTo} onChange={(e) => setEditAssignedTo(e.target.value)} placeholder="Buyer / Agent / Lender" />
+              </div>
+              <div>
+                <Label className="text-xs">Due date</Label>
+                <Input type="date" value={editDueDate} onChange={(e) => setEditDueDate(e.target.value)} />
+              </div>
+              <div>
+                <Label className="text-xs">Notes</Label>
+                <Textarea rows={3} value={editNotes} onChange={(e) => setEditNotes(e.target.value)} />
+              </div>
+            </div>
+
+            {/* Attorney contact */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <Label className="text-xs">Attorney name</Label>
+                <Input value={attorneyName} onChange={(e) => setAttorneyName(e.target.value)} />
+              </div>
+              <div>
+                <Label className="text-xs">Attorney email</Label>
+                <Input type="email" value={attorneyEmail} onChange={(e) => setAttorneyEmail(e.target.value)} />
+              </div>
+              <div>
+                <Label className="text-xs">Attorney phone</Label>
+                <Input value={attorneyPhone} onChange={(e) => setAttorneyPhone(e.target.value)} />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between gap-3">
               <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">
                 <div className="flex items-center gap-1">
                   <User className="w-4 h-4" />
-                  <span>{task.assignedTo}</span>
+                  <span>{editAssignedTo || 'Unassigned'}</span>
                 </div>
                 <Badge variant="outline" className="text-xs">
                   {task.category}
@@ -152,52 +202,68 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask }: {
                 <Badge variant="outline" className={`text-xs ${getPriorityColor(task.priority)}`}>
                   {task.priority} priority
                 </Badge>
+                {editDueDate && <span className="text-xs text-primary">Due: {formatDate(editDueDate)}</span>}
               </div>
-              
               {task.completedDate && (
                 <span className="text-sm text-green-600">Completed {task.completedDate}</span>
               )}
             </div>
-            
-            {(isActive || (task.linkedPage && !isCompleted)) && (
-              <div className="flex flex-wrap gap-3 pt-3">
-                {task.linkedPage && (
-                  <Button 
-                    size="sm" 
-                    variant="default" 
-                    onClick={handleNavigation}
-                    className="mobile-button-sm"
-                  >
-                    {task.actionLabel || 'Take Action'}
-                  </Button>
-                )}
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="mobile-button-sm"
-                  onClick={() => {
-                    // Show task details modal or expand task information
-                    alert(`Task Details: ${task.title}\n\nDescription: ${task.description || 'No additional details available.'}\n\nCategory: ${task.category}\nPriority: ${task.priority}`);
-                    // In a real app, this would open a detailed view modal
-                  }}
-                >
-                  View Details
-                </Button>
-              </div>
-            )}
-            
-            {isCompleted && task.linkedPage && (
-              <div className="flex flex-wrap gap-3 pt-3">
+
+            <div className="flex flex-wrap gap-3 pt-2">
+              <Button
+                size="sm"
+                onClick={() => {
+                  const updates: Partial<Task> = {
+                    title: editTitle,
+                    assignedTo: editAssignedTo,
+                    dueDate: editDueDate || undefined,
+                    notes: editNotes,
+                  };
+
+                  const newAttorney = (attorneyName || attorneyEmail || attorneyPhone) ? {
+                    name: attorneyName,
+                    role: 'Attorney',
+                    email: attorneyEmail || undefined,
+                    phone: attorneyPhone || undefined,
+                    when: 'Contract review',
+                  } : undefined;
+
+                  if (newAttorney) {
+                    const others = (task.contacts || []).filter(c => !(c.role && c.role.toLowerCase().includes('attorney')));
+                    updates.contacts = [...others, newAttorney as any];
+                  }
+
+                  onUpdateTaskFields?.(task.id, updates);
+                }}
+              >
+                Save
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  setEditTitle(task.title);
+                  setEditAssignedTo(task.assignedTo || '');
+                  setEditDueDate(task.dueDate || '');
+                  setEditNotes(task.notes || '');
+                  const cur = (task.contacts || []).find(c => c.role.toLowerCase().includes('attorney'));
+                  setAttorneyName(cur?.name || '');
+                  setAttorneyEmail(cur?.email || '');
+                  setAttorneyPhone(cur?.phone || '');
+                }}
+              >
+                Cancel
+              </Button>
+              {task.linkedPage && (
                 <Button 
                   size="sm" 
                   variant="outline" 
                   onClick={handleNavigation}
-                  className="mobile-button-sm"
                 >
-                  View {task.category}
+                  Go to page
                 </Button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </CollapsibleContent>
       </div>
@@ -303,6 +369,10 @@ export default function Tasks({ onNavigate }: TasksProps) {
     taskContext.updateTaskStatus(taskId, status);
   };
 
+  const handleUpdateTaskFields = (taskId: string, updates: Partial<Task>) => {
+    taskContext.updateTask(taskId, updates);
+  };
+
   // Tab state management
   const [activeTab, setActiveTab] = useState<string>('checklist');
   const [checklistSubtab, setChecklistSubtab] = useState<'list' | 'calendar'>('list');
@@ -403,29 +473,25 @@ export default function Tasks({ onNavigate }: TasksProps) {
                 </Button>
               </div>
 
-              <TabsContent value="list" className="space-y-6 mt-6">
-                {/* Wider layout for better task visibility */}
-                <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 max-w-none">
-                  <div className="lg:col-span-2">
-                    <ChecklistSidebar
-                      phases={taskPhases}
-                      selectedPhaseId={selectedPhaseId}
-                      selectedTaskId={selectedTaskId}
-                      onSelectPhase={(id) => setSelectedPhaseId(id)}
-                      onSelectTask={handleSelectTask}
-                      onUpdateTask={handleUpdateTask}
-                    />
-                  </div>
-                  <div className="lg:col-span-3">
-                    <ChecklistDetail
-                      task={flatTasks.find(t => t.id === selectedTaskId) || firstActiveTask}
-                      onAction={() => {
-                        const t = flatTasks.find(t => t.id === selectedTaskId) || firstActiveTask;
-                        if (t?.linkedPage) onNavigate(t.linkedPage);
-                      }}
-                      onUpdateTask={handleUpdateTask}
-                    />
-                  </div>
+              <TabsContent value="list" className="space-y-4 mt-6">
+                {/* Flat list of tasks with expandable editing */}
+                <div className="space-y-3">
+                  {flatTasks
+                    .slice()
+                    .sort((a,b) => {
+                      const ad = a.dueDate ? new Date(a.dueDate).getTime() : Infinity;
+                      const bd = b.dueDate ? new Date(b.dueDate).getTime() : Infinity;
+                      return ad - bd;
+                    })
+                    .map((t) => (
+                      <ExpandableTaskCard
+                        key={t.id}
+                        task={t}
+                        onNavigate={onNavigate}
+                        onUpdateTask={handleUpdateTask}
+                        onUpdateTaskFields={handleUpdateTaskFields}
+                      />
+                    ))}
                 </div>
               </TabsContent>
 
