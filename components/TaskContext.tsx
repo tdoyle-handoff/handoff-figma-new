@@ -135,7 +135,7 @@ const getPropertyData = (): PropertyData | null => {
 const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] => {
   const isUnderContract = isHouseUnderContract();
 
-  return [
+  const tasks: Task[] = [
     // Phase 1: Search & Research
     {
       id: 'task-buy-box-template',
@@ -801,6 +801,58 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
       assignedTo: 'Buyer'
     }
   ];
+
+  // Default due dates tuned to workflow (relative to today) where not already set
+  const offsetDaysById: Record<string, number> = {
+    'task-buy-box-template': 0,
+    'task-mortgage-preapproval': 3,
+    'task-mls-listing-pdf': 1,
+    'task-submit-offer': 2,
+    'task-offer-acceptance-signing': 5,
+    'task-attorney-selection': 7,
+    'task-contract-riders': 9,
+    'task-send-lawyer-signed-contract': 9,
+    'task-earnest-money-deposit': 10,
+    'task-shop-inspectors': 10,
+    'task-home-inspection': 12,
+    'task-schedule-specialized-inspections': 13,
+    'task-review-inspection-results': 14,
+    'task-submit-repair-requests': 15,
+    'task-finalize-inspection-remedies': 18,
+    'task-send-offer-to-lender': 6,
+    'task-shop-mortgage-terms': 7,
+    'task-mortgage-application': 8,
+    'task-appraisal': 20,
+    'task-title-search': 20,
+    'task-insurance-get-bids': 12,
+    'task-homeowners-insurance': 22,
+    'task-schedule-final-walkthrough': 27,
+    'task-final-walkthrough': 28,
+    'task-confirm-repairs-complete': 24,
+    'task-renegotiate-new-findings': 25,
+    'task-closing-review': 29,
+    'task-escrow-wire-instructions': 23,
+    'task-closing-funds': 30,
+    'task-wire-funds': 31,
+    'task-closing-meeting': 32,
+    'task-utilities-transfer': 33,
+    'task-move-in': 34,
+    'task-change-address': 35,
+    'task-home-maintenance': 40,
+  };
+
+  const today = new Date();
+  const toISO = (d: Date) => d.toISOString().split('T')[0];
+
+  tasks.forEach((t) => {
+    if (!t.dueDate && offsetDaysById[t.id] !== undefined) {
+      const d = new Date(today);
+      d.setDate(d.getDate() + offsetDaysById[t.id]);
+      t.dueDate = toISO(d);
+    }
+  });
+
+  return tasks;
 };
 
 // Generate organized task phases for better user experience

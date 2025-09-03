@@ -60,11 +60,12 @@ const formatDate = (dateStr: string) => {
   return date.toLocaleDateString();
 };
 
-const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields }: {
+const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields, tasksById }: {
   task: Task;
   onNavigate: (page: string) => void;
   onUpdateTask?: (taskId: string, status: Task['status']) => void;
   onUpdateTaskFields?: (taskId: string, updates: Partial<Task>) => void;
+  tasksById?: Record<string, Task>;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const isCompleted = task.status === 'completed';
@@ -154,6 +155,39 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
         <CollapsibleContent className="px-5 pb-5">
           <div className="ml-8 space-y-4 pt-3 border-t border-gray-100">
             <p className="text-sm text-gray-600">{task.description}</p>
+
+            {/* Dependencies chips */}
+            {Array.isArray(task.dependencies) && task.dependencies.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2">
+                {task.dependencies.map((depId) => {
+                  const dep = tasksById ? tasksById[depId] : undefined;
+                  if (!dep) return (
+                    <span key={depId} className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs text-gray-600">
+                      <Circle className="w-3 h-3 text-gray-400" />
+                      <span className="truncate max-w-[160px]" title={depId}>Prerequisite</span>
+                    </span>
+                  );
+                  const icon = dep.status === 'completed' ? (
+                    <CheckCircle className="w-3 h-3 text-green-600" />
+                  ) : dep.status === 'overdue' ? (
+                    <AlertTriangle className="w-3 h-3 text-red-600" />
+                  ) : (
+                    <Clock className="w-3 h-3 text-blue-600" />
+                  );
+                  return (
+                    <span key={dep.id} className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs text-gray-700">
+                      {icon}
+                      <span className="truncate max-w-[160px]" title={dep.title}>{dep.title}</span>
+                    </span>
+                  );
+                })}
+                {tasksById && task.dependencies.some((id) => tasksById![id]?.status !== 'completed') && (
+                  <span className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-2 py-0.5">
+                    Blocked
+                  </span>
+                )}
+              </div>
+            )}
 
             {/* Editable fields */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -374,6 +408,11 @@ const [checklistSubtab, setChecklistSubtab] = useState<'list' | 'calendar' | 'bo
   // selection state for sidebar -> detail
   const [selectedPhaseId, setSelectedPhaseId] = useState<string | undefined>(taskPhases.find(p => p.status === 'active')?.id);
   const flatTasks = taskPhases.flatMap(p => p.tasks);
+  const tasksById = React.useMemo(() => {
+    const map: Record<string, Task> = {};
+    flatTasks.forEach(t => { map[t.id] = t; });
+    return map;
+  }, [taskPhases]);
   const firstActiveTask = flatTasks.find(t => ['active','in-progress','overdue'].includes(t.status)) || flatTasks[0] || null;
   const [selectedTaskId, setSelectedTaskId] = useState<string | undefined>(firstActiveTask?.id);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
@@ -490,6 +529,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'list' | 'calendar' | 'bo
                         onNavigate={onNavigate}
                         onUpdateTask={handleUpdateTask}
                         onUpdateTaskFields={handleUpdateTaskFields}
+                        tasksById={tasksById}
                       />
                     ))}
                 </div>
