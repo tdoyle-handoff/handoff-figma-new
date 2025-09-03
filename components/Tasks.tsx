@@ -382,7 +382,7 @@ export default function Tasks({ onNavigate }: TasksProps) {
         <TabsContent value="checklist" className="space-y-6 mt-6 bg-white">
           {/* Sub-tabs: List | Calendar */}
           <div className="px-1">
-            <Tabs value={checklistSubtab} onValueChange={setChecklistSubtab} className="w-full">
+            <Tabs value={checklistSubtab} onValueChange={(v) => setChecklistSubtab(v as 'list' | 'calendar')} className="w-full">
               <TabsList className="bg-transparent h-auto p-0 border-b border-gray-200 rounded-none flex justify-start">
                 <TabsTrigger
                   value="list"
