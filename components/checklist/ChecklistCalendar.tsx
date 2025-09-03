@@ -6,6 +6,8 @@ import { Badge } from '../ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
+import { Textarea } from '../ui/textarea';
+import { Label } from '../ui/label';
 
 interface ChecklistCalendarProps {
   tasks: Task[];
@@ -64,6 +66,9 @@ export default function ChecklistCalendar({ tasks, onUpdateTask }: ChecklistCale
   const [editOpen, setEditOpen] = useState(false);
   const [editTask, setEditTask] = useState<Task | null>(null);
   const [editDate, setEditDate] = useState<string>('');
+  const [editTitle, setEditTitle] = useState<string>('');
+  const [editAssignedTo, setEditAssignedTo] = useState<string>('');
+  const [editNotes, setEditNotes] = useState<string>('');
 
   const monthStart = useMemo(() => startOfMonth(cursor), [cursor]);
   const monthEnd = useMemo(() => endOfMonth(cursor), [cursor]);
@@ -90,6 +95,8 @@ export default function ChecklistCalendar({ tasks, onUpdateTask }: ChecklistCale
     return map;
   }, [tasks]);
 
+  const unscheduled = useMemo(() => tasks.filter(t => !t.dueDate), [tasks]);
+
   const handlePrevMonth = () => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1));
   const handleNextMonth = () => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1));
   const handleToday = () => setCursor(new Date());
@@ -109,6 +116,13 @@ export default function ChecklistCalendar({ tasks, onUpdateTask }: ChecklistCale
     const taskId = e.dataTransfer.getData('text/task-id');
     if (!taskId) return;
     onUpdateTask(taskId, { dueDate: formatISODate(date) });
+  };
+
+  const onDropUnscheduled = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const taskId = e.dataTransfer.getData('text/task-id');
+    if (!taskId) return;
+    onUpdateTask(taskId, { dueDate: undefined });
   };
 
   const monthLabel = cursor.toLocaleString(undefined, { month: 'long', year: 'numeric' });
@@ -137,16 +151,51 @@ export default function ChecklistCalendar({ tasks, onUpdateTask }: ChecklistCale
         </div>
       </CardHeader>
       <CardContent>
-        {/* Weekday headers */}
-        <div className="grid grid-cols-7 text-xs text-gray-500 mb-2">
-          {weekdayLabels.map((lbl) => (
-            <div key={lbl} className="px-2 py-1 text-center">{lbl}</div>
-          ))}
-        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+          {/* Unscheduled panel */}
+          <div className="lg:col-span-3">
+            <div
+              className="border rounded-md p-3 bg-white min-h-[120px]"
+              onDragOver={onDragOver}
+              onDrop={onDropUnscheduled}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-sm font-medium">Unscheduled</div>
+                <Badge variant="outline" className="text-[10px] px-1.5 py-0.5">{unscheduled.length}</Badge>
+              </div>
+              {unscheduled.length === 0 ? (
+                <div className="text-xs text-gray-500">No tasks without a date. Drag here to clear a task’s date.</div>
+              ) : (
+                <div className="space-y-1 max-h-[280px] overflow-auto">
+                  {unscheduled.map((t) => (
+                    <div
+                      key={t.id}
+                      draggable
+                      onDragStart={(e) => onDragStart(e, t.id)}
+                      className="cursor-move text-xs border rounded px-2 py-1 flex items-center gap-2 hover:bg-gray-50"
+                      title={`${t.title}${t.description ? ' — ' + t.description : ''}`}
+                    >
+                      {statusIcon(t.status)}
+                      <span className="truncate">{t.title}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
 
-        {/* Calendar grid */}
-        <div className="grid grid-cols-7 gap-px bg-gray-200 rounded overflow-hidden">
-          {days.map((day) => {
+          {/* Calendar area */}
+          <div className="lg:col-span-9">
+            {/* Weekday headers */}
+            <div className="grid grid-cols-7 text-xs text-gray-500 mb-2">
+              {weekdayLabels.map((lbl) => (
+                <div key={lbl} className="px-2 py-1 text-center">{lbl}</div>
+              ))}
+            </div>
+
+            {/* Calendar grid */}
+            <div className="grid grid-cols-7 gap-px bg-gray-200 rounded overflow-hidden">
+              {days.map((day) => {
             const inMonth = day.getMonth() === monthStart.getMonth();
             const isToday = isSameDay(day, today);
             const key = formatISODate(day);
@@ -178,6 +227,9 @@ export default function ChecklistCalendar({ tasks, onUpdateTask }: ChecklistCale
                       onClick={() => {
                         setEditTask(t);
                         setEditDate(t.dueDate || formatISODate(day));
+                        setEditTitle(t.title);
+                        setEditAssignedTo(t.assignedTo || '');
+                        setEditNotes(t.notes || '');
                         setEditOpen(true);
                       }}
                       className="group cursor-move text-xs border rounded px-1.5 py-1 flex items-center gap-1 hover:bg-gray-50"
@@ -207,24 +259,40 @@ export default function ChecklistCalendar({ tasks, onUpdateTask }: ChecklistCale
     <Dialog open={editOpen} onOpenChange={setEditOpen}>
       <DialogContent className="max-w-md bg-white border border-gray-200 shadow-xl">
         <DialogHeader>
-          <DialogTitle>Edit Task Date</DialogTitle>
+          <DialogTitle>Edit Task</DialogTitle>
         </DialogHeader>
         {editTask && (
           <div className="space-y-4">
             <div>
-              <div className="text-sm text-gray-600 mb-1">Task</div>
-              <div className="text-sm font-medium text-gray-900">{editTask.title}</div>
+              <Label className="text-sm text-gray-600 mb-1">Title</Label>
+              <Input type="text" value={editTitle} onChange={(e) => setEditTitle(e.target.value)} />
             </div>
             <div>
-              <div className="text-sm text-gray-600 mb-1">Due date</div>
-              <Input type="date" value={editDate} onChange={(e) => setEditDate(e.target.value)} />
+              <Label className="text-sm text-gray-600 mb-1">Assigned to</Label>
+              <Input type="text" value={editAssignedTo} onChange={(e) => setEditAssignedTo(e.target.value)} placeholder="e.g., Buyer, Agent, Lender" />
+            </div>
+            <div>
+              <Label className="text-sm text-gray-600 mb-1">Due date</Label>
+              <div className="flex items-center gap-2">
+                <Input type="date" value={editDate} onChange={(e) => setEditDate(e.target.value)} />
+                <Button variant="outline" onClick={() => setEditDate('')}>Clear</Button>
+              </div>
+            </div>
+            <div>
+              <Label className="text-sm text-gray-600 mb-1">Notes</Label>
+              <Textarea value={editNotes} onChange={(e) => setEditNotes(e.target.value)} rows={4} />
             </div>
             <div className="flex justify-end gap-2 pt-2">
               <Button variant="outline" onClick={() => setEditOpen(false)}>Cancel</Button>
               <Button
                 onClick={() => {
                   if (editTask) {
-                    onUpdateTask(editTask.id, { dueDate: editDate });
+                    onUpdateTask(editTask.id, { 
+                      dueDate: editDate || undefined,
+                      title: editTitle,
+                      assignedTo: editAssignedTo,
+                      notes: editNotes,
+                    });
                   }
                   setEditOpen(false);
                 }}
