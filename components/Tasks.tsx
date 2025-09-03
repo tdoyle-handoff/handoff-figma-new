@@ -12,6 +12,7 @@ import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Label } from './ui/label';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './ui/select';
+import { Switch } from './ui/switch';
 import ChecklistLegalTabs from './checklist/LegalTabs';
 import ChecklistInspectionTabs from './checklist/InspectionTabs';
 import ChecklistInsuranceTabs from './checklist/InsuranceTabs';
@@ -910,20 +911,77 @@ const PhaseOverviewCard = ({ phase, onAddTask, onNavigate, onUpdateTask, onUpdat
         </div>
       </CardHeader>
       <CardContent className="pt-0">
-        <div className="space-y-2">
-          {phase.tasks.map((task) => (
-            <ExpandableTaskCard
-              key={task.id}
-              task={task}
-              onNavigate={onNavigate}
-              onUpdateTask={onUpdateTask}
-              onUpdateTaskFields={onUpdateTaskFields}
-              tasksById={tasksById}
-              minimal
-              onOpenModal={onOpenModal}
-            />
-          ))}
-        </div>
+        {(() => {
+          const isDiligencePhase = phase.id.toLowerCase().includes('diligence') || phase.title.toLowerCase().includes('diligence');
+          if (!isDiligencePhase) {
+            return (
+              <div className="space-y-2">
+                {phase.tasks.map((task) => (
+                  <ExpandableTaskCard
+                    key={task.id}
+                    task={task}
+                    onNavigate={onNavigate}
+                    onUpdateTask={onUpdateTask}
+                    onUpdateTaskFields={onUpdateTaskFields}
+                    tasksById={tasksById}
+                    minimal
+                    onOpenModal={onOpenModal}
+                  />
+                ))}
+              </div>
+            );
+          }
+          const groups: { label: string; key: string; tasks: Task[] }[] = [
+            { label: 'Inspections', key: 'inspections', tasks: phase.tasks.filter(t => (t.subcategory || '').toLowerCase() === 'inspections') },
+            { label: 'Legal', key: 'legal', tasks: phase.tasks.filter(t => (t.subcategory || '').toLowerCase() === 'legal') },
+            { label: 'Mortgage', key: 'financing', tasks: phase.tasks.filter(t => (t.subcategory || '').toLowerCase() === 'financing') },
+          ];
+          const other = phase.tasks.filter(t => !['inspections','legal','financing'].includes((t.subcategory || '').toLowerCase()));
+          return (
+            <div className="space-y-4">
+              {groups.map((g) => (
+                g.tasks.length > 0 && (
+                  <div key={g.key} className="space-y-2">
+                    <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide">{g.label}</div>
+                    <div className="space-y-2">
+                      {g.tasks.map((task) => (
+                        <ExpandableTaskCard
+                          key={task.id}
+                          task={task}
+                          onNavigate={onNavigate}
+                          onUpdateTask={onUpdateTask}
+                          onUpdateTaskFields={onUpdateTaskFields}
+                          tasksById={tasksById}
+                          minimal
+                          onOpenModal={onOpenModal}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )
+              ))}
+              {other.length > 0 && (
+                <div className="space-y-2">
+                  <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Other</div>
+                  <div className="space-y-2">
+                    {other.map((task) => (
+                      <ExpandableTaskCard
+                        key={task.id}
+                        task={task}
+                        onNavigate={onNavigate}
+                        onUpdateTask={onUpdateTask}
+                        onUpdateTaskFields={onUpdateTaskFields}
+                        tasksById={tasksById}
+                        minimal
+                        onOpenModal={onOpenModal}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })()}
         <div className="mt-4 flex items-center gap-2">
           <Input placeholder="Add task" value={title} onChange={(e) => setTitle(e.target.value)} />
           <Button size="sm" onClick={() => { if (title.trim()) { onAddTask?.(phase, title.trim()); setTitle(''); } }}>
@@ -951,6 +1009,34 @@ export default function Tasks({ onNavigate }: TasksProps) {
   const { taskPhases } = taskContext;
 
   const [modalTask, setModalTask] = useState<Task | null>(null);
+
+  // Scenario filters: controls which tasks are shown
+  const [scenarios, setScenarios] = useState<{ mortgage: boolean; cash: boolean; inspections: boolean; sellerFinancing: boolean; others: boolean }>(() => {
+    try {
+      const raw = localStorage.getItem('handoff-task-scenarios-v1');
+      if (raw) return JSON.parse(raw);
+    } catch {}
+    return { mortgage: true, cash: false, inspections: true, sellerFinancing: false, others: false };
+  });
+  React.useEffect(() => {
+    try { localStorage.setItem('handoff-task-scenarios-v1', JSON.stringify(scenarios)); } catch {}
+  }, [scenarios]);
+
+  // Derive displayed phases by filtering tasks based on selected scenarios
+  const displayedTaskPhases = React.useMemo(() => {
+    const allowFinancing = scenarios.mortgage || scenarios.sellerFinancing;
+    const allowInspections = scenarios.inspections !== false;
+    return taskPhases.map((phase) => ({
+      ...phase,
+      tasks: phase.tasks.filter((t) => {
+        const sub = (t.subcategory || '').toLowerCase();
+        if (!allowInspections && sub === 'inspections') return false;
+        if (!allowFinancing && sub === 'financing') return false;
+        // Cash purchase hint: if cash selected and mortgage off, financing already filtered; keep others
+        return true;
+      })
+    }));
+  }, [taskPhases, scenarios]);
 
   const phaseIdToCategory = (phaseId: string): Task['category'] => {
     if (phaseId.includes('search')) return 'search';
@@ -991,8 +1077,8 @@ export default function Tasks({ onNavigate }: TasksProps) {
 const [checklistSubtab, setChecklistSubtab] = useState<'cards' | 'board'>('cards');
 
   // selection state for sidebar -> detail
-  const [selectedPhaseId, setSelectedPhaseId] = useState<string | undefined>(taskPhases.find(p => p.status === 'active')?.id);
-  const flatTasks = taskPhases.flatMap(p => p.tasks);
+  const [selectedPhaseId, setSelectedPhaseId] = useState<string | undefined>(displayedTaskPhases.find(p => p.status === 'active')?.id);
+  const flatTasks = displayedTaskPhases.flatMap(p => p.tasks);
   const tasksById = React.useMemo(() => {
     const map: Record<string, Task> = {};
     flatTasks.forEach(t => { map[t.id] = t; });
@@ -1028,7 +1114,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'cards' | 'board'>('cards
   };
   
   // Get active tasks for quick actions
-  const activeTasksForAlert = taskPhases.flatMap(phase => phase.tasks).filter(task => 
+  const activeTasksForAlert = displayedTaskPhases.flatMap(phase => phase.tasks).filter(task => 
     ['active', 'in-progress', 'overdue'].includes(task.status)
   );
   
@@ -1098,6 +1184,33 @@ const [checklistSubtab, setChecklistSubtab] = useState<'cards' | 'board'>('cards
         <TabsContent value="checklist" className="space-y-6 mt-6 bg-white">
           {/* Sub-tabs: List | Calendar */}
           <div className="px-1">
+            {/* Scenario selection */}
+            <div className="mb-4 p-3 border rounded-lg bg-gray-50">
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="font-medium text-sm text-gray-800">Scenarios & scope</div>
+                <div className="flex items-center gap-2">
+                  <Switch id="scn-mortgage" checked={scenarios.mortgage} onCheckedChange={(v) => setScenarios((s) => ({ ...s, mortgage: !!v, cash: v ? false : s.cash }))} />
+                  <label htmlFor="scn-mortgage" className="text-sm">Mortgage financing</label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Switch id="scn-cash" checked={scenarios.cash} onCheckedChange={(v) => setScenarios((s) => ({ ...s, cash: !!v, mortgage: v ? false : s.mortgage, sellerFinancing: v ? false : s.sellerFinancing }))} />
+                  <label htmlFor="scn-cash" className="text-sm">Cash purchase</label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Switch id="scn-inspections" checked={scenarios.inspections} onCheckedChange={(v) => setScenarios((s) => ({ ...s, inspections: !!v }))} />
+                  <label htmlFor="scn-inspections" className="text-sm">Inspections in scope</label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Switch id="scn-sellerfin" checked={scenarios.sellerFinancing} onCheckedChange={(v) => setScenarios((s) => ({ ...s, sellerFinancing: !!v, cash: v ? false : s.cash }))} />
+                  <label htmlFor="scn-sellerfin" className="text-sm">Seller financing</label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Switch id="scn-others" checked={scenarios.others} onCheckedChange={(v) => setScenarios((s) => ({ ...s, others: !!v }))} />
+                  <label htmlFor="scn-others" className="text-sm">Other items</label>
+                </div>
+              </div>
+            </div>
+
             {/* Schedule Anchors */}
             <div className="mb-4 p-3 border rounded-lg bg-gray-50">
               <div className="flex flex-wrap items-end gap-4">
@@ -1147,7 +1260,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'cards' | 'board'>('cards
               <TabsContent value="cards" className="space-y-3 mt-4">
                 {/* Overview cards by phase */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 md:gap-4">
-                  {taskPhases.map((phase) => (
+                  {displayedTaskPhases.map((phase) => (
                     <PhaseOverviewCard key={phase.id} phase={phase} onAddTask={handleAddTaskToPhase} onNavigate={onNavigate} onUpdateTask={handleUpdateTask} onUpdateTaskFields={handleUpdateTaskFields} tasksById={tasksById} onOpenModal={(t)=>setModalTask(t)} />
                   ))}
                 </div>
