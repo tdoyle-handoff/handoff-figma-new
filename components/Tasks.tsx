@@ -21,6 +21,8 @@ import ChecklistDetail from './checklist/ChecklistDetail';
 import ChecklistCalendar from './checklist/ChecklistCalendar';
 import ChecklistKanban from './checklist/ChecklistKanban';
 import { useTaskContext, Task, TaskPhase } from './TaskContext';
+import { scenarioSchema } from '../utils/scenarioSchema';
+import { getSelectedScenarios as getScenarioKeys, setSelectedScenarios as saveScenarioSelection } from '../utils/scenarioEngine';
 
 // Task interfaces are now imported from TaskContext
 
@@ -997,6 +999,54 @@ interface TasksProps {
   onNavigate: (page: string) => void;
 }
 
+// Scenario Toggle Panel Component
+function ScenarioTogglePanel({ selectedKeys, onChange }: { selectedKeys: string[]; onChange: (keys: string[]) => void }) {
+  const selected = new Set(selectedKeys);
+  const groups: string[] = (scenarioSchema.merge_rules?.order || []) as string[];
+  const pretty = (s: string) => s.replace(/_/g, ' ').replace(/\b\w/g, (m) => m.toUpperCase());
+
+  const toggle = (key: string, enabled: boolean) => {
+    const next = new Set(selected);
+    if (enabled) next.add(key); else next.delete(key);
+    onChange(Array.from(next));
+  };
+
+  const clearAll = () => onChange([]);
+
+  return (
+    <div className="mb-4 p-3 border rounded-lg bg-gray-50">
+      <div className="flex items-center justify-between mb-2">
+        <div className="font-medium text-sm text-gray-800">Scenarios & scope</div>
+        <div className="flex items-center gap-2">
+          {selected.size > 0 && (
+            <span className="text-xs text-gray-600">{selected.size} selected</span>
+          )}
+          <Button size="sm" variant="outline" onClick={clearAll}>Reset</Button>
+        </div>
+      </div>
+      <div className="space-y-3">
+        {groups.map((group) => {
+          const mods: any[] = Array.isArray((scenarioSchema.modules as any)[group]) ? (scenarioSchema.modules as any)[group] : [];
+          if (mods.length === 0) return null;
+          return (
+            <div key={group} className="">
+              <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">{pretty(group)}</div>
+              <div className="flex flex-wrap gap-4">
+                {mods.map((m: any) => (
+                  <div key={m.key} className="flex items-center gap-2">
+                    <Switch id={`scn-${m.key}`} checked={selected.has(m.key)} onCheckedChange={(v) => toggle(m.key, !!v)} />
+                    <label htmlFor={`scn-${m.key}`} className="text-sm">{pretty(m.key)}</label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export default function Tasks({ onNavigate }: TasksProps) {
   const isMobile = useIsMobile();
   const taskContext = useTaskContext();
@@ -1010,33 +1060,22 @@ export default function Tasks({ onNavigate }: TasksProps) {
 
   const [modalTask, setModalTask] = useState<Task | null>(null);
 
-  // Scenario filters: controls which tasks are shown
-  const [scenarios, setScenarios] = useState<{ mortgage: boolean; cash: boolean; inspections: boolean; sellerFinancing: boolean; others: boolean }>(() => {
-    try {
-      const raw = localStorage.getItem('handoff-task-scenarios-v1');
-      if (raw) return JSON.parse(raw);
-    } catch {}
-    return { mortgage: true, cash: false, inspections: true, sellerFinancing: false, others: false };
+  // Scenario toggles (v2): selected scenario keys from schema/engine
+  const [selectedScenarioKeys, setSelectedScenarioKeys] = useState<string[]>(() => {
+    try { return getScenarioKeys(); } catch { return []; }
   });
   React.useEffect(() => {
-    try { localStorage.setItem('handoff-task-scenarios-v1', JSON.stringify(scenarios)); } catch {}
-  }, [scenarios]);
+    const onStorage = () => { try { setSelectedScenarioKeys(getScenarioKeys()); } catch {} };
+    const onEvt = () => { try { setSelectedScenarioKeys(getScenarioKeys()); } catch {} };
+    window.addEventListener('storage', onStorage);
+    window.addEventListener('scenariosUpdated', onEvt as any);
+    return () => {
+      window.removeEventListener('storage', onStorage);
+      window.removeEventListener('scenariosUpdated', onEvt as any);
+    };
+  }, []);
 
-  // Derive displayed phases by filtering tasks based on selected scenarios
-  const displayedTaskPhases = React.useMemo(() => {
-    const allowFinancing = scenarios.mortgage || scenarios.sellerFinancing;
-    const allowInspections = scenarios.inspections !== false;
-    return taskPhases.map((phase) => ({
-      ...phase,
-      tasks: phase.tasks.filter((t) => {
-        const sub = (t.subcategory || '').toLowerCase();
-        if (!allowInspections && sub === 'inspections') return false;
-        if (!allowFinancing && sub === 'financing') return false;
-        // Cash purchase hint: if cash selected and mortgage off, financing already filtered; keep others
-        return true;
-      })
-    }));
-  }, [taskPhases, scenarios]);
+  const displayedTaskPhases = React.useMemo(() => taskPhases, [taskPhases]);
 
   const phaseIdToCategory = (phaseId: string): Task['category'] => {
     if (phaseId.includes('search')) return 'search';
@@ -1184,32 +1223,17 @@ const [checklistSubtab, setChecklistSubtab] = useState<'cards' | 'board'>('cards
         <TabsContent value="checklist" className="space-y-6 mt-6 bg-white">
           {/* Sub-tabs: List | Calendar */}
           <div className="px-1">
-            {/* Scenario selection */}
-            <div className="mb-4 p-3 border rounded-lg bg-gray-50">
-              <div className="flex flex-wrap items-center gap-4">
-                <div className="font-medium text-sm text-gray-800">Scenarios & scope</div>
-                <div className="flex items-center gap-2">
-                  <Switch id="scn-mortgage" checked={scenarios.mortgage} onCheckedChange={(v) => setScenarios((s) => ({ ...s, mortgage: !!v, cash: v ? false : s.cash }))} />
-                  <label htmlFor="scn-mortgage" className="text-sm">Mortgage financing</label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Switch id="scn-cash" checked={scenarios.cash} onCheckedChange={(v) => setScenarios((s) => ({ ...s, cash: !!v, mortgage: v ? false : s.mortgage, sellerFinancing: v ? false : s.sellerFinancing }))} />
-                  <label htmlFor="scn-cash" className="text-sm">Cash purchase</label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Switch id="scn-inspections" checked={scenarios.inspections} onCheckedChange={(v) => setScenarios((s) => ({ ...s, inspections: !!v }))} />
-                  <label htmlFor="scn-inspections" className="text-sm">Inspections in scope</label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Switch id="scn-sellerfin" checked={scenarios.sellerFinancing} onCheckedChange={(v) => setScenarios((s) => ({ ...s, sellerFinancing: !!v, cash: v ? false : s.cash }))} />
-                  <label htmlFor="scn-sellerfin" className="text-sm">Seller financing</label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Switch id="scn-others" checked={scenarios.others} onCheckedChange={(v) => setScenarios((s) => ({ ...s, others: !!v }))} />
-                  <label htmlFor="scn-others" className="text-sm">Other items</label>
-                </div>
-              </div>
-            </div>
+            {/* Scenario selection (v2) */}
+            <ScenarioTogglePanel
+              selectedKeys={selectedScenarioKeys}
+              onChange={(nextKeys) => {
+                setSelectedScenarioKeys(nextKeys);
+                const map: Record<string, boolean> = {};
+                nextKeys.forEach(k => { map[k] = true; });
+                try { saveScenarioSelection(map); } catch {}
+                try { window.dispatchEvent(new Event('scenariosUpdated')); } catch {}
+              }}
+            />
 
             {/* Schedule Anchors */}
             <div className="mb-4 p-3 border rounded-lg bg-gray-50">
