@@ -130,8 +130,11 @@ function visibleByScenarios(schemaTask: any, selected: string[]): boolean {
 
 function applyOverrides(tasks: Task[], overrides: any[]) {
   overrides.forEach((ov) => {
-    const target = findTask(tasks, [ov.task_id]).
-      || tasks.find((t) => t.title.toLowerCase().includes(String(ov.task_id || '').replace(/_/g,' ').toLowerCase()));
+    const target =
+      findTask(tasks, [ov.task_id]) ||
+      tasks.find((t) =>
+        t.title.toLowerCase().includes(String(ov.task_id ?? '').replace(/_/g, ' ').toLowerCase())
+      );
     if (!target) return;
     const updated = cloneTask(target);
     if (typeof ov.title === 'string') updated.title = ov.title;
