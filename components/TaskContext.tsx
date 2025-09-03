@@ -138,6 +138,17 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
   return [
     // Phase 1: Search & Research
     {
+      id: 'task-buy-box-template',
+      title: 'Define Buy Box Criteria',
+      description: 'Create an internal buy box template outlining price range, areas, property type, and must-haves.',
+      category: 'search',
+      subcategory: 'general',
+      priority: 'medium',
+      status: isUnderContract ? 'completed' : 'active',
+      estimatedTime: '1-2 hours',
+      assignedTo: 'Buyer'
+    },
+    {
       id: 'task-mortgage-preapproval',
       title: 'Get Pre-approved for Mortgage',
       description: 'Obtain pre-approval letter from a lender to understand your budget and strengthen your offer.',
@@ -224,6 +235,17 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
 
     // Phase 2: Offer & Negotiation
     {
+      id: 'task-mls-listing-pdf',
+      title: 'Collect MLS Listing PDF',
+      description: 'Download and store the official MLS listing PDF for the subject property.',
+      category: 'offer',
+      priority: 'medium',
+      status: isUnderContract ? 'completed' : 'pending',
+      estimatedTime: '30 minutes',
+      assignedTo: 'Agent',
+      dependencies: ['task-property-search']
+    },
+    {
       id: 'task-market-analysis',
       title: 'Comparative Market Analysis',
       description: 'Analyze recent sales of similar properties to determine fair market value.',
@@ -257,6 +279,18 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
     },
 
     // Phase 3: Contract & Legal
+    {
+      id: 'task-offer-acceptance-signing',
+      title: 'Offer Acceptance & Signing',
+      description: 'Accept the offer and sign the contract; perform AI-assisted markup review as needed.',
+      category: 'contract',
+      subcategory: 'legal',
+      priority: 'high',
+      status: isUnderContract ? 'active' : 'pending',
+      estimatedTime: '1 day',
+      assignedTo: 'Buyer & Seller',
+      dependencies: ['task-submit-offer']
+    },
     {
       id: 'task-contract-review',
       title: 'Review Purchase Contract',
@@ -333,8 +367,54 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
       estimatedTime: '1-2 days',
       assignedTo: 'Buyer'
     },
+    {
+      id: 'task-contract-riders',
+      title: 'Add Contract Riders',
+      description: 'Identify, draft, and attach required riders to the contract.',
+      category: 'contract',
+      subcategory: 'legal',
+      priority: 'medium',
+      status: isUnderContract ? 'pending' : 'upcoming',
+      estimatedTime: '1 day',
+      assignedTo: 'Attorney',
+      dependencies: ['task-offer-acceptance-signing']
+    },
+    {
+      id: 'task-send-lawyer-signed-contract',
+      title: 'Send Signed Contract to Attorney',
+      description: 'Provide fully executed contract documents to your attorney.',
+      category: 'contract',
+      subcategory: 'legal',
+      priority: 'high',
+      status: isUnderContract ? 'pending' : 'upcoming',
+      assignedTo: 'Buyer',
+      dependencies: ['task-attorney-selection', 'task-offer-acceptance-signing']
+    },
+    {
+      id: 'task-earnest-money-deposit',
+      title: 'Submit Earnest Money Deposit',
+      description: 'Produce deposit according to the contract and wire or deliver check to escrow.',
+      category: 'contract',
+      subcategory: 'legal',
+      priority: 'high',
+      status: isUnderContract ? 'pending' : 'upcoming',
+      estimatedTime: '1 day',
+      assignedTo: 'Buyer',
+      dependencies: ['task-offer-acceptance-signing']
+    },
 
     // Phase 4: Due Diligence
+    {
+      id: 'task-shop-inspectors',
+      title: 'Shop for Inspectors',
+      description: 'Identify and vet general and specialized inspectors.',
+      category: 'diligence',
+      subcategory: 'inspections',
+      priority: 'medium',
+      status: isUnderContract ? 'pending' : 'upcoming',
+      assignedTo: 'Buyer',
+      dependencies: ['task-offer-acceptance-signing']
+    },
     {
       id: 'task-home-inspection',
       title: 'Schedule Home Inspection',
@@ -347,6 +427,7 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
       linkedPage: 'inspections',
       actionLabel: 'Schedule Inspection',
       assignedTo: 'Buyer',
+      dependencies: ['task-shop-inspectors'],
       instructions: {
         overview: 'A professional home inspection is crucial for identifying potential problems before you buy.',
         steps: [
@@ -403,8 +484,52 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
       }
     },
     {
+      id: 'task-schedule-specialized-inspections',
+      title: 'Schedule Specialized Inspections',
+      description: 'Schedule pest, septic, lead, radon, roof, structural, well water, or other specialty inspections as needed.',
+      category: 'diligence',
+      subcategory: 'inspections',
+      priority: 'medium',
+      status: isUnderContract ? 'pending' : 'upcoming',
+      assignedTo: 'Buyer',
+      dependencies: ['task-home-inspection']
+    },
+    {
+      id: 'task-review-inspection-results',
+      title: 'Review Inspection Results',
+      description: 'Read inspection reports and identify issues to address.',
+      category: 'diligence',
+      subcategory: 'inspections',
+      priority: 'high',
+      status: isUnderContract ? 'pending' : 'upcoming',
+      assignedTo: 'Buyer & Agent',
+      dependencies: ['task-home-inspection']
+    },
+    {
+      id: 'task-submit-repair-requests',
+      title: 'Submit Repair Requests / Begin Negotiations',
+      description: 'Compile items to address and submit to the seller to begin negotiations.',
+      category: 'diligence',
+      subcategory: 'inspections',
+      priority: 'high',
+      status: isUnderContract ? 'pending' : 'upcoming',
+      assignedTo: 'Buyer & Agent',
+      dependencies: ['task-review-inspection-results']
+    },
+    {
+      id: 'task-finalize-inspection-remedies',
+      title: 'Finalize Inspection Remedies & Timelines',
+      description: 'Finalize extensions, riders, and timelines for agreed inspection remedies.',
+      category: 'diligence',
+      subcategory: 'inspections',
+      priority: 'medium',
+      status: isUnderContract ? 'pending' : 'upcoming',
+      assignedTo: 'Buyer & Agent',
+      dependencies: ['task-submit-repair-requests']
+    },
+    {
       id: 'task-mortgage-application',
-      title: 'Submit Formal Mortgage Application',
+      title: 'Submit Mortgage Application & Financials',
       description: 'Complete the full mortgage application with your chosen lender.',
       category: 'diligence',
       subcategory: 'financing',
@@ -413,7 +538,30 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
       estimatedTime: '1-2 days',
       linkedPage: 'financing',
       actionLabel: 'Apply for Mortgage',
-      assignedTo: 'Buyer'
+      assignedTo: 'Buyer',
+      dependencies: ['task-submit-offer', 'task-offer-acceptance-signing']
+    },
+    {
+      id: 'task-send-offer-to-lender',
+      title: 'Send Accepted Offer to Lender',
+      description: 'Provide accepted offer and contract to your mortgage lender.',
+      category: 'diligence',
+      subcategory: 'financing',
+      priority: 'high',
+      status: isUnderContract ? 'active' : 'pending',
+      assignedTo: 'Buyer',
+      dependencies: ['task-offer-acceptance-signing']
+    },
+    {
+      id: 'task-shop-mortgage-terms',
+      title: 'Shop for Mortgage Terms',
+      description: 'Compare rates, points, and terms from multiple lenders.',
+      category: 'diligence',
+      subcategory: 'financing',
+      priority: 'medium',
+      status: isUnderContract ? 'active' : 'pending',
+      assignedTo: 'Buyer',
+      dependencies: ['task-mortgage-preapproval']
     },
     {
       id: 'task-appraisal',
@@ -424,7 +572,8 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
       priority: 'high',
       status: isUnderContract ? 'pending' : 'upcoming',
       estimatedTime: '1-2 weeks',
-      assignedTo: 'Lender'
+      assignedTo: 'Lender',
+      dependencies: ['task-mortgage-application']
     },
     {
       id: 'task-title-search',
@@ -437,10 +586,22 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
       estimatedTime: '1-2 weeks',
       linkedPage: 'legal',
       actionLabel: 'Review Title',
-      assignedTo: 'Title Company'
+      assignedTo: 'Title Company',
+      dependencies: ['task-offer-acceptance-signing']
     },
 
     // Phase 5: Pre-Closing
+    {
+      id: 'task-insurance-get-bids',
+      title: 'Get Insurance Bids & Coverage Options',
+      description: 'Gather quotes for home, flood, wind, hurricane, liability, PMI as applicable from brokers or direct.',
+      category: 'pre-closing',
+      subcategory: 'insurance',
+      priority: 'high',
+      status: isUnderContract ? 'pending' : 'upcoming',
+      assignedTo: 'Buyer',
+      dependencies: ['task-offer-acceptance-signing']
+    },
     {
       id: 'task-homeowners-insurance',
       title: 'Secure Homeowners Insurance',
@@ -451,8 +612,9 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
       status: isUnderContract ? 'pending' : 'upcoming',
       estimatedTime: '1-2 weeks',
       linkedPage: 'insurance',
-      actionLabel: 'Get Insurance Quotes',
+      actionLabel: 'Bind Coverage',
       assignedTo: 'Buyer',
+      dependencies: ['task-insurance-get-bids'],
       instructions: {
         overview: 'Homeowners insurance is required by your lender and protects your investment.',
         steps: [
@@ -496,14 +658,45 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
       }
     },
     {
+      id: 'task-schedule-final-walkthrough',
+      title: 'Schedule Final Walk-through',
+      description: 'Coordinate date and time for final walk-through before closing.',
+      category: 'pre-closing',
+      priority: 'medium',
+      status: 'upcoming',
+      assignedTo: 'Agent',
+      dependencies: ['task-finalize-inspection-remedies']
+    },
+    {
       id: 'task-final-walkthrough',
-      title: 'Final Walk-through',
+      title: 'Final Walk-through (Conduct)',
       description: 'Conduct final inspection of property before closing.',
       category: 'pre-closing',
       priority: 'high',
       status: 'upcoming',
       estimatedTime: '1-2 hours',
-      assignedTo: 'Buyer & Agent'
+      assignedTo: 'Buyer & Agent',
+      dependencies: ['task-schedule-final-walkthrough']
+    },
+    {
+      id: 'task-confirm-repairs-complete',
+      title: 'Confirm Repairs Completed',
+      description: 'Verify that agreed-upon repairs/remedies were completed before closing.',
+      category: 'pre-closing',
+      priority: 'high',
+      status: 'upcoming',
+      assignedTo: 'Buyer & Agent',
+      dependencies: ['task-finalize-inspection-remedies']
+    },
+    {
+      id: 'task-renegotiate-new-findings',
+      title: 'Re-negotiate New Findings (if applicable)',
+      description: 'If new issues are discovered, negotiate additional remedies or concessions.',
+      category: 'pre-closing',
+      priority: 'medium',
+      status: 'upcoming',
+      assignedTo: 'Buyer & Agent',
+      dependencies: ['task-confirm-repairs-complete']
     },
     {
       id: 'task-closing-review',
@@ -516,10 +709,21 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
       estimatedTime: '2-3 hours',
       linkedPage: 'legal',
       actionLabel: 'Review Documents',
-      assignedTo: 'Attorney'
+      assignedTo: 'Attorney',
+      dependencies: ['task-title-search']
     },
 
     // Phase 6: Closing
+    {
+      id: 'task-escrow-wire-instructions',
+      title: 'Escrow Account & Wire Instructions Prepared',
+      description: 'Title/escrow company prepares wire instructions for deposit and closing funds.',
+      category: 'closing',
+      priority: 'high',
+      status: 'upcoming',
+      assignedTo: 'Title Company',
+      dependencies: ['task-earnest-money-deposit']
+    },
     {
       id: 'task-closing-funds',
       title: 'Prepare Closing Funds',
@@ -528,7 +732,19 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
       priority: 'high',
       status: 'upcoming',
       estimatedTime: '1 day',
-      assignedTo: 'Buyer'
+      assignedTo: 'Buyer',
+      dependencies: ['task-closing-review', 'task-insurance-get-bids', 'task-homeowners-insurance']
+    },
+    {
+      id: 'task-wire-funds',
+      title: 'Wire Funds / Produce Cashier’s Check',
+      description: 'On closing day, wire funds or bring a cashier’s check as required.',
+      category: 'closing',
+      priority: 'high',
+      status: 'upcoming',
+      estimatedTime: '1 day',
+      assignedTo: 'Buyer',
+      dependencies: ['task-closing-funds', 'task-escrow-wire-instructions']
     },
     {
       id: 'task-closing-meeting',
@@ -538,7 +754,8 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
       priority: 'high',
       status: 'upcoming',
       estimatedTime: '2-3 hours',
-      assignedTo: 'All Parties'
+      assignedTo: 'All Parties',
+      dependencies: ['task-wire-funds']
     },
 
     // Phase 7: Post-Closing
@@ -551,6 +768,17 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
       status: 'upcoming',
       estimatedTime: '2-3 hours',
       assignedTo: 'Buyer'
+    },
+    {
+      id: 'task-move-in',
+      title: 'Move-in',
+      description: 'Plan and execute the move-in once closing is complete.',
+      category: 'post-closing',
+      priority: 'medium',
+      status: 'upcoming',
+      estimatedTime: '1-3 days',
+      assignedTo: 'Buyer',
+      dependencies: ['task-closing-meeting']
     },
     {
       id: 'task-change-address',
