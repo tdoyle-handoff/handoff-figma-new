@@ -13,6 +13,7 @@ import ChecklistInspectionTabs from './checklist/InspectionTabs';
 import ChecklistInsuranceTabs from './checklist/InsuranceTabs';
 import ChecklistSidebar from './checklist/ChecklistSidebar';
 import ChecklistDetail from './checklist/ChecklistDetail';
+import ChecklistCalendar from './checklist/ChecklistCalendar';
 import { useTaskContext, Task, TaskPhase } from './TaskContext';
 
 // Task interfaces are now imported from TaskContext
@@ -304,6 +305,7 @@ export default function Tasks({ onNavigate }: TasksProps) {
 
   // Tab state management
   const [activeTab, setActiveTab] = useState<string>('checklist');
+  const [checklistSubtab, setChecklistSubtab] = useState<'list' | 'calendar'>('list');
 
   // selection state for sidebar -> detail
   const [selectedPhaseId, setSelectedPhaseId] = useState<string | undefined>(taskPhases.find(p => p.status === 'active')?.id);
@@ -378,28 +380,57 @@ export default function Tasks({ onNavigate }: TasksProps) {
         </TabsList>
 
         <TabsContent value="checklist" className="space-y-6 mt-6 bg-white">
-          {/* Wider layout for better task visibility */}
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 max-w-none">
-            <div className="lg:col-span-2">
-              <ChecklistSidebar
-                phases={taskPhases}
-                selectedPhaseId={selectedPhaseId}
-                selectedTaskId={selectedTaskId}
-                onSelectPhase={(id) => setSelectedPhaseId(id)}
-                onSelectTask={handleSelectTask}
-                onUpdateTask={handleUpdateTask}
-              />
-            </div>
-            <div className="lg:col-span-3">
-              <ChecklistDetail
-                task={flatTasks.find(t => t.id === selectedTaskId) || firstActiveTask}
-                onAction={() => {
-                  const t = flatTasks.find(t => t.id === selectedTaskId) || firstActiveTask;
-                  if (t?.linkedPage) onNavigate(t.linkedPage);
-                }}
-                onUpdateTask={handleUpdateTask}
-              />
-            </div>
+          {/* Sub-tabs: List | Calendar */}
+          <div className="px-1">
+            <Tabs value={checklistSubtab} onValueChange={setChecklistSubtab} className="w-full">
+              <TabsList className="bg-transparent h-auto p-0 border-b border-gray-200 rounded-none flex justify-start">
+                <TabsTrigger
+                  value="list"
+                  className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-2 px-4 font-medium transition-all duration-200"
+                >
+                  List
+                </TabsTrigger>
+                <TabsTrigger
+                  value="calendar"
+                  className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-2 px-4 font-medium transition-all duration-200"
+                >
+                  Calendar
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="list" className="space-y-6 mt-6">
+                {/* Wider layout for better task visibility */}
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 max-w-none">
+                  <div className="lg:col-span-2">
+                    <ChecklistSidebar
+                      phases={taskPhases}
+                      selectedPhaseId={selectedPhaseId}
+                      selectedTaskId={selectedTaskId}
+                      onSelectPhase={(id) => setSelectedPhaseId(id)}
+                      onSelectTask={handleSelectTask}
+                      onUpdateTask={handleUpdateTask}
+                    />
+                  </div>
+                  <div className="lg:col-span-3">
+                    <ChecklistDetail
+                      task={flatTasks.find(t => t.id === selectedTaskId) || firstActiveTask}
+                      onAction={() => {
+                        const t = flatTasks.find(t => t.id === selectedTaskId) || firstActiveTask;
+                        if (t?.linkedPage) onNavigate(t.linkedPage);
+                      }}
+                      onUpdateTask={handleUpdateTask}
+                    />
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="calendar" className="space-y-6 mt-6">
+                <ChecklistCalendar
+                  tasks={flatTasks}
+                  onUpdateTask={(taskId, updates) => taskContext.updateTask(taskId, updates)}
+                />
+              </TabsContent>
+            </Tabs>
           </div>
 
           {/* Task Category Navigation (hidden via flag) */}
