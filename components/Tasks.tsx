@@ -83,6 +83,59 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
   const [attorneyPhone, setAttorneyPhone] = useState<string>(currentAttorney?.phone || '');
   const [dueLocked, setDueLocked] = useState<boolean>(!!task.dueDateLocked);
 
+  // Agent info (for agent selection)
+  const currentAgent = (task.contacts || []).find(c => (c.role || '').toLowerCase().includes('agent'));
+  const [agentName, setAgentName] = useState<string>((currentAgent as any)?.name || '');
+  const [agentEmail, setAgentEmail] = useState<string>((currentAgent as any)?.email || '');
+  const [agentPhone, setAgentPhone] = useState<string>((currentAgent as any)?.phone || '');
+  const [agentBrokerage, setAgentBrokerage] = useState<string>((task as any).customFields?.agent?.brokerage || '');
+
+  // Lender / pre-approval info
+  const pre = ((task as any).customFields?.preApproval) || {};
+  const [lenderNamePA, setLenderNamePA] = useState<string>(pre.lenderName || '');
+  const [preApprovalAmount, setPreApprovalAmount] = useState<string>(pre.amount || '');
+  const [preApprovalRate, setPreApprovalRate] = useState<string>(pre.rate || '');
+  const [preApprovalExpiry, setPreApprovalExpiry] = useState<string>(pre.expirationDate || '');
+
+  const getQuestionnaireData = () => {
+    try {
+      const a = localStorage.getItem('handoff-pre-questionnaire');
+      if (a) return JSON.parse(a);
+    } catch {}
+    try {
+      const b = localStorage.getItem('handoff-property-data');
+      if (b) return JSON.parse(b);
+    } catch {}
+    return null;
+  };
+
+  const handleDownloadQuestionnairePDF = () => {
+    const data = getQuestionnaireData();
+    const w = window.open('', '_blank');
+    if (!w) return;
+    const html = `<!doctype html>
+      <html>
+        <head>
+          <meta charset="utf-8" />
+          <title>Property Questionnaire</title>
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif; padding: 24px; }
+            h1 { font-size: 20px; margin-bottom: 12px; }
+            h2 { font-size: 16px; margin: 16px 0 8px; }
+            table { width: 100%; border-collapse: collapse; }
+            td, th { border: 1px solid #ddd; padding: 8px; font-size: 12px; vertical-align: top; }
+          </style>
+        </head>
+        <body>
+          <h1>Property Questionnaire</h1>
+          ${data ? `<pre>${JSON.stringify(data, null, 2)}</pre>` : '<p>No questionnaire data found.</p>'}
+          <script>window.onload = () => window.print();</script>
+        </body>
+      </html>`;
+    w.document.write(html);
+    w.document.close();
+  };
+
   const handleNavigation = () => {
     if (task.linkedPage) {
       onNavigate(task.linkedPage);
@@ -240,6 +293,66 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
               </div>
             )}
 
+            {/* Agent details: for agent selection */}
+            {task.id === 'task-agent-selection' && (
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                  <Label className="text-xs">Agent name</Label>
+                  <Input value={agentName} onChange={(e) => setAgentName(e.target.value)} />
+                </div>
+                <div>
+                  <Label className="text-xs">Agent email</Label>
+                  <Input type="email" value={agentEmail} onChange={(e) => setAgentEmail(e.target.value)} />
+                </div>
+                <div>
+                  <Label className="text-xs">Agent phone</Label>
+                  <Input value={agentPhone} onChange={(e) => setAgentPhone(e.target.value)} />
+                </div>
+                <div>
+                  <Label className="text-xs">Brokerage</Label>
+                  <Input value={agentBrokerage} onChange={(e) => setAgentBrokerage(e.target.value)} />
+                </div>
+              </div>
+            )}
+
+            {/* Pre-approval details */}
+            {task.id === 'task-mortgage-preapproval' && (
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                  <Label className="text-xs">Lender name</Label>
+                  <Input value={lenderNamePA} onChange={(e) => setLenderNamePA(e.target.value)} />
+                </div>
+                <div>
+                  <Label className="text-xs">Pre-approval amount</Label>
+                  <Input value={preApprovalAmount} onChange={(e) => setPreApprovalAmount(e.target.value)} placeholder="$" />
+                </div>
+                <div>
+                  <Label className="text-xs">Rate</Label>
+                  <Input value={preApprovalRate} onChange={(e) => setPreApprovalRate(e.target.value)} placeholder="%" />
+                </div>
+                <div>
+                  <Label className="text-xs">Expiration</Label>
+                  <Input type="date" value={preApprovalExpiry} onChange={(e) => setPreApprovalExpiry(e.target.value)} />
+                </div>
+              </div>
+            )}
+
+            {/* Questionnaire helpers */}
+            {task.id === 'task-buy-box-template' && (
+              <div className="flex flex-wrap gap-2">
+                <Button size="sm" variant="outline" onClick={() => onNavigate('property-search')}>Open Home Search</Button>
+                <Button size="sm" onClick={handleDownloadQuestionnairePDF}>Download Questionnaire PDF</Button>
+              </div>
+            )}
+
+            {/* Property search helpers */}
+            {task.id === 'task-property-search' && (
+              <div className="flex flex-wrap gap-2">
+                <Button size="sm" variant="outline" onClick={() => onNavigate('property-search')}>Open Property Search</Button>
+                <Button size="sm" variant="outline" onClick={() => onNavigate('home-tracking')}>Open Home Tracking</Button>
+              </div>
+            )}
+
             <div className="flex items-center justify-between gap-3">
               <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">
                 <div className="flex items-center gap-1">
@@ -270,6 +383,48 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                     dueDateLocked: editDueDate ? dueLocked : false,
                     notes: editNotes,
                   };
+
+                  // Merge agent details
+                  if (task.id === 'task-agent-selection') {
+                    const agent = (agentName || agentEmail || agentPhone || agentBrokerage) ? {
+                      name: agentName,
+                      role: 'Agent',
+                      email: agentEmail || undefined,
+                      phone: agentPhone || undefined,
+                      when: 'General representation',
+                    } : undefined;
+                    if (agent) {
+                      const others = (task.contacts || []).filter(c => !(c.role && c.role.toLowerCase().includes('agent')));
+                      (updates as any).contacts = [...others, agent as any];
+                    }
+                    (updates as any).customFields = {
+                      ...(task as any).customFields,
+                      agent: { brokerage: agentBrokerage }
+                    };
+                  }
+
+                  // Merge pre-approval details
+                  if (task.id === 'task-mortgage-preapproval') {
+                    (updates as any).customFields = {
+                      ...(task as any).customFields,
+                      preApproval: {
+                        lenderName: lenderNamePA,
+                        amount: preApprovalAmount,
+                        rate: preApprovalRate,
+                        expirationDate: preApprovalExpiry,
+                      }
+                    };
+
+                    if (lenderNamePA) {
+                      const lenderContact = {
+                        name: lenderNamePA,
+                        role: 'Lender',
+                        when: 'Pre-approval / financing',
+                      } as any;
+                      const others = (task.contacts || []).filter(c => !(c.role && c.role.toLowerCase().includes('lender')));
+                      (updates as any).contacts = [...others, lenderContact];
+                    }
+                  }
 
                   const newAttorney = (attorneyName || attorneyEmail || attorneyPhone) ? {
                     name: attorneyName,
@@ -302,6 +457,16 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                   setAttorneyName(cur?.name || '');
                   setAttorneyEmail(cur?.email || '');
                   setAttorneyPhone(cur?.phone || '');
+                  const ag = (task.contacts || []).find(c => c.role && c.role.toLowerCase().includes('agent')) as any;
+                  setAgentName(ag?.name || '');
+                  setAgentEmail(ag?.email || '');
+                  setAgentPhone(ag?.phone || '');
+                  setAgentBrokerage(((task as any).customFields?.agent?.brokerage) || '');
+                  const pa = ((task as any).customFields?.preApproval) || {};
+                  setLenderNamePA(pa.lenderName || '');
+                  setPreApprovalAmount(pa.amount || '');
+                  setPreApprovalRate(pa.rate || '');
+                  setPreApprovalExpiry(pa.expirationDate || '');
                 }}
               >
                 Cancel
@@ -314,17 +479,19 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
   );
 };
 
-const PhaseCard = ({ phase, onNavigate, onUpdateTask, onUpdateTaskFields, tasksById }: {
+const PhaseCard = ({ phase, onNavigate, onUpdateTask, onUpdateTaskFields, tasksById, onAddTask }: {
   phase: TaskPhase;
   onNavigate: (page: string) => void;
   onUpdateTask?: (taskId: string, status: Task['status']) => void;
   onUpdateTaskFields?: (taskId: string, updates: Partial<Task>) => void;
   tasksById?: Record<string, Task>;
+  onAddTask?: (phase: TaskPhase, title: string) => void;
 }) => {
   const [isExpanded, setIsExpanded] = useState(phase.status === 'active');
   const completedTasks = phase.tasks.filter(task => task.status === 'completed').length;
   const totalTasks = phase.tasks.length;
   const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+  const [newTaskTitle, setNewTaskTitle] = useState('');
   
   return (
     <Card className="mb-6 shadow-sm">
@@ -391,6 +558,16 @@ const PhaseCard = ({ phase, onNavigate, onUpdateTask, onUpdateTaskFields, tasksB
                 />
               ))}
             </div>
+            <div className="mt-4 flex items-center gap-2">
+              <Input
+                placeholder="Add a task to this phase"
+                value={newTaskTitle}
+                onChange={(e) => setNewTaskTitle(e.target.value)}
+              />
+              <Button size="sm" onClick={() => { if (newTaskTitle.trim()) { onAddTask?.(phase, newTaskTitle.trim()); setNewTaskTitle(''); } }}>
+                <Plus className="w-4 h-4 mr-1" /> Add
+              </Button>
+            </div>
           </CardContent>
         </CollapsibleContent>
       </Collapsible>
@@ -410,10 +587,17 @@ const getPhaseIcon = (title: string) => {
   return <CheckSquare className="w-6 h-6" />;
 };
 
-const PhaseOverviewCard = ({ phase }: { phase: TaskPhase }) => {
+const PhaseOverviewCard = ({ phase, onAddTask }: { phase: TaskPhase, onAddTask?: (phase: TaskPhase, title: string) => void }) => {
   const completed = phase.tasks.filter(t => t.status === 'completed').length;
   const total = phase.tasks.length || 1;
   const progress = Math.round((completed / total) * 100);
+  const [title, setTitle] = useState('');
+  const statusIcon = (s: Task['status']) => {
+    if (s === 'completed') return <CheckCircle className="w-3.5 h-3.5 text-green-600" />;
+    if (s === 'overdue') return <AlertTriangle className="w-3.5 h-3.5 text-red-600" />;
+    if (s === 'active' || s === 'in-progress') return <Clock className="w-3.5 h-3.5 text-blue-600" />;
+    return <Circle className="w-3.5 h-3.5 text-gray-300" />;
+  };
   return (
     <Card className="shadow-sm border-gray-200">
       <CardHeader className="pb-3">
@@ -434,9 +618,18 @@ const PhaseOverviewCard = ({ phase }: { phase: TaskPhase }) => {
       <CardContent className="pt-0">
         <ul className="space-y-3">
           {phase.tasks.map((t) => (
-            <li key={t.id} className="text-[15px] text-gray-800 leading-relaxed">{t.title}</li>
+            <li key={t.id} className="text-[15px] text-gray-800 leading-relaxed flex items-center gap-2">
+              {statusIcon(t.status)}
+              <span>{t.title}</span>
+            </li>
           ))}
         </ul>
+        <div className="mt-4 flex items-center gap-2">
+          <Input placeholder="Add task" value={title} onChange={(e) => setTitle(e.target.value)} />
+          <Button size="sm" onClick={() => { if (title.trim()) { onAddTask?.(phase, title.trim()); setTitle(''); } }}>
+            <Plus className="w-4 h-4 mr-1" /> Add
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
@@ -456,6 +649,28 @@ export default function Tasks({ onNavigate }: TasksProps) {
   const SHOW_PROGRESS_COUNTS = false;
 
   const { taskPhases } = taskContext;
+
+  const phaseIdToCategory = (phaseId: string): Task['category'] => {
+    if (phaseId.includes('search')) return 'search';
+    if (phaseId.includes('offer')) return 'offer';
+    if (phaseId.includes('contract')) return 'contract';
+    if (phaseId.includes('diligence')) return 'diligence';
+    if (phaseId.includes('pre-closing')) return 'pre-closing';
+    if (phaseId.includes('closing')) return 'closing';
+    return 'post-closing';
+  };
+
+  const handleAddTaskToPhase = (phase: TaskPhase, title: string) => {
+    const category = phaseIdToCategory(phase.id);
+    taskContext.addTask({
+      title,
+      description: '',
+      category,
+      priority: 'low',
+      status: 'upcoming',
+      assignedTo: 'Buyer'
+    });
+  };
   const totalTasks = taskContext.getTotalTasksCount();
   const completedTasks = taskContext.getCompletedTasksCount();
   const activeTasks = taskContext.getActiveTasksCount();
@@ -622,6 +837,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'list' | 'cards' | 'calen
                       onUpdateTask={handleUpdateTask}
                       onUpdateTaskFields={handleUpdateTaskFields}
                       tasksById={tasksById}
+                      onAddTask={handleAddTaskToPhase}
                     />
                   ))}
                 </div>
@@ -631,7 +847,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'list' | 'cards' | 'calen
                 {/* Overview cards by phase */}
                 <div className={`grid ${isMobile ? 'grid-cols-1' : 'md:grid-cols-2'} gap-6`}>
                   {taskPhases.map((phase) => (
-                    <PhaseOverviewCard key={phase.id} phase={phase} />
+                    <PhaseOverviewCard key={phase.id} phase={phase} onAddTask={handleAddTaskToPhase} />
                   ))}
                 </div>
               </TabsContent>
