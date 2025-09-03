@@ -13,6 +13,7 @@ const Inspections = React.lazy(() => import('./Inspections'));
 const Insurance = React.lazy(() => import('./Insurance'));
 const Communications = React.lazy(() => import('./Communications'));
 const Settings = React.lazy(() => import('./Settings'));
+const ChecklistCalendarPage = React.lazy(() => import('./checklist/ChecklistCalendarPage').then(m => ({ default: m.default })));
 
 // Property Search page with tabs (Home Search, ATTOM Summary, Onboarding)
 const PropertySearchTabs = React.lazy(() => import('./PropertySearchTabs'));
@@ -99,6 +100,12 @@ export function PageRenderer({
           </Suspense>
         );
       
+      case 'calendar':
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <ChecklistCalendarPage />
+          </Suspense>
+        );
       
       case 'resources':
         return (

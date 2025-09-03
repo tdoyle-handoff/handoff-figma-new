@@ -24,7 +24,8 @@ import {
   Eye,
   Building,
   TrendingUp,
-  BarChart3
+  BarChart3,
+  Calendar
 } from 'lucide-react';
 import type { PageType } from '../hooks/useNavigation';
 
@@ -71,6 +72,12 @@ export default function MobileLayout({
       id: 'tasks',
       label: 'Transaction Checklist',
       icon: CheckSquare,
+      category: 'Core'
+    },
+    {
+      id: 'calendar',
+      label: 'Checklist Calendar',
+      icon: Calendar,
       category: 'Core'
     },
 
@@ -127,11 +134,10 @@ export default function MobileLayout({
       label: 'Transaction Checklist',
       icon: CheckSquare
     },
-
     {
-      id: 'communications',
-      label: 'Communication Suite',
-      icon: MessageSquare
+      id: 'calendar',
+      label: 'Calendar',
+      icon: Calendar
     }
   ];
 

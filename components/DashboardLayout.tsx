@@ -25,7 +25,8 @@ import {
   Building,
   BarChart3,
   ShoppingCart,
-  Code
+  Code,
+  Calendar
 } from 'lucide-react';
 import type { PageType } from '../hooks/useNavigation';
 
@@ -70,6 +71,7 @@ export default function DashboardLayout({
 
     // Purchasing Your Home
     { id: 'tasks', label: 'Transaction Checklist', icon: CheckSquare, category: 'Purchasing Your Home' },
+    { id: 'calendar', label: 'Checklist Calendar', icon: Calendar, category: 'Purchasing Your Home' },
     { id: 'documents', label: 'Contract Builder', icon: FileText, category: 'Purchasing Your Home' },
 
     // Support

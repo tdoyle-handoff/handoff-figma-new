@@ -14,6 +14,7 @@ export type PageType =
   | 'communications'
   | 'mortgage-calculator'
   | 'closing-calculator'
+  | 'calendar'
   | 'settings'
   | 'dev-tools'
   | 'dev-config';
@@ -66,7 +67,7 @@ const isValidPageType = (page: string): page is PageType => {
     'overview', 'tasks', 'property', 'legal', 'financing',
     'inspections', 'insurance', 'documents', 'resources',
     'team', 'communications', 'mortgage-calculator',
-    'closing-calculator', 'settings', 'dev-tools', 'dev-config'
+    'closing-calculator', 'calendar', 'settings', 'dev-tools', 'dev-config'
   ];
   return validPages.includes(page as PageType);
 };
@@ -116,7 +117,8 @@ export function useNavigation(): NavigationState & NavigationActions {
     'communications': 'Communication Suite - Handoff',
     'mortgage-calculator': 'Mortgage Calculator - Handoff',
     'closing-calculator': 'Closing Calculator - Handoff',
-    'settings': 'Settings - Handoff',
+'settings': 'Settings - Handoff',
+    'calendar': 'Checklist Calendar - Handoff',
     'dev-tools': 'Developer Tools - Handoff',
     'dev-config': 'Developer Configuration - Handoff',
   } as const), []);
@@ -135,7 +137,8 @@ export function useNavigation(): NavigationState & NavigationActions {
     'communications': 'Messages, notifications, and team collaboration tools',
     'mortgage-calculator': 'Calculate mortgage payments and loan scenarios',
     'closing-calculator': 'Estimate closing costs and final transaction expenses',
-    'settings': 'Account preferences, notifications, and application settings',
+'settings': 'Account preferences, notifications, and application settings',
+    'calendar': 'Visual schedule for checklist tasks with drag-and-drop due dates',
     'dev-tools': 'Development and debugging tools for technical support',
     'dev-config': 'Configure UI elements and feature visibility for development',
   } as const), []);

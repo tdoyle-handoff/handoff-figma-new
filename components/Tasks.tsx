@@ -383,7 +383,8 @@ export default function Tasks({ onNavigate }: TasksProps) {
           {/* Sub-tabs: List | Calendar */}
           <div className="px-1">
             <Tabs value={checklistSubtab} onValueChange={(v) => setChecklistSubtab(v as 'list' | 'calendar')} className="w-full">
-              <TabsList className="bg-transparent h-auto p-0 border-b border-gray-200 rounded-none flex justify-start">
+              <div className="flex items-center justify-between">
+                <TabsList className="bg-transparent h-auto p-0 border-b border-gray-200 rounded-none flex justify-start">
                 <TabsTrigger
                   value="list"
                   className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-2 px-4 font-medium transition-all duration-200"
@@ -397,6 +398,10 @@ export default function Tasks({ onNavigate }: TasksProps) {
                   Calendar
                 </TabsTrigger>
               </TabsList>
+                <Button variant="outline" size="sm" onClick={() => onNavigate('calendar')} className="ml-2">
+                  Open full calendar
+                </Button>
+              </div>
 
               <TabsContent value="list" className="space-y-6 mt-6">
                 {/* Wider layout for better task visibility */}
