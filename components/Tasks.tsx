@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CheckCircle, Circle, Clock, AlertTriangle, Calendar, User, ArrowRight, Filter, ChevronDown, ChevronRight, ExternalLink, Scale, Calculator, FileCheck, Shield, CheckSquare, Lock, Unlock } from 'lucide-react';
+import { CheckCircle, Circle, Clock, AlertTriangle, Calendar, User, ArrowRight, Filter, ChevronDown, ChevronRight, ExternalLink, Scale, Calculator, FileCheck, Shield, CheckSquare, Lock, Unlock, Search as SearchIcon, Home, FileText, KeyRound } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -398,6 +398,50 @@ const PhaseCard = ({ phase, onNavigate, onUpdateTask, onUpdateTaskFields, tasksB
   );
 };
 
+// Compact phase overview card for Cards tab
+const getPhaseIcon = (title: string) => {
+  const t = title.toLowerCase();
+  if (t.includes('search')) return <SearchIcon className="w-6 h-6" />;
+  if (t.includes('offer')) return <FileText className="w-6 h-6" />;
+  if (t.includes('contract') || t.includes('legal')) return <Scale className="w-6 h-6" />;
+  if (t.includes('diligence')) return <SearchIcon className="w-6 h-6" />;
+  if (t.includes('closing')) return <KeyRound className="w-6 h-6" />;
+  if (t.includes('post')) return <Home className="w-6 h-6" />;
+  return <CheckSquare className="w-6 h-6" />;
+};
+
+const PhaseOverviewCard = ({ phase }: { phase: TaskPhase }) => {
+  const completed = phase.tasks.filter(t => t.status === 'completed').length;
+  const total = phase.tasks.length || 1;
+  const progress = Math.round((completed / total) * 100);
+  return (
+    <Card className="shadow-sm border-gray-200">
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-gray-100 text-gray-700">
+              {getPhaseIcon(phase.title)}
+            </div>
+            <CardTitle className="text-xl">{phase.title}</CardTitle>
+          </div>
+          <div className="w-32">
+            <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
+              <div className="h-full bg-gray-200" style={{ width: `${progress}%` }} />
+            </div>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="pt-0">
+        <ul className="space-y-3">
+          {phase.tasks.map((t) => (
+            <li key={t.id} className="text-[15px] text-gray-800 leading-relaxed">{t.title}</li>
+          ))}
+        </ul>
+      </CardContent>
+    </Card>
+  );
+};
+
 interface TasksProps {
   onNavigate: (page: string) => void;
 }
@@ -427,7 +471,7 @@ export default function Tasks({ onNavigate }: TasksProps) {
 
   // Tab state management
   const [activeTab, setActiveTab] = useState<string>('checklist');
-const [checklistSubtab, setChecklistSubtab] = useState<'list' | 'calendar' | 'board'>('list');
+const [checklistSubtab, setChecklistSubtab] = useState<'list' | 'cards' | 'calendar' | 'board'>('cards');
 
   // selection state for sidebar -> detail
   const [selectedPhaseId, setSelectedPhaseId] = useState<string | undefined>(taskPhases.find(p => p.status === 'active')?.id);
@@ -544,6 +588,12 @@ const [checklistSubtab, setChecklistSubtab] = useState<'list' | 'calendar' | 'bo
                   List
                 </TabsTrigger>
                 <TabsTrigger
+                  value="cards"
+                  className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-2 px-4 font-medium transition-all duration-200"
+                >
+                  Cards
+                </TabsTrigger>
+                <TabsTrigger
                   value="calendar"
                   className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-2 px-4 font-medium transition-all duration-200"
                 >
@@ -562,7 +612,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'list' | 'calendar' | 'bo
               </div>
 
               <TabsContent value="list" className="space-y-4 mt-6">
-                {/* Grouped by phase */}
+                {/* Grouped by phase - detailed, editable */}
                 <div className="space-y-3">
                   {taskPhases.map((phase) => (
                     <PhaseCard
@@ -573,6 +623,15 @@ const [checklistSubtab, setChecklistSubtab] = useState<'list' | 'calendar' | 'bo
                       onUpdateTaskFields={handleUpdateTaskFields}
                       tasksById={tasksById}
                     />
+                  ))}
+                </div>
+              </TabsContent>
+
+              <TabsContent value="cards" className="space-y-4 mt-6">
+                {/* Overview cards by phase */}
+                <div className={`grid ${isMobile ? 'grid-cols-1' : 'md:grid-cols-2'} gap-6`}>
+                  {taskPhases.map((phase) => (
+                    <PhaseOverviewCard key={phase.id} phase={phase} />
                   ))}
                 </div>
               </TabsContent>
