@@ -60,13 +60,14 @@ const formatDate = (dateStr: string) => {
   return date.toLocaleDateString();
 };
 
-const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields, tasksById, minimal }: {
+const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields, tasksById, minimal, openInWindow }: {
   task: Task;
   onNavigate: (page: string) => void;
   onUpdateTask?: (taskId: string, status: Task['status']) => void;
   onUpdateTaskFields?: (taskId: string, updates: Partial<Task>) => void;
   tasksById?: Record<string, Task>;
   minimal?: boolean;
+  openInWindow?: boolean;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const isCompleted = task.status === 'completed';
@@ -150,13 +151,133 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
       onUpdateTask(task.id, newStatus);
     }
   };
+
+  const openTaskPopup = () => {
+    const w = window.open('', '_blank', 'width=860,height=720,resizable=yes,scrollbars=yes');
+    if (!w) return;
+    const taskJson = JSON.stringify(task);
+    const html = `<!doctype html>
+<html><head><meta charset="utf-8" />
+<title>${task.title.replace(/</g,'&lt;')}</title>
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;margin:0;padding:16px;background:#fff;color:#111}
+  .hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+  h1{font-size:18px;margin:0}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  label{font-size:12px;color:#555;display:block;margin-bottom:4px}
+  input[type="text"],input[type="email"],input[type="date"],textarea{width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-size:13px}
+  textarea{min-height:90px;resize:vertical}
+  .row{margin:10px 0}
+  .btns{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+  button{border-radius:8px;border:1px solid #ddd;background:#f9fafb;padding:8px 12px;font-size:13px;cursor:pointer}
+  button.primary{background:#0ea5e9;color:#fff;border-color:#0ea5e9}
+  .chip{display:inline-block;padding:2px 8px;border-radius:999px;background:#f3f4f6;color:#374151;font-size:11px;margin-right:6px}
+  .tips{margin-top:8px}
+  .tips li{font-size:12px;color:#555;margin-left:16px}
+  .section-title{font-weight:600;font-size:13px;margin:12px 0 6px}
+</style>
+</head>
+<body>
+  <div class="hdr">
+    <h1>${task.title.replace(/</g,'&lt;')}</h1>
+    <span class="chip">${task.category}</span>
+  </div>
+  <p style="font-size:13px;color:#555;margin:0 0 12px">${(task.description||'').replace(/</g,'&lt;')}</p>
+  ${(task.instructions && task.instructions.tips && task.instructions.tips.length) ? `<div class="section-title">Tips</div><ul class="tips">${task.instructions.tips.map(t=>`<li>${String(t).replace(/</g,'&lt;')}</li>`).join('')}</ul>`:''}
+
+  <div class="grid">
+    <div class="row">
+      <label>Title</label>
+      <input id="title" type="text" value="${(task.title||'').replace(/"/g,'&quot;')}" />
+    </div>
+    <div class="row">
+      <label>Assigned to</label>
+      <input id="assignedTo" type="text" value="${(task.assignedTo||'').replace(/"/g,'&quot;')}" />
+    </div>
+    <div class="row">
+      <label>Due date</label>
+      <input id="dueDate" type="date" value="${task.dueDate||''}" />
+      <div style="margin-top:6px;font-size:12px;color:#555">
+        <input id="dueLock" type="checkbox" ${task.dueDateLocked?'checked':''}/> Lock due date
+      </div>
+    </div>
+    <div class="row" style="grid-column:1 / -1">
+      <label>Notes</label>
+      <textarea id="notes">${(task.notes||'').replace(/</g,'&lt;')}</textarea>
+    </div>
+  </div>
+
+  ${task.id==='task-agent-selection' ? `
+  <div class="section-title">Agent Details</div>
+  <div class="grid">
+    <div class="row"><label>Agent name</label><input id="agentName" type="text" value="${(((task.contacts||[]).find(c=>(c.role||'').toLowerCase().includes('agent'))||{}).name||'').replace(/"/g,'&quot;')}"></div>
+    <div class="row"><label>Agent email</label><input id="agentEmail" type="email" value="${(((task.contacts||[]).find(c=>(c.role||'').toLowerCase().includes('agent'))||{}).email||'').replace(/"/g,'&quot;')}"></div>
+    <div class="row"><label>Agent phone</label><input id="agentPhone" type="text" value="${(((task.contacts||[]).find(c=>(c.role||'').toLowerCase().includes('agent'))||{}).phone||'').replace(/"/g,'&quot;')}"></div>
+    <div class="row"><label>Brokerage</label><input id="agentBrokerage" type="text" value="${(((task.customFields||{}).agent||{}).brokerage||'').replace(/"/g,'&quot;')}"></div>
+  </div>`:''}
+
+  ${task.id==='task-mortgage-preapproval' ? `
+  <div class="section-title">Pre-approval</div>
+  <div class="grid">
+    <div class="row"><label>Lender name</label><input id="paLender" type="text" value="${(((task.customFields||{}).preApproval||{}).lenderName||'').replace(/"/g,'&quot;')}"></div>
+    <div class="row"><label>Amount</label><input id="paAmount" type="text" value="${(((task.customFields||{}).preApproval||{}).amount||'').replace(/"/g,'&quot;')}"></div>
+    <div class="row"><label>Rate</label><input id="paRate" type="text" value="${(((task.customFields||{}).preApproval||{}).rate||'').replace(/"/g,'&quot;')}"></div>
+    <div class="row"><label>Expiration</label><input id="paExpiry" type="date" value="${(((task.customFields||{}).preApproval||{}).expirationDate||'')}"></div>
+  </div>`:''}
+
+  ${task.id==='task-buy-box-template' ? `
+  <div class="section-title">Questionnaire</div>
+  <div class="row"><button id="openSearch">Open Home Search</button><button id="downloadPdf" class="primary">Download Questionnaire PDF</button></div>`:''}
+
+  ${task.id==='task-property-search' ? `
+  <div class="section-title">Search Links</div>
+  <div class="row"><button id="openSearch2">Open Property Search</button><button id="openTrack">Open Home Tracking</button></div>`:''}
+
+  <div class="btns">
+    <button id="closeBtn">Close</button>
+    <button id="saveBtn" class="primary">Save</button>
+  </div>
+
+<script>
+  const TASK = ${taskJson};
+  function val(id){const el=document.getElementById(id);return el?el.value:''}
+  function checked(id){const el=document.getElementById(id);return el?el.checked:false}
+  document.getElementById('saveBtn').onclick = () => {
+    const updates = {title: val('title'), assignedTo: val('assignedTo'), dueDate: val('dueDate')||undefined, dueDateLocked: checked('dueLock'), notes: val('notes')};
+    if (TASK.id==='task-agent-selection'){
+      const agent={name:val('agentName'), role:'Agent', email:val('agentEmail')||undefined, phone:val('agentPhone')||undefined, when:'General representation'};
+      updates.contacts = (TASK.contacts||[]).filter(c => !(c.role||'').toLowerCase().includes('agent'));
+      if (agent.name||agent.email||agent.phone) updates.contacts.push(agent);
+      updates.customFields = Object.assign({}, TASK.customFields||{}, { agent: { brokerage: val('agentBrokerage') }});
+    }
+    if (TASK.id==='task-mortgage-preapproval'){
+      updates.customFields = Object.assign({}, TASK.customFields||{}, { preApproval: { lenderName: val('paLender'), amount: val('paAmount'), rate: val('paRate'), expirationDate: val('paExpiry') }});
+      if (val('paLender')){
+        const lender = { name: val('paLender'), role:'Lender', when:'Pre-approval / financing'};
+        updates.contacts = (TASK.contacts||[]).filter(c => !(c.role||'').toLowerCase().includes('lender'));
+        updates.contacts.push(lender);
+      }
+    }
+    window.opener && window.opener.postMessage({ type:'task-update', taskId: TASK.id, updates }, '*');
+    window.close();
+  };
+  document.getElementById('closeBtn').onclick = () => window.close();
+  const os=document.getElementById('openSearch'); if(os) os.onclick=()=>{window.opener && window.opener.postMessage({type:'navigate', page:'property-search'}, '*')};
+  const d=document.getElementById('downloadPdf'); if(d) d.onclick=()=>{window.opener && window.opener.postMessage({ type:'download-questionnaire'}, '*')};
+  const os2=document.getElementById('openSearch2'); if(os2) os2.onclick=()=>{window.opener && window.opener.postMessage({type:'navigate', page:'property-search'}, '*')};
+  const ot=document.getElementById('openTrack'); if(ot) ot.onclick=()=>{window.opener && window.opener.postMessage({type:'navigate', page:'home-tracking'}, '*')};
+</script>
+</body></html>`;
+    w.document.write(html);
+    w.document.close();
+  };
   
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <div className={`${minimal ? `rounded-lg min-h-[100px] hover:bg-gray-50/30 ${isOverdue ? 'border-l-4 border-l-red-300' : isActive ? 'border-l-4 border-l-blue-300' : 'border-l-4 border-l-gray-200'}` : `border rounded-lg transition-all hover:shadow-md min-h-[100px] ${
         isOverdue ? 'border-red-200 bg-red-50/30' :
         isActive ? 'border-blue-200 bg-blue-50/30' : 'border-gray-200'}`}` }>
-        <CollapsibleTrigger className={`${minimal ? 'w-full p-4 text-left' : 'w-full p-6 text-left'}`}>
+        <CollapsibleTrigger className={`${minimal ? 'w-full p-4 text-left' : 'w-full p-6 text-left'}`} onClick={(e) => { if (openInWindow) { e.preventDefault(); e.stopPropagation(); openTaskPopup(); } }}>
           <div className="flex items-center gap-3">
             <div className="flex-shrink-0">
               <button
@@ -637,6 +758,7 @@ const PhaseOverviewCard = ({ phase, onAddTask, onNavigate, onUpdateTask, onUpdat
               onUpdateTaskFields={onUpdateTaskFields}
               tasksById={tasksById}
               minimal
+              openInWindow
             />
           ))}
         </div>
@@ -750,6 +872,25 @@ const [checklistSubtab, setChecklistSubtab] = useState<'cards' | 'board'>('cards
   const getTaskCountByCategory = (category: string) => {
     return taskContext.getActiveTasksByCategory(category.toLowerCase()).length;
   };
+
+  React.useEffect(() => {
+    const onMsg = (event: MessageEvent) => {
+      const data: any = event.data || {};
+      if (data.type === 'task-update' && data.taskId) {
+        taskContext.updateTask(data.taskId, data.updates || {});
+      } else if (data.type === 'navigate' && data.page) {
+        onNavigate(data.page);
+      } else if (data.type === 'download-questionnaire') {
+        // trigger the questionnaire PDF from current window if needed
+        try {
+          const ev = new CustomEvent('downloadQuestionnaire', {});
+          window.dispatchEvent(ev);
+        } catch {}
+      }
+    };
+    window.addEventListener('message', onMsg);
+    return () => window.removeEventListener('message', onMsg);
+  }, [taskContext, onNavigate]);
   
   return (
     <div className="space-y-8 max-w-none">
