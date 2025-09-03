@@ -13,6 +13,8 @@ import { Textarea } from './ui/textarea';
 import { Label } from './ui/label';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './ui/select';
 import { Switch } from './ui/switch';
+import { Popover, PopoverTrigger, PopoverContent } from './ui/popover';
+import { ScrollArea } from './ui/scroll-area';
 import ChecklistLegalTabs from './checklist/LegalTabs';
 import ChecklistInspectionTabs from './checklist/InspectionTabs';
 import ChecklistInsuranceTabs from './checklist/InsuranceTabs';
@@ -1004,6 +1006,7 @@ function ScenarioTogglePanel({ selectedKeys, onChange }: { selectedKeys: string[
   const selected = new Set(selectedKeys);
   const groups: string[] = (scenarioSchema.merge_rules?.order || []) as string[];
   const pretty = (s: string) => s.replace(/_/g, ' ').replace(/\b\w/g, (m) => m.toUpperCase());
+  const [filter, setFilter] = React.useState('');
 
   const toggle = (key: string, enabled: boolean) => {
     const next = new Set(selected);
@@ -1012,37 +1015,54 @@ function ScenarioTogglePanel({ selectedKeys, onChange }: { selectedKeys: string[
   };
 
   const clearAll = () => onChange([]);
+  const count = selected.size;
 
   return (
-    <div className="mb-4 p-3 border rounded-lg bg-gray-50">
-      <div className="flex items-center justify-between mb-2">
-        <div className="font-medium text-sm text-gray-800">Scenarios & scope</div>
-        <div className="flex items-center gap-2">
-          {selected.size > 0 && (
-            <span className="text-xs text-gray-600">{selected.size} selected</span>
-          )}
-          <Button size="sm" variant="outline" onClick={clearAll}>Reset</Button>
-        </div>
-      </div>
-      <div className="space-y-3">
-        {groups.map((group) => {
-          const mods: any[] = Array.isArray((scenarioSchema.modules as any)[group]) ? (scenarioSchema.modules as any)[group] : [];
-          if (mods.length === 0) return null;
-          return (
-            <div key={group} className="">
-              <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">{pretty(group)}</div>
-              <div className="flex flex-wrap gap-4">
-                {mods.map((m: any) => (
-                  <div key={m.key} className="flex items-center gap-2">
-                    <Switch id={`scn-${m.key}`} checked={selected.has(m.key)} onCheckedChange={(v) => toggle(m.key, !!v)} />
-                    <label htmlFor={`scn-${m.key}`} className="text-sm">{pretty(m.key)}</label>
-                  </div>
-                ))}
-              </div>
+    <div className="mb-3">
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button variant="outline" size="sm" className="gap-2">
+            <Filter className="w-4 h-4" /> Scenarios & scope {count > 0 ? `(${count})` : ''}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-[420px] p-0" align="start">
+          <div className="border-b px-3 py-2 flex items-center justify-between">
+            <div className="font-medium text-sm">Scenarios & scope</div>
+            <div className="flex items-center gap-2">
+              {count > 0 && <span className="text-xs text-gray-600">{count} selected</span>}
+              <Button size="sm" variant="outline" onClick={() => { clearAll(); }}>Reset</Button>
             </div>
-          );
-        })}
-      </div>
+          </div>
+          <div className="p-3 pt-2">
+            <Input placeholder="Filter scenarios" value={filter} onChange={(e) => setFilter(e.target.value)} />
+          </div>
+          <ScrollArea className="max-h-[340px] px-3 pb-3">
+            <div className="space-y-4">
+              {groups.map((group) => {
+                const mods: any[] = Array.isArray((scenarioSchema.modules as any)[group]) ? (scenarioSchema.modules as any)[group] : [];
+                if (mods.length === 0) return null;
+                const filtered = filter
+                  ? mods.filter((m: any) => pretty(m.key).toLowerCase().includes(filter.toLowerCase()))
+                  : mods;
+                if (filtered.length === 0) return null;
+                return (
+                  <div key={group}>
+                    <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">{pretty(group)}</div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {filtered.map((m: any) => (
+                        <label key={m.key} htmlFor={`scn-${m.key}`} className="flex items-center justify-between gap-2 rounded-md border px-2.5 py-2 hover:bg-gray-50">
+                          <span className="text-sm truncate">{pretty(m.key)}</span>
+                          <Switch id={`scn-${m.key}`} checked={selected.has(m.key)} onCheckedChange={(v) => toggle(m.key, !!v)} />
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </ScrollArea>
+        </PopoverContent>
+      </Popover>
     </div>
   );
 }
