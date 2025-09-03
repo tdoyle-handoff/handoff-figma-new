@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from './ui/alert';
 import { useIsMobile } from './ui/use-mobile';
 // import { ServerStatusBanner } from './ServerStatusBanner';
 import { authHelpers } from '../utils/supabase/client';
+import DreamHomeAddressCapture from './DreamHomeAddressCapture';
 const handoffLogo = 'https://cdn.builder.io/api/v1/image/assets%2Fd17493787dd14ef798478b15abccc651%2Fb382513b801044b9b63fee0d35fea0d6?format=webp&width=800';
 
 interface SetupData {
@@ -389,6 +390,16 @@ export function SetupWizard({
     }
   }, [clearAuthError, authError]);
 
+  // Dream Home pre-onboarding: navigate to onboarding flow
+  const handleStartOnboarding = useCallback(() => {
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('onboarding', '1');
+      window.location.href = url.toString();
+    } catch {
+      window.location.href = '/?onboarding=1';
+    }
+  }, []);
 
   // Handle server status changes
   const handleServerAvailable = useCallback(() => {

@@ -277,10 +277,10 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
   
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <div className={`${minimal ? `rounded-lg min-h-[100px] hover:bg-gray-50/30 ${isOverdue ? 'border-l-4 border-l-red-300' : isActive ? 'border-l-4 border-l-blue-300' : 'border-l-4 border-l-gray-200'}` : `border rounded-lg transition-all hover:shadow-md min-h-[100px] ${
+      <div className={`${minimal ? `rounded-lg hover:bg-gray-50/30 ${isOverdue ? 'border-l-4 border-l-red-300' : isActive ? 'border-l-4 border-l-blue-300' : 'border-l-4 border-l-gray-200'}` : `border rounded-lg transition-all hover:shadow-md ${
         isOverdue ? 'border-red-200 bg-red-50/30' :
         isActive ? 'border-blue-200 bg-blue-50/30' : 'border-gray-200'}`}` }>
-        <CollapsibleTrigger className={`${minimal ? 'w-full p-4 text-left' : 'w-full p-6 text-left'}`} onClick={(e) => { if (openInWindow) { e.preventDefault(); e.stopPropagation(); openTaskPopup(); } else if (onOpenModal) { e.preventDefault(); e.stopPropagation(); onOpenModal(task); } }}>
+        <CollapsibleTrigger className={`${minimal ? 'w-full px-3 py-2 sm:px-4 sm:py-3 text-left' : 'w-full px-5 py-4 md:px-6 md:py-5 text-left'}`} onClick={(e) => { if (openInWindow) { e.preventDefault(); e.stopPropagation(); openTaskPopup(); } else if (onOpenModal) { e.preventDefault(); e.stopPropagation(); onOpenModal(task); } }}>
           <div className="flex items-center gap-3">
             <div className="flex-shrink-0">
               <button
@@ -301,8 +301,8 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
             </div>
             
             <div className="flex-1 min-w-0">
-              <div className="flex items-start justify-between gap-3">
-                <h4 className={`font-medium ${isCompleted ? 'text-gray-500 line-through' : 'text-gray-900'} break-words leading-tight flex-1`}>
+              <div className="flex items-center justify-between gap-3">
+                <h4 className={`font-medium ${isCompleted ? 'text-gray-500 line-through' : 'text-gray-900'} break-words leading-tight flex-1 m-0`}>
                   {task.title}
                 </h4>
                 <div className="flex items-center gap-2 flex-shrink-0">
@@ -978,7 +978,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'cards' | 'board'>('cards
 
               <TabsContent value="cards" className="space-y-3 mt-4">
                 {/* Overview cards by phase */}
-                <div className={`grid ${isMobile ? 'grid-cols-1' : 'md:grid-cols-2'} gap-4`}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 md:gap-4">
                   {taskPhases.map((phase) => (
                     <PhaseOverviewCard key={phase.id} phase={phase} onAddTask={handleAddTaskToPhase} onNavigate={onNavigate} onUpdateTask={handleUpdateTask} onUpdateTaskFields={handleUpdateTaskFields} tasksById={tasksById} onOpenModal={(t)=>setModalTask(t)} />
                   ))}
