@@ -3,6 +3,9 @@ import { ChevronLeft, ChevronRight, CalendarDays, Circle, CheckCircle, AlertTria
 import type { Task } from '../TaskContext';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
 
 interface ChecklistCalendarProps {
   tasks: Task[];
@@ -58,6 +61,9 @@ const statusIcon = (status: Task['status']) => {
 
 export default function ChecklistCalendar({ tasks, onUpdateTask }: ChecklistCalendarProps) {
   const [cursor, setCursor] = useState<Date>(new Date());
+  const [editOpen, setEditOpen] = useState(false);
+  const [editTask, setEditTask] = useState<Task | null>(null);
+  const [editDate, setEditDate] = useState<string>('');
 
   const monthStart = useMemo(() => startOfMonth(cursor), [cursor]);
   const monthEnd = useMemo(() => endOfMonth(cursor), [cursor]);
@@ -169,6 +175,11 @@ export default function ChecklistCalendar({ tasks, onUpdateTask }: ChecklistCale
                       key={t.id}
                       draggable
                       onDragStart={(e) => onDragStart(e, t.id)}
+                      onClick={() => {
+                        setEditTask(t);
+                        setEditDate(t.dueDate || formatISODate(day));
+                        setEditOpen(true);
+                      }}
                       className="group cursor-move text-xs border rounded px-1.5 py-1 flex items-center gap-1 hover:bg-gray-50"
                       title={`${t.title}${t.description ? ' — ' + t.description : ''}`}
                     >
@@ -191,6 +202,40 @@ export default function ChecklistCalendar({ tasks, onUpdateTask }: ChecklistCale
         </div>
       </CardContent>
     </Card>
+
+    {/* Edit dialog */}
+    <Dialog open={editOpen} onOpenChange={setEditOpen}>
+      <DialogContent className="max-w-md bg-white border border-gray-200 shadow-xl">
+        <DialogHeader>
+          <DialogTitle>Edit Task Date</DialogTitle>
+        </DialogHeader>
+        {editTask && (
+          <div className="space-y-4">
+            <div>
+              <div className="text-sm text-gray-600 mb-1">Task</div>
+              <div className="text-sm font-medium text-gray-900">{editTask.title}</div>
+            </div>
+            <div>
+              <div className="text-sm text-gray-600 mb-1">Due date</div>
+              <Input type="date" value={editDate} onChange={(e) => setEditDate(e.target.value)} />
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <Button variant="outline" onClick={() => setEditOpen(false)}>Cancel</Button>
+              <Button
+                onClick={() => {
+                  if (editTask) {
+                    onUpdateTask(editTask.id, { dueDate: editDate });
+                  }
+                  setEditOpen(false);
+                }}
+              >
+                Save
+              </Button>
+            </div>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }
 

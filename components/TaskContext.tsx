@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react';
 import { UserProfile } from '../utils/supabase/client';
 import { PropertyData } from './PropertyContext';
+import { useAuth } from '../hooks/useAuth';
 
 export interface Task {
   id: string;
@@ -669,14 +670,61 @@ const generateRealEstateTaskPhases = (tasks: Task[], propertyData: PropertyData 
 export function TaskProvider({ children, userProfile }: TaskProviderProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [taskPhases, setTaskPhases] = useState<TaskPhase[]>([]);
+  const { updateUserProfile, isGuestMode } = useAuth();
+  const persistTimerRef = useRef<number | null>(null);
+
+  // Helper: load saved tasks (localStorage and user profile preferences)
+  const loadSavedTasks = (): Task[] => {
+    try {
+      // Try user profile first
+      const prefTasks = (userProfile as any)?.preferences?.checklistTasks as Task[] | undefined;
+      if (prefTasks && Array.isArray(prefTasks) && prefTasks.length > 0) {
+        return prefTasks;
+      }
+      // Fallback to localStorage
+      const raw = localStorage.getItem('handoff-checklist-tasks');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) return parsed as Task[];
+      }
+    } catch {}
+    return [];
+  };
+
+  // Merge saved tasks onto generated baseline (preserve status/dueDate/custom)
+  const mergeTasks = (base: Task[], saved: Task[]): Task[] => {
+    const savedById = new Map<string, Task>();
+    saved.forEach(t => savedById.set(t.id, t));
+    const merged: Task[] = base.map(bt => {
+      const sv = savedById.get(bt.id);
+      if (!sv) return bt;
+      return {
+        ...bt,
+        status: sv.status ?? bt.status,
+        dueDate: sv.dueDate ?? bt.dueDate,
+        completedDate: sv.completedDate ?? bt.completedDate,
+        assignedTo: sv.assignedTo ?? bt.assignedTo,
+        notes: sv.notes ?? bt.notes,
+      };
+    });
+    // include any user-customized tasks that don't exist in base
+    saved.forEach(sv => {
+      if (!merged.find(t => t.id === sv.id) && sv.userCustomized) {
+        merged.push(sv);
+      }
+    });
+    return merged;
+  };
 
   // Initialize tasks based on property data
   useEffect(() => {
     const propertyData = getPropertyData();
     const generatedTasks = generateRealEstateTransactionTasks(propertyData || {} as PropertyData);
-    const phases = generateRealEstateTaskPhases(generatedTasks, propertyData);
-    
-    setTasks(generatedTasks);
+    const saved = loadSavedTasks();
+    const effectiveTasks = saved.length > 0 ? mergeTasks(generatedTasks, saved) : generatedTasks;
+    const phases = generateRealEstateTaskPhases(effectiveTasks, propertyData);
+
+    setTasks(effectiveTasks);
     setTaskPhases(phases);
   }, [userProfile]);
 
@@ -850,7 +898,7 @@ export function TaskProvider({ children, userProfile }: TaskProviderProps) {
         return task;
       })
     );
-    
+
     setTimeout(() => {
       const propertyData = getPropertyData();
       const updatedTasks = tasks.map(task => 
@@ -883,6 +931,29 @@ export function TaskProvider({ children, userProfile }: TaskProviderProps) {
   const deleteTask = (taskId: string): void => {
     setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
   };
+
+  // Persist tasks whenever they change (debounced)
+  useEffect(() => {
+    if (persistTimerRef.current) window.clearTimeout(persistTimerRef.current);
+    persistTimerRef.current = window.setTimeout(async () => {
+      try {
+        localStorage.setItem('handoff-checklist-tasks', JSON.stringify(tasks));
+      } catch {}
+      try {
+        if (userProfile && !isGuestMode && typeof updateUserProfile === 'function') {
+          const currentPrefs = (userProfile as any)?.preferences || {};
+          await updateUserProfile({ preferences: { ...currentPrefs, checklistTasks: tasks } as any });
+        }
+      } catch (e) {
+        // non-fatal
+        console.warn('Checklist persistence failed:', e);
+      }
+    }, 1500) as unknown as number;
+
+    return () => {
+      if (persistTimerRef.current) window.clearTimeout(persistTimerRef.current);
+    };
+  }, [tasks, userProfile, isGuestMode, updateUserProfile]);
 
   const contextValue: TaskContextType = {
     tasks,
