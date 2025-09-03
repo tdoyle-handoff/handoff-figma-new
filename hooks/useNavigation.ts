@@ -118,7 +118,7 @@ export function useNavigation(): NavigationState & NavigationActions {
     'mortgage-calculator': 'Mortgage Calculator - Handoff',
     'closing-calculator': 'Closing Calculator - Handoff',
 'settings': 'Settings - Handoff',
-    'calendar': 'Checklist Calendar - Handoff',
+    'calendar': 'Calendar - Handoff',
     'dev-tools': 'Developer Tools - Handoff',
     'dev-config': 'Developer Configuration - Handoff',
   } as const), []);

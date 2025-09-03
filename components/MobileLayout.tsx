@@ -76,7 +76,7 @@ export default function MobileLayout({
     },
     {
       id: 'calendar',
-      label: 'Checklist Calendar',
+      label: 'Calendar',
       icon: Calendar,
       category: 'Core'
     },
@@ -282,6 +282,11 @@ export default function MobileLayout({
                           {items.map((item) => {
                             const Icon = item.icon;
                             const isActive = currentPage === item.id;
+
+                            // Only show Calendar child when on Transaction Checklist (or on calendar)
+                            if (item.id === 'calendar' && !(currentPage === 'tasks' || currentPage === 'calendar')) {
+                              return null;
+                            }
                             
                             return (
                               <Button
@@ -290,7 +295,8 @@ export default function MobileLayout({
                                 className={cn(
                                   "w-full justify-start h-auto p-3 mobile-button",
                                   isActive && "bg-primary text-primary-foreground",
-                                  !isActive && "hover:bg-muted"
+                                  !isActive && "hover:bg-muted",
+                                  item.id === 'calendar' && 'pl-8'
                                 )}
                                 onClick={() => {
                                   onPageChange(item.id);

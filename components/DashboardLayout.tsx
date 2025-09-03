@@ -71,7 +71,7 @@ export default function DashboardLayout({
 
     // Purchasing Your Home
     { id: 'tasks', label: 'Transaction Checklist', icon: CheckSquare, category: 'Purchasing Your Home' },
-    { id: 'calendar', label: 'Checklist Calendar', icon: Calendar, category: 'Purchasing Your Home' },
+    { id: 'calendar', label: 'Calendar', icon: Calendar, category: 'Purchasing Your Home' },
     { id: 'documents', label: 'Contract Builder', icon: FileText, category: 'Purchasing Your Home' },
 
     // Support
@@ -207,6 +207,11 @@ export default function DashboardLayout({
                   const Icon = item.icon;
                   const isActive = currentPage === item.id;
 
+                  // Show calendar as a child only when Transaction Checklist is active (or on calendar page)
+                  if (item.id === 'calendar' && !(currentPage === 'tasks' || currentPage === 'calendar')) {
+                    return null;
+                  }
+
                   return (
                     <button
                       key={item.id}
@@ -215,7 +220,8 @@ export default function DashboardLayout({
                         isActive
                           ? "bg-white text-blue-900 shadow-sm"
                           : "text-blue-100 hover:bg-blue-800/50 hover:text-white",
-                        !sidebarOpen && "justify-center px-3"
+                        !sidebarOpen && "justify-center px-3",
+                        item.id === 'calendar' && sidebarOpen && 'ml-6'
                       )}
                       onClick={() => onPageChange(item.id)}
                     >
