@@ -60,7 +60,7 @@ const formatDate = (dateStr: string) => {
   return date.toLocaleDateString();
 };
 
-const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields, tasksById, minimal, openInWindow }: {
+const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields, tasksById, minimal, openInWindow, onOpenModal, forceOpen }: {
   task: Task;
   onNavigate: (page: string) => void;
   onUpdateTask?: (taskId: string, status: Task['status']) => void;
@@ -68,8 +68,11 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
   tasksById?: Record<string, Task>;
   minimal?: boolean;
   openInWindow?: boolean;
+  onOpenModal?: (task: Task) => void;
+  forceOpen?: boolean;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  React.useEffect(() => { if (forceOpen) setIsOpen(true); }, [forceOpen]);
   const isCompleted = task.status === 'completed';
   const isActive = ['active', 'in-progress', 'overdue'].includes(task.status);
   const isOverdue = task.status === 'overdue';
@@ -277,7 +280,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
       <div className={`${minimal ? `rounded-lg min-h-[100px] hover:bg-gray-50/30 ${isOverdue ? 'border-l-4 border-l-red-300' : isActive ? 'border-l-4 border-l-blue-300' : 'border-l-4 border-l-gray-200'}` : `border rounded-lg transition-all hover:shadow-md min-h-[100px] ${
         isOverdue ? 'border-red-200 bg-red-50/30' :
         isActive ? 'border-blue-200 bg-blue-50/30' : 'border-gray-200'}`}` }>
-        <CollapsibleTrigger className={`${minimal ? 'w-full p-4 text-left' : 'w-full p-6 text-left'}`} onClick={(e) => { if (openInWindow) { e.preventDefault(); e.stopPropagation(); openTaskPopup(); } }}>
+        <CollapsibleTrigger className={`${minimal ? 'w-full p-4 text-left' : 'w-full p-6 text-left'}`} onClick={(e) => { if (openInWindow) { e.preventDefault(); e.stopPropagation(); openTaskPopup(); } else if (onOpenModal) { e.preventDefault(); e.stopPropagation(); onOpenModal(task); } }}>
           <div className="flex items-center gap-3">
             <div className="flex-shrink-0">
               <button
@@ -719,7 +722,7 @@ const getPhaseIcon = (title: string) => {
   return <CheckSquare className="w-6 h-6" />;
 };
 
-const PhaseOverviewCard = ({ phase, onAddTask, onNavigate, onUpdateTask, onUpdateTaskFields, tasksById }: { phase: TaskPhase, onAddTask?: (phase: TaskPhase, title: string) => void, onNavigate: (page: string) => void, onUpdateTask?: (taskId: string, status: Task['status']) => void, onUpdateTaskFields?: (taskId: string, updates: Partial<Task>) => void, tasksById?: Record<string, Task> }) => {
+const PhaseOverviewCard = ({ phase, onAddTask, onNavigate, onUpdateTask, onUpdateTaskFields, tasksById, onOpenModal }: { phase: TaskPhase, onAddTask?: (phase: TaskPhase, title: string) => void, onNavigate: (page: string) => void, onUpdateTask?: (taskId: string, status: Task['status']) => void, onUpdateTaskFields?: (taskId: string, updates: Partial<Task>) => void, tasksById?: Record<string, Task>, onOpenModal?: (task: Task) => void }) => {
   const completed = phase.tasks.filter(t => t.status === 'completed').length;
   const total = phase.tasks.length || 1;
   const progress = Math.round((completed / total) * 100);
@@ -758,7 +761,7 @@ const PhaseOverviewCard = ({ phase, onAddTask, onNavigate, onUpdateTask, onUpdat
               onUpdateTaskFields={onUpdateTaskFields}
               tasksById={tasksById}
               minimal
-              openInWindow
+              onOpenModal={onOpenModal}
             />
           ))}
         </div>
@@ -787,6 +790,8 @@ export default function Tasks({ onNavigate }: TasksProps) {
   const SHOW_PROGRESS_COUNTS = false;
 
   const { taskPhases } = taskContext;
+
+  const [modalTask, setModalTask] = useState<Task | null>(null);
 
   const phaseIdToCategory = (phaseId: string): Task['category'] => {
     if (phaseId.includes('search')) return 'search';
@@ -975,7 +980,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'cards' | 'board'>('cards
                 {/* Overview cards by phase */}
                 <div className={`grid ${isMobile ? 'grid-cols-1' : 'md:grid-cols-2'} gap-4`}>
                   {taskPhases.map((phase) => (
-                    <PhaseOverviewCard key={phase.id} phase={phase} onAddTask={handleAddTaskToPhase} onNavigate={onNavigate} onUpdateTask={handleUpdateTask} onUpdateTaskFields={handleUpdateTaskFields} tasksById={tasksById} />
+                    <PhaseOverviewCard key={phase.id} phase={phase} onAddTask={handleAddTaskToPhase} onNavigate={onNavigate} onUpdateTask={handleUpdateTask} onUpdateTaskFields={handleUpdateTaskFields} tasksById={tasksById} onOpenModal={(t)=>setModalTask(t)} />
                   ))}
                 </div>
               </TabsContent>
@@ -1162,6 +1167,26 @@ const [checklistSubtab, setChecklistSubtab] = useState<'cards' | 'board'>('cards
           <ChecklistInsuranceTabs selectedTask={selectedTask} />
         </TabsContent>
       </Tabs>
+
+      {modalTask && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/30" onClick={() => setModalTask(null)} />
+          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[85vh] overflow-auto p-4">
+            <div className="flex items-center justify-between mb-2 px-1">
+              <h3 className="text-lg font-semibold truncate pr-4">{modalTask.title}</h3>
+              <Button variant="outline" size="sm" onClick={() => setModalTask(null)}>Close</Button>
+            </div>
+            <ExpandableTaskCard
+              task={modalTask}
+              onNavigate={onNavigate}
+              onUpdateTask={handleUpdateTask}
+              onUpdateTaskFields={handleUpdateTaskFields}
+              tasksById={tasksById}
+              forceOpen
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
