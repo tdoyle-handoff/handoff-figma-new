@@ -66,6 +66,11 @@ export interface TaskPhase {
   keyMilestones?: string[];
 }
 
+export interface ScheduleAnchors {
+  offerAcceptedDate?: string; // ISO yyyy-mm-dd
+  closingDate?: string;       // ISO yyyy-mm-dd
+}
+
 interface TaskContextType {
   tasks: Task[];
   taskPhases: TaskPhase[];
@@ -89,6 +94,10 @@ interface TaskContextType {
   getTasksByPhase: (phaseId: string) => Task[];
   getNextActionableTasks: () => Task[];
   getTasksNeedingAttention: () => Task[];
+  // Scheduling
+  scheduleAnchors: ScheduleAnchors;
+  setScheduleAnchors: (anchors: Partial<ScheduleAnchors>) => void;
+  recomputeDueDates: () => void;
 }
 
 const TaskContext = createContext<TaskContextType | undefined>(undefined);
@@ -129,6 +138,38 @@ const getPropertyData = (): PropertyData | null => {
     console.warn('Error parsing property data:', error);
   }
   return null;
+};
+
+// Helpers: load and save schedule anchors
+const SCHEDULE_ANCHORS_KEY = 'handoff-schedule-anchors';
+const loadScheduleAnchors = (userProfile?: UserProfile | null): ScheduleAnchors => {
+  try {
+    const fromProfile = (userProfile as any)?.preferences?.scheduleAnchors as ScheduleAnchors | undefined;
+    const raw = localStorage.getItem(SCHEDULE_ANCHORS_KEY);
+    const fromLocal = raw ? (JSON.parse(raw) as ScheduleAnchors) : undefined;
+    return { ...(fromLocal || {}), ...(fromProfile || {}) };
+  } catch {
+    return {};
+  }
+};
+
+const saveScheduleAnchors = async (
+  anchors: ScheduleAnchors,
+  userProfile: UserProfile | null,
+  isGuestMode: boolean,
+  updateUserProfile?: (updates: Partial<UserProfile>) => Promise<UserProfile | null>
+) => {
+  try {
+    localStorage.setItem(SCHEDULE_ANCHORS_KEY, JSON.stringify(anchors));
+  } catch {}
+  try {
+    if (userProfile && !isGuestMode && typeof updateUserProfile === 'function') {
+      const currentPrefs = (userProfile as any)?.preferences || {};
+      await updateUserProfile({ preferences: { ...currentPrefs, scheduleAnchors: anchors } as any });
+    }
+  } catch (e) {
+    console.warn('Schedule anchors persistence failed:', e);
+  }
 };
 
 // Task generation function - generates comprehensive real estate transaction checklist
@@ -802,6 +843,53 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
     }
   ];
 
+  // Scheduling rules per task (anchor + offset days). Anchor missing -> fallback to today offsets below.
+  const scheduleRules: Record<string, { anchor: 'acceptance' | 'closing' | 'today'; offset: number }> = {
+    'task-buy-box-template': { anchor: 'today', offset: 0 },
+    'task-mortgage-preapproval': { anchor: 'today', offset: 3 },
+    'task-mls-listing-pdf': { anchor: 'today', offset: 1 },
+    'task-property-search': { anchor: 'today', offset: 0 },
+    'task-market-analysis': { anchor: 'today', offset: 1 },
+    'task-submit-offer': { anchor: 'today', offset: 2 },
+
+    'task-offer-acceptance-signing': { anchor: 'acceptance', offset: 0 },
+    'task-attorney-selection': { anchor: 'acceptance', offset: 2 },
+    'task-contract-riders': { anchor: 'acceptance', offset: 3 },
+    'task-send-lawyer-signed-contract': { anchor: 'acceptance', offset: 3 },
+    'task-earnest-money-deposit': { anchor: 'acceptance', offset: 2 },
+
+    'task-shop-inspectors': { anchor: 'acceptance', offset: 2 },
+    'task-home-inspection': { anchor: 'acceptance', offset: 4 },
+    'task-schedule-specialized-inspections': { anchor: 'acceptance', offset: 5 },
+    'task-review-inspection-results': { anchor: 'acceptance', offset: 6 },
+    'task-submit-repair-requests': { anchor: 'acceptance', offset: 7 },
+    'task-finalize-inspection-remedies': { anchor: 'acceptance', offset: 10 },
+
+    'task-send-offer-to-lender': { anchor: 'acceptance', offset: 1 },
+    'task-shop-mortgage-terms': { anchor: 'acceptance', offset: 2 },
+    'task-mortgage-application': { anchor: 'acceptance', offset: 3 },
+    'task-appraisal': { anchor: 'acceptance', offset: 14 },
+    'task-title-search': { anchor: 'acceptance', offset: 14 },
+
+    'task-insurance-get-bids': { anchor: 'acceptance', offset: 7 },
+    'task-homeowners-insurance': { anchor: 'acceptance', offset: 22 },
+
+    'task-schedule-final-walkthrough': { anchor: 'closing', offset: -5 },
+    'task-final-walkthrough': { anchor: 'closing', offset: -1 },
+    'task-confirm-repairs-complete': { anchor: 'closing', offset: -6 },
+    'task-renegotiate-new-findings': { anchor: 'closing', offset: -4 },
+    'task-closing-review': { anchor: 'closing', offset: -3 },
+    'task-escrow-wire-instructions': { anchor: 'closing', offset: -8 },
+    'task-closing-funds': { anchor: 'closing', offset: -2 },
+    'task-wire-funds': { anchor: 'closing', offset: -1 },
+    'task-closing-meeting': { anchor: 'closing', offset: 0 },
+
+    'task-utilities-transfer': { anchor: 'closing', offset: 1 },
+    'task-move-in': { anchor: 'closing', offset: 2 },
+    'task-change-address': { anchor: 'closing', offset: 3 },
+    'task-home-maintenance': { anchor: 'closing', offset: 10 },
+  };
+
   // Default due dates tuned to workflow (relative to today) where not already set
   const offsetDaysById: Record<string, number> = {
     'task-buy-box-template': 0,
@@ -844,7 +932,29 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
   const today = new Date();
   const toISO = (d: Date) => d.toISOString().split('T')[0];
 
+  // Apply schedule rules using available anchors; fallback to 'today' offsets
+  const anchors = loadScheduleAnchors(null);
+  const applyRule = (rule: { anchor: 'acceptance' | 'closing' | 'today'; offset: number }): string => {
+    let base: Date | null = null;
+    if (rule.anchor === 'acceptance' && anchors.offerAcceptedDate) {
+      base = new Date(anchors.offerAcceptedDate as string);
+    } else if (rule.anchor === 'closing' && anchors.closingDate) {
+      base = new Date(anchors.closingDate as string);
+    }
+    if (!base) {
+      base = new Date(today);
+    }
+    const d = new Date(base);
+    d.setDate(d.getDate() + rule.offset);
+    return toISO(d);
+  };
+
   tasks.forEach((t) => {
+    const rule = scheduleRules[t.id];
+    if (rule) {
+      t.dueDate = applyRule(rule);
+      return;
+    }
     if (!t.dueDate && offsetDaysById[t.id] !== undefined) {
       const d = new Date(today);
       d.setDate(d.getDate() + offsetDaysById[t.id]);
@@ -951,6 +1061,7 @@ export function TaskProvider({ children, userProfile }: TaskProviderProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [taskPhases, setTaskPhases] = useState<TaskPhase[]>([]);
   const { updateUserProfile, isGuestMode } = useAuth();
+  const [scheduleAnchors, setScheduleAnchorsState] = useState<ScheduleAnchors>(() => loadScheduleAnchors(userProfile));
   const persistTimerRef = useRef<number | null>(null);
 
   // Helper: load saved tasks (localStorage and user profile preferences)
@@ -1006,6 +1117,9 @@ export function TaskProvider({ children, userProfile }: TaskProviderProps) {
 
     setTasks(effectiveTasks);
     setTaskPhases(phases);
+
+    // Load/reload anchors when profile changes
+    setScheduleAnchorsState(loadScheduleAnchors(userProfile));
   }, [userProfile]);
 
   // Listen for property data updates
@@ -1043,6 +1157,26 @@ export function TaskProvider({ children, userProfile }: TaskProviderProps) {
     const phases = generateRealEstateTaskPhases(generatedTasks, propertyData);
     setTasks(generatedTasks);
     setTaskPhases(phases);
+  };
+
+  // Recompute due dates from current anchors (non-destructive to other fields)
+  const recomputeDueDates = () => {
+    const propertyData = getPropertyData();
+    // Recreate baseline tasks then merge existing field values back in
+    const base = generateRealEstateTransactionTasks(propertyData || {} as PropertyData);
+    const byId: Record<string, Task> = {};
+    base.forEach((t) => { byId[t.id] = t; });
+    const updated = tasks.map((t) => ({ ...t, dueDate: byId[t.id]?.dueDate || t.dueDate }));
+    setTasks(updated);
+    const phases = generateRealEstateTaskPhases(updated, propertyData);
+    setTaskPhases(phases);
+  };
+
+  const setScheduleAnchors = async (anchors: Partial<ScheduleAnchors>) => {
+    const next = { ...scheduleAnchors, ...anchors } as ScheduleAnchors;
+    setScheduleAnchorsState(next);
+    await saveScheduleAnchors(next, userProfile, isGuestMode, updateUserProfile);
+    recomputeDueDates();
   };
 
   const getTotalTasksCount = (): number => {
@@ -1257,7 +1391,11 @@ export function TaskProvider({ children, userProfile }: TaskProviderProps) {
     generatePersonalizedTasks,
     getTasksByPhase,
     getNextActionableTasks,
-    getTasksNeedingAttention
+    getTasksNeedingAttention,
+    // Scheduling
+    scheduleAnchors,
+    setScheduleAnchors,
+    recomputeDueDates
   };
 
   return (

@@ -485,6 +485,31 @@ const [checklistSubtab, setChecklistSubtab] = useState<'list' | 'calendar' | 'bo
         <TabsContent value="checklist" className="space-y-6 mt-6 bg-white">
           {/* Sub-tabs: List | Calendar */}
           <div className="px-1">
+            {/* Schedule Anchors */}
+            <div className="mb-4 p-3 border rounded-lg bg-gray-50">
+              <div className="flex flex-wrap items-end gap-4">
+                <div>
+                  <Label className="text-xs">Offer Accepted</Label>
+                  <Input
+                    type="date"
+                    defaultValue={taskContext.scheduleAnchors.offerAcceptedDate || ''}
+                    onChange={(e) => taskContext.setScheduleAnchors({ offerAcceptedDate: e.target.value || undefined })}
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs">Closing Date</Label>
+                  <Input
+                    type="date"
+                    defaultValue={taskContext.scheduleAnchors.closingDate || ''}
+                    onChange={(e) => taskContext.setScheduleAnchors({ closingDate: e.target.value || undefined })}
+                  />
+                </div>
+                <div className="ml-auto flex items-center gap-2 text-xs text-gray-600">
+                  <span>Due dates update dynamically from anchors.</span>
+                  <Button size="sm" variant="outline" onClick={() => taskContext.recomputeDueDates()}>Recompute now</Button>
+                </div>
+              </div>
+            </div>
 <Tabs value={checklistSubtab} onValueChange={(v) => setChecklistSubtab(v as 'list' | 'calendar' | 'board')} className="w-full">
               <div className="flex items-center justify-between">
                 <TabsList className="bg-transparent h-auto p-0 border-b border-gray-200 rounded-none flex justify-start">
