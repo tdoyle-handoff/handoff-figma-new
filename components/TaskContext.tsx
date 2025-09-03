@@ -16,7 +16,9 @@ export interface Task {
   dueDateLocked?: boolean;
   assignedTo?: string;
   notes?: string;
+  contacts?: TaskContact[];
   documents?: string[];
+  customFields?: Record<string, any>;
   completedDate?: string;
   estimatedTime?: string;
   dependencies?: string[];
@@ -181,14 +183,16 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
     // Phase 1: Search & Research
     {
       id: 'task-buy-box-template',
-      title: 'Define Buy Box Criteria',
-      description: 'Create an internal buy box template outlining price range, areas, property type, and must-haves.',
+      title: 'Complete Property Questionnaire',
+      description: 'Fill out the property questionnaire to define price range, areas, property type, must-haves, and constraints. This powers Home Search and tracking.',
       category: 'search',
       subcategory: 'general',
       priority: 'medium',
       status: isUnderContract ? 'completed' : 'active',
       estimatedTime: '1-2 hours',
-      assignedTo: 'Buyer'
+      assignedTo: 'Buyer',
+      linkedPage: 'property-search',
+      actionLabel: 'Open Home Search'
     },
     {
       id: 'task-mortgage-preapproval',
@@ -1098,6 +1102,9 @@ export function TaskProvider({ children, userProfile }: TaskProviderProps) {
         completedDate: sv.completedDate ?? bt.completedDate,
         assignedTo: sv.assignedTo ?? bt.assignedTo,
         notes: sv.notes ?? bt.notes,
+        contacts: (sv as any).contacts ?? (bt as any).contacts,
+        documents: sv.documents ?? bt.documents,
+        customFields: (sv as any).customFields ?? (bt as any).customFields,
       };
     });
     // include any user-customized tasks that don't exist in base
