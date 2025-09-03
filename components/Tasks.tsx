@@ -60,12 +60,13 @@ const formatDate = (dateStr: string) => {
   return date.toLocaleDateString();
 };
 
-const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields, tasksById }: {
+const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields, tasksById, minimal }: {
   task: Task;
   onNavigate: (page: string) => void;
   onUpdateTask?: (taskId: string, status: Task['status']) => void;
   onUpdateTaskFields?: (taskId: string, updates: Partial<Task>) => void;
   tasksById?: Record<string, Task>;
+  minimal?: boolean;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const isCompleted = task.status === 'completed';
@@ -152,10 +153,9 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
   
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <div className={`border rounded-lg transition-all hover:shadow-md min-h-[100px] ${
+      <div className={`${minimal ? 'rounded-lg min-h-[100px] hover:bg-gray-50/30' : `border rounded-lg transition-all hover:shadow-md min-h-[100px] ${
         isOverdue ? 'border-red-200 bg-red-50/30' :
-        isActive ? 'border-blue-200 bg-blue-50/30' : 'border-gray-200'
-      }`}>
+        isActive ? 'border-blue-200 bg-blue-50/30' : 'border-gray-200'}`}` }>
         <CollapsibleTrigger className="w-full p-6 text-left">
           <div className="flex items-center gap-3">
             <div className="flex-shrink-0">
@@ -209,6 +209,17 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
         <CollapsibleContent className="px-5 pb-5">
           <div className="ml-8 space-y-4 pt-3 border-t border-gray-100">
             <p className="text-sm text-gray-600">{task.description}</p>
+
+            {task.instructions?.tips && task.instructions.tips.length > 0 && (
+              <div className="pt-1">
+                <Label className="text-xs">Tips</Label>
+                <ul className="list-disc ml-5 mt-1 space-y-1">
+                  {task.instructions.tips.map((tip, idx) => (
+                    <li key={idx} className="text-xs text-gray-600">{tip}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             {/* Dependencies chips */}
             {Array.isArray(task.dependencies) && task.dependencies.length > 0 && (
@@ -587,7 +598,7 @@ const getPhaseIcon = (title: string) => {
   return <CheckSquare className="w-6 h-6" />;
 };
 
-const PhaseOverviewCard = ({ phase, onAddTask }: { phase: TaskPhase, onAddTask?: (phase: TaskPhase, title: string) => void }) => {
+const PhaseOverviewCard = ({ phase, onAddTask, onNavigate, onUpdateTask, onUpdateTaskFields, tasksById }: { phase: TaskPhase, onAddTask?: (phase: TaskPhase, title: string) => void, onNavigate: (page: string) => void, onUpdateTask?: (taskId: string, status: Task['status']) => void, onUpdateTaskFields?: (taskId: string, updates: Partial<Task>) => void, tasksById?: Record<string, Task> }) => {
   const completed = phase.tasks.filter(t => t.status === 'completed').length;
   const total = phase.tasks.length || 1;
   const progress = Math.round((completed / total) * 100);
@@ -616,14 +627,19 @@ const PhaseOverviewCard = ({ phase, onAddTask }: { phase: TaskPhase, onAddTask?:
         </div>
       </CardHeader>
       <CardContent className="pt-0">
-        <ul className="space-y-3">
-          {phase.tasks.map((t) => (
-            <li key={t.id} className="text-[15px] text-gray-800 leading-relaxed flex items-center gap-2">
-              {statusIcon(t.status)}
-              <span>{t.title}</span>
-            </li>
+        <div className="space-y-2">
+          {phase.tasks.map((task) => (
+            <ExpandableTaskCard
+              key={task.id}
+              task={task}
+              onNavigate={onNavigate}
+              onUpdateTask={onUpdateTask}
+              onUpdateTaskFields={onUpdateTaskFields}
+              tasksById={tasksById}
+              minimal
+            />
           ))}
-        </ul>
+        </div>
         <div className="mt-4 flex items-center gap-2">
           <Input placeholder="Add task" value={title} onChange={(e) => setTitle(e.target.value)} />
           <Button size="sm" onClick={() => { if (title.trim()) { onAddTask?.(phase, title.trim()); setTitle(''); } }}>
@@ -847,7 +863,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'list' | 'cards' | 'calen
                 {/* Overview cards by phase */}
                 <div className={`grid ${isMobile ? 'grid-cols-1' : 'md:grid-cols-2'} gap-6`}>
                   {taskPhases.map((phase) => (
-                    <PhaseOverviewCard key={phase.id} phase={phase} onAddTask={handleAddTaskToPhase} />
+                    <PhaseOverviewCard key={phase.id} phase={phase} onAddTask={handleAddTaskToPhase} onNavigate={onNavigate} onUpdateTask={handleUpdateTask} onUpdateTaskFields={handleUpdateTaskFields} tasksById={tasksById} />
                   ))}
                 </div>
               </TabsContent>
