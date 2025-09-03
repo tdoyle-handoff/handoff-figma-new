@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CheckCircle, Circle, Clock, AlertTriangle, Calendar, User, ArrowRight, Filter, ChevronDown, ChevronRight, ExternalLink, Scale, Calculator, FileCheck, Shield, CheckSquare } from 'lucide-react';
+import { CheckCircle, Circle, Clock, AlertTriangle, Calendar, User, ArrowRight, Filter, ChevronDown, ChevronRight, ExternalLink, Scale, Calculator, FileCheck, Shield, CheckSquare, Lock, Unlock } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -81,6 +81,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
   const [attorneyName, setAttorneyName] = useState<string>(currentAttorney?.name || '');
   const [attorneyEmail, setAttorneyEmail] = useState<string>(currentAttorney?.email || '');
   const [attorneyPhone, setAttorneyPhone] = useState<string>(currentAttorney?.phone || '');
+  const [dueLocked, setDueLocked] = useState<boolean>(!!task.dueDateLocked);
 
   const handleNavigation = () => {
     if (task.linkedPage) {
@@ -201,7 +202,19 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
               </div>
               <div>
                 <Label className="text-xs">Due date</Label>
-                <Input type="date" value={editDueDate} onChange={(e) => setEditDueDate(e.target.value)} />
+                <div className="flex items-center gap-2">
+                  <Input type="date" value={editDueDate} onChange={(e) => { setEditDueDate(e.target.value); setDueLocked(!!e.target.value); }} />
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant={dueLocked ? 'default' : 'outline'}
+                    onClick={() => setDueLocked((v) => !v)}
+                    title={dueLocked ? 'Unlock to allow dynamic recalculation' : 'Lock to prevent recalculation'}
+                  >
+                    {dueLocked ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
+                  </Button>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">{dueLocked ? 'Locked: will not change when anchors update.' : 'Will update when anchors change.'}</p>
               </div>
               <div>
                 <Label className="text-xs">Notes</Label>
@@ -239,7 +252,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                 <Badge variant="outline" className={`text-xs ${getPriorityColor(task.priority)}`}>
                   {task.priority} priority
                 </Badge>
-                {editDueDate && <span className="text-xs text-primary">Due: {formatDate(editDueDate)}</span>}
+                {editDueDate && <span className="text-xs text-primary">Due: {formatDate(editDueDate)} {dueLocked && <Lock className="inline w-3 h-3 ml-1" />}</span>}
               </div>
               {task.completedDate && (
                 <span className="text-sm text-green-600">Completed {task.completedDate}</span>
@@ -254,6 +267,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                     title: editTitle,
                     assignedTo: editAssignedTo,
                     dueDate: editDueDate || undefined,
+                    dueDateLocked: editDueDate ? dueLocked : false,
                     notes: editNotes,
                   };
 
@@ -282,6 +296,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                   setEditTitle(task.title);
                   setEditAssignedTo(task.assignedTo || '');
                   setEditDueDate(task.dueDate || '');
+                  setDueLocked(!!task.dueDateLocked);
                   setEditNotes(task.notes || '');
                   const cur = (task.contacts || []).find(c => c.role.toLowerCase().includes('attorney'));
                   setAttorneyName(cur?.name || '');
@@ -299,10 +314,12 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
   );
 };
 
-const PhaseCard = ({ phase, onNavigate, onUpdateTask }: {
+const PhaseCard = ({ phase, onNavigate, onUpdateTask, onUpdateTaskFields, tasksById }: {
   phase: TaskPhase;
   onNavigate: (page: string) => void;
   onUpdateTask?: (taskId: string, status: Task['status']) => void;
+  onUpdateTaskFields?: (taskId: string, updates: Partial<Task>) => void;
+  tasksById?: Record<string, Task>;
 }) => {
   const [isExpanded, setIsExpanded] = useState(phase.status === 'active');
   const completedTasks = phase.tasks.filter(task => task.status === 'completed').length;
@@ -364,7 +381,14 @@ const PhaseCard = ({ phase, onNavigate, onUpdateTask }: {
           <CardContent className="pt-0">
             <div className="space-y-2">
               {phase.tasks.map((task) => (
-                <ExpandableTaskCard key={task.id} task={task} onNavigate={onNavigate} onUpdateTask={onUpdateTask} />
+                <ExpandableTaskCard
+                  key={task.id}
+                  task={task}
+                  onNavigate={onNavigate}
+                  onUpdateTask={onUpdateTask}
+                  onUpdateTaskFields={onUpdateTaskFields}
+                  tasksById={tasksById}
+                />
               ))}
             </div>
           </CardContent>
@@ -505,7 +529,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'list' | 'calendar' | 'bo
                   />
                 </div>
                 <div className="ml-auto flex items-center gap-2 text-xs text-gray-600">
-                  <span>Due dates update dynamically from anchors.</span>
+                  <span>Due dates update dynamically from anchors (locked dates are preserved).</span>
                   <Button size="sm" variant="outline" onClick={() => taskContext.recomputeDueDates()}>Recompute now</Button>
                 </div>
               </div>
@@ -538,39 +562,44 @@ const [checklistSubtab, setChecklistSubtab] = useState<'list' | 'calendar' | 'bo
               </div>
 
               <TabsContent value="list" className="space-y-4 mt-6">
-                {/* Flat list of tasks with expandable editing */}
+                {/* Grouped by phase */}
                 <div className="space-y-3">
-                  {flatTasks
-                    .slice()
-                    .sort((a,b) => {
-                      const ad = a.dueDate ? new Date(a.dueDate).getTime() : Infinity;
-                      const bd = b.dueDate ? new Date(b.dueDate).getTime() : Infinity;
-                      return ad - bd;
-                    })
-                    .map((t) => (
-                      <ExpandableTaskCard
-                        key={t.id}
-                        task={t}
-                        onNavigate={onNavigate}
-                        onUpdateTask={handleUpdateTask}
-                        onUpdateTaskFields={handleUpdateTaskFields}
-                        tasksById={tasksById}
-                      />
-                    ))}
+                  {taskPhases.map((phase) => (
+                    <PhaseCard
+                      key={phase.id}
+                      phase={phase}
+                      onNavigate={onNavigate}
+                      onUpdateTask={handleUpdateTask}
+                      onUpdateTaskFields={handleUpdateTaskFields}
+                      tasksById={tasksById}
+                    />
+                  ))}
                 </div>
               </TabsContent>
 
               <TabsContent value="calendar" className="space-y-6 mt-6">
                 <ChecklistCalendar
                   tasks={flatTasks}
-                  onUpdateTask={(taskId, updates) => taskContext.updateTask(taskId, updates)}
+                  onUpdateTask={(taskId, updates) => {
+                    const nextUpdates = { ...updates } as Partial<Task>;
+                    if ('dueDate' in updates) {
+                      (nextUpdates as any).dueDateLocked = !!updates.dueDate;
+                    }
+                    taskContext.updateTask(taskId, nextUpdates);
+                  }}
                 />
               </TabsContent>
 
               <TabsContent value="board" className="space-y-6 mt-6">
                 <ChecklistKanban
                   tasks={flatTasks}
-                  onUpdateTask={(taskId, updates) => taskContext.updateTask(taskId, updates)}
+                  onUpdateTask={(taskId, updates) => {
+                    const nextUpdates = { ...updates } as Partial<Task>;
+                    if ('dueDate' in updates) {
+                      (nextUpdates as any).dueDateLocked = !!updates.dueDate;
+                    }
+                    taskContext.updateTask(taskId, nextUpdates);
+                  }}
                   onNavigate={onNavigate}
                 />
               </TabsContent>
