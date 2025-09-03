@@ -1001,8 +1001,105 @@ interface TasksProps {
   onNavigate: (page: string) => void;
 }
 
-// Scenario Toggle Panel Component
-function ScenarioTogglePanel({ selectedKeys, onChange }: { selectedKeys: string[]; onChange: (keys: string[]) => void }) {
+// Scenario Banner with per-category multi-select dropdowns
+function ScenarioBanner({ selectedKeys, onChange }: { selectedKeys: string[]; onChange: (keys: string[]) => void }) {
+  const selected = new Set(selectedKeys);
+  const groups: string[] = (scenarioSchema.merge_rules?.order || []) as string[];
+  const pretty = (s: string) => s.replace(/_/g, ' ').replace(/\b\w/g, (m) => m.toUpperCase());
+
+  const setForGroup = (group: string, keys: string[]) => {
+    const next = new Set(selected);
+    // Remove any existing keys in this group
+    const mods: any[] = Array.isArray((scenarioSchema.modules as any)[group]) ? (scenarioSchema.modules as any)[group] : [];
+    mods.forEach((m: any) => next.delete(m.key));
+    // Add the provided keys
+    keys.forEach(k => next.add(k));
+    onChange(Array.from(next));
+  };
+
+  const groupSelectedCount = (group: string) => {
+    const mods: any[] = Array.isArray((scenarioSchema.modules as any)[group]) ? (scenarioSchema.modules as any)[group] : [];
+    return mods.reduce((acc, m) => acc + (selected.has(m.key) ? 1 : 0), 0);
+  };
+
+  const totalCount = selected.size;
+
+  return (
+    <div className="mb-3 p-3 border rounded-lg bg-gray-50">
+      <div className="flex items-center justify-between mb-2">
+        <div className="font-medium text-sm text-gray-800">
+          Scenarios & scope
+          {totalCount > 0 && <span className="ml-2 text-xs text-gray-600">({totalCount} selected)</span>}
+        </div>
+        <div className="flex items-center gap-2">
+          <Button size="sm" variant="outline" onClick={() => onChange([])}>Reset</Button>
+        </div>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {groups.map((group) => {
+          const mods: any[] = Array.isArray((scenarioSchema.modules as any)[group]) ? (scenarioSchema.modules as any)[group] : [];
+          if (mods.length === 0) return null;
+          const count = groupSelectedCount(group);
+          return (
+            <GroupMultiSelect
+              key={group}
+              label={pretty(group)}
+              options={mods.map((m: any) => ({ key: m.key, label: pretty(m.key) }))}
+              selectedKeys={mods.filter((m: any) => selected.has(m.key)).map((m: any) => m.key)}
+              onChange={(keys) => setForGroup(group, keys)}
+              count={count}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function GroupMultiSelect({ label, options, selectedKeys, onChange, count }: { label: string; options: { key: string; label: string }[]; selectedKeys: string[]; onChange: (keys: string[]) => void; count: number; }) {
+  const [filter, setFilter] = React.useState('');
+  const selected = new Set(selectedKeys);
+  const toggle = (key: string, enabled: boolean) => {
+    const next = new Set(selected);
+    if (enabled) next.add(key); else next.delete(key);
+    onChange(Array.from(next));
+  };
+  const filtered = filter ? options.filter(o => o.label.toLowerCase().includes(filter.toLowerCase())) : options;
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="outline" size="sm" className="gap-2">
+          {label} {count > 0 ? `(${count})` : ''}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[320px] p-0" align="start">
+        <div className="border-b px-3 py-2 flex items-center justify-between">
+          <div className="font-medium text-sm">{label}</div>
+          <div className="flex items-center gap-2">
+            {count > 0 && <Button size="sm" variant="ghost" onClick={() => onChange([])}>Clear</Button>}
+            <Button size="sm" variant="outline" onClick={() => onChange(filtered.map(f => f.key))}>Select all</Button>
+          </div>
+        </div>
+        <div className="p-3 pt-2">
+          <Input placeholder="Filter" value={filter} onChange={(e) => setFilter(e.target.value)} />
+        </div>
+        <ScrollArea className="max-h-[300px] px-3 pb-3">
+          <div className="space-y-2">
+            {filtered.map((opt) => (
+              <label key={opt.key} htmlFor={`ms-${label}-${opt.key}`} className="flex items-center justify-between gap-2 rounded-md border px-2.5 py-2 hover:bg-gray-50">
+                <span className="text-sm truncate">{opt.label}</span>
+                <Checkbox id={`ms-${label}-${opt.key}`} checked={selected.has(opt.key)} onCheckedChange={(v) => toggle(opt.key, !!v)} />
+              </label>
+            ))}
+            {filtered.length === 0 && (
+              <div className="text-xs text-gray-500 px-1 py-2">No options</div>
+            )}
+          </div>
+        </ScrollArea>
+      </PopoverContent>
+    </Popover>
+  );
+}
   const selected = new Set(selectedKeys);
   const groups: string[] = (scenarioSchema.merge_rules?.order || []) as string[];
   const pretty = (s: string) => s.replace(/_/g, ' ').replace(/\b\w/g, (m) => m.toUpperCase());
@@ -1243,8 +1340,8 @@ const [checklistSubtab, setChecklistSubtab] = useState<'cards' | 'board'>('cards
         <TabsContent value="checklist" className="space-y-6 mt-6 bg-white">
           {/* Sub-tabs: List | Calendar */}
           <div className="px-1">
-            {/* Scenario selection (v2) */}
-            <ScenarioTogglePanel
+            {/* Scenario selection banner (multi-select dropdowns per category) */}
+            <ScenarioBanner
               selectedKeys={selectedScenarioKeys}
               onChange={(nextKeys) => {
                 setSelectedScenarioKeys(nextKeys);
