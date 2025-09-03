@@ -156,7 +156,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
       <div className={`${minimal ? `rounded-lg min-h-[100px] hover:bg-gray-50/30 ${isOverdue ? 'border-l-4 border-l-red-300' : isActive ? 'border-l-4 border-l-blue-300' : 'border-l-4 border-l-gray-200'}` : `border rounded-lg transition-all hover:shadow-md min-h-[100px] ${
         isOverdue ? 'border-red-200 bg-red-50/30' :
         isActive ? 'border-blue-200 bg-blue-50/30' : 'border-gray-200'}`}` }>
-        <CollapsibleTrigger className="w-full p-6 text-left">
+        <CollapsibleTrigger className={`${minimal ? 'w-full p-4 text-left' : 'w-full p-6 text-left'}`}>
           <div className="flex items-center gap-3">
             <div className="flex-shrink-0">
               <button
@@ -206,8 +206,8 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
           </div>
         </CollapsibleTrigger>
         
-        <CollapsibleContent className="px-5 pb-5">
-          <div className="ml-8 space-y-4 pt-3 border-t border-gray-100">
+        <CollapsibleContent className={`${minimal ? 'px-4 pb-4' : 'px-5 pb-5'}`}>
+          <div className={`${minimal ? 'ml-6 space-y-3 pt-2' : 'ml-8 space-y-4 pt-3 border-t border-gray-100'}`}>
             <p className="text-sm text-gray-600">{task.description}</p>
 
             {task.instructions?.tips && task.instructions.tips.length > 0 && (
@@ -611,16 +611,16 @@ const PhaseOverviewCard = ({ phase, onAddTask, onNavigate, onUpdateTask, onUpdat
   };
   return (
     <Card className="shadow-sm border-gray-200">
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-gray-100 text-gray-700">
+          <div className="flex items-center gap-2.5">
+            <div className="p-1.5 rounded-lg bg-gray-100 text-gray-700">
               {getPhaseIcon(phase.title)}
             </div>
-            <CardTitle className="text-xl">{phase.title}</CardTitle>
+            <CardTitle className="text-lg">{phase.title}</CardTitle>
           </div>
-          <div className="w-32">
-            <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
+          <div className="w-28">
+            <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden">
               <div className="h-full bg-gray-200" style={{ width: `${progress}%` }} />
             </div>
           </div>
@@ -702,7 +702,7 @@ export default function Tasks({ onNavigate }: TasksProps) {
 
   // Tab state management
   const [activeTab, setActiveTab] = useState<string>('checklist');
-const [checklistSubtab, setChecklistSubtab] = useState<'list' | 'cards' | 'calendar' | 'board'>('cards');
+const [checklistSubtab, setChecklistSubtab] = useState<'cards' | 'board'>('cards');
 
   // selection state for sidebar -> detail
   const [selectedPhaseId, setSelectedPhaseId] = useState<string | undefined>(taskPhases.find(p => p.status === 'active')?.id);
@@ -809,26 +809,14 @@ const [checklistSubtab, setChecklistSubtab] = useState<'list' | 'cards' | 'calen
                 </div>
               </div>
             </div>
-<Tabs value={checklistSubtab} onValueChange={(v) => setChecklistSubtab(v as 'list' | 'calendar' | 'board')} className="w-full">
+<Tabs value={checklistSubtab} onValueChange={(v) => setChecklistSubtab(v as 'cards' | 'board')} className="w-full">
               <div className="flex items-center justify-between">
                 <TabsList className="bg-transparent h-auto p-0 border-b border-gray-200 rounded-none flex justify-start">
-                <TabsTrigger
-                  value="list"
-                  className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-2 px-4 font-medium transition-all duration-200"
-                >
-                  List
-                </TabsTrigger>
                 <TabsTrigger
                   value="cards"
                   className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-2 px-4 font-medium transition-all duration-200"
                 >
                   Cards
-                </TabsTrigger>
-                <TabsTrigger
-                  value="calendar"
-                  className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-2 px-4 font-medium transition-all duration-200"
-                >
-                  Calendar
                 </TabsTrigger>
                 <TabsTrigger
                   value="board"
@@ -842,43 +830,13 @@ const [checklistSubtab, setChecklistSubtab] = useState<'list' | 'cards' | 'calen
                 </Button>
               </div>
 
-              <TabsContent value="list" className="space-y-4 mt-6">
-                {/* Grouped by phase - detailed, editable */}
-                <div className="space-y-3">
-                  {taskPhases.map((phase) => (
-                    <PhaseCard
-                      key={phase.id}
-                      phase={phase}
-                      onNavigate={onNavigate}
-                      onUpdateTask={handleUpdateTask}
-                      onUpdateTaskFields={handleUpdateTaskFields}
-                      tasksById={tasksById}
-                      onAddTask={handleAddTaskToPhase}
-                    />
-                  ))}
-                </div>
-              </TabsContent>
-
-              <TabsContent value="cards" className="space-y-4 mt-6">
+              <TabsContent value="cards" className="space-y-3 mt-4">
                 {/* Overview cards by phase */}
-                <div className={`grid ${isMobile ? 'grid-cols-1' : 'md:grid-cols-2'} gap-6`}>
+                <div className={`grid ${isMobile ? 'grid-cols-1' : 'md:grid-cols-2'} gap-4`}>
                   {taskPhases.map((phase) => (
                     <PhaseOverviewCard key={phase.id} phase={phase} onAddTask={handleAddTaskToPhase} onNavigate={onNavigate} onUpdateTask={handleUpdateTask} onUpdateTaskFields={handleUpdateTaskFields} tasksById={tasksById} />
                   ))}
                 </div>
-              </TabsContent>
-
-              <TabsContent value="calendar" className="space-y-6 mt-6">
-                <ChecklistCalendar
-                  tasks={flatTasks}
-                  onUpdateTask={(taskId, updates) => {
-                    const nextUpdates = { ...updates } as Partial<Task>;
-                    if ('dueDate' in updates) {
-                      (nextUpdates as any).dueDateLocked = !!updates.dueDate;
-                    }
-                    taskContext.updateTask(taskId, nextUpdates);
-                  }}
-                />
               </TabsContent>
 
               <TabsContent value="board" className="space-y-6 mt-6">
