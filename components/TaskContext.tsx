@@ -13,6 +13,7 @@ export interface Task {
   status: 'completed' | 'in-progress' | 'pending' | 'overdue' | 'active' | 'upcoming';
   completed?: boolean;
   dueDate?: string;
+  dueDateLocked?: boolean;
   assignedTo?: string;
   notes?: string;
   documents?: string[];
@@ -1093,6 +1094,7 @@ export function TaskProvider({ children, userProfile }: TaskProviderProps) {
         ...bt,
         status: sv.status ?? bt.status,
         dueDate: sv.dueDate ?? bt.dueDate,
+        dueDateLocked: sv.dueDateLocked ?? bt.dueDateLocked,
         completedDate: sv.completedDate ?? bt.completedDate,
         assignedTo: sv.assignedTo ?? bt.assignedTo,
         notes: sv.notes ?? bt.notes,
@@ -1166,7 +1168,11 @@ export function TaskProvider({ children, userProfile }: TaskProviderProps) {
     const base = generateRealEstateTransactionTasks(propertyData || {} as PropertyData);
     const byId: Record<string, Task> = {};
     base.forEach((t) => { byId[t.id] = t; });
-    const updated = tasks.map((t) => ({ ...t, dueDate: byId[t.id]?.dueDate || t.dueDate }));
+    const updated = tasks.map((t) => {
+      if (t.dueDateLocked) return t; // respect manual lock
+      const computed = byId[t.id]?.dueDate;
+      return { ...t, dueDate: computed || t.dueDate };
+    });
     setTasks(updated);
     const phases = generateRealEstateTaskPhases(updated, propertyData);
     setTaskPhases(phases);
