@@ -174,21 +174,23 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
               </div>
             </div>
 
-            {/* Attorney contact */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <Label className="text-xs">Attorney name</Label>
-                <Input value={attorneyName} onChange={(e) => setAttorneyName(e.target.value)} />
+            {/* Attorney contact: only for "find/hire attorney" task */}
+            {task.id === 'task-attorney-selection' && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label className="text-xs">Attorney name</Label>
+                  <Input value={attorneyName} onChange={(e) => setAttorneyName(e.target.value)} />
+                </div>
+                <div>
+                  <Label className="text-xs">Attorney email</Label>
+                  <Input type="email" value={attorneyEmail} onChange={(e) => setAttorneyEmail(e.target.value)} />
+                </div>
+                <div>
+                  <Label className="text-xs">Attorney phone</Label>
+                  <Input value={attorneyPhone} onChange={(e) => setAttorneyPhone(e.target.value)} />
+                </div>
               </div>
-              <div>
-                <Label className="text-xs">Attorney email</Label>
-                <Input type="email" value={attorneyEmail} onChange={(e) => setAttorneyEmail(e.target.value)} />
-              </div>
-              <div>
-                <Label className="text-xs">Attorney phone</Label>
-                <Input value={attorneyPhone} onChange={(e) => setAttorneyPhone(e.target.value)} />
-              </div>
-            </div>
+            )}
 
             <div className="flex items-center justify-between gap-3">
               <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">
@@ -254,15 +256,6 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
               >
                 Cancel
               </Button>
-              {task.linkedPage && (
-                <Button 
-                  size="sm" 
-                  variant="outline" 
-                  onClick={handleNavigation}
-                >
-                  Go to page
-                </Button>
-              )}
             </div>
           </div>
         </CollapsibleContent>
