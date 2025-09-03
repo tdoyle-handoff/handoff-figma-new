@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { cn } from './ui/utils';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Badge } from './ui/badge';
+import { Separator } from './ui/separator';
 import { usePropertyContext } from './PropertyContext';
 import { useNavigation } from '../hooks/useNavigation';
+const handoffLogo = 'https://cdn.builder.io/api/v1/image/assets%2Fd17493787dd14ef798478b15abccc651%2Fb382513b801044b9b63fee0d35fea0d6?format=webp&width=800';
 import {
   Home,
   FileText,
@@ -13,9 +15,17 @@ import {
   BookOpen,
   Settings,
   LogOut,
+  DollarSign,
+  Scale,
+  Shield,
   MessageSquare,
   TrendingUp,
+  Calculator,
+  Eye,
+  Building,
   BarChart3,
+  ShoppingCart,
+  Code
 } from 'lucide-react';
 import type { PageType } from '../hooks/useNavigation';
 
@@ -49,17 +59,38 @@ export default function DashboardLayout({
   const navigation = useNavigation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  // Navigation items organized by workflow categories (unchanged logic)
+  // Check if user is a developer (in production, this would check actual permissions)
+  const isDeveloper = process.env.NODE_ENV === 'development' || setupData?.buyerEmail?.includes('dev') || setupData?.buyerEmail?.includes('admin');
+
+  // Navigation items organized by workflow categories
   const navigationItems: NavigationItem[] = [
+    // Finding your Dream Home
     { id: 'property', label: 'Property Search', icon: Home, category: 'Finding your Dream Home' },
     { id: 'overview', label: 'Analytics & Budget', icon: TrendingUp, category: 'Finding your Dream Home' },
+
+    // Purchasing Your Home
     { id: 'tasks', label: 'Transaction Checklist', icon: CheckSquare, category: 'Purchasing Your Home' },
     { id: 'documents', label: 'Contract Builder', icon: FileText, category: 'Purchasing Your Home' },
+
+    // Support
     { id: 'resources', label: 'Education Hub', icon: BookOpen, category: 'Support' },
+
+    // Developer section (hidden)
+    // ...(isDeveloper ? [
+    //   { id: 'dev-config', label: 'Developer Config', icon: Code, category: 'Developer Tools', description: 'Configure UI elements and features' }
+    // ] : [])
   ];
+
+  const categoryColors = {
+    'Finding your Dream Home': 'text-blue-600 bg-blue-50 border-blue-200',
+    'Purchasing Your Home': 'text-sky-600 bg-sky-50 border-sky-200',
+    'Support': 'text-indigo-600 bg-indigo-50 border-indigo-200',
+    'Developer Tools': 'text-purple-600 bg-purple-50 border-purple-200'
+  };
 
   const getUserDisplayName = () => {
     if (setupData?.buyerName && setupData.buyerName !== 'User') {
+      // Format the name properly (capitalize first letter of each word)
       return setupData.buyerName
         .split(' ')
         .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
@@ -69,8 +100,8 @@ export default function DashboardLayout({
   };
 
   const getUserDisplayEmail = () => {
-    if (setupData?.buyerEmail &&
-        setupData.buyerEmail !== 'user@handoff.demo' &&
+    if (setupData?.buyerEmail && 
+        setupData.buyerEmail !== 'user@handoff.demo' && 
         setupData.buyerEmail !== 'guest@handoff.demo') {
       return setupData.buyerEmail;
     }
@@ -89,138 +120,204 @@ export default function DashboardLayout({
       .slice(0, 2);
   };
 
+  const getCompletionStatus = () => {
+    return propertyContext.getCompletionStatus();
+  };
+
+  const completionStatus = getCompletionStatus();
+
   // Group navigation items by category
   const groupedNavigation = navigationItems.reduce((acc, item) => {
     const category = item.category || 'Other';
     if (!acc[category]) {
-      acc[category] = [] as NavigationItem[];
+      acc[category] = [];
     }
     acc[category].push(item);
     return acc;
   }, {} as Record<string, NavigationItem[]>);
 
   return (
-    <div className="min-h-screen w-full bg-[#F8FAFC] text-foreground">
-      <div className="flex w-full min-h-screen">
-        {/* Sidebar */}
-        <div className={cn(
-          'relative z-30 flex flex-col bg-white border-r shadow-sm transition-all duration-200',
-          sidebarOpen ? 'w-72' : 'w-16'
-        )}>
-          {/* Brand header */}
-          <div className="px-4 py-3 border-b bg-white/95 backdrop-blur">
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-md bg-primary text-primary-foreground grid place-items-center text-xs font-semibold">H</div>
-              {sidebarOpen && <div className="text-sm font-semibold">Handoff</div>}
-            </div>
-          </div>
-
-          {/* User profile (compact) */}
-          {sidebarOpen && (
-            <div className="p-4 border-b">
-              <div className="flex items-center gap-3">
-                <Avatar className="h-9 w-9">
-                  <AvatarImage src="" />
-                  <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-                    {getInitials(getUserDisplayName())}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="min-w-0">
-                  <p className="text-sm font-medium truncate">{getUserDisplayName()}</p>
-                  <p className="text-xs text-muted-foreground truncate">{getUserDisplayEmail()}</p>
-                  {setupData?.displayBadge && (
-                    <span className="inline-flex items-center text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground mt-1">{setupData.displayBadge}</span>
-                  )}
-                </div>
+    <div className="flex h-screen bg-slate-50">
+      {/* Sidebar */}
+      <div className={cn(
+        "relative z-30 flex flex-col bg-gradient-to-b from-blue-900 to-blue-800 shadow-xl transition-all duration-300 shrink-0",
+        sidebarOpen ? "w-80" : "w-16"
+      )}>
+        {/* Header */}
+        <div className="p-6 bg-white border-b border-gray-200">
+          <div className="flex items-center gap-3">
+            {sidebarOpen ? (
+              <div className="flex items-center justify-center">
+                <img
+                  src="https://cdn.builder.io/api/v1/image/assets%2Fd17493787dd14ef798478b15abccc651%2Fb382513b801044b9b63fee0d35fea0d6?format=webp&width=800"
+                  alt="Handoff Logo"
+                  className="h-8 w-auto"
+                />
               </div>
-            </div>
-          )}
-
-          {/* Navigation groups */}
-          <div className="flex-1 overflow-auto p-2">
-            {Object.entries(groupedNavigation).map(([category, items]) => (
-              <div key={category} className="mb-2">
-                {sidebarOpen && (
-                  <div className="px-2 py-1 text-[11px] font-medium text-muted-foreground uppercase tracking-wide">{category}</div>
-                )}
-                <div className="flex flex-col gap-1">
-                  {items.map((item) => {
-                    const Icon = item.icon;
-                    const isActive = currentPage === item.id;
-                    return (
-                      <button
-                        key={item.id}
-                        onClick={() => onPageChange(item.id)}
-                        className={cn(
-                          'w-full flex items-center gap-2 rounded-md px-2 py-2 text-sm transition-colors',
-                          isActive ? 'bg-muted text-foreground' : 'hover:bg-muted text-muted-foreground',
-                          !sidebarOpen && 'justify-center'
-                        )}
-                      >
-                        <Icon className="h-4 w-4" />
-                        {sidebarOpen && <span className="truncate">{item.label}</span>}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Sidebar footer */}
-          <div className="mt-auto border-t p-2 flex items-center gap-1">
-            <button
-              className={cn('flex items-center gap-2 px-2 py-1.5 rounded text-xs text-muted-foreground hover:bg-muted', !sidebarOpen && 'justify-center w-full')}
-              onClick={() => onPageChange('settings')}
-            >
-              <Settings className="h-3.5 w-3.5" />
-              {sidebarOpen && <span>Settings</span>}
-            </button>
-            <button
-              className={cn('flex items-center gap-2 px-2 py-1.5 rounded text-xs text-red-600 hover:bg-red-50', !sidebarOpen && 'justify-center w-full')}
-              onClick={onSignOut}
-            >
-              <LogOut className="h-3.5 w-3.5" />
-              {sidebarOpen && <span>Quit</span>}
-            </button>
+            ) : (
+              <img
+                src="https://cdn.builder.io/api/v1/image/assets%2Fd17493787dd14ef798478b15abccc651%2Fb382513b801044b9b63fee0d35fea0d6?format=webp&width=800"
+                alt="Handoff Logo"
+                className="h-8 w-auto"
+              />
+            )}
           </div>
         </div>
 
-        {/* Main content area */}
-        <div className="flex-1 flex flex-col min-w-0">
-          {/* Top header */}
-          <div className="h-14 flex items-center gap-2 px-4 border-b bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/70">
-            <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 rounded hover:bg-gray-100"
-              aria-label="Toggle sidebar"
-            >
-              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
+        {/* User Profile */}
+        {sidebarOpen && (
+          <div className="p-4 border-b border-blue-700/50">
             <div className="flex items-center gap-3">
-              <span className="text-sm text-muted-foreground">{navigation.getPageTitle(currentPage).replace(' - Handoff', '')}</span>
-              <span className="text-muted-foreground/40 hidden sm:inline">/</span>
-              <span className="text-xs text-muted-foreground hidden sm:inline">{navigation.getPageDescription(currentPage)}</span>
-            </div>
-            <div className="ml-auto flex items-center gap-2">
-              <Button variant="secondary" size="sm">Preview</Button>
-              <Button size="sm">Publish</Button>
-              <Avatar className="h-8 w-8 ml-1">
+              <Avatar className="h-10 w-10">
                 <AvatarImage src="" />
-                <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                <AvatarFallback className="bg-blue-600 text-white">
+                  {getInitials(getUserDisplayName())}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-sm truncate text-white" title={getUserDisplayName()}>
+                  {getUserDisplayName()}
+                </p>
+                <p className="text-xs text-blue-200 truncate" title={getUserDisplayEmail()}>
+                  {getUserDisplayEmail()}
+                </p>
+                {setupData?.displayBadge && (
+                  <Badge variant="secondary" className="text-xs mt-1 bg-blue-700 text-blue-100 hover:bg-blue-600">
+                    {setupData.displayBadge}
+                  </Badge>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Navigation */}
+        <div className="flex-1 overflow-y-auto p-4">
+          <div className="space-y-1">
+            {Object.entries(groupedNavigation).map(([category, items]) => (
+              <React.Fragment key={category}>
+                {sidebarOpen && category !== 'Finding your Dream Home' && category !== 'Purchasing Your Home' && category !== 'Support' && (
+                  <div className="px-3 py-2 text-xs font-medium text-blue-300 uppercase tracking-wide">
+                    {category}
+                  </div>
+                )}
+                {items.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = currentPage === item.id;
+
+                  return (
+                    <button
+                      key={item.id}
+                      className={cn(
+                        "w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 text-left",
+                        isActive
+                          ? "bg-white text-blue-900 shadow-sm"
+                          : "text-blue-100 hover:bg-blue-800/50 hover:text-white",
+                        !sidebarOpen && "justify-center px-3"
+                      )}
+                      onClick={() => onPageChange(item.id)}
+                    >
+                      <Icon className="h-5 w-5 flex-shrink-0" />
+                      {sidebarOpen && (
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-sm">{item.label}</span>
+                            {item.badge && (
+                              <Badge
+                                variant="secondary"
+                                className={cn(
+                                  "text-xs px-1.5 py-0.5",
+                                  isActive
+                                    ? "bg-blue-100 text-blue-700"
+                                    : "bg-blue-700 text-blue-100"
+                                )}
+                              >
+                                {item.badge}
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
+              </React.Fragment>
+            ))}
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="p-2 border-t border-blue-700/50 mt-auto">
+          <div className="flex items-center gap-1">
+            <button
+              className={cn(
+                "flex items-center gap-2 px-2 py-1.5 rounded transition-all duration-200 text-blue-200 hover:bg-blue-800/30 hover:text-white text-xs",
+                !sidebarOpen && "justify-center px-2"
+              )}
+              onClick={() => onPageChange('settings')}
+            >
+              <Settings className="h-3 w-3" />
+              {sidebarOpen && <span>Settings</span>}
+            </button>
+
+            <button
+              className={cn(
+                "flex items-center gap-2 px-2 py-1.5 rounded transition-all duration-200 text-blue-200 hover:bg-red-600/30 hover:text-white text-xs",
+                !sidebarOpen && "justify-center px-2"
+              )}
+              onClick={onSignOut}
+            >
+              <LogOut className="h-3 w-3" />
+              {sidebarOpen && <span>Quit</span>}
+            </button>
+          </div>
+
+          {sidebarOpen && (
+            <div className="mt-2 pt-2 border-t border-blue-700/30">
+              <button
+                onClick={() => setSidebarOpen(false)}
+                className="text-xs text-blue-300 hover:text-white transition-colors"
+              >
+                Collapse
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="relative z-0 flex-1 flex flex-col min-h-0 min-w-0 bg-slate-50">
+        {/* Header */}
+        <div className="bg-white border-b border-slate-200 px-8 py-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors lg:hidden"
+              >
+                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">{navigation.getPageTitle(currentPage).replace(' - Handoff', '')}</h1>
+                <p className="text-sm text-gray-600 mt-1">{navigation.getPageDescription(currentPage)}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <Avatar className="h-10 w-10">
+                <AvatarImage src="" />
+                <AvatarFallback className="bg-blue-600 text-white">
                   {getInitials(getUserDisplayName())}
                 </AvatarFallback>
               </Avatar>
             </div>
           </div>
-
-          {/* Page body (unchanged children) */}
-          <main className="flex-1 overflow-auto p-6">
-            {children}
-          </main>
         </div>
+
+        <main className="flex-1 overflow-auto p-8">
+          {children}
+        </main>
       </div>
     </div>
   );

@@ -61,26 +61,6 @@ const statusIcon = (status: Task['status']) => {
   }
 };
 
-const categoryChipClasses = (category: Task['category']) => {
-  switch (category) {
-    case 'search':
-      return 'border-l-4 border-l-blue-400 bg-blue-50';
-    case 'offer':
-      return 'border-l-4 border-l-green-400 bg-green-50';
-    case 'contract':
-      return 'border-l-4 border-l-purple-400 bg-purple-50';
-    case 'diligence':
-      return 'border-l-4 border-l-orange-400 bg-orange-50';
-    case 'pre-closing':
-      return 'border-l-4 border-l-indigo-400 bg-indigo-50';
-    case 'closing':
-      return 'border-l-4 border-l-emerald-400 bg-emerald-50';
-    case 'post-closing':
-      return 'border-l-4 border-l-teal-400 bg-teal-50';
-    default:
-      return 'border-l-4 border-l-gray-300 bg-white';
-  }
-};
 
 export default function ChecklistCalendar({ tasks, onUpdateTask }: ChecklistCalendarProps) {
   const [cursor, setCursor] = useState<Date>(new Date());
@@ -254,7 +234,7 @@ export default function ChecklistCalendar({ tasks, onUpdateTask }: ChecklistCale
                         setEditNotes(t.notes || '');
                         setEditOpen(true);
                       }}
-                      className={`group cursor-move text-xs border rounded px-1.5 py-1 flex items-center gap-1 hover:bg-gray-50 ${categoryChipClasses(t.category)}`}
+                      className="group cursor-move text-xs border rounded px-1.5 py-1 flex items-center gap-1 hover:bg-gray-50"
                       title={`${t.title}${t.description ? ' — ' + t.description : ''}`}
                     >
                       {statusIcon(t.status)}
