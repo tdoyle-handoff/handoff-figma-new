@@ -1042,8 +1042,8 @@ const TaskTableCard = ({ title, tasks, onNavigate, onUpdateTask, onUpdateTaskFie
         </div>
         <div className="divide-y">
           {tasks.map((task) => (
-            <div className="px-1">
-              <ExpandableTaskCard key={task.id} task={task} onNavigate={onNavigate} onUpdateTask={onUpdateTask} onUpdateTaskFields={onUpdateTaskFields} tasksById={tasksById} minimal row />
+            <div key={task.id} className="px-1">
+              <ExpandableTaskCard task={task} onNavigate={onNavigate} onUpdateTask={onUpdateTask} onUpdateTaskFields={onUpdateTaskFields} tasksById={tasksById} minimal row />
             </div>
           ))}
         </div>
@@ -1393,7 +1393,7 @@ export default function Tasks({ onNavigate }: TasksProps) {
 
   // Tab state management
   const [activeTab, setActiveTab] = useState<string>('checklist');
-const [checklistSubtab, setChecklistSubtab] = useState<'cards' | 'board'>('cards');
+const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
 
   // selection state for sidebar -> detail
   const [selectedPhaseId, setSelectedPhaseId] = useState<string | undefined>(displayedTaskPhases.find(p => p.status === 'active')?.id);
@@ -1473,32 +1473,16 @@ const [checklistSubtab, setChecklistSubtab] = useState<'cards' | 'board'>('cards
   return (
     <div className="space-y-8 max-w-none">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="w-full bg-transparent h-auto p-0 border-b border-gray-200 rounded-none flex justify-start">
-          <TabsTrigger
-            value="checklist"
-            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200"
-          >
-            Checklist
-          </TabsTrigger>
-          <TabsTrigger
-            value="legal"
-            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200"
-          >
-            Legal
-          </TabsTrigger>
-          <TabsTrigger
-            value="inspections"
-            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200"
-          >
-            Inspections
-          </TabsTrigger>
-          <TabsTrigger
-            value="insurance"
-            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200"
-          >
-            Insurance
-          </TabsTrigger>
-        </TabsList>
+        {activeTab === 'checklist' && (
+          <TabsList className="w-full bg-transparent h-auto p-0 border-b border-gray-200 rounded-none flex justify-start">
+            <TabsTrigger
+              value="checklist"
+              className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200"
+            >
+              Checklist
+            </TabsTrigger>
+          </TabsList>
+        )}
 
         <TabsContent value="checklist" className="space-y-6 mt-6 bg-white">
           <div className="px-1 space-y-4">
@@ -1512,31 +1496,49 @@ const [checklistSubtab, setChecklistSubtab] = useState<'cards' | 'board'>('cards
                 <Badge className="bg-green-100 text-green-800 text-[12px] px-3 py-1 rounded-full font-semibold">{Math.round(overallProgress)}% Complete</Badge>
               </div>
             </div>
-            <div className="flex items-center justify-between">
-              <PhaseProgressBar phases={displayedTaskPhases} onSelect={(pid)=>{
-                const idx = displayedTaskPhases.findIndex(p=>p.id===pid);
-                if (idx>=0) {
-                  const el = document.getElementById(`phase-card-${pid}`);
-                  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-              }} />
+            {/* To-do | Done toggle */}
+            <div>
+              <Tabs value={checklistSubtab} onValueChange={(v)=>setChecklistSubtab(v as 'todo'|'done')}>
+                <TabsList className="bg-transparent h-auto p-0 rounded-none border-b border-gray-200">
+                  <TabsTrigger value="todo" className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 pb-2 px-4 text-gray-600 data-[state=active]:text-gray-900">To-do list</TabsTrigger>
+                  <TabsTrigger value="done" className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 pb-2 px-4 text-gray-600 data-[state=active]:text-gray-900">Done</TabsTrigger>
+                </TabsList>
+              </Tabs>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              {/* Left: Phase cards as tables */}
+              {/* Left: To-do / Done content */}
               <div className="lg:col-span-2 space-y-4">
-                {displayedTaskPhases.map((phase) => (
-                  <div key={phase.id} id={`phase-card-${phase.id}`}>
-                    <TaskTableCard
-                      title={phase.title}
-                      tasks={phase.tasks}
-                      onNavigate={onNavigate}
-                      onUpdateTask={handleUpdateTask}
-                      onUpdateTaskFields={handleUpdateTaskFields}
-                      tasksById={tasksById}
-                    />
-                  </div>
-                ))}
+                {checklistSubtab === 'todo' && (
+                  <>
+                    {displayedTaskPhases.map((phase) => {
+                      const tasks = phase.tasks.filter(t => t.status !== 'completed');
+                      if (tasks.length === 0) return null;
+                      return (
+                        <div key={phase.id} id={`phase-card-${phase.id}`}>
+                          <TaskTableCard
+                            title={phase.title}
+                            tasks={tasks}
+                            onNavigate={onNavigate}
+                            onUpdateTask={handleUpdateTask}
+                            onUpdateTaskFields={handleUpdateTaskFields}
+                            tasksById={tasksById}
+                          />
+                        </div>
+                      );
+                    })}
+                  </>
+                )}
+                {checklistSubtab === 'done' && (
+                  <TaskTableCard
+                    title="Completed"
+                    tasks={displayedTaskPhases.flatMap(p => p.tasks.filter(t => t.status === 'completed'))}
+                    onNavigate={onNavigate}
+                    onUpdateTask={handleUpdateTask}
+                    onUpdateTaskFields={handleUpdateTaskFields}
+                    tasksById={tasksById}
+                  />
+                )}
               </div>
 
               {/* Right sidebar */}
@@ -1598,6 +1600,23 @@ const [checklistSubtab, setChecklistSubtab] = useState<'cards' | 'board'>('cards
                     </Button>
                     <Button variant="outline" className="w-full justify-start h-10 text-[13px] px-3 whitespace-normal leading-snug" onClick={() => onNavigate('calendar')}>
                       <Calendar className="w-4 h-4 mr-2" /> Calendar
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                <Card className="shadow-sm">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-[15px] font-semibold tracking-[-0.01em] text-gray-900">Workspaces</CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-0 space-y-2">
+                    <Button variant="outline" className="w-full justify-start h-10 text-[13px] px-3 whitespace-normal leading-snug" onClick={() => setActiveTab('legal')}>
+                      <Scale className="w-4 h-4 mr-2" /> Legal
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start h-10 text-[13px] px-3 whitespace-normal leading-snug" onClick={() => setActiveTab('inspections')}>
+                      <FileCheck className="w-4 h-4 mr-2" /> Inspections
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start h-10 text-[13px] px-3 whitespace-normal leading-snug" onClick={() => setActiveTab('insurance')}>
+                      <Shield className="w-4 h-4 mr-2" /> Insurance
                     </Button>
                   </CardContent>
                 </Card>
