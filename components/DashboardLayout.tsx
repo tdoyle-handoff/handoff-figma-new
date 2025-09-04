@@ -142,7 +142,7 @@ export default function DashboardLayout({
     <div className="flex h-screen bg-slate-50">
       {/* Sidebar */}
       <div className={cn(
-        "relative z-30 flex flex-col bg-gradient-to-b from-blue-900 to-blue-800 shadow-xl transition-all duration-300 shrink-0",
+        "relative z-30 flex flex-col bg-[#001F3F] shadow-xl transition-all duration-300 shrink-0",
         sidebarOpen ? "w-80" : "w-16"
       )}>
         {/* Header */}

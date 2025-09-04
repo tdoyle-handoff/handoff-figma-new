@@ -17,7 +17,7 @@ export function AppLayout({ topNav, leftSidebar, rightSidebar, progressTracker, 
 
       <div className="flex flex-1">
         {/* Left Sidebar */}
-        <aside className="w-64 border-r hidden md:block">{leftSidebar}</aside>
+        <aside className="w-64 border-r hidden md:block bg-[#001F3F] text-white">{leftSidebar}</aside>
 
         {/* Main Content */}
         <main className="flex-1 p-4 md:p-6 space-y-4">

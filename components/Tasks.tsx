@@ -92,9 +92,9 @@ const formatShortDate = (dateStr?: string) => {
 };
 
 const priorityLabel = (p: Task['priority']) => {
-  if (p === 'high') return 'High Priority';
-  if (p === 'medium') return 'Medium Priority';
-  return 'Low Priority';
+  if (p === 'high') return 'High';
+  if (p === 'medium') return 'Medium';
+  return 'Low';
 };
 
 const priorityPill = (p: Task['priority']) => {
@@ -452,7 +452,6 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                     </div>
                   ))}
                 </div>
-                <span className="truncate" title={task.assignedTo || 'Unassigned'}>{task.assignedTo || 'Unassigned'}</span>
               </div>
               <div className="col-span-2 text-[12px] text-gray-700">
                 {formatShortDate(task.dueDate)}
@@ -765,7 +764,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                 <Badge variant="outline" className="text-xs">
                   {task.category}
                 </Badge>
-                <Badge variant="outline" className={`text-xs ${getPriorityColor(task.priority)}`}>
+                <Badge variant="outline" className={`text-xs ${getPriorityColor(task.priority)}`}>\n                  {priorityLabel(task.priority)}\n                </Badge>
                   {task.priority} priority
                 </Badge>
                 {editDueDate && <span className="text-xs text-primary">Due: {formatDate(editDueDate)} {dueLocked && <Lock className="inline w-3 h-3 ml-1" />}</span>}
