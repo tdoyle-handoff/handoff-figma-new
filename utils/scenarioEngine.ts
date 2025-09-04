@@ -36,7 +36,6 @@ function mapPhaseToCategory(phase: string): { category: Task['category']; subcat
     case 'financing':
       return { category: 'diligence', subcategory: 'financing' };
     case 'pre_close':
-    case 'pre_close':
       return { category: 'pre-closing' };
     case 'closing':
       return { category: 'closing' };

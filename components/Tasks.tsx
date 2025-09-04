@@ -104,7 +104,7 @@ const priorityPill = (p: Task['priority']) => {
 // Assignee avatars (initials), derived from task.contacts once info is entered
 const roleAliases: Record<string, string[]> = {
   buyer: ['buyer', 'you', 'client'],
-  agent: ['agent', "buyer's agent", 'realtor'],
+  agent: ['agent', "buyer's agent", 'buyers agent', 'realtor'],
   lender: ['lender', 'loan officer', 'mortgage'],
   attorney: ['attorney', 'lawyer'],
   title: ['title', 'title company'],
@@ -1434,20 +1434,10 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
   }, [taskContext, onNavigate]);
   
   return (
-    <div className="space-y-8 max-w-none">
+    <div className="space-y-8 max-w-none bg-[#F6F7FB] p-4 sm:p-6">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        {activeTab === 'checklist' && (
-          <TabsList className="w-full bg-transparent h-auto p-0 border-b border-gray-200 rounded-none flex justify-start">
-            <TabsTrigger
-              value="checklist"
-              className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200"
-            >
-              Checklist
-            </TabsTrigger>
-          </TabsList>
-        )}
 
-        <TabsContent value="checklist" className="space-y-6 mt-6 bg-white">
+        <TabsContent value="checklist" className="space-y-6 mt-6 bg-[#F6F7FB]">
           <div className="px-1 space-y-4">
             <div className="flex items-center justify-between">
               <div>
@@ -1552,16 +1542,16 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                     <CardTitle className="text-[15px] font-semibold tracking-[-0.01em] text-gray-900">Quick links</CardTitle>
                   </CardHeader>
                   <CardContent className="pt-0 space-y-2">
-                    <Button variant="outline" className="w-full justify-start h-10 text-[13px] px-3 whitespace-normal leading-snug" onClick={() => onNavigate('property-search')}>
+                    <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => onNavigate('property-search')}>
                       <SearchIcon className="w-4 h-4 mr-2" /> Property search
                     </Button>
-                    <Button variant="outline" className="w-full justify-start h-10 text-[13px] px-3 whitespace-normal leading-snug" onClick={() => onNavigate('home-tracking')}>
+                    <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => onNavigate('home-tracking')}>
                       <Home className="w-4 h-4 mr-2" /> Home tracking
                     </Button>
-                    <Button variant="outline" className="w-full justify-start h-10 text-[13px] px-3 whitespace-normal leading-snug" onClick={() => onNavigate('documents')}>
+                    <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => onNavigate('documents')}>
                       <FileText className="w-4 h-4 mr-2" /> Documents
                     </Button>
-                    <Button variant="outline" className="w-full justify-start h-10 text-[13px] px-3 whitespace-normal leading-snug" onClick={() => onNavigate('calendar')}>
+                    <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => onNavigate('calendar')}>
                       <Calendar className="w-4 h-4 mr-2" /> Calendar
                     </Button>
                   </CardContent>
@@ -1572,13 +1562,13 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                     <CardTitle className="text-[15px] font-semibold tracking-[-0.01em] text-gray-900">Workspaces</CardTitle>
                   </CardHeader>
                   <CardContent className="pt-0 space-y-2">
-                    <Button variant="outline" className="w-full justify-start h-10 text-[13px] px-3 whitespace-normal leading-snug" onClick={() => setActiveTab('legal')}>
+                    <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => setActiveTab('legal')}>
                       <Scale className="w-4 h-4 mr-2" /> Legal
                     </Button>
-                    <Button variant="outline" className="w-full justify-start h-10 text-[13px] px-3 whitespace-normal leading-snug" onClick={() => setActiveTab('inspections')}>
+                    <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => setActiveTab('inspections')}>
                       <FileCheck className="w-4 h-4 mr-2" /> Inspections
                     </Button>
-                    <Button variant="outline" className="w-full justify-start h-10 text-[13px] px-3 whitespace-normal leading-snug" onClick={() => setActiveTab('insurance')}>
+                    <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => setActiveTab('insurance')}>
                       <Shield className="w-4 h-4 mr-2" /> Insurance
                     </Button>
                   </CardContent>
@@ -1741,15 +1731,15 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
           </Card>
         </TabsContent>
 
-        <TabsContent value="legal" className="space-y-6 mt-6 bg-white">
+        <TabsContent value="legal" className="space-y-6 mt-6 bg-[#F6F7FB]">
           <ChecklistLegalTabs selectedTask={selectedTask} />
         </TabsContent>
 
-        <TabsContent value="inspections" className="space-y-6 mt-6 bg-white">
+        <TabsContent value="inspections" className="space-y-6 mt-6 bg-[#F6F7FB]">
           <ChecklistInspectionTabs selectedTask={selectedTask} />
         </TabsContent>
 
-        <TabsContent value="insurance" className="space-y-6 mt-6 bg-white">
+        <TabsContent value="insurance" className="space-y-6 mt-6 bg-[#F6F7FB]">
           <ChecklistInsuranceTabs selectedTask={selectedTask} />
         </TabsContent>
       </Tabs>
