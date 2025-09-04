@@ -1026,7 +1026,7 @@ function ScenarioBanner({ selectedKeys, onChange }: { selectedKeys: string[]; on
   const totalCount = selected.size;
 
   return (
-    <div className="mb-3 p-3 border rounded-lg bg-gray-50">
+    <div className="mb-3 p-3 border rounded-lg bg-white shadow-sm">
       <div className="flex items-center justify-between mb-2">
         <div className="font-medium text-sm text-gray-800">
           Scenarios & scope
@@ -1069,25 +1069,35 @@ function GroupMultiSelect({ label, options, selectedKeys, onChange, count }: { l
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-2 rounded-full bg-white border-gray-200 hover:bg-gray-50 shadow-sm"
+        >
           {label} {count > 0 ? `(${count})` : ''}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[320px] p-0" align="start">
-        <div className="border-b px-3 py-2 flex items-center justify-between">
+      <PopoverContent className="w-[360px] p-0 bg-white border shadow-lg" align="start">
+        <div className="border-b px-3 py-2 flex items-center justify-between bg-gray-50">
           <div className="font-medium text-sm">{label}</div>
           <div className="flex items-center gap-2">
-            {count > 0 && <Button size="sm" variant="ghost" onClick={() => onChange([])}>Clear</Button>}
-            <Button size="sm" variant="outline" onClick={() => onChange(filtered.map(f => f.key))}>Select all</Button>
+            {count > 0 && (
+              <Button size="sm" variant="ghost" className="h-7 px-2" onClick={() => onChange([])}>
+                Clear
+              </Button>
+            )}
+            <Button size="sm" variant="outline" className="h-7 px-2" onClick={() => onChange(filtered.map(f => f.key))}>
+              Select all
+            </Button>
           </div>
         </div>
-        <div className="p-3 pt-2">
+        <div className="p-3 pt-2 bg-white">
           <Input placeholder="Filter" value={filter} onChange={(e) => setFilter(e.target.value)} />
         </div>
         <ScrollArea className="max-h-[300px] px-3 pb-3">
           <div className="space-y-2">
             {filtered.map((opt) => (
-              <label key={opt.key} htmlFor={`ms-${label}-${opt.key}`} className="flex items-center justify-between gap-2 rounded-md border px-2.5 py-2 hover:bg-gray-50">
+              <label key={opt.key} htmlFor={`ms-${label}-${opt.key}`} className="flex items-center justify-between gap-2 rounded-md border px-2.5 py-2 bg-white hover:bg-gray-50">
                 <span className="text-sm truncate">{opt.label}</span>
                 <Checkbox id={`ms-${label}-${opt.key}`} checked={selected.has(opt.key)} onCheckedChange={(v) => toggle(opt.key, !!v)} />
               </label>
