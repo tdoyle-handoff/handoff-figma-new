@@ -764,8 +764,8 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                 <Badge variant="outline" className="text-xs">
                   {task.category}
                 </Badge>
-                <Badge variant="outline" className={`text-xs ${getPriorityColor(task.priority)}`}>\n                  {priorityLabel(task.priority)}\n                </Badge>
-                  {task.priority} priority
+                <Badge variant="outline" className={`text-xs ${getPriorityColor(task.priority)}`}>
+                  {priorityLabel(task.priority)}
                 </Badge>
                 {editDueDate && <span className="text-xs text-primary">Due: {formatDate(editDueDate)} {dueLocked && <Lock className="inline w-3 h-3 ml-1" />}</span>}
               </div>
