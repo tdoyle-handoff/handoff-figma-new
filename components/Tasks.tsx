@@ -80,7 +80,31 @@ const formatDate = (dateStr: string) => {
   return date.toLocaleDateString();
 };
 
-const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields, tasksById, minimal, openInWindow, onOpenModal, forceOpen }: {
+// DD/MM/YY for table cells
+const formatShortDate = (dateStr?: string) => {
+  if (!dateStr) return '-';
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return '-';
+  const dd = String(d.getDate()).padStart(2, '0');
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const yy = String(d.getFullYear()).slice(-2);
+  return `${dd}/${mm}/${yy}`;
+};
+
+const priorityLabel = (p: Task['priority']) => {
+  if (p === 'high') return 'High Priority';
+  if (p === 'medium') return 'Medium Priority';
+  return 'Low Priority';
+};
+
+const priorityPill = (p: Task['priority']) => {
+  const common = 'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium border';
+  if (p === 'high') return `${common} bg-green-50 text-green-700 border-green-200`;
+  if (p === 'medium') return `${common} bg-amber-50 text-amber-700 border-amber-200`;
+  return `${common} bg-purple-50 text-purple-700 border-purple-200`;
+};
+
+const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields, tasksById, minimal, openInWindow, onOpenModal, forceOpen, row }: {
   task: Task;
   onNavigate: (page: string) => void;
   onUpdateTask?: (taskId: string, status: Task['status']) => void;
@@ -90,6 +114,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
   openInWindow?: boolean;
   onOpenModal?: (task: Task) => void;
   forceOpen?: boolean;
+  row?: boolean;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   React.useEffect(() => { if (forceOpen) setIsOpen(true); }, [forceOpen]);
@@ -314,57 +339,100 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
       <div className={`${minimal ? `border rounded-lg bg-white hover:shadow-sm ${isOverdue ? 'border-l-4 border-l-red-300' : isActive ? 'border-l-4 border-l-blue-300' : 'border-l-4 border-l-gray-200'}` : `border rounded-lg bg-white transition-all hover:shadow-md ${
         isOverdue ? 'border-gray-200 border-l-4 border-l-red-300' :
         isActive ? 'border-gray-200 border-l-4 border-l-blue-300' : 'border-gray-200 border-l-4 border-l-gray-200'}`}` }>
-        <CollapsibleTrigger className={`${minimal ? 'w-full px-3 py-2 sm:px-4 sm:py-3 text-left' : 'w-full px-5 py-4 md:px-6 md:py-5 text-left'}`} onClick={(e) => { if (openInWindow) { e.preventDefault(); e.stopPropagation(); openTaskPopup(); } else if (onOpenModal) { e.preventDefault(); e.stopPropagation(); onOpenModal(task); } }}>
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="flex-shrink-0">
-              <button
-                onClick={handleToggleCompletion}
-                className="p-1 -m-1 rounded hover:bg-gray-100 transition-colors"
-                title={isCompleted ? "Mark as incomplete" : "Mark as complete"}
-              >
-                {isCompleted ? (
-                  <CheckCircle className="w-5 h-5 text-green-600" />
-                ) : isOverdue ? (
-                  <AlertTriangle className="w-5 h-5 text-red-600" />
-                ) : isActive ? (
-                  <Clock className="w-5 h-5 text-blue-600" />
-                ) : (
-                  <Circle className="w-5 h-5 text-gray-400" />
-                )}
-              </button>
+        <CollapsibleTrigger className={`${row ? 'w-full px-3 py-3 text-left' : (minimal ? 'w-full px-3 py-2 sm:px-4 sm:py-3 text-left' : 'w-full px-5 py-4 md:px-6 md:py-5 text-left')}`} onClick={(e) => { if (openInWindow) { e.preventDefault(); e.stopPropagation(); openTaskPopup(); } else if (onOpenModal) { e.preventDefault(); e.stopPropagation(); onOpenModal(task); } }}>
+          {row ? (
+            <div className="grid grid-cols-12 items-center gap-2">
+              <div className="col-span-5 flex items-center gap-2 min-w-0">
+                <button
+                  onClick={handleToggleCompletion}
+                  className="p-1 -m-1 rounded hover:bg-gray-100 transition-colors"
+                  title={isCompleted ? 'Mark as incomplete' : 'Mark as complete'}
+                >
+                  {isCompleted ? (
+                    <CheckCircle className="w-5 h-5 text-green-600" />
+                  ) : isOverdue ? (
+                    <AlertTriangle className="w-5 h-5 text-red-600" />
+                  ) : isActive ? (
+                    <Clock className="w-5 h-5 text-blue-600" />
+                  ) : (
+                    <Circle className="w-5 h-5 text-gray-400" />
+                  )}
+                </button>
+                <h4 className={`font-medium ${isCompleted ? 'text-gray-500 line-through' : 'text-gray-900'} truncate m-0`} title={task.title}>{task.title}</h4>
+              </div>
+              <div className="col-span-2">
+                <Badge className={`text-xs ${task.status==='completed'?'bg-green-100 text-green-800':task.status==='overdue'?'bg-red-100 text-red-800':(isActive?'bg-blue-100 text-blue-800':'bg-gray-100 text-gray-800')}`}>{task.status}</Badge>
+              </div>
+              <div className="col-span-2 text-sm text-gray-700 truncate flex items-center gap-1">
+                <User className="w-4 h-4 text-gray-400" />
+                <span className="truncate" title={task.assignedTo || 'Unassigned'}>{task.assignedTo || 'Unassigned'}</span>
+              </div>
+              <div className="col-span-2 text-sm text-gray-700">
+                {formatShortDate(task.dueDate)}
+              </div>
+              <div className="col-span-1 flex items-center justify-end gap-2">
+                <span className={priorityPill(task.priority)}>{priorityLabel(task.priority)}</span>
+                <div className="flex-shrink-0">
+                  {isOpen ? (
+                    <ChevronDown className="w-4 h-4 text-gray-400" />
+                  ) : (
+                    <ChevronRight className="w-4 h-4 text-gray-400" />
+                  )}
+                </div>
+              </div>
             </div>
-            
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center justify-between gap-3 sm:gap-4">
-                <h4 className={`font-semibold ${isCompleted ? 'text-gray-500 line-through' : 'text-gray-900'} break-words leading-snug tracking-tight flex-1 m-0 text-[15px] sm:text-base`}>
-                  {task.title}
-                </h4>
-                <div className="flex items-center gap-2.5 flex-shrink-0">
-                  {task.completedDate && (
-                    <span className="text-sm text-green-600">Completed</span>
+          ) : (
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="flex-shrink-0">
+                <button
+                  onClick={handleToggleCompletion}
+                  className="p-1 -m-1 rounded hover:bg-gray-100 transition-colors"
+                  title={isCompleted ? "Mark as incomplete" : "Mark as complete"}
+                >
+                  {isCompleted ? (
+                    <CheckCircle className="w-5 h-5 text-green-600" />
+                  ) : isOverdue ? (
+                    <AlertTriangle className="w-5 h-5 text-red-600" />
+                  ) : isActive ? (
+                    <Clock className="w-5 h-5 text-blue-600" />
+                  ) : (
+                    <Circle className="w-5 h-5 text-gray-400" />
                   )}
-                  {isActive && (
-                    <Badge variant="outline" className="bg-blue-100 text-blue-800 text-xs">
-                      Active
-                    </Badge>
-                  )}
-                  {task.linkedPage && (
-                    <ExternalLink className="w-4 h-4 text-gray-400" />
-                  )}
-                  <div className="flex-shrink-0">
-                    {isOpen ? (
-                      <ChevronDown className="w-4 h-4 text-gray-400" />
-                    ) : (
-                      <ChevronRight className="w-4 h-4 text-gray-400" />
+                </button>
+              </div>
+              
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-3 sm:gap-4">
+                  <h4 className={`font-semibold ${isCompleted ? 'text-gray-500 line-through' : 'text-gray-900'} break-words leading-snug tracking-tight flex-1 m-0 text-[15px] sm:text-base`}>
+                    {task.title}
+                  </h4>
+                  <div className="flex items-center gap-2.5 flex-shrink-0">
+                    {task.completedDate && (
+                      <span className="text-sm text-green-600">Completed</span>
                     )}
+                    {isActive && (
+                      <Badge variant="outline" className="bg-blue-100 text-blue-800 text-xs">
+                        Active
+                      </Badge>
+                    )}
+                    {task.linkedPage && (
+                      <ExternalLink className="w-4 h-4 text-gray-400" />
+                    )}
+                    <div className="flex-shrink-0">
+                      {isOpen ? (
+                        <ChevronDown className="w-4 h-4 text-gray-400" />
+                      ) : (
+                        <ChevronRight className="w-4 h-4 text-gray-400" />
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
         </CollapsibleTrigger>
         
-        <CollapsibleContent className={`${minimal ? 'px-4 pb-4' : 'px-5 pb-5'}`}>
+        <CollapsibleContent className={`${minimal ? (row ? 'px-3 pb-3' : 'px-4 pb-4') : 'px-5 pb-5'}`}>
           <div className={`${minimal ? 'ml-6 space-y-3 pt-2' : 'ml-8 space-y-4 pt-3 border-t border-gray-100'}`}>
             <p className="text-sm text-gray-600">{task.description}</p>
 
@@ -904,6 +972,31 @@ const PhaseCard = ({ phase, onNavigate, onUpdateTask, onUpdateTaskFields, tasksB
   );
 };
 
+// Table-style phase card matching the provided design
+const TaskTableCard = ({ title, tasks, onNavigate, onUpdateTask, onUpdateTaskFields, tasksById }: { title: string; tasks: Task[]; onNavigate: (page: string) => void; onUpdateTask?: (taskId: string, status: Task['status']) => void; onUpdateTaskFields?: (taskId: string, updates: Partial<Task>) => void; tasksById?: Record<string, Task>; }) => {
+  return (
+    <Card className="shadow-sm bg-white">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-base font-semibold">{title}</CardTitle>
+      </CardHeader>
+      <CardContent className="pt-0">
+        <div className="grid grid-cols-12 text-xs font-medium text-gray-500 px-3 py-2">
+          <div className="col-span-6">Title</div>
+          <div className="col-span-2">Status</div>
+          <div className="col-span-2">Assignee</div>
+          <div className="col-span-1">Due Date</div>
+          <div className="col-span-1 text-right">Priority</div>
+        </div>
+        <div className="divide-y">
+          {tasks.map((task) => (
+            <ExpandableTaskCard key={task.id} task={task} onNavigate={onNavigate} onUpdateTask={onUpdateTask} onUpdateTaskFields={onUpdateTaskFields} tasksById={tasksById} minimal row />
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
 // Compact phase overview card for Cards tab
 const getPhaseIcon = (title: string) => {
   const t = title.toLowerCase();
@@ -914,6 +1007,30 @@ const getPhaseIcon = (title: string) => {
   if (t.includes('closing')) return <KeyRound className="w-6 h-6" />;
   if (t.includes('post')) return <Home className="w-6 h-6" />;
   return <CheckSquare className="w-6 h-6" />;
+};
+
+// Horizontal segmented phase progress bar
+const PhaseProgressBar = ({ phases, onSelect }: { phases: TaskPhase[]; onSelect?: (phaseId: string) => void }) => {
+  const getPhaseState = (p: TaskPhase) => {
+    const total = p.tasks.length || 0;
+    const completed = p.tasks.filter(t => t.status === 'completed').length;
+    if (total > 0 && completed === total) return 'completed';
+    if (p.status === 'active' || p.tasks.some(t => ['active','in-progress','overdue'].includes(t.status))) return 'active';
+    return 'upcoming';
+  };
+  return (
+    <div className="inline-flex items-center bg-gray-100 p-1 rounded-full">
+      {phases.map((p, i) => {
+        const st = getPhaseState(p);
+        const cls = st==='completed' ? 'bg-green-600 text-white' : st==='active' ? 'bg-blue-600 text-white' : 'text-gray-700';
+        return (
+          <button key={p.id} onClick={() => onSelect?.(p.id)} className={`px-3 py-1 rounded-full text-xs sm:text-sm ${cls} ${i>0?'ml-1':''}`}>
+            {p.title}
+          </button>
+        );
+      })}
+    </div>
+  );
 };
 
 const PhaseOverviewCard = ({ phase, ordinal, totalPhases, onAddTask, onNavigate, onUpdateTask, onUpdateTaskFields, tasksById, onOpenModal }: { phase: TaskPhase, ordinal: number, totalPhases: number, onAddTask?: (phase: TaskPhase, title: string) => void, onNavigate: (page: string) => void, onUpdateTask?: (taskId: string, status: Task['status']) => void, onUpdateTaskFields?: (taskId: string, updates: Partial<Task>) => void, tasksById?: Record<string, Task>, onOpenModal?: (task: Task) => void }) => {
@@ -1329,89 +1446,107 @@ const [checklistSubtab, setChecklistSubtab] = useState<'cards' | 'board'>('cards
         </TabsList>
 
         <TabsContent value="checklist" className="space-y-6 mt-6 bg-white">
-          {/* Sub-tabs: List | Calendar */}
-          <div className="px-1">
-            {/* Scenario selection banner (multi-select dropdowns per category) */}
-            <ScenarioBanner
-              selectedKeys={selectedScenarioKeys}
-              onChange={(nextKeys) => {
-                setSelectedScenarioKeys(nextKeys);
-                const map: Record<string, boolean> = {};
-                nextKeys.forEach(k => { map[k] = true; });
-                try { saveScenarioSelection(map); } catch {}
-                try { window.dispatchEvent(new Event('scenariosUpdated')); } catch {}
-              }}
-            />
-
-            {/* Schedule Anchors */}
-            <div className="mb-4 p-3 border rounded-lg bg-gray-50">
-              <div className="flex flex-wrap items-end gap-4">
-                <div>
-                  <Label className="text-xs">Offer Accepted</Label>
-                  <Input
-                    type="date"
-                    defaultValue={taskContext.scheduleAnchors.offerAcceptedDate || ''}
-                    onChange={(e) => taskContext.setScheduleAnchors({ offerAcceptedDate: e.target.value || undefined })}
-                  />
-                </div>
-                <div>
-                  <Label className="text-xs">Closing Date</Label>
-                  <Input
-                    type="date"
-                    defaultValue={taskContext.scheduleAnchors.closingDate || ''}
-                    onChange={(e) => taskContext.setScheduleAnchors({ closingDate: e.target.value || undefined })}
-                  />
-                </div>
-                <div className="ml-auto flex items-center gap-2 text-xs text-gray-600">
-                  <span>Due dates update dynamically from anchors (locked dates are preserved).</span>
-                  <Button size="sm" variant="outline" onClick={() => taskContext.recomputeDueDates()}>Recompute now</Button>
-                </div>
+          <div className="px-1 space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-semibold">Project Overview</h2>
+                <p className="text-sm text-gray-600">The transaction overview outlines objectives, timelines, and progress updates.</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge className="bg-violet-100 text-violet-800 text-xs">On Track</Badge>
+                <Badge className="bg-green-100 text-green-800 text-xs font-semibold">{Math.round(overallProgress)}% Complete</Badge>
               </div>
             </div>
-<Tabs value={checklistSubtab} onValueChange={(v) => setChecklistSubtab(v as 'cards' | 'board')} className="w-full">
-              <div className="flex items-center justify-between">
-                <TabsList className="bg-transparent h-auto p-0 border-b border-gray-200 rounded-none flex justify-start">
-                <TabsTrigger
-                  value="cards"
-                  className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-2 px-4 font-medium transition-all duration-200"
-                >
-                  Cards
-                </TabsTrigger>
-                <TabsTrigger
-                  value="board"
-                  className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-2 px-4 font-medium transition-all duration-200"
-                >
-                  Board
-                </TabsTrigger>
-              </TabsList>
-                <Button variant="outline" size="sm" onClick={() => onNavigate('calendar')} className="ml-2">
-                  Open full calendar
-                </Button>
+            <div className="flex items-center justify-between">
+              <PhaseProgressBar phases={displayedTaskPhases} onSelect={(pid)=>{
+                const idx = displayedTaskPhases.findIndex(p=>p.id===pid);
+                if (idx>=0) {
+                  const el = document.getElementById(`phase-card-${pid}`);
+                  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }} />
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              {/* Left: Phase cards as tables */}
+              <div className="lg:col-span-2 space-y-4">
+                {displayedTaskPhases.map((phase) => (
+                  <div key={phase.id} id={`phase-card-${phase.id}`}>
+                    <TaskTableCard
+                      title={phase.title}
+                      tasks={phase.tasks}
+                      onNavigate={onNavigate}
+                      onUpdateTask={handleUpdateTask}
+                      onUpdateTaskFields={handleUpdateTaskFields}
+                      tasksById={tasksById}
+                    />
+                  </div>
+                ))}
               </div>
 
-              <TabsContent value="cards" className="space-y-3 mt-4">
-                {/* Overview cards by phase */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 md:gap-4">
-                  {displayedTaskPhases.map((phase, i) => (
-                    <PhaseOverviewCard key={phase.id} phase={phase} ordinal={i + 1} totalPhases={displayedTaskPhases.length} onAddTask={handleAddTaskToPhase} onNavigate={onNavigate} onUpdateTask={handleUpdateTask} onUpdateTaskFields={handleUpdateTaskFields} tasksById={tasksById} onOpenModal={(t)=>setModalTask(t)} />
-                  ))}
-                </div>
-              </TabsContent>
+              {/* Right sidebar */}
+              <div className="space-y-4">
+                <Card className="shadow-sm">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">Scenario & scope</CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <ScenarioBanner
+                      selectedKeys={selectedScenarioKeys}
+                      onChange={(nextKeys) => {
+                        setSelectedScenarioKeys(nextKeys);
+                        const map: Record<string, boolean> = {};
+                        nextKeys.forEach(k => { map[k] = true; });
+                        try { saveScenarioSelection(map); } catch {}
+                        try { window.dispatchEvent(new Event('scenariosUpdated')); } catch {}
+                      }}
+                    />
+                  </CardContent>
+                </Card>
 
-              <TabsContent value="board" className="space-y-6 mt-6">
-                <ChecklistKanban
-                  tasks={flatTasks}
-                  onUpdateTask={(taskId, updates) => {
-                    const nextUpdates = { ...updates } as Partial<Task>;
-                    if ('dueDate' in updates) {
-                      (nextUpdates as any).dueDateLocked = !!updates.dueDate;
-                    }
-                    taskContext.updateTask(taskId, nextUpdates);
-                  }}
-                  onNavigate={onNavigate}
-                />
-              </TabsContent>
-            </Tabs>
+                <Card className="shadow-sm">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">Contract dates</CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="flex flex-col gap-3">
+                      <div>
+                        <Label className="text-xs">Offer Accepted</Label>
+                        <Input type="date" defaultValue={taskContext.scheduleAnchors.offerAcceptedDate || ''} onChange={(e) => taskContext.setScheduleAnchors({ offerAcceptedDate: e.target.value || undefined })} />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Closing Date</Label>
+                        <Input type="date" defaultValue={taskContext.scheduleAnchors.closingDate || ''} onChange={(e) => taskContext.setScheduleAnchors({ closingDate: e.target.value || undefined })} />
+                      </div>
+                      <div className="flex items-center justify-between text-xs text-gray-600">
+                        <span>Due dates update dynamically from anchors (locked dates are preserved).</span>
+                        <Button size="sm" variant="outline" onClick={() => taskContext.recomputeDueDates()}>Recompute</Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="shadow-sm">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">Quick links</CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-0 space-y-2">
+                    <Button variant="outline" className="w-full justify-start" onClick={() => onNavigate('property-search')}>
+                      <SearchIcon className="w-4 h-4 mr-2" /> Property search
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start" onClick={() => onNavigate('home-tracking')}>
+                      <Home className="w-4 h-4 mr-2" /> Home tracking
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start" onClick={() => onNavigate('documents')}>
+                      <FileText className="w-4 h-4 mr-2" /> Documents
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start" onClick={() => onNavigate('calendar')}>
+                      <Calendar className="w-4 h-4 mr-2" /> Calendar
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
           </div>
 
           {/* Task Category Navigation (hidden via flag) */}
