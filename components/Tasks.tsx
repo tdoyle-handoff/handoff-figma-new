@@ -1138,21 +1138,47 @@ const getPhaseIcon = (title: string) => {
 };
 
 // Horizontal segmented phase progress bar
-const PhaseProgressBar = ({ phases, onSelect }: { phases: TaskPhase[]; onSelect?: (phaseId: string) => void }) => {
-  const getPhaseState = (p: TaskPhase) => {
-    const total = p.tasks.length || 0;
-    const completed = p.tasks.filter(t => t.status === 'completed').length;
-    if (total > 0 && completed === total) return 'completed';
-    if (p.status === 'active' || p.tasks.some(t => ['active','in-progress','overdue'].includes(t.status))) return 'active';
+const PhaseProgressBar = ({ phases, onSelect, currentId }: { phases: TaskPhase[]; onSelect?: (phaseId: string) => void; currentId?: string }) => {
+  const computeCurrentIndex = () => {
+    if (currentId) {
+      const idx = phases.findIndex(p => p.id === currentId);
+      return idx >= 0 ? idx : 0;
+    }
+    const activeIdx = phases.findIndex(p => p.status === 'active');
+    if (activeIdx >= 0) return activeIdx;
+    const firstIncomplete = phases.findIndex(p => {
+      const total = p.tasks.length || 0;
+      const completed = p.tasks.filter(t => t.status === 'completed').length;
+      return completed < total;
+    });
+    return firstIncomplete >= 0 ? firstIncomplete : Math.max(0, phases.length - 1);
+  };
+
+  const currentIdx = computeCurrentIndex();
+
+  const getPhaseState = (idx: number) => {
+    if (idx < currentIdx) return 'completed';
+    if (idx === currentIdx) return 'current';
     return 'upcoming';
   };
+
   return (
-    <div className="inline-flex items-center bg-gray-100 p-1 rounded-full">
+    <div className="inline-flex items-center bg-gray-100 p-1 rounded-full border border-gray-200 shadow-sm">
       {phases.map((p, i) => {
-        const st = getPhaseState(p);
-        const cls = st==='completed' ? 'bg-green-600 text-white' : st==='active' ? 'bg-blue-600 text-white' : 'text-gray-700';
+        const st = getPhaseState(i);
+        const cls = st === 'current'
+          ? 'bg-blue-600 text-white'
+          : st === 'completed'
+            ? 'bg-white text-gray-500'
+            : 'bg-white text-gray-700';
         return (
-          <button key={p.id} onClick={() => onSelect?.(p.id)} className={`px-4 py-1.5 rounded-full text-[13px] ${cls} ${i>0?'ml-1':''}`}>
+          <button
+            key={p.id}
+            onClick={() => onSelect?.(p.id)}
+            className={`px-4 py-1.5 rounded-full text-[13px] ${cls} ${i>0?'ml-1':''}`}
+            aria-current={st === 'current' ? 'step' : undefined}
+            title={p.title}
+          >
             {p.title}
           </button>
         );
@@ -1468,6 +1494,8 @@ export default function Tasks({ onNavigate }: TasksProps) {
   // Tab state management
   const [activeTab, setActiveTab] = useState<string>('checklist');
 const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
+  // When set, show only this phase as its own page
+  const [phasePageId, setPhasePageId] = useState<string | null>(null);
 
   // selection state for sidebar -> detail
   const [selectedPhaseId, setSelectedPhaseId] = useState<string | undefined>(displayedTaskPhases.find(p => p.status === 'active')?.id);
@@ -1555,9 +1583,18 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                 <h2 className="text-xl font-semibold">Project Overview</h2>
                 <p className="text-sm text-gray-600">The transaction overview outlines objectives, timelines, and progress updates.</p>
               </div>
-        <div className="flex items-center gap-2">
-                <Badge className="bg-violet-100 text-violet-800 text-[12px] px-3 py-1 rounded-full">On Track</Badge>
-                <Badge className="bg-green-100 text-green-800 text-[12px] px-3 py-1 rounded-full font-semibold">{Math.round(overallProgress)}% Complete</Badge>
+              <div className="flex items-center gap-3">
+                <div className="hidden lg:block">
+                  <PhaseProgressBar
+                    phases={displayedTaskPhases}
+                    currentId={phasePageId || undefined}
+                    onSelect={(id) => { setPhasePageId(id); setChecklistSubtab('todo'); }}
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge className="bg-violet-100 text-violet-800 text-[12px] px-3 py-1 rounded-full">On Track</Badge>
+                  <Badge className="bg-green-100 text-green-800 text-[12px] px-3 py-1 rounded-full font-semibold">{Math.round(overallProgress)}% Complete</Badge>
+                </div>
               </div>
             </div>
             {/* To-do | Done toggle */}
@@ -1580,7 +1617,17 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                 )}
                 {checklistSubtab === 'todo' && (
                   <>
-                    {displayedTaskPhases.map((phase) => {
+                    {phasePageId && (
+                      <div className="flex items-center justify-between">
+                        <Button variant="ghost" size="sm" className="h-8 px-2" onClick={() => setPhasePageId(null)}>
+                          ← All phases
+                        </Button>
+                        <div className="text-sm text-gray-600">
+                          {displayedTaskPhases.find(p => p.id === phasePageId)?.title}
+                        </div>
+                      </div>
+                    )}
+                    {(phasePageId ? displayedTaskPhases.filter(p => p.id === phasePageId) : displayedTaskPhases).map((phase) => {
                       const tasks = phase.tasks.filter(t => t.status !== 'completed');
                       if (tasks.length === 0) return null;
 
