@@ -55,6 +55,19 @@ const getPriorityColor = (priority: string) => {
   }
 };
 
+// Default, lightweight tips to help buyers when a task lacks explicit instructions
+const defaultTipsForTask = (task: Task): string[] => {
+  const tips: string[] = [];
+  if (!task.assignedTo) tips.push('Assign this task to the right person.');
+  if (!task.dueDate) tips.push('Add a due date and lock it if it is fixed.');
+  if (['offer','contract','diligence','closing'].includes(task.category)) tips.push('Attach related documents for easier tracking.');
+  if ((task.subcategory || '').toLowerCase() === 'legal') tips.push('Consult your attorney and keep their contact info up to date.');
+  if ((task.subcategory || '').toLowerCase() === 'inspections') tips.push('Schedule early and leave time for follow-ups.');
+  if ((task.subcategory || '').toLowerCase() === 'insurance') tips.push('Ask for quotes from multiple providers and compare coverage.');
+  if (tips.length === 0) tips.push('Review the details and check this off when done.');
+  return tips;
+};
+
 const formatDate = (dateStr: string) => {
   const date = new Date(dateStr);
   const today = new Date();
@@ -83,6 +96,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
   const isCompleted = task.status === 'completed';
   const isActive = ['active', 'in-progress', 'overdue'].includes(task.status);
   const isOverdue = task.status === 'overdue';
+  const effectiveTips = (task.instructions?.tips && task.instructions.tips.length > 0) ? task.instructions.tips : defaultTipsForTask(task);
 
   // Local editable state
   const [editTitle, setEditTitle] = useState<string>(task.title);
@@ -297,11 +311,11 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
   
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <div className={`${minimal ? `rounded-lg hover:bg-gray-50/30 ${isOverdue ? 'border-l-4 border-l-red-300' : isActive ? 'border-l-4 border-l-blue-300' : 'border-l-4 border-l-gray-200'}` : `border rounded-lg transition-all hover:shadow-md ${
-        isOverdue ? 'border-red-200 bg-red-50/30' :
-        isActive ? 'border-blue-200 bg-blue-50/30' : 'border-gray-200'}`}` }>
+      <div className={`${minimal ? `border rounded-lg bg-white hover:shadow-sm ${isOverdue ? 'border-l-4 border-l-red-300' : isActive ? 'border-l-4 border-l-blue-300' : 'border-l-4 border-l-gray-200'}` : `border rounded-lg bg-white transition-all hover:shadow-md ${
+        isOverdue ? 'border-gray-200 border-l-4 border-l-red-300' :
+        isActive ? 'border-gray-200 border-l-4 border-l-blue-300' : 'border-gray-200 border-l-4 border-l-gray-200'}`}` }>
         <CollapsibleTrigger className={`${minimal ? 'w-full px-3 py-2 sm:px-4 sm:py-3 text-left' : 'w-full px-5 py-4 md:px-6 md:py-5 text-left'}`} onClick={(e) => { if (openInWindow) { e.preventDefault(); e.stopPropagation(); openTaskPopup(); } else if (onOpenModal) { e.preventDefault(); e.stopPropagation(); onOpenModal(task); } }}>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 sm:gap-4">
             <div className="flex-shrink-0">
               <button
                 onClick={handleToggleCompletion}
@@ -321,11 +335,11 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
             </div>
             
             <div className="flex-1 min-w-0">
-              <div className="flex items-center justify-between gap-3">
-                <h4 className={`font-medium ${isCompleted ? 'text-gray-500 line-through' : 'text-gray-900'} break-words leading-tight flex-1 m-0`}>
+              <div className="flex items-center justify-between gap-3 sm:gap-4">
+                <h4 className={`font-semibold ${isCompleted ? 'text-gray-500 line-through' : 'text-gray-900'} break-words leading-snug tracking-tight flex-1 m-0 text-[15px] sm:text-base`}>
                   {task.title}
                 </h4>
-                <div className="flex items-center gap-2 flex-shrink-0">
+                <div className="flex items-center gap-2.5 flex-shrink-0">
                   {task.completedDate && (
                     <span className="text-sm text-green-600">Completed</span>
                   )}
@@ -347,9 +361,9 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                 </div>
               </div>
               {/* One-line helper: description or first tip */}
-              {((task.instructions?.tips && task.instructions.tips.length > 0) || task.description) && (
-                <div className="mt-0.5 text-xs text-gray-500 truncate">
-                  {(task.instructions?.tips && task.instructions.tips[0]) || (task.description || '')}
+              {(effectiveTips.length > 0 || task.description) && (
+                <div className="mt-1 text-xs text-gray-600 truncate">
+                  {effectiveTips[0] || (task.description || '')}
                 </div>
               )}
             </div>
@@ -360,11 +374,11 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
           <div className={`${minimal ? 'ml-6 space-y-3 pt-2' : 'ml-8 space-y-4 pt-3 border-t border-gray-100'}`}>
             <p className="text-sm text-gray-600">{task.description}</p>
 
-            {task.instructions?.tips && task.instructions.tips.length > 0 && (
+            {effectiveTips.length > 0 && (
               <div className="pt-1">
                 <Label className="text-xs">Tips</Label>
                 <ul className="list-disc ml-5 mt-1 space-y-1">
-                  {task.instructions.tips.map((tip, idx) => (
+                  {effectiveTips.map((tip, idx) => (
                     <li key={idx} className="text-xs text-gray-600">{tip}</li>
                   ))}
                 </ul>
@@ -731,6 +745,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                   }
 
                   onUpdateTaskFields?.(task.id, updates);
+                  try { window.dispatchEvent(new Event('tasksUpdated')); } catch {}
                 }}
               >
                 Save
@@ -798,9 +813,10 @@ const PhaseCard = ({ phase, onNavigate, onUpdateTask, onUpdateTaskFields, tasksB
   const totalTasks = phase.tasks.length;
   const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
   const [newTaskTitle, setNewTaskTitle] = useState('');
+  const [addingNew, setAddingNew] = useState(false);
   
   return (
-    <Card className="mb-6 shadow-sm">
+    <Card className="mb-6 shadow-sm bg-white hover:shadow-md transition-colors">
       <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
         <CollapsibleTrigger asChild>
           <CardHeader className="pb-5 cursor-pointer hover:bg-gray-50/50 transition-colors">
@@ -864,15 +880,28 @@ const PhaseCard = ({ phase, onNavigate, onUpdateTask, onUpdateTaskFields, tasksB
                 />
               ))}
             </div>
-            <div className="mt-4 flex items-center gap-2">
-              <Input
-                placeholder="Add a task to this phase"
-                value={newTaskTitle}
-                onChange={(e) => setNewTaskTitle(e.target.value)}
-              />
-              <Button size="sm" onClick={() => { if (newTaskTitle.trim()) { onAddTask?.(phase, newTaskTitle.trim()); setNewTaskTitle(''); } }}>
-                <Plus className="w-4 h-4 mr-1" /> Add
-              </Button>
+            <div className="mt-4">
+              {!addingNew ? (
+                <Button variant="ghost" size="sm" className="h-8 px-2 text-gray-600 hover:text-gray-900" onClick={() => setAddingNew(true)}>
+                  <Plus className="w-4 h-4 mr-1" /> Add task
+                </Button>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Input
+                    className="h-8 text-sm"
+                    placeholder="New task title"
+                    value={newTaskTitle}
+                    onChange={(e) => setNewTaskTitle(e.target.value)}
+                    autoFocus
+                  />
+                  <Button size="sm" onClick={() => { if (newTaskTitle.trim()) { onAddTask?.(phase, newTaskTitle.trim()); setNewTaskTitle(''); setAddingNew(false); } }}>
+                    <Plus className="w-4 h-4 mr-1" /> Add
+                  </Button>
+                  <Button size="sm" variant="ghost" onClick={() => { setAddingNew(false); setNewTaskTitle(''); }}>
+                    Cancel
+                  </Button>
+                </div>
+              )}
             </div>
           </CardContent>
         </CollapsibleContent>
@@ -898,6 +927,7 @@ const PhaseOverviewCard = ({ phase, ordinal, totalPhases, onAddTask, onNavigate,
   const total = phase.tasks.length || 1;
   const progress = Math.round((completed / total) * 100);
   const [title, setTitle] = useState('');
+  const [adding, setAdding] = useState(false);
   const statusIcon = (s: Task['status']) => {
     if (s === 'completed') return <CheckCircle className="w-3.5 h-3.5 text-green-600" />;
     if (s === 'overdue') return <AlertTriangle className="w-3.5 h-3.5 text-red-600" />;
@@ -905,7 +935,7 @@ const PhaseOverviewCard = ({ phase, ordinal, totalPhases, onAddTask, onNavigate,
     return <Circle className="w-3.5 h-3.5 text-gray-300" />;
   };
   return (
-    <Card className="shadow-sm border-gray-200">
+    <Card className="shadow-sm border-gray-200 bg-white hover:shadow-md transition-colors">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -996,11 +1026,22 @@ const PhaseOverviewCard = ({ phase, ordinal, totalPhases, onAddTask, onNavigate,
             </div>
           );
         })()}
-        <div className="mt-4 flex items-center gap-2">
-          <Input placeholder="Add task" value={title} onChange={(e) => setTitle(e.target.value)} />
-          <Button size="sm" onClick={() => { if (title.trim()) { onAddTask?.(phase, title.trim()); setTitle(''); } }}>
-            <Plus className="w-4 h-4 mr-1" /> Add
-          </Button>
+        <div className="mt-4">
+          {!adding ? (
+            <Button variant="ghost" size="sm" className="h-8 px-2 text-gray-600 hover:text-gray-900" onClick={() => setAdding(true)}>
+              <Plus className="w-4 h-4 mr-1" /> Add task
+            </Button>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Input className="h-8 text-sm" placeholder="New task title" value={title} onChange={(e) => setTitle(e.target.value)} autoFocus />
+              <Button size="sm" onClick={() => { if (title.trim()) { onAddTask?.(phase, title.trim()); setTitle(''); setAdding(false); } }}>
+                <Plus className="w-4 h-4 mr-1" /> Add
+              </Button>
+              <Button size="sm" variant="ghost" onClick={() => { setAdding(false); setTitle(''); }}>
+                Cancel
+              </Button>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
