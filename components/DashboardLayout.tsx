@@ -410,20 +410,6 @@ export default function DashboardLayout({
           </div>
         </div>
 
-        {currentPage === 'tasks' && headerPhases.length > 0 && (
-          <div className="bg-white border-b border-slate-200 px-8 py-3">
-            <div className="flex justify-end">
-              <HeaderPhaseStepper
-                phases={headerPhases}
-                currentId={headerPhases.find(p => p.status === 'active')?.id}
-                onSelect={(id) => {
-                  onPageChange('tasks');
-                  try { window.dispatchEvent(new CustomEvent('selectPhase', { detail: { id } })); } catch {}
-                }}
-              />
-            </div>
-          </div>
-        )}
 
         <main className="flex-1 overflow-auto p-8">
           {children}
