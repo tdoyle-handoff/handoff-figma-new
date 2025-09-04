@@ -360,12 +360,6 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                   </div>
                 </div>
               </div>
-              {/* One-line helper: description or first tip */}
-              {(effectiveTips.length > 0 || task.description) && (
-                <div className="mt-1 text-xs text-gray-600 truncate">
-                  {effectiveTips[0] || (task.description || '')}
-                </div>
-              )}
             </div>
           </div>
         </CollapsibleTrigger>
