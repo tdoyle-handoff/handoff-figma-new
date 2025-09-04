@@ -77,18 +77,22 @@ const formatDate = (dateStr: string) => {
   if (diffDays === 0) return 'Today';
   if (diffDays === 1) return 'Tomorrow';
   if (diffDays > 1 && diffDays <= 7) return `${diffDays} days`;
-  return date.toLocaleDateString();
+  // m/dd/yy fallback
+  const m = String(date.getMonth() + 1);
+  const dd = String(date.getDate()).padStart(2, '0');
+  const yy = String(date.getFullYear()).slice(-2);
+  return `${m}/${dd}/${yy}`;
 };
 
-// DD/MM/YY for table cells
+// m/dd/yy for table cells
 const formatShortDate = (dateStr?: string) => {
   if (!dateStr) return '-';
   const d = new Date(dateStr);
   if (isNaN(d.getTime())) return '-';
+  const m = String(d.getMonth() + 1); // no leading zero
   const dd = String(d.getDate()).padStart(2, '0');
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
   const yy = String(d.getFullYear()).slice(-2);
-  return `${dd}/${mm}/${yy}`;
+  return `${m}/${dd}/${yy}`;
 };
 
 const priorityLabel = (p: Task['priority']) => {
@@ -509,7 +513,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
         </CollapsibleTrigger>
         
         <CollapsibleContent className={`${minimal ? (row ? 'px-3 pb-3' : 'px-4 pb-4') : 'px-5 pb-5'}`}>
-          <div className={`${minimal ? 'ml-6 space-y-3 pt-2' : 'ml-8 space-y-4 pt-3 border-t border-gray-100'}`}>
+          <div className={`${minimal ? 'ml-6 space-y-2 pt-1.5' : 'ml-8 space-y-3 pt-2 border-t border-gray-100'}`}>
             <p className="text-sm text-gray-600">{task.description}</p>
 
             {effectiveTips.length > 0 && (

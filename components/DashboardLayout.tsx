@@ -138,6 +138,9 @@ export default function DashboardLayout({
     return acc;
   }, {} as Record<string, NavigationItem[]>);
 
+  // Pull Transaction Checklist to the top of the list
+  const tasksItem = navigationItems.find((i) => i.id === 'tasks');
+
   return (
     <div className="flex h-screen bg-slate-50">
       {/* Sidebar */}
@@ -196,6 +199,32 @@ export default function DashboardLayout({
         {/* Navigation */}
         <div className="flex-1 overflow-y-auto p-4">
           <div className="space-y-1">
+            {/* Transaction Checklist pinned to top */}
+            {tasksItem && (() => {
+              const Icon = tasksItem.icon;
+              const isActive = currentPage === tasksItem.id;
+              return (
+                <button
+                  key={tasksItem.id}
+                  className={cn(
+                    "w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 text-left",
+                    isActive ? "bg-white text-blue-900 shadow-sm" : "text-blue-100 hover:bg-blue-800/50 hover:text-white",
+                    !sidebarOpen && "justify-center px-3"
+                  )}
+                  onClick={() => onPageChange(tasksItem.id)}
+                >
+                  <Icon className="h-5 w-5 flex-shrink-0" />
+                  {sidebarOpen && (
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-sm">{tasksItem.label}</span>
+                      </div>
+                    </div>
+                  )}
+                </button>
+              );
+            })()}
+
             {Object.entries(groupedNavigation).map(([category, items]) => (
               <React.Fragment key={category}>
                 {sidebarOpen && category !== 'Finding your Dream Home' && category !== 'Purchasing Your Home' && category !== 'Support' && (
@@ -204,6 +233,7 @@ export default function DashboardLayout({
                   </div>
                 )}
                 {items.map((item) => {
+                  if (item.id === 'tasks') return null; // already rendered at top
                   const Icon = item.icon;
                   const isActive = currentPage === item.id;
 
