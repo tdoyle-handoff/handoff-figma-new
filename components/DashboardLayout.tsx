@@ -29,6 +29,7 @@ import {
   Calendar
 } from 'lucide-react';
 import type { PageType } from '../hooks/useNavigation';
+import { useTaskContext, TaskPhase } from './TaskContext';
 
 interface NavigationItem {
   id: PageType;
@@ -127,6 +128,62 @@ export default function DashboardLayout({
   };
 
   const completionStatus = getCompletionStatus();
+
+  // Phases for header stepper (only used on Tasks page)
+  const taskCtx = useTaskContext();
+  const headerPhases = taskCtx?.taskPhases || [];
+
+  const HeaderPhaseStepper = ({ phases, currentId, onSelect }: { phases: TaskPhase[]; currentId?: string; onSelect: (id: string) => void }) => {
+    const computeCurrentIndex = () => {
+      if (currentId) {
+        const idx = phases.findIndex(p => p.id === currentId);
+        if (idx >= 0) return idx;
+      }
+      const activeIdx = phases.findIndex(p => p.status === 'active');
+      if (activeIdx >= 0) return activeIdx;
+      const firstIncomplete = phases.findIndex(p => {
+        const total = p.tasks.length || 0;
+        const done = p.tasks.filter(t => t.status === 'completed').length;
+        return done < total;
+      });
+      return firstIncomplete >= 0 ? firstIncomplete : Math.max(0, phases.length - 1);
+    };
+    const cur = computeCurrentIndex();
+
+    const stateAt = (i: number) => (i < cur ? 'completed' : i === cur ? 'current' : 'upcoming');
+
+    return (
+      <div className="hidden xl:flex items-center isolate rounded-full bg-white px-1.5 py-1 border border-gray-200 shadow-sm">
+        {phases.map((p, i) => {
+          const st = stateAt(i);
+          const isCurrent = st === 'current';
+          const base = 'relative inline-flex items-center h-9 px-5 rounded-full text-sm font-medium transition-colors';
+          const colors = isCurrent
+            ? 'bg-blue-600 text-white'
+            : 'bg-white text-gray-700';
+          const ring = isCurrent ? '' : 'ring-1 ring-gray-200';
+          const z = isCurrent ? 'z-20' : i < cur ? 'z-10' : 'z-0';
+          return (
+            <button
+              key={p.id}
+              className={`${base} ${colors} ${ring} ${z} ${i>0 ? 'ml-3' : ''}`}
+              aria-current={isCurrent ? 'step' : undefined}
+              onClick={() => onSelect(p.id)}
+              title={p.title}
+            >
+              {p.title}
+              {i < phases.length - 1 && (
+                <span
+                  aria-hidden
+                  className={`${isCurrent ? 'bg-blue-600' : 'bg-white'} absolute right-[-10px] top-0 h-full w-3 skew-x-12 ${isCurrent ? '' : 'ring-1 ring-gray-200'} rounded-r-full`}
+                />
+              )}
+            </button>
+          );
+        })}
+      </div>
+    );
+  };
 
   // Group navigation items by category
   const groupedNavigation = navigationItems.reduce((acc, item) => {
@@ -343,6 +400,16 @@ export default function DashboardLayout({
               </div>
             </div>
             <div className="flex items-center gap-4">
+              {currentPage === 'tasks' && headerPhases.length > 0 && (
+                <HeaderPhaseStepper
+                  phases={headerPhases}
+                  currentId={headerPhases.find(p => p.status === 'active')?.id}
+                  onSelect={(id) => {
+                    onPageChange('tasks');
+                    try { window.dispatchEvent(new CustomEvent('selectPhase', { detail: { id } })); } catch {}
+                  }}
+                />
+              )}
               <Avatar className="h-10 w-10">
                 <AvatarImage src="" />
                 <AvatarFallback className="bg-blue-600 text-white">

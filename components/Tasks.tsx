@@ -1570,9 +1570,23 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
     };
     window.addEventListener('message', onMsg);
     window.addEventListener('updateScheduleAnchors', onAnchors as any);
+    const onSelectPhase = (e: any) => {
+      try {
+        const id = e?.detail?.id;
+        if (id) {
+          setActiveTab('checklist');
+          setChecklistSubtab('todo');
+          setPhasePageId(id);
+          const el = document.getElementById(`phase-card-${id}`);
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      } catch {}
+    };
+    window.addEventListener('selectPhase', onSelectPhase as any);
     return () => {
       window.removeEventListener('message', onMsg);
       window.removeEventListener('updateScheduleAnchors', onAnchors as any);
+      window.removeEventListener('selectPhase', onSelectPhase as any);
     };
   }, [taskContext, onNavigate]);
   
@@ -1588,13 +1602,6 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                 <p className="text-sm text-gray-600">The transaction overview outlines objectives, timelines, and progress updates.</p>
               </div>
               <div className="flex items-center gap-3">
-                <div className="hidden lg:block">
-                  <PhaseProgressBar
-                    phases={displayedTaskPhases}
-                    currentId={phasePageId || undefined}
-                    onSelect={(id) => { setPhasePageId(id); setChecklistSubtab('todo'); }}
-                  />
-                </div>
                 <div className="flex items-center gap-2">
                   <Badge className="bg-violet-100 text-violet-800 text-[12px] px-3 py-1 rounded-full">On Track</Badge>
                   <Badge className="bg-green-100 text-green-800 text-[12px] px-3 py-1 rounded-full font-semibold">{Math.round(overallProgress)}% Complete</Badge>
