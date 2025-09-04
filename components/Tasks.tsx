@@ -98,7 +98,10 @@ const priorityLabel = (p: Task['priority']) => {
 };
 
 const priorityPill = (p: Task['priority']) => {
-  return 'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium border border-gray-200 text-gray-700 bg-white';
+  const common = 'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium border';
+  if (p === 'high') return `${common} bg-red-50 text-red-700 border-red-200`;
+  if (p === 'medium') return `${common} bg-amber-50 text-amber-700 border-amber-200`;
+  return `${common} bg-green-50 text-green-700 border-green-200`;
 };
 
 // Assignee avatars (initials), derived from task.contacts once info is entered
@@ -381,16 +384,33 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <div className={`${minimal ? 'border border-gray-200 rounded-lg bg-white hover:shadow-sm' : 'border border-gray-200 rounded-lg bg-white transition-all hover:shadow-md'}`}>
-        <CollapsibleTrigger className={`${row ? 'w-full px-3 py-3 text-left' : (minimal ? 'w-full px-3 py-2 sm:px-4 sm:py-3 text-left' : 'w-full px-5 py-4 md:px-6 md:py-5 text-left')}`} onClick={(e) => { if (openInWindow) { e.preventDefault(); e.stopPropagation(); openTaskPopup(); } else if (onOpenModal) { e.preventDefault(); e.stopPropagation(); onOpenModal(task); } }}>
+        <CollapsibleTrigger className={`${row ? 'w-full px-2.5 py-2 text-left' : (minimal ? 'w-full px-3 py-2 sm:px-4 sm:py-3 text-left' : 'w-full px-5 py-4 md:px-6 md:py-5 text-left')}`} onClick={(e) => { if (openInWindow) { e.preventDefault(); e.stopPropagation(); openTaskPopup(); } else if (onOpenModal) { e.preventDefault(); e.stopPropagation(); onOpenModal(task); } }}>
           {row ? (
             <div className="grid grid-cols-12 items-center gap-2">
               <div className="col-span-5 flex items-center gap-2 min-w-0">
-                <h4 className={`font-medium ${isCompleted ? 'text-gray-500 line-through' : 'text-gray-900'} truncate m-0`} title={task.title}>{task.title}</h4>
+                <h4 className={`font-medium text-[13px] ${isCompleted ? 'text-gray-500 line-through' : 'text-gray-900'} truncate m-0`} title={task.title}>{task.title}</h4>
+                {(() => {
+                  const sub = (task.subcategory || '').toLowerCase();
+                  const labelMap: Record<string, string> = { legal: 'Legal', inspection: 'Inspection', inspections: 'Inspection', financing: 'Mortgage', mortgage: 'Mortgage', insurance: 'Insurance' };
+                  const clsMap: Record<string, string> = {
+                    legal: 'bg-red-50 text-red-700 border-red-200',
+                    inspection: 'bg-blue-50 text-blue-700 border-blue-200',
+                    inspections: 'bg-blue-50 text-blue-700 border-blue-200',
+                    financing: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                    mortgage: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                    insurance: 'bg-amber-50 text-amber-700 border-amber-200'
+                  };
+                  const label = labelMap[sub];
+                  const cls = clsMap[sub];
+                  return label ? (
+                    <span className={`shrink-0 inline-flex items-center rounded-full border px-1.5 py-0.5 text-[10px] ${cls}`}>{label}</span>
+                  ) : null;
+                })()}
               </div>
               <div className="col-span-2">
-                <span className="text-xs text-gray-700 capitalize">{task.status}</span>
+                <span className="text-[11px] text-gray-700 capitalize">{task.status}</span>
               </div>
-              <div className="col-span-2 text-sm text-gray-700 truncate flex items-center gap-1">
+              <div className="col-span-2 text-[12px] text-gray-700 truncate flex items-center gap-1">
                 <div className="flex items-center -space-x-2 mr-1">
                   {getAssigneeAvatars(task).map((a, idx) => (
                     <div key={`${a.initials}-${idx}`} className={`inline-flex items-center justify-center h-6 w-6 rounded-full bg-slate-200 text-slate-700 text-[10px] font-semibold ring-2 ring-white ${idx===0?'':'ml-2'}`} title={a.title}>
@@ -400,7 +420,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                 </div>
                 <span className="truncate" title={task.assignedTo || 'Unassigned'}>{task.assignedTo || 'Unassigned'}</span>
               </div>
-              <div className="col-span-2 text-sm text-gray-700">
+              <div className="col-span-2 text-[12px] text-gray-700">
                 {formatShortDate(task.dueDate)}
               </div>
               <div className="col-span-1 flex items-center justify-end gap-2">
@@ -996,7 +1016,7 @@ const TaskTableCard = ({ title, tasks, onNavigate, onUpdateTask, onUpdateTaskFie
         <CardTitle className="text-[15px] font-semibold tracking-[-0.01em] text-gray-900">{title}</CardTitle>
       </CardHeader>
       <CardContent className="pt-0">
-        <div className="grid grid-cols-12 text-[12px] font-medium text-gray-500 px-3 py-2">
+        <div className="grid grid-cols-12 text-[12px] font-medium text-gray-500 px-2 py-1.5">
           <div className="col-span-6">Title</div>
           <div className="col-span-2">Status</div>
           <div className="col-span-2">Assignee</div>
@@ -1206,15 +1226,14 @@ function ScenarioBanner({ selectedKeys, onChange, embedded }: { selectedKeys: st
 
   return (
     <div className={`${embedded ? 'p-0 border-0 shadow-none mb-0' : 'mb-3 p-3 border rounded-lg bg-white shadow-sm'}`}>
-      <div className={`flex items-center justify-between ${embedded ? 'mb-3' : 'mb-2'}`}>
-        <div className={`${embedded ? 'font-semibold' : 'font-medium'} text-sm text-gray-800`}>
-          Scenarios & scope
-          {totalCount > 0 && <span className="ml-2 text-xs text-gray-600">({totalCount} selected)</span>}
+      {!embedded && (
+        <div className={`flex items-center justify-between mb-2`}>
+          <div className={`font-medium text-sm text-gray-800`}>
+            Scenarios & scope
+            {totalCount > 0 && <span className="ml-2 text-xs text-gray-600">({totalCount} selected)</span>}
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Button size="sm" variant="outline" onClick={() => onChange([])}>Reset</Button>
-        </div>
-      </div>
+      )}
       <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-2 ${embedded ? 'pr-1' : ''}`}>
         {groups.map((group) => {
           const mods: any[] = Array.isArray((scenarioSchema.modules as any)[group]) ? (scenarioSchema.modules as any)[group] : [];
@@ -1251,9 +1270,10 @@ function GroupMultiSelect({ label, options, selectedKeys, onChange, count }: { l
         <Button
           variant="outline"
           size="sm"
-          className="gap-2 rounded-full bg-white border-gray-200 hover:bg-gray-50 h-9 px-3 text-[12px]"
+          className="w-full justify-between items-center gap-2 rounded-full bg-white border-gray-200 hover:bg-gray-50 h-9 px-3 text-[12px] overflow-hidden min-w-0"
         >
-          {label} {count > 0 ? `(${count})` : ''}
+          <span className="truncate">{label}</span>
+          {count > 0 && <span className="shrink-0 text-gray-500">({count})</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[360px] p-0 bg-white border shadow-lg" align="start">
@@ -1462,11 +1482,47 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               {/* Left: To-do / Done content */}
               <div className="lg:col-span-2 space-y-4">
+                {selectedScenarioKeys.length === 0 && (
+                  <div className="rounded-[10px] border border-[#E6E8F0] bg-white p-3 text-[13px] text-gray-700">
+                    Before using the checklist, set your Scope and Scenarios in the right panel.
+                  </div>
+                )}
                 {checklistSubtab === 'todo' && (
                   <>
                     {displayedTaskPhases.map((phase) => {
                       const tasks = phase.tasks.filter(t => t.status !== 'completed');
                       if (tasks.length === 0) return null;
+
+                      const isDiligence = phase.id.toLowerCase().includes('diligence') || phase.title.toLowerCase().includes('diligence');
+                      if (isDiligence) {
+                        const groups = [
+                          { label: 'Legal', keys: ['legal'] },
+                          { label: 'Inspections', keys: ['inspections', 'inspection'] },
+                          { label: 'Insurance', keys: ['insurance'] },
+                          { label: 'Mortgage', keys: ['financing', 'mortgage'] },
+                        ];
+                        return (
+                          <div key={phase.id} id={`phase-card-${phase.id}`}>
+                            {groups.map((g) => {
+                              const gTasks = tasks.filter((t) => g.keys.includes(((t.subcategory || '') as string).toLowerCase()));
+                              if (gTasks.length === 0) return null;
+                              return (
+                                <div key={`${phase.id}-${g.label.replace(/\s+/g, '-').toLowerCase()}`}>
+                                  <TaskTableCard
+                                    title={`${phase.title} — ${g.label}`}
+                                    tasks={gTasks}
+                                    onNavigate={onNavigate}
+                                    onUpdateTask={handleUpdateTask}
+                                    onUpdateTaskFields={handleUpdateTaskFields}
+                                    tasksById={tasksById}
+                                  />
+                                </div>
+                              );
+                            })}
+                          </div>
+                        );
+                      }
+
                       return (
                         <div key={phase.id} id={`phase-card-${phase.id}`}>
                           <TaskTableCard
@@ -1517,6 +1573,23 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
 
                 <Card className="shadow-sm">
                   <CardHeader className="pb-2">
+                    <CardTitle className="text-[15px] font-semibold tracking-[-0.01em] text-gray-900">Workspaces</CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-0 space-y-2">
+                    <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => setActiveTab('legal')}>
+                      <Scale className="w-4 h-4 mr-2" /> Legal
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => setActiveTab('inspections')}>
+                      <FileCheck className="w-4 h-4 mr-2" /> Inspections
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => setActiveTab('insurance')}>
+                      <Shield className="w-4 h-4 mr-2" /> Insurance
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                <Card className="shadow-sm">
+                  <CardHeader className="pb-2">
                     <CardTitle className="text-[15px] font-semibold tracking-[-0.01em] text-gray-900">Contract dates</CardTitle>
                   </CardHeader>
                   <CardContent className="pt-0">
@@ -1557,22 +1630,6 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                   </CardContent>
                 </Card>
 
-                <Card className="shadow-sm">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-[15px] font-semibold tracking-[-0.01em] text-gray-900">Workspaces</CardTitle>
-                  </CardHeader>
-                  <CardContent className="pt-0 space-y-2">
-                    <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => setActiveTab('legal')}>
-                      <Scale className="w-4 h-4 mr-2" /> Legal
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => setActiveTab('inspections')}>
-                      <FileCheck className="w-4 h-4 mr-2" /> Inspections
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => setActiveTab('insurance')}>
-                      <Shield className="w-4 h-4 mr-2" /> Insurance
-                    </Button>
-                  </CardContent>
-                </Card>
               </div>
             </div>
           </div>
