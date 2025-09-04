@@ -346,6 +346,12 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                   </div>
                 </div>
               </div>
+              {/* One-line helper: description or first tip */}
+              {((task.instructions?.tips && task.instructions.tips.length > 0) || task.description) && (
+                <div className="mt-0.5 text-xs text-gray-500 truncate">
+                  {(task.instructions?.tips && task.instructions.tips[0]) || (task.description || '')}
+                </div>
+              )}
             </div>
           </div>
         </CollapsibleTrigger>
@@ -887,7 +893,7 @@ const getPhaseIcon = (title: string) => {
   return <CheckSquare className="w-6 h-6" />;
 };
 
-const PhaseOverviewCard = ({ phase, onAddTask, onNavigate, onUpdateTask, onUpdateTaskFields, tasksById, onOpenModal }: { phase: TaskPhase, onAddTask?: (phase: TaskPhase, title: string) => void, onNavigate: (page: string) => void, onUpdateTask?: (taskId: string, status: Task['status']) => void, onUpdateTaskFields?: (taskId: string, updates: Partial<Task>) => void, tasksById?: Record<string, Task>, onOpenModal?: (task: Task) => void }) => {
+const PhaseOverviewCard = ({ phase, ordinal, totalPhases, onAddTask, onNavigate, onUpdateTask, onUpdateTaskFields, tasksById, onOpenModal }: { phase: TaskPhase, ordinal: number, totalPhases: number, onAddTask?: (phase: TaskPhase, title: string) => void, onNavigate: (page: string) => void, onUpdateTask?: (taskId: string, status: Task['status']) => void, onUpdateTaskFields?: (taskId: string, updates: Partial<Task>) => void, tasksById?: Record<string, Task>, onOpenModal?: (task: Task) => void }) => {
   const completed = phase.tasks.filter(t => t.status === 'completed').length;
   const total = phase.tasks.length || 1;
   const progress = Math.round((completed / total) * 100);
@@ -908,9 +914,12 @@ const PhaseOverviewCard = ({ phase, onAddTask, onNavigate, onUpdateTask, onUpdat
             </div>
             <CardTitle className="text-lg">{phase.title}</CardTitle>
           </div>
-          <div className="w-28">
-            <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden">
-              <div className="h-full bg-gray-200" style={{ width: `${progress}%` }} />
+          <div className="flex items-center gap-4">
+            <div className="text-xs text-gray-600">Phase {ordinal} of {totalPhases}</div>
+            <div className="w-28">
+              <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                <div className="h-full bg-gray-200" style={{ width: `${progress}%` }} />
+              </div>
             </div>
           </div>
         </div>
@@ -1036,7 +1045,7 @@ function ScenarioBanner({ selectedKeys, onChange }: { selectedKeys: string[]; on
           <Button size="sm" variant="outline" onClick={() => onChange([])}>Reset</Button>
         </div>
       </div>
-      <div className="flex flex-wrap gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
         {groups.map((group) => {
           const mods: any[] = Array.isArray((scenarioSchema.modules as any)[group]) ? (scenarioSchema.modules as any)[group] : [];
           if (mods.length === 0) return null;
@@ -1072,7 +1081,7 @@ function GroupMultiSelect({ label, options, selectedKeys, onChange, count }: { l
         <Button
           variant="outline"
           size="sm"
-          className="gap-2 rounded-full bg-white border-gray-200 hover:bg-gray-50 shadow-sm"
+          className="gap-2 rounded-full bg-white border-gray-200 hover:bg-gray-50 shadow-sm h-8 px-3 text-xs"
         >
           {label} {count > 0 ? `(${count})` : ''}
         </Button>
@@ -1119,7 +1128,6 @@ export default function Tasks({ onNavigate }: TasksProps) {
   // Feature flags for visibility
   const SHOW_TASK_CATEGORIES = false;
   const SHOW_QUICK_ACTIONS = false;
-  const SHOW_PROGRESS_COUNTS = false;
 
   const { taskPhases } = taskContext;
 
@@ -1349,8 +1357,8 @@ const [checklistSubtab, setChecklistSubtab] = useState<'cards' | 'board'>('cards
               <TabsContent value="cards" className="space-y-3 mt-4">
                 {/* Overview cards by phase */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 md:gap-4">
-                  {displayedTaskPhases.map((phase) => (
-                    <PhaseOverviewCard key={phase.id} phase={phase} onAddTask={handleAddTaskToPhase} onNavigate={onNavigate} onUpdateTask={handleUpdateTask} onUpdateTaskFields={handleUpdateTaskFields} tasksById={tasksById} onOpenModal={(t)=>setModalTask(t)} />
+                  {displayedTaskPhases.map((phase, i) => (
+                    <PhaseOverviewCard key={phase.id} phase={phase} ordinal={i + 1} totalPhases={displayedTaskPhases.length} onAddTask={handleAddTaskToPhase} onNavigate={onNavigate} onUpdateTask={handleUpdateTask} onUpdateTaskFields={handleUpdateTaskFields} tasksById={tasksById} onOpenModal={(t)=>setModalTask(t)} />
                   ))}
                 </div>
               </TabsContent>
