@@ -104,6 +104,18 @@ const priorityPill = (p: Task['priority']) => {
   return `${common} bg-green-50 text-green-700 border-green-200`;
 };
 
+const statusLabel = (s: string) => {
+  const map: Record<string, string> = {
+    'active': 'In-Progress',
+    'in-progress': 'In-Progress',
+    'completed': 'Completed',
+    'upcoming': 'Upcoming',
+    'overdue': 'Overdue',
+  };
+  if (!s) return '';
+  return map[s] || s.charAt(0).toUpperCase() + s.slice(1);
+};
+
 // Assignee avatars (initials), derived from task.contacts once info is entered
 const roleAliases: Record<string, string[]> = {
   buyer: ['buyer', 'you', 'client'],
@@ -442,7 +454,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                 })()}
               </div>
               <div className="col-span-2">
-                <span className="text-[11px] text-gray-700 capitalize">{task.status}</span>
+<span className="text-[11px] text-gray-700">{statusLabel(task.status)}</span>
               </div>
               <div className="col-span-2 text-[12px] text-gray-700 truncate flex items-center gap-1">
                 <div className="flex items-center -space-x-2 mr-1">
@@ -764,10 +776,19 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                 <Badge variant="outline" className="text-xs">
                   {task.category}
                 </Badge>
-                <Badge variant="outline" className={`text-xs ${getPriorityColor(task.priority)}`}>
-                  {priorityLabel(task.priority)}
-                </Badge>
-                {editDueDate && <span className="text-xs text-primary">Due: {formatDate(editDueDate)} {dueLocked && <Lock className="inline w-3 h-3 ml-1" />}</span>}
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className={`text-xs ${getPriorityColor(task.priority)}`}>
+                    {priorityLabel(task.priority)}
+                  </Badge>
+                  <span className="text-xs text-muted-foreground">
+                    {task.priority} priority
+                  </span>
+                  {editDueDate && (
+                    <span className="text-xs text-primary">
+                      Due: {formatDate(editDueDate)} {dueLocked && <Lock className="inline w-3 h-3 ml-1" />}
+                    </span>
+                  )}
+                </div>
               </div>
               {task.completedDate && (
                 <span className="text-sm text-gray-600">Completed {task.completedDate}</span>
@@ -974,8 +995,8 @@ const PhaseCard = ({ phase, onNavigate, onUpdateTask, onUpdateTaskFields, tasksB
                   
                   <div className="flex items-center gap-4">
                     <div className="text-right">
-                      <Badge className={`${getStatusColor(phase.status)} border-0 mb-2`}>
-                        {phase.status}
+<Badge className={`${getStatusColor(phase.status)} border-0 mb-2`}>
+                        {statusLabel(phase.status)}
                       </Badge>
                       <div className="flex items-center gap-2">
                         <Progress value={progress} className="w-24 h-2" />
