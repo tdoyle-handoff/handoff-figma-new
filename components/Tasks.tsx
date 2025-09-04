@@ -151,6 +151,40 @@ const getAssigneeAvatars = (task: Task): { initials: string; title: string }[] =
   return out;
 };
 
+// Sort tasks so dependencies appear before dependents (within the provided set)
+const sortTasksByDependencies = (tasks: Task[], tasksById: Record<string, Task> = {}): Task[] => {
+  const ids = new Set(tasks.map(t => t.id));
+  const inDeg = new Map<string, number>();
+  const adj = new Map<string, string[]>();
+  tasks.forEach(t => { inDeg.set(t.id, 0); adj.set(t.id, []); });
+  tasks.forEach(t => {
+    const deps = (t.dependencies || []).filter(d => ids.has(d));
+    inDeg.set(t.id, (inDeg.get(t.id) || 0) + deps.length);
+    deps.forEach(d => {
+      const arr = adj.get(d) || [];
+      arr.push(t.id);
+      adj.set(d, arr);
+    });
+  });
+  const origOrder = tasks.map(t => t.id);
+  const queue: string[] = origOrder.filter(id => (inDeg.get(id) || 0) === 0);
+  const outIds: string[] = [];
+  while (queue.length) {
+    const id = queue.shift()!;
+    outIds.push(id);
+    for (const nei of (adj.get(id) || [])) {
+      inDeg.set(nei, (inDeg.get(nei)! - 1));
+      if ((inDeg.get(nei) || 0) === 0) queue.push(nei);
+    }
+  }
+  if (outIds.length < tasks.length) {
+    for (const id of origOrder) if (!outIds.includes(id)) outIds.push(id);
+  }
+  const byId: Record<string, Task> = {};
+  tasks.forEach(t => { byId[t.id] = t; });
+  return outIds.map(id => byId[id]).filter(Boolean);
+};
+
 const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields, tasksById, minimal, openInWindow, onOpenModal, forceOpen, row }: {
   task: Task;
   onNavigate: (page: string) => void;
@@ -967,7 +1001,7 @@ const PhaseCard = ({ phase, onNavigate, onUpdateTask, onUpdateTaskFields, tasksB
         <CollapsibleContent>
           <CardContent className="pt-0">
             <div className="space-y-2">
-              {phase.tasks.map((task) => (
+              {sortTasksByDependencies(phase.tasks, tasksById || {}).map((task) => (
                 <ExpandableTaskCard
                   key={task.id}
                   task={task}
@@ -1010,6 +1044,7 @@ const PhaseCard = ({ phase, onNavigate, onUpdateTask, onUpdateTaskFields, tasksB
 
 // Table-style phase card matching the provided design
 const TaskTableCard = ({ title, tasks, onNavigate, onUpdateTask, onUpdateTaskFields, tasksById }: { title: string; tasks: Task[]; onNavigate: (page: string) => void; onUpdateTask?: (taskId: string, status: Task['status']) => void; onUpdateTaskFields?: (taskId: string, updates: Partial<Task>) => void; tasksById?: Record<string, Task>; }) => {
+  const sortedTasks = sortTasksByDependencies(tasks, tasksById || {});
   return (
     <Card className="shadow-sm bg-white">
       <CardHeader className="pb-2">
@@ -1017,18 +1052,53 @@ const TaskTableCard = ({ title, tasks, onNavigate, onUpdateTask, onUpdateTaskFie
       </CardHeader>
       <CardContent className="pt-0">
         <div className="grid grid-cols-12 text-[12px] font-medium text-gray-500 px-2 py-1.5">
-          <div className="col-span-6">Title</div>
+          <div className="col-span-5">Title</div>
           <div className="col-span-2">Status</div>
           <div className="col-span-2">Assignee</div>
-          <div className="col-span-1">Due Date</div>
+          <div className="col-span-2">Due Date</div>
           <div className="col-span-1 text-right">Priority</div>
         </div>
         <div className="divide-y">
-          {tasks.map((task) => (
+          {sortedTasks.map((task) => (
             <div key={task.id} className="px-1">
               <ExpandableTaskCard task={task} onNavigate={onNavigate} onUpdateTask={onUpdateTask} onUpdateTaskFields={onUpdateTaskFields} tasksById={tasksById} minimal row />
             </div>
           ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+const TaskTableCardGrouped = ({ title, groups, onNavigate, onUpdateTask, onUpdateTaskFields, tasksById }: { title: string; groups: { label: string; tasks: Task[] }[]; onNavigate: (page: string) => void; onUpdateTask?: (taskId: string, status: Task['status']) => void; onUpdateTaskFields?: (taskId: string, updates: Partial<Task>) => void; tasksById?: Record<string, Task>; }) => {
+  const present = groups.filter(g => g.tasks && g.tasks.length > 0);
+  return (
+    <Card className="shadow-sm bg-white">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-[15px] font-semibold tracking-[-0.01em] text-gray-900">{title}</CardTitle>
+      </CardHeader>
+      <CardContent className="pt-0">
+        <div className="grid grid-cols-12 text-[12px] font-medium text-gray-500 px-2 py-1.5">
+          <div className="col-span-5">Title</div>
+          <div className="col-span-2">Status</div>
+          <div className="col-span-2">Assignee</div>
+          <div className="col-span-2">Due Date</div>
+          <div className="col-span-1 text-right">Priority</div>
+        </div>
+        <div className="divide-y">
+          {present.map((g) => {
+            const sorted = sortTasksByDependencies(g.tasks, tasksById || {});
+            return (
+              <div key={g.label}>
+                <div className="bg-gray-50 px-2 py-1 text-[11px] font-medium text-gray-600">{g.label}</div>
+                {sorted.map((task) => (
+                  <div key={task.id} className="px-1">
+                    <ExpandableTaskCard task={task} onNavigate={onNavigate} onUpdateTask={onUpdateTask} onUpdateTaskFields={onUpdateTaskFields} tasksById={tasksById} minimal row />
+                  </div>
+                ))}
+              </div>
+            );
+          })}
         </div>
       </CardContent>
     </Card>
@@ -1107,9 +1177,10 @@ const PhaseOverviewCard = ({ phase, ordinal, totalPhases, onAddTask, onNavigate,
         {(() => {
           const isDiligencePhase = phase.id.toLowerCase().includes('diligence') || phase.title.toLowerCase().includes('diligence');
           if (!isDiligencePhase) {
+            const sortedPhaseTasks = sortTasksByDependencies(phase.tasks, tasksById || {});
             return (
               <div className="space-y-2">
-                {phase.tasks.map((task) => (
+                {sortedPhaseTasks.map((task) => (
                   <ExpandableTaskCard
                     key={task.id}
                     task={task}
@@ -1137,7 +1208,7 @@ const PhaseOverviewCard = ({ phase, ordinal, totalPhases, onAddTask, onNavigate,
                   <div key={g.key} className="space-y-2">
                     <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide">{g.label}</div>
                     <div className="space-y-2">
-                      {g.tasks.map((task) => (
+                      {sortTasksByDependencies(g.tasks, tasksById || {}).map((task) => (
                         <ExpandableTaskCard
                           key={task.id}
                           task={task}
@@ -1157,7 +1228,7 @@ const PhaseOverviewCard = ({ phase, ordinal, totalPhases, onAddTask, onNavigate,
                 <div className="space-y-2">
                   <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Other</div>
                   <div className="space-y-2">
-                    {other.map((task) => (
+                    {sortTasksByDependencies(other, tasksById || {}).map((task) => (
                       <ExpandableTaskCard
                         key={task.id}
                         task={task}
@@ -1495,30 +1566,25 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
 
                       const isDiligence = phase.id.toLowerCase().includes('diligence') || phase.title.toLowerCase().includes('diligence');
                       if (isDiligence) {
-                        const groups = [
-                          { label: 'Legal', keys: ['legal'] },
-                          { label: 'Inspections', keys: ['inspections', 'inspection'] },
-                          { label: 'Insurance', keys: ['insurance'] },
-                          { label: 'Mortgage', keys: ['financing', 'mortgage'] },
-                        ];
+                        const legal = tasks.filter(t => ((t.subcategory || '') as string).toLowerCase() === 'legal');
+                        const inspections = tasks.filter(t => ['inspections','inspection'].includes(((t.subcategory || '') as string).toLowerCase()));
+                        const insurance = tasks.filter(t => ((t.subcategory || '') as string).toLowerCase() === 'insurance');
+                        const mortgage = tasks.filter(t => ['financing','mortgage'].includes(((t.subcategory || '') as string).toLowerCase()));
                         return (
                           <div key={phase.id} id={`phase-card-${phase.id}`}>
-                            {groups.map((g) => {
-                              const gTasks = tasks.filter((t) => g.keys.includes(((t.subcategory || '') as string).toLowerCase()));
-                              if (gTasks.length === 0) return null;
-                              return (
-                                <div key={`${phase.id}-${g.label.replace(/\s+/g, '-').toLowerCase()}`}>
-                                  <TaskTableCard
-                                    title={`${phase.title} — ${g.label}`}
-                                    tasks={gTasks}
-                                    onNavigate={onNavigate}
-                                    onUpdateTask={handleUpdateTask}
-                                    onUpdateTaskFields={handleUpdateTaskFields}
-                                    tasksById={tasksById}
-                                  />
-                                </div>
-                              );
-                            })}
+                            <TaskTableCardGrouped
+                              title={phase.title}
+                              groups={[
+                                { label: 'Legal', tasks: legal },
+                                { label: 'Inspections', tasks: inspections },
+                                { label: 'Insurance', tasks: insurance },
+                                { label: 'Mortgage', tasks: mortgage },
+                              ]}
+                              onNavigate={onNavigate}
+                              onUpdateTask={handleUpdateTask}
+                              onUpdateTaskFields={handleUpdateTaskFields}
+                              tasksById={tasksById}
+                            />
                           </div>
                         );
                       }
