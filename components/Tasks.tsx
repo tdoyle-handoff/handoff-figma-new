@@ -104,6 +104,53 @@ const priorityPill = (p: Task['priority']) => {
   return `${common} bg-purple-50 text-purple-700 border-purple-200`;
 };
 
+// Assignee avatars (initials), derived from task.contacts once info is entered
+const roleAliases: Record<string, string[]> = {
+  buyer: ['buyer', 'you', 'client'],
+  agent: ['agent', 'buyer's agent', 'realtor'],
+  lender: ['lender', 'loan officer', 'mortgage'],
+  attorney: ['attorney', 'lawyer'],
+  title: ['title', 'title company'],
+};
+const normalize = (s: string) => (s || '').toLowerCase();
+const roleKeysFromAssigned = (assigned?: string): string[] => {
+  const a = normalize(assigned || '');
+  if (!a) return [];
+  if (a.includes('all')) return ['buyer','agent','lender','attorney','title'];
+  if (a.includes('buyer & agent') || a.includes('buyer and agent')) return ['buyer','agent'];
+  if (a.includes('buyer')) return ['buyer'];
+  if (a.includes('agent')) return ['agent'];
+  if (a.includes('lender')) return ['lender'];
+  if (a.includes('attorney')) return ['attorney'];
+  if (a.includes('title')) return ['title'];
+  return [];
+};
+const findContactForRole = (task: Task, roleKey: string) => {
+  const aliases = roleAliases[roleKey] || [roleKey];
+  const contacts = task.contacts || [];
+  return contacts.find(c => aliases.some(al => normalize(c.role || '').includes(al))) || null;
+};
+const initialsFromName = (name?: string) => {
+  if (!name) return '';
+  const parts = name.trim().split(/\s+/);
+  const first = parts[0]?.[0] || '';
+  const last = parts.length > 1 ? parts[parts.length - 1][0] : '';
+  return (first + last).toUpperCase() || first.toUpperCase();
+};
+const getAssigneeAvatars = (task: Task): { initials: string; title: string }[] => {
+  const roles = roleKeysFromAssigned(task.assignedTo);
+  const out: { initials: string; title: string }[] = [];
+  roles.slice(0, 3).forEach(r => {
+    const contact = findContactForRole(task, r);
+    const init = contact ? initialsFromName(contact.name) : (r[0] || '?').toUpperCase();
+    out.push({ initials: init, title: contact?.name || r });
+  });
+  if (out.length === 0 && task.assignedTo) {
+    out.push({ initials: (task.assignedTo[0] || '?').toUpperCase(), title: task.assignedTo });
+  }
+  return out;
+};
+
 const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields, tasksById, minimal, openInWindow, onOpenModal, forceOpen, row }: {
   task: Task;
   onNavigate: (page: string) => void;
@@ -364,7 +411,13 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                 <Badge className={`text-xs ${task.status==='completed'?'bg-green-100 text-green-800':task.status==='overdue'?'bg-red-100 text-red-800':(isActive?'bg-blue-100 text-blue-800':'bg-gray-100 text-gray-800')}`}>{task.status}</Badge>
               </div>
               <div className="col-span-2 text-sm text-gray-700 truncate flex items-center gap-1">
-                <User className="w-4 h-4 text-gray-400" />
+                <div className="flex items-center -space-x-2 mr-1">
+                  {getAssigneeAvatars(task).map((a, idx) => (
+                    <div key={`${a.initials}-${idx}`} className={`inline-flex items-center justify-center h-6 w-6 rounded-full bg-slate-200 text-slate-700 text-[10px] font-semibold ring-2 ring-white ${idx===0?'':'ml-2'}`} title={a.title}>
+                      {a.initials}
+                    </div>
+                  ))}
+                </div>
                 <span className="truncate" title={task.assignedTo || 'Unassigned'}>{task.assignedTo || 'Unassigned'}</span>
               </div>
               <div className="col-span-2 text-sm text-gray-700">
@@ -976,11 +1029,11 @@ const PhaseCard = ({ phase, onNavigate, onUpdateTask, onUpdateTaskFields, tasksB
 const TaskTableCard = ({ title, tasks, onNavigate, onUpdateTask, onUpdateTaskFields, tasksById }: { title: string; tasks: Task[]; onNavigate: (page: string) => void; onUpdateTask?: (taskId: string, status: Task['status']) => void; onUpdateTaskFields?: (taskId: string, updates: Partial<Task>) => void; tasksById?: Record<string, Task>; }) => {
   return (
     <Card className="shadow-sm bg-white">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base font-semibold">{title}</CardTitle>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-[15px] font-semibold tracking-[-0.01em] text-gray-900">{title}</CardTitle>
       </CardHeader>
       <CardContent className="pt-0">
-        <div className="grid grid-cols-12 text-xs font-medium text-gray-500 px-3 py-2">
+        <div className="grid grid-cols-12 text-[12px] font-medium text-gray-500 px-3 py-2">
           <div className="col-span-6">Title</div>
           <div className="col-span-2">Status</div>
           <div className="col-span-2">Assignee</div>
@@ -989,7 +1042,9 @@ const TaskTableCard = ({ title, tasks, onNavigate, onUpdateTask, onUpdateTaskFie
         </div>
         <div className="divide-y">
           {tasks.map((task) => (
-            <ExpandableTaskCard key={task.id} task={task} onNavigate={onNavigate} onUpdateTask={onUpdateTask} onUpdateTaskFields={onUpdateTaskFields} tasksById={tasksById} minimal row />
+            <div className="px-1">
+              <ExpandableTaskCard key={task.id} task={task} onNavigate={onNavigate} onUpdateTask={onUpdateTask} onUpdateTaskFields={onUpdateTaskFields} tasksById={tasksById} minimal row />
+            </div>
           ))}
         </div>
       </CardContent>
@@ -1024,7 +1079,7 @@ const PhaseProgressBar = ({ phases, onSelect }: { phases: TaskPhase[]; onSelect?
         const st = getPhaseState(p);
         const cls = st==='completed' ? 'bg-green-600 text-white' : st==='active' ? 'bg-blue-600 text-white' : 'text-gray-700';
         return (
-          <button key={p.id} onClick={() => onSelect?.(p.id)} className={`px-3 py-1 rounded-full text-xs sm:text-sm ${cls} ${i>0?'ml-1':''}`}>
+          <button key={p.id} onClick={() => onSelect?.(p.id)} className={`px-4 py-1.5 rounded-full text-[13px] ${cls} ${i>0?'ml-1':''}`}>
             {p.title}
           </button>
         );
@@ -1164,7 +1219,7 @@ interface TasksProps {
 }
 
 // Scenario Banner with per-category multi-select dropdowns
-function ScenarioBanner({ selectedKeys, onChange }: { selectedKeys: string[]; onChange: (keys: string[]) => void }) {
+function ScenarioBanner({ selectedKeys, onChange, embedded }: { selectedKeys: string[]; onChange: (keys: string[]) => void; embedded?: boolean }) {
   const selected = new Set(selectedKeys);
   const groups: string[] = (scenarioSchema.merge_rules?.order || []) as string[];
   const pretty = (s: string) => s.replace(/_/g, ' ').replace(/\b\w/g, (m) => m.toUpperCase());
@@ -1187,9 +1242,9 @@ function ScenarioBanner({ selectedKeys, onChange }: { selectedKeys: string[]; on
   const totalCount = selected.size;
 
   return (
-    <div className="mb-3 p-3 border rounded-lg bg-white shadow-sm">
-      <div className="flex items-center justify-between mb-2">
-        <div className="font-medium text-sm text-gray-800">
+    <div className={`${embedded ? 'p-0 border-0 shadow-none mb-0' : 'mb-3 p-3 border rounded-lg bg-white shadow-sm'}`}>
+      <div className={`flex items-center justify-between ${embedded ? 'mb-3' : 'mb-2'}`}>
+        <div className={`${embedded ? 'font-semibold' : 'font-medium'} text-sm text-gray-800`}>
           Scenarios & scope
           {totalCount > 0 && <span className="ml-2 text-xs text-gray-600">({totalCount} selected)</span>}
         </div>
@@ -1197,7 +1252,7 @@ function ScenarioBanner({ selectedKeys, onChange }: { selectedKeys: string[]; on
           <Button size="sm" variant="outline" onClick={() => onChange([])}>Reset</Button>
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+      <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-2 ${embedded ? 'pr-1' : ''}`}>
         {groups.map((group) => {
           const mods: any[] = Array.isArray((scenarioSchema.modules as any)[group]) ? (scenarioSchema.modules as any)[group] : [];
           if (mods.length === 0) return null;
@@ -1233,7 +1288,7 @@ function GroupMultiSelect({ label, options, selectedKeys, onChange, count }: { l
         <Button
           variant="outline"
           size="sm"
-          className="gap-2 rounded-full bg-white border-gray-200 hover:bg-gray-50 shadow-sm h-8 px-3 text-xs"
+          className="gap-2 rounded-full bg-white border-gray-200 hover:bg-gray-50 shadow-sm h-9 px-3 text-[12px]"
         >
           {label} {count > 0 ? `(${count})` : ''}
         </Button>
@@ -1452,9 +1507,9 @@ const [checklistSubtab, setChecklistSubtab] = useState<'cards' | 'board'>('cards
                 <h2 className="text-xl font-semibold">Project Overview</h2>
                 <p className="text-sm text-gray-600">The transaction overview outlines objectives, timelines, and progress updates.</p>
               </div>
-              <div className="flex items-center gap-2">
-                <Badge className="bg-violet-100 text-violet-800 text-xs">On Track</Badge>
-                <Badge className="bg-green-100 text-green-800 text-xs font-semibold">{Math.round(overallProgress)}% Complete</Badge>
+        <div className="flex items-center gap-2">
+                <Badge className="bg-violet-100 text-violet-800 text-[12px] px-3 py-1 rounded-full">On Track</Badge>
+                <Badge className="bg-green-100 text-green-800 text-[12px] px-3 py-1 rounded-full font-semibold">{Math.round(overallProgress)}% Complete</Badge>
               </div>
             </div>
             <div className="flex items-center justify-between">
@@ -1487,11 +1542,12 @@ const [checklistSubtab, setChecklistSubtab] = useState<'cards' | 'board'>('cards
               {/* Right sidebar */}
               <div className="space-y-4">
                 <Card className="shadow-sm">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-base">Scenario & scope</CardTitle>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-[15px] font-semibold tracking-[-0.01em] text-gray-900">Scenario & scope</CardTitle>
                   </CardHeader>
                   <CardContent className="pt-0">
                     <ScenarioBanner
+                      embedded
                       selectedKeys={selectedScenarioKeys}
                       onChange={(nextKeys) => {
                         setSelectedScenarioKeys(nextKeys);
@@ -1505,8 +1561,8 @@ const [checklistSubtab, setChecklistSubtab] = useState<'cards' | 'board'>('cards
                 </Card>
 
                 <Card className="shadow-sm">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-base">Contract dates</CardTitle>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-[15px] font-semibold tracking-[-0.01em] text-gray-900">Contract dates</CardTitle>
                   </CardHeader>
                   <CardContent className="pt-0">
                     <div className="flex flex-col gap-3">
@@ -1527,20 +1583,20 @@ const [checklistSubtab, setChecklistSubtab] = useState<'cards' | 'board'>('cards
                 </Card>
 
                 <Card className="shadow-sm">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-base">Quick links</CardTitle>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-[15px] font-semibold tracking-[-0.01em] text-gray-900">Quick links</CardTitle>
                   </CardHeader>
                   <CardContent className="pt-0 space-y-2">
-                    <Button variant="outline" className="w-full justify-start" onClick={() => onNavigate('property-search')}>
+                    <Button variant="outline" className="w-full justify-start h-10 text-[13px] px-3 whitespace-normal leading-snug" onClick={() => onNavigate('property-search')}>
                       <SearchIcon className="w-4 h-4 mr-2" /> Property search
                     </Button>
-                    <Button variant="outline" className="w-full justify-start" onClick={() => onNavigate('home-tracking')}>
+                    <Button variant="outline" className="w-full justify-start h-10 text-[13px] px-3 whitespace-normal leading-snug" onClick={() => onNavigate('home-tracking')}>
                       <Home className="w-4 h-4 mr-2" /> Home tracking
                     </Button>
-                    <Button variant="outline" className="w-full justify-start" onClick={() => onNavigate('documents')}>
+                    <Button variant="outline" className="w-full justify-start h-10 text-[13px] px-3 whitespace-normal leading-snug" onClick={() => onNavigate('documents')}>
                       <FileText className="w-4 h-4 mr-2" /> Documents
                     </Button>
-                    <Button variant="outline" className="w-full justify-start" onClick={() => onNavigate('calendar')}>
+                    <Button variant="outline" className="w-full justify-start h-10 text-[13px] px-3 whitespace-normal leading-snug" onClick={() => onNavigate('calendar')}>
                       <Calendar className="w-4 h-4 mr-2" /> Calendar
                     </Button>
                   </CardContent>
