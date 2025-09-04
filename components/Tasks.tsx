@@ -98,16 +98,13 @@ const priorityLabel = (p: Task['priority']) => {
 };
 
 const priorityPill = (p: Task['priority']) => {
-  const common = 'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium border';
-  if (p === 'high') return `${common} bg-green-50 text-green-700 border-green-200`;
-  if (p === 'medium') return `${common} bg-amber-50 text-amber-700 border-amber-200`;
-  return `${common} bg-purple-50 text-purple-700 border-purple-200`;
+  return 'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium border border-gray-200 text-gray-700 bg-white';
 };
 
 // Assignee avatars (initials), derived from task.contacts once info is entered
 const roleAliases: Record<string, string[]> = {
   buyer: ['buyer', 'you', 'client'],
-  agent: ['agent', 'buyer's agent', 'realtor'],
+  agent: ['agent', "buyer's agent", 'realtor'],
   lender: ['lender', 'loan officer', 'mortgage'],
   attorney: ['attorney', 'lawyer'],
   title: ['title', 'title company'],
@@ -383,32 +380,15 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
   
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <div className={`${minimal ? `border rounded-lg bg-white hover:shadow-sm ${isOverdue ? 'border-l-4 border-l-red-300' : isActive ? 'border-l-4 border-l-blue-300' : 'border-l-4 border-l-gray-200'}` : `border rounded-lg bg-white transition-all hover:shadow-md ${
-        isOverdue ? 'border-gray-200 border-l-4 border-l-red-300' :
-        isActive ? 'border-gray-200 border-l-4 border-l-blue-300' : 'border-gray-200 border-l-4 border-l-gray-200'}`}` }>
+      <div className={`${minimal ? 'border border-gray-200 rounded-lg bg-white hover:shadow-sm' : 'border border-gray-200 rounded-lg bg-white transition-all hover:shadow-md'}`}>
         <CollapsibleTrigger className={`${row ? 'w-full px-3 py-3 text-left' : (minimal ? 'w-full px-3 py-2 sm:px-4 sm:py-3 text-left' : 'w-full px-5 py-4 md:px-6 md:py-5 text-left')}`} onClick={(e) => { if (openInWindow) { e.preventDefault(); e.stopPropagation(); openTaskPopup(); } else if (onOpenModal) { e.preventDefault(); e.stopPropagation(); onOpenModal(task); } }}>
           {row ? (
             <div className="grid grid-cols-12 items-center gap-2">
               <div className="col-span-5 flex items-center gap-2 min-w-0">
-                <button
-                  onClick={handleToggleCompletion}
-                  className="p-1 -m-1 rounded hover:bg-gray-100 transition-colors"
-                  title={isCompleted ? 'Mark as incomplete' : 'Mark as complete'}
-                >
-                  {isCompleted ? (
-                    <CheckCircle className="w-5 h-5 text-green-600" />
-                  ) : isOverdue ? (
-                    <AlertTriangle className="w-5 h-5 text-red-600" />
-                  ) : isActive ? (
-                    <Clock className="w-5 h-5 text-blue-600" />
-                  ) : (
-                    <Circle className="w-5 h-5 text-gray-400" />
-                  )}
-                </button>
                 <h4 className={`font-medium ${isCompleted ? 'text-gray-500 line-through' : 'text-gray-900'} truncate m-0`} title={task.title}>{task.title}</h4>
               </div>
               <div className="col-span-2">
-                <Badge className={`text-xs ${task.status==='completed'?'bg-green-100 text-green-800':task.status==='overdue'?'bg-red-100 text-red-800':(isActive?'bg-blue-100 text-blue-800':'bg-gray-100 text-gray-800')}`}>{task.status}</Badge>
+                <span className="text-xs text-gray-700 capitalize">{task.status}</span>
               </div>
               <div className="col-span-2 text-sm text-gray-700 truncate flex items-center gap-1">
                 <div className="flex items-center -space-x-2 mr-1">
@@ -436,23 +416,6 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
             </div>
           ) : (
             <div className="flex items-center gap-3 sm:gap-4">
-              <div className="flex-shrink-0">
-                <button
-                  onClick={handleToggleCompletion}
-                  className="p-1 -m-1 rounded hover:bg-gray-100 transition-colors"
-                  title={isCompleted ? "Mark as incomplete" : "Mark as complete"}
-                >
-                  {isCompleted ? (
-                    <CheckCircle className="w-5 h-5 text-green-600" />
-                  ) : isOverdue ? (
-                    <AlertTriangle className="w-5 h-5 text-red-600" />
-                  ) : isActive ? (
-                    <Clock className="w-5 h-5 text-blue-600" />
-                  ) : (
-                    <Circle className="w-5 h-5 text-gray-400" />
-                  )}
-                </button>
-              </div>
               
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-3 sm:gap-4">
@@ -461,12 +424,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                   </h4>
                   <div className="flex items-center gap-2.5 flex-shrink-0">
                     {task.completedDate && (
-                      <span className="text-sm text-green-600">Completed</span>
-                    )}
-                    {isActive && (
-                      <Badge variant="outline" className="bg-blue-100 text-blue-800 text-xs">
-                        Active
-                      </Badge>
+                      <span className="text-sm text-gray-600">Completed</span>
                     )}
                     {task.linkedPage && (
                       <ExternalLink className="w-4 h-4 text-gray-400" />
@@ -759,7 +717,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                 {editDueDate && <span className="text-xs text-primary">Due: {formatDate(editDueDate)} {dueLocked && <Lock className="inline w-3 h-3 ml-1" />}</span>}
               </div>
               {task.completedDate && (
-                <span className="text-sm text-green-600">Completed {task.completedDate}</span>
+                <span className="text-sm text-gray-600">Completed {task.completedDate}</span>
               )}
             </div>
 
@@ -868,6 +826,11 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
               {task.status === 'completed' && (
                 <Button size="sm" variant="outline" onClick={() => onUpdateTask?.(task.id, 'active')}>
                   Mark incomplete
+                </Button>
+              )}
+              {task.status !== 'completed' && (
+                <Button size="sm" variant="outline" onClick={() => onUpdateTask?.(task.id, 'completed')}>
+                  Mark complete
                 </Button>
               )}
               <Button
