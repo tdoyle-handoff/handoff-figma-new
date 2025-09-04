@@ -218,9 +218,9 @@ export default function DashboardLayout({
               </div>
             ) : (
               <img
-                src="https://cdn.builder.io/api/v1/image/assets%2Fd17493787dd14ef798478b15abccc651%2Fb382513b801044b9b63fee0d35fea0d6?format=webp&width=800"
-                alt="Handoff Logo"
-                className="h-8 w-auto"
+                src="/house-logo.svg"
+                alt="Handoff Icon"
+                className="h-8 w-8 rounded-lg"
               />
             )}
           </div>
@@ -400,16 +400,6 @@ export default function DashboardLayout({
               </div>
             </div>
             <div className="flex items-center gap-4">
-              {currentPage === 'tasks' && headerPhases.length > 0 && (
-                <HeaderPhaseStepper
-                  phases={headerPhases}
-                  currentId={headerPhases.find(p => p.status === 'active')?.id}
-                  onSelect={(id) => {
-                    onPageChange('tasks');
-                    try { window.dispatchEvent(new CustomEvent('selectPhase', { detail: { id } })); } catch {}
-                  }}
-                />
-              )}
               <Avatar className="h-10 w-10">
                 <AvatarImage src="" />
                 <AvatarFallback className="bg-blue-600 text-white">
@@ -419,6 +409,21 @@ export default function DashboardLayout({
             </div>
           </div>
         </div>
+
+        {currentPage === 'tasks' && headerPhases.length > 0 && (
+          <div className="bg-white border-b border-slate-200 px-8 py-3">
+            <div className="flex justify-end">
+              <HeaderPhaseStepper
+                phases={headerPhases}
+                currentId={headerPhases.find(p => p.status === 'active')?.id}
+                onSelect={(id) => {
+                  onPageChange('tasks');
+                  try { window.dispatchEvent(new CustomEvent('selectPhase', { detail: { id } })); } catch {}
+                }}
+              />
+            </div>
+          </div>
+        )}
 
         <main className="flex-1 overflow-auto p-8">
           {children}

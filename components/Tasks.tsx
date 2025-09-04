@@ -1397,7 +1397,7 @@ function GroupMultiSelect({ label, options, selectedKeys, onChange, count }: { l
           {count > 0 && <span className="shrink-0 text-gray-500">({count})</span>}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[360px] p-0 bg-white border shadow-lg" align="start">
+      <PopoverContent className="w-[360px] p-0 bg-white border shadow-lg max-h-[60vh] overflow-hidden flex flex-col" align="start">
         <div className="border-b px-3 py-2 flex items-center justify-between bg-gray-50">
           <div className="font-medium text-sm">{label}</div>
           <div className="flex items-center gap-2">
@@ -1414,7 +1414,7 @@ function GroupMultiSelect({ label, options, selectedKeys, onChange, count }: { l
         <div className="p-3 pt-2 bg-white">
           <Input placeholder="Filter" value={filter} onChange={(e) => setFilter(e.target.value)} />
         </div>
-        <ScrollArea className="max-h-[300px] px-3 pb-3">
+        <ScrollArea className="flex-1 overflow-auto px-3 pb-3">
           <div className="space-y-2">
             {filtered.map((opt) => (
               <label key={opt.key} htmlFor={`ms-${label}-${opt.key}`} className="flex items-center justify-between gap-2 rounded-md border px-2.5 py-2 bg-white hover:bg-gray-50">

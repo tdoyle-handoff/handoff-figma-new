@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" fill="none">
+  <rect x="16" y="16" width="224" height="224" rx="48" fill="#001F3F"/>
+  <!-- House body -->
+  <path d="M72 120.5L126.8 72.7c3.0-2.6 7.4-2.6 10.4 0L184 120.5V200c0 4.4-3.6 8-8 8H80c-4.4 0-8-3.6-8-8v-79.5z" fill="#F9FAFB"/>
+  <!-- Roof outline -->
+  <path d="M56.6 118.1c-2.1 2.0-2.2 5.3-0.2 7.4 1 1.1 2.4 1.7 3.9 1.7h16.7V200c0 6.6 5.4 12 12 12h96c6.6 0 12-5.4 12-12v-72.8h16.7c1.5 0 2.9-0.6 3.9-1.7 2-2.1 1.9-5.4-0.2-7.4l-75.6-67.2c-6.3-5.6-15.9-5.6-22.2 0l-75.6 67.2z" fill="#F9FAFB"/>
+  <!-- Doorway cutout to match stroke look -->
+  <rect x="90" y="128" width="76" height="76" rx="2" fill="#001F3F"/>
+  <!-- Window -->
+  <rect x="118" y="144" width="20" height="20" rx="2" fill="#F9FAFB"/>
+  <rect x="142" y="144" width="20" height="20" rx="2" fill="#F9FAFB"/>
+  <rect x="118" y="168" width="20" height="20" rx="2" fill="#F9FAFB"/>
+  <rect x="142" y="168" width="20" height="20" rx="2" fill="#F9FAFB"/>
+</svg>
+
