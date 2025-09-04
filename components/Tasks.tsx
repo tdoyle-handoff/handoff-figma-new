@@ -15,6 +15,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '.
 import { Switch } from './ui/switch';
 import { Popover, PopoverTrigger, PopoverContent } from './ui/popover';
 import { ScrollArea } from './ui/scroll-area';
+import { Checkbox } from './ui/checkbox';
 import ChecklistLegalTabs from './checklist/LegalTabs';
 import ChecklistInspectionTabs from './checklist/InspectionTabs';
 import ChecklistInsuranceTabs from './checklist/InsuranceTabs';
@@ -1098,69 +1099,6 @@ function GroupMultiSelect({ label, options, selectedKeys, onChange, count }: { l
         </ScrollArea>
       </PopoverContent>
     </Popover>
-  );
-}
-  const selected = new Set(selectedKeys);
-  const groups: string[] = (scenarioSchema.merge_rules?.order || []) as string[];
-  const pretty = (s: string) => s.replace(/_/g, ' ').replace(/\b\w/g, (m) => m.toUpperCase());
-  const [filter, setFilter] = React.useState('');
-
-  const toggle = (key: string, enabled: boolean) => {
-    const next = new Set(selected);
-    if (enabled) next.add(key); else next.delete(key);
-    onChange(Array.from(next));
-  };
-
-  const clearAll = () => onChange([]);
-  const count = selected.size;
-
-  return (
-    <div className="mb-3">
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button variant="outline" size="sm" className="gap-2">
-            <Filter className="w-4 h-4" /> Scenarios & scope {count > 0 ? `(${count})` : ''}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-[420px] p-0" align="start">
-          <div className="border-b px-3 py-2 flex items-center justify-between">
-            <div className="font-medium text-sm">Scenarios & scope</div>
-            <div className="flex items-center gap-2">
-              {count > 0 && <span className="text-xs text-gray-600">{count} selected</span>}
-              <Button size="sm" variant="outline" onClick={() => { clearAll(); }}>Reset</Button>
-            </div>
-          </div>
-          <div className="p-3 pt-2">
-            <Input placeholder="Filter scenarios" value={filter} onChange={(e) => setFilter(e.target.value)} />
-          </div>
-          <ScrollArea className="max-h-[340px] px-3 pb-3">
-            <div className="space-y-4">
-              {groups.map((group) => {
-                const mods: any[] = Array.isArray((scenarioSchema.modules as any)[group]) ? (scenarioSchema.modules as any)[group] : [];
-                if (mods.length === 0) return null;
-                const filtered = filter
-                  ? mods.filter((m: any) => pretty(m.key).toLowerCase().includes(filter.toLowerCase()))
-                  : mods;
-                if (filtered.length === 0) return null;
-                return (
-                  <div key={group}>
-                    <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">{pretty(group)}</div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {filtered.map((m: any) => (
-                        <label key={m.key} htmlFor={`scn-${m.key}`} className="flex items-center justify-between gap-2 rounded-md border px-2.5 py-2 hover:bg-gray-50">
-                          <span className="text-sm truncate">{pretty(m.key)}</span>
-                          <Switch id={`scn-${m.key}`} checked={selected.has(m.key)} onCheckedChange={(v) => toggle(m.key, !!v)} />
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </ScrollArea>
-        </PopoverContent>
-      </Popover>
-    </div>
   );
 }
 
