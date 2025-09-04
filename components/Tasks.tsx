@@ -1251,7 +1251,7 @@ function GroupMultiSelect({ label, options, selectedKeys, onChange, count }: { l
         <Button
           variant="outline"
           size="sm"
-          className="gap-2 rounded-full bg-white border-gray-200 hover:bg-gray-50 shadow-sm h-9 px-3 text-[12px]"
+          className="gap-2 rounded-full bg-white border-gray-200 hover:bg-gray-50 h-9 px-3 text-[12px]"
         >
           {label} {count > 0 ? `(${count})` : ''}
         </Button>
@@ -1434,7 +1434,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
   }, [taskContext, onNavigate]);
   
   return (
-    <div className="space-y-8 max-w-none bg-[#F6F7FB] p-4 sm:p-6">
+    <div className="space-y-8 max-w-none bg-[#F6F7FB] p-4 sm:p-6 [&_button]:shadow-none [&_button:focus]:outline-none [&_button:focus]:ring-0 [&_button:focus-visible]:outline-none [&_button:focus-visible]:ring-0 [&_button:active]:font-semibold">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
 
         <TabsContent value="checklist" className="space-y-6 mt-6 bg-[#F6F7FB]">
