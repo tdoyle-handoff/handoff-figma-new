@@ -202,10 +202,7 @@ export default function DashboardLayout({
   return (
     <div className="flex h-screen bg-slate-50">
       {/* Sidebar */}
-      <div className={cn(
-        "relative z-30 flex flex-col bg-[#001F3F] shadow-xl transition-all duration-300 shrink-0",
-        sidebarOpen ? "w-80" : "w-16"
-      )}>
+      <div className="hidden">
         {/* Header */}
         <div className="p-6 bg-white border-b border-gray-200">
           <div className="flex items-center gap-3">
@@ -406,34 +403,53 @@ export default function DashboardLayout({
 
       {/* Main Content */}
       <div className="relative z-0 flex-1 flex flex-col min-h-0 min-w-0 bg-slate-50">
-        {/* Header */}
-        <div className="bg-white border-b border-slate-200 px-8 py-6">
-          <div className="flex items-center justify-between">
+        {/* Top Navigation Bar */}
+        <header className="px-6 pt-6">
+          <div className="bg-[#0B1F44] text-white rounded-2xl shadow-lg px-6 py-3 flex items-center justify-between">
+            {/* Left: Logo */}
             <div className="flex items-center gap-3">
-              <button
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors lg:hidden"
-              >
-                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </button>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">{navigation.getPageTitle(currentPage).replace(' - Handoff', '')}</h1>
-                <p className="text-sm text-gray-600 mt-1">{navigation.getPageDescription(currentPage)}</p>
-              </div>
+              <img
+                src={handoffLogo}
+                alt="Handoff Logo"
+                className="h-8 w-8 rounded-full bg-white p-1"
+              />
+              <span className="sr-only">{navigation.getPageTitle(currentPage)}</span>
             </div>
-            <div className="flex items-center gap-4">
-              <Avatar className="h-10 w-10">
+
+            {/* Center: Horizontal Nav */}
+            <nav className="flex items-center gap-2">
+              {navigationItems.map((item) => {
+                const isActive = currentPage === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => onPageChange(item.id)}
+                    className={cn(
+                      "px-5 py-2 rounded-xl text-sm font-medium transition-colors",
+                      isActive ? "bg-white/15 text-white" : "text-white/80 hover:text-white"
+                    )}
+                  >
+                    {item.label}
+                  </button>
+                );
+              })}
+            </nav>
+
+            {/* Right: User */}
+            <div className="flex items-center gap-3">
+              <Avatar className="h-9 w-9 ring-2 ring-white/20">
                 <AvatarImage src="" />
                 <AvatarFallback className="bg-blue-600 text-white">
                   {getInitials(getUserDisplayName())}
                 </AvatarFallback>
               </Avatar>
+              <div className="hidden md:block leading-tight">
+                <div className="text-sm font-medium">{getUserDisplayName()}</div>
+                <div className="text-xs text-white/70 truncate max-w-[220px]">{getUserDisplayEmail()}</div>
+              </div>
             </div>
           </div>
-        </div>
-
+        </header>
 
         <main className="flex-1 overflow-auto p-8">
           {children}
