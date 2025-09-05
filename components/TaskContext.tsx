@@ -493,7 +493,7 @@ How to complete it:
           'Factor in seasonality: spring tends to be hotter; winter slower.'
         ]
       }
-    }
+    },
     {
       id: 'task-submit-offer',
       title: 'Submit Purchase Offer',
@@ -527,7 +527,7 @@ How to complete it:
           'Double-check earnest money details: amount, due date, escrow agent.'
         ]
       }
-    }
+    },
     {
       id: 'task-offer-negotiation',
       title: 'Negotiate Offer Terms',
@@ -566,19 +566,49 @@ How to complete it:
     {
       id: 'task-offer-acceptance-signing',
       title: 'Offer Acceptance & Signing',
-      description: 'Accept the offer and sign the contract; perform AI-assisted markup review as needed.',
+      description: `What it is: Once the seller agrees to your offer—or you both agree on counter terms—the purchase agreement is signed by both sides. This is the moment your deal becomes under contract.
+
+Why it matters: This signature locks in the terms you negotiated and creates enforceable deadlines for deposits, inspections, financing, and closing. Everything that follows (title search, lender application, inspections) flows from the dates and obligations in this document.
+
+How to complete it:
+- Review the final version carefully before signing. Ensure price, closing date, contingencies, and included items match what was agreed.
+- Sign electronically or in person—both are legally valid.
+- Confirm both buyer and seller signatures are present.
+- Save a copy with the exact execution date, as it triggers all future deadlines.`,
       category: 'contract',
       subcategory: 'legal',
       priority: 'high',
       status: isUnderContract ? 'active' : 'pending',
       estimatedTime: '1 day',
       assignedTo: 'Buyer & Seller',
-      dependencies: ['task-submit-offer']
+      dependencies: ['task-submit-offer'],
+      instructions: {
+        overview: 'Execute the final purchase agreement and capture the exact acceptance date for downstream deadlines.',
+        steps: [
+          { step: 1, title: 'Verify final terms', description: 'Price, closing date, contingencies, inclusions', action: 'Compare against negotiated terms' },
+          { step: 2, title: 'Sign', description: 'Electronic or wet signature are valid', action: 'Complete signatures for all parties' },
+          { step: 3, title: 'Confirm execution', description: 'Both buyer and seller signatures present', action: 'Check signature blocks' },
+          { step: 4, title: 'Record acceptance date', description: 'This date drives contingency periods', action: 'Save the executed copy with date' }
+        ],
+        tips: [
+          'Ensure contingencies (inspection, financing, appraisal) are clearly listed—removing later can be difficult.',
+          'Highlight unusual clauses (as-is sale, rent-back, escalation addendum) for your attorney.',
+          'Write down the exact date of acceptance—this starts your contingency clocks.'
+        ]
+      }
     },
     {
       id: 'task-contract-review',
       title: 'Review Purchase Contract',
-      description: 'Carefully review all terms, conditions, and contingencies in the purchase agreement.',
+      description: `What it is: Line-by-line legal and practical review of the agreement you’ve signed.
+
+Why it matters: Contracts are dense and deadlines binding. Many buyers miss critical terms (transfer taxes, repair limits, timing obligations). Reviewing ensures you know exactly what you’re committing to.
+
+How to complete it:
+- Schedule a 30–60 minute review with your attorney.
+- Walk through obligations, timelines, remedies, and costs.
+- Identify ambiguities or missing clauses—negotiate addenda as needed.
+- Keep a written summary of key dates and responsibilities.`,
       category: 'contract',
       subcategory: 'legal',
       priority: 'high',
@@ -635,7 +665,11 @@ How to complete it:
           'Don\'t sign anything you don\'t understand',
           'Pay special attention to contingency deadlines',
           'Ensure all verbal agreements are in writing',
-          'Understand your right to withdraw under contingencies'
+'Understand your right to withdraw under contingencies',
+          'Ask specifically about whether time is of the essence—this makes deadlines firm.',
+          'Verify who pays which closing costs—they vary by state.',
+          'Clarify remedies if inspection uncovers issues—refund, repair, or renegotiation?',
+          'Keep a handy copy—you will reference it throughout the transaction.'
         ],
         timeline: '2-3 business days for thorough review'
       }
@@ -643,48 +677,143 @@ How to complete it:
     {
       id: 'task-attorney-selection',
       title: 'Hire Real Estate Attorney',
-      description: 'Select and retain a qualified real estate attorney to represent your interests.',
+      description: `What it is: A licensed attorney specializing in real estate to review your contract, riders, and disclosures. In some states (NY, NJ, IL, MA), attorney review is standard.
+
+Why it matters: Real estate contracts are legally binding. A trained attorney protects you from hidden risks (unclear title, one-sided clauses, missed deadlines) that your agent may not be qualified to catch.
+
+How to complete it:
+- Ask for referrals from trusted contacts or your agent.
+- Confirm the attorney specializes in residential real estate.
+- Send them the executed contract immediately.
+- Schedule a review call to walk through rights, obligations, and deadlines.`,
       category: 'contract',
       subcategory: 'legal',
       priority: 'high',
       status: isUnderContract ? 'completed' : 'pending',
       estimatedTime: '1-2 days',
-      assignedTo: 'Buyer'
+      assignedTo: 'Buyer',
+      instructions: {
+        overview: 'Engage a responsive residential real estate attorney and initiate review quickly.',
+        steps: [
+          { step: 1, title: 'Source referrals', description: 'From agent and trusted contacts', action: 'Create shortlist of specialists' },
+          { step: 2, title: 'Engagement', description: 'Retain attorney and send executed contract', action: 'Confirm scope and fees' },
+          { step: 3, title: 'Schedule review', description: '30–60 minute call to discuss terms and deadlines', action: 'Prepare questions and priorities' }
+        ],
+        tips: [
+          'Don’t wait: attorney review windows can be short (3–5 days in some states).',
+          'Ask about fees up front (flat vs hourly).',
+          'Prioritize responsiveness—real estate timelines move quickly.'
+        ]
+      }
     },
     {
       id: 'task-contract-riders',
       title: 'Add Contract Riders',
-      description: 'Identify, draft, and attach required riders to the contract.',
+      description: `What it is: Optional add-on clauses that customize the standard purchase agreement (e.g., inspection remedies, financing timelines, appraisal conditions, rent-back agreements).
+
+Why it matters: Riders tailor the deal to your needs. Without them, boilerplate language may leave you unprotected or too rigid.`,
       category: 'contract',
       subcategory: 'legal',
       priority: 'medium',
       status: isUnderContract ? 'pending' : 'upcoming',
       estimatedTime: '1 day',
       assignedTo: 'Attorney',
-      dependencies: ['task-offer-acceptance-signing']
+      dependencies: ['task-offer-acceptance-signing'],
+      instructions: {
+        overview: 'Draft, negotiate, and execute only the riders necessary to protect your priorities.',
+        steps: [
+          { step: 1, title: 'Identify needs', description: 'Inspection, financing, appraisal, rent-back', action: 'List relevant riders with your attorney/agent' },
+          { step: 2, title: 'Draft precisely', description: 'Clear, specific terms to reduce disputes', action: 'Avoid vague language' },
+          { step: 3, title: 'Execute riders', description: 'Ensure both parties sign', action: 'Attach to contract' }
+        ],
+        tips: [
+          'Keep riders clear and specific—ambiguity invites disputes.',
+          'Too many riders can reduce offer appeal—focus on essentials.',
+          'Consider adding an appraisal rider to address low appraisal risk.'
+        ]
+      }
     },
     {
       id: 'task-send-lawyer-signed-contract',
       title: 'Send Signed Contract to Attorney',
-      description: 'Provide fully executed contract documents to your attorney.',
+      description: `What it is: Providing your attorney with the fully executed purchase agreement and all attachments.
+
+Why it matters: Your attorney can’t protect your rights or track deadlines without seeing the signed deal. This triggers their legal review and sets coordination with the seller’s attorney.`,
       category: 'contract',
       subcategory: 'legal',
       priority: 'high',
       status: isUnderContract ? 'pending' : 'upcoming',
       assignedTo: 'Buyer',
-      dependencies: ['task-attorney-selection', 'task-offer-acceptance-signing']
+      dependencies: ['task-attorney-selection', 'task-offer-acceptance-signing'],
+      instructions: {
+        overview: 'Deliver the executed contract package to your attorney immediately after acceptance.',
+        steps: [
+          { step: 1, title: 'Email executed PDF', description: 'Send the full signed agreement and attachments', action: 'Email to attorney and CC agent' },
+          { step: 2, title: 'Confirm receipt', description: 'Ask attorney to acknowledge and summarize key dates', action: 'Request confirmation email' }
+        ],
+        tips: [
+          'Don’t assume the agent sent it—ensure your attorney has the documents.',
+          'Ask your attorney to calendar all critical deadlines (inspection, mortgage commitment, closing).'
+        ]
+      }
+    },
+    {
+      id: 'task-open-escrow',
+      title: 'Open Escrow',
+      description: `What it is: A neutral third party (escrow/title company or attorney, depending on state) that holds funds and manages closing paperwork.
+
+Why it matters: Escrow ensures documents and money are exchanged fairly. The seller won’t transfer the deed until funds are in; you won’t release funds until title is clear.`,
+      category: 'contract',
+      subcategory: 'legal',
+      priority: 'high',
+      status: isUnderContract ? 'pending' : 'upcoming',
+      assignedTo: 'Title Company',
+      dependencies: ['task-offer-acceptance-signing'],
+      instructions: {
+        overview: 'Initiate escrow so the closing process can be tracked and funds handled securely.',
+        steps: [
+          { step: 1, title: 'Send executed contract', description: 'Agent/attorney forwards to escrow/title', action: 'Provide full package promptly' },
+          { step: 2, title: 'Receive instructions', description: 'Escrow sends wiring and process details', action: 'Review carefully and verify by phone' },
+          { step: 3, title: 'Get file opened', description: 'Escrow logs the transaction and timeline', action: 'Save contact and file number' }
+        ],
+        tips: [
+          'Always verify wire instructions directly by phone—wire fraud is common and devastating.',
+          'Ask for a good faith estimate of funds early to plan cash to close.',
+          'Save your escrow officer’s contact—they are your logistics hub.'
+        ]
+      }
     },
     {
       id: 'task-earnest-money-deposit',
       title: 'Submit Earnest Money Deposit',
-      description: 'Produce deposit according to the contract and wire or deliver check to escrow.',
+      description: `What it is: A good-faith deposit, typically 1–3% of purchase price, wired to escrow or attorney trust account within a few days of contract signing.
+
+Why it matters: Demonstrates commitment to the deal. If you back out without a valid contingency, you risk forfeiting the deposit. If you close, it’s applied to down payment or closing costs.
+
+How to complete it:
+- Get official wiring or check delivery instructions from escrow/attorney.
+- Send funds within the contract deadline (usually 3–5 business days).
+- Request written confirmation of receipt.`,
       category: 'contract',
       subcategory: 'legal',
       priority: 'high',
       status: isUnderContract ? 'pending' : 'upcoming',
       estimatedTime: '1 day',
       assignedTo: 'Buyer',
-      dependencies: ['task-offer-acceptance-signing']
+      dependencies: ['task-offer-acceptance-signing'],
+      instructions: {
+        overview: 'Fund the earnest deposit on time to avoid breach of contract.',
+        steps: [
+          { step: 1, title: 'Obtain instructions', description: 'Wire or cashier’s check details', action: 'Verify instructions directly with escrow/title by phone' },
+          { step: 2, title: 'Send funds', description: 'Within the contract deadline', action: 'Complete the transfer and retain receipt' },
+          { step: 3, title: 'Confirm receipt', description: 'Get written confirmation from escrow/attorney', action: 'File confirmation with your records' }
+        ],
+        tips: [
+          'Late deposit can be a breach—prioritize this task.',
+          'Use a cashier’s check or wire—personal checks are often not allowed.',
+          'Keep proof of transaction—this shows you met the obligation.'
+        ]
+      }
     },
 
     // Phase 4: Due Diligence
@@ -1134,7 +1263,8 @@ How to complete it:
     'task-send-lawyer-signed-contract': ['legal'],
     'task-earnest-money-deposit': ['legal'],
     'task-title-search': ['legal'],
-    'task-closing-review': ['legal'],
+'task-closing-review': ['legal'],
+    'task-open-escrow': ['legal'],
 
     // Financing / Mortgage
 'task-mortgage-preapproval': ['financing'],
@@ -1209,6 +1339,7 @@ How to complete it:
     'task-attorney-selection': { anchor: 'acceptance', offset: 2 },
     'task-contract-riders': { anchor: 'acceptance', offset: 3 },
     'task-send-lawyer-signed-contract': { anchor: 'acceptance', offset: 3 },
+    'task-open-escrow': { anchor: 'acceptance', offset: 1 },
     'task-earnest-money-deposit': { anchor: 'acceptance', offset: 2 },
 
     'task-shop-inspectors': { anchor: 'acceptance', offset: 2 },
@@ -1257,6 +1388,7 @@ How to complete it:
     'task-attorney-selection': 7,
     'task-contract-riders': 9,
     'task-send-lawyer-signed-contract': 9,
+    'task-open-escrow': 6,
     'task-earnest-money-deposit': 10,
     'task-shop-inspectors': 10,
     'task-home-inspection': 12,
