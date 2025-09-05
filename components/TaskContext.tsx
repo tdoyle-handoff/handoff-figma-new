@@ -562,6 +562,63 @@ How to complete it:
       }
     },
 
+    {
+      id: 'task-home-sale-contingency',
+      title: 'List & Sell Current Home (Home Sale Contingency)',
+      description: `If your purchase is contingent on selling your current home, you must list, market, and close on that home before—or at the same time as—your new purchase.
+
+Why it matters:
+Most sellers won’t wait forever. A home sale contingency protects you from owning two homes at once, but it also makes your offer less attractive. The faster you get your old home sold, the smoother your new purchase goes.
+`,
+      category: 'offer',
+      subcategory: 'legal',
+      priority: 'high',
+      status: isUnderContract ? 'completed' : 'pending',
+      assignedTo: 'Buyer & Listing Agent',
+      instructions: {
+        overview: 'Move quickly to list and sell your current home so your contingent purchase remains viable.',
+        steps: [
+          { step: 1, title: 'Hire a listing agent', description: 'Engage an experienced local listing agent before making your offer on the new home', action: 'Sign listing agreement and align pricing strategy' },
+          { step: 2, title: 'Prep and list', description: 'Declutter, stage, photograph, and publish on MLS', action: 'Launch within days to generate interest fast' },
+          { step: 3, title: 'Market aggressively', description: 'Leverage pricing strategy and marketing to solicit quick offers', action: 'Host open houses and promote across channels' },
+          { step: 4, title: 'Keep the other side informed', description: 'Update the new home’s seller on your sale progress', action: 'Provide milestones to build trust' }
+        ],
+        tips: [
+          'Price realistically—overpricing can stall your contingency and jeopardize your purchase.',
+          'Prefer offers with fewer contingencies on your sale to reduce risk and delays.',
+          'Consider a bridge loan if your old home doesn’t sell in time.'
+        ]
+      }
+    },
+    {
+      id: 'task-backup-offer',
+      title: 'Draft Backup Offer Addendum (Backup Offer)',
+      description: `An agreement making your offer a “backup” in case the seller’s primary contract falls through.
+
+Why it matters:
+In hot markets, buyers often miss out. A backup offer secures next position without forcing you to wait indefinitely. If the first deal collapses, you automatically step in.
+`,
+      category: 'offer',
+      subcategory: 'legal',
+      priority: 'medium',
+      status: isUnderContract ? 'completed' : 'pending',
+      assignedTo: 'Agent & Attorney',
+      dependencies: ['task-draft-offer'],
+      instructions: {
+        overview: 'Position your offer as the next in line if the current primary contract cancels.',
+        steps: [
+          { step: 1, title: 'Draft backup offer + addendum', description: 'Use standard purchase agreement plus backup addendum', action: 'Have agent/attorney prepare documents' },
+          { step: 2, title: 'Define trigger condition', description: 'Effective only if the first contract is canceled', action: 'State the triggering event clearly' },
+          { step: 3, title: 'Set an expiration', description: 'Limit how long you’re willing to remain a backup', action: 'Specify a clear expiration date' }
+        ],
+        tips: [
+          'Backup offers are binding if triggered—submit only if you truly want the property.',
+          'Negotiate clear timelines to avoid being stuck in limbo.',
+          'Stay in touch with the listing agent for signals on the primary deal’s stability.'
+        ]
+      }
+    },
+
     // Phase 3: Contract & Legal
     {
       id: 'task-offer-acceptance-signing',
@@ -1958,6 +2015,36 @@ International wires can take longer due to anti-money laundering checks. If dela
       }
     },
 
+    {
+      id: 'task-dual-escrows',
+      title: 'Coordinate Dual Escrows / Simultaneous Closing',
+      description: `Managing two closings (the sale of your current home and the purchase of your new one) to occur on the same day or in quick succession.
+
+Why it matters:
+If one deal delays, the other may collapse. Careful coordination ensures funds from your sale flow directly into your purchase without gaps.
+`,
+      category: 'closing',
+      subcategory: 'legal',
+      priority: 'high',
+      status: 'upcoming',
+      assignedTo: 'All Parties',
+      dependencies: ['task-open-escrow', 'task-escrow-wire-instructions'],
+      instructions: {
+        overview: 'Orchestrate back-to-back sale and purchase so funds flow cleanly and timelines hold.',
+        steps: [
+          { step: 1, title: 'Consolidate counterparties', description: 'Use the same title/escrow company or attorney for both deals if possible', action: 'Align files and contacts across both transactions' },
+          { step: 2, title: 'Sequence closings', description: 'Schedule sale first, then purchase a few hours later', action: 'Leave buffer time for wire arrival' },
+          { step: 3, title: 'Notify all parties', description: 'Inform lenders, agents, and attorneys of the back-to-back plan', action: 'Confirm all are prepared for same-day funding' },
+          { step: 4, title: 'Prepare backups', description: 'Have backup funds available in case wire timing slips', action: 'Arrange contingency cash or short-term funds' }
+        ],
+        tips: [
+          'Morning closings are safer—same-day buffer helps resolve issues.',
+          'Where allowed, wire directly from sale escrow to purchase escrow to save time.',
+          'Expect stress and potential delays—stay flexible and communicative.'
+        ]
+      }
+    },
+
     // Phase 7: Post-Closing
     {
       id: 'task-utilities-transfer',
@@ -2198,6 +2285,9 @@ Homes need regular maintenance. Neglect leads to costly repairs and reduced valu
     'task-gov-addenda': ['legal', 'scenario-gov-owned'],
     'task-firpta-compliance': ['legal', 'scenario-international-seller'],
     'task-international-wire-clearance': ['financing', 'scenario-international-buyer'],
+    'task-home-sale-contingency': ['legal', 'scenario-home-sale-contingency'],
+    'task-backup-offer': ['legal', 'scenario-backup-offer'],
+    'task-dual-escrows': ['legal'],
 
     // Financing / Mortgage
     'task-probate-approval': ['legal', 'scenario-probate'],
@@ -2315,6 +2405,9 @@ Homes need regular maintenance. Neglect leads to costly repairs and reduced valu
     'task-gov-addenda': { anchor: 'today', offset: 2 },
     'task-firpta-compliance': { anchor: 'acceptance', offset: 5 },
     'task-international-wire-clearance': { anchor: 'closing', offset: -5 },
+    'task-home-sale-contingency': { anchor: 'today', offset: 0 },
+    'task-backup-offer': { anchor: 'today', offset: 1 },
+    'task-dual-escrows': { anchor: 'closing', offset: -2 },
 
     'task-insurance-get-bids': { anchor: 'acceptance', offset: 7 },
     'task-homeowners-insurance': { anchor: 'acceptance', offset: 22 },
@@ -2390,6 +2483,9 @@ Homes need regular maintenance. Neglect leads to costly repairs and reduced valu
     'task-gov-addenda': 3,
     'task-firpta-compliance': 21,
     'task-international-wire-clearance': 29,
+    'task-home-sale-contingency': 5,
+    'task-backup-offer': 6,
+    'task-dual-escrows': 31,
     'task-insurance-get-bids': 12,
     'task-homeowners-insurance': 22,
     'task-schedule-final-walkthrough': 27,
