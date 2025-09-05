@@ -411,7 +411,7 @@ export default function DashboardLayout({
               <img
                 src={handoffLogo}
                 alt="Handoff Logo"
-                className="h-8 w-8 rounded-full bg-white p-1"
+                className="h-8 w-auto object-contain"
               />
               <span className="sr-only">{navigation.getPageTitle(currentPage)}</span>
             </div>
