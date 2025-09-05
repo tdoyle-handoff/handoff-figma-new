@@ -930,16 +930,16 @@ How to complete it:
     },
     {
       id: 'task-schedule-specialized-inspections',
-      title: 'Schedule Specialized Inspections',
-      description: `What it is: Targeted evaluations for issues outside the scope of a general inspection, such as radon, mold, lead paint, pest infestations, septic systems, well water quality, asbestos, sewer lines, or structural engineering.
+      title: 'Order Specialty Tests (Lead, Radon, Mold, Pest, Asbestos, etc.)',
+      description: `What it is: Specialized inspections that go beyond the standard home inspection. These include radon gas testing, mold sampling, pest/termite inspections, lead paint testing, asbestos sampling, and well or septic system checks.
 
-Why it matters: Certain risks are property-specific. Rural homes often need septic inspections; older homes may need asbestos checks; wooded areas may require pest assessments. Skipping these can expose you to hidden health and financial risks.
+Why it matters: A general inspector may identify symptoms (musty smell, water staining, pest droppings), but not confirm the problem. Specialized tests give you hard data. Many of these hazards are invisible but can cause serious health risks or huge repair bills if ignored.
 
 How to complete it:
-- Review general inspection results to decide which specialized inspections are necessary.
-- Ask your inspector or agent for vetted specialists.
-- Schedule before your inspection contingency expires.
-- Get written reports with test results and recommendations.`,
+- Ask your general inspector which areas require deeper testing.
+- Hire licensed specialists (radon, mold remediation companies, pest inspectors).
+- Schedule within your inspection contingency period.
+- Receive detailed lab reports or inspection summaries.`,
       category: 'diligence',
       subcategory: 'inspections',
       priority: 'medium',
@@ -947,17 +947,19 @@ How to complete it:
       assignedTo: 'Buyer',
       dependencies: ['task-home-inspection'],
       instructions: {
-        overview: 'Order targeted inspections guided by the general findings and property type.',
+        overview: 'Order targeted tests based on general inspection findings and property risk profile.',
         steps: [
-          { step: 1, title: 'Review general report', description: 'Identify areas needing deeper evaluation', action: 'List required specialties' },
-          { step: 2, title: 'Select specialists', description: 'Use referrals from inspector/agent', action: 'Vet credentials and availability' },
-          { step: 3, title: 'Schedule promptly', description: 'Complete before contingency deadline', action: 'Calendar tests (e.g., 48-hour radon)' },
-          { step: 4, title: 'Collect reports', description: 'Obtain written results and recommendations', action: 'File in your transaction folder' }
+          { step: 1, title: 'Consult your inspector', description: 'Identify recommended specialty tests', action: 'List tests (radon, mold, pest, lead, asbestos, sewer, well/septic)' },
+          { step: 2, title: 'Hire licensed specialists', description: 'Use vetted providers; confirm certifications', action: 'Verify credentials, scope, and turnaround times' },
+          { step: 3, title: 'Schedule within contingency', description: 'Book tests promptly to meet deadlines', action: 'Account for radon 48-hr test windows' },
+          { step: 4, title: 'Collect written reports', description: 'Obtain lab results or formal summaries', action: 'File reports and share with agent/attorney' }
         ],
         tips: [
-          'Sewer line scoping is often overlooked but can prevent >$10k surprises.',
-          'Radon tests usually take ~48 hours—plan this into your timeline.',
-          'In condos/co-ops, some tests (pest, sewer line) may be unnecessary—focus on building-level maintenance.'
+          'Radon is a leading cause of lung cancer—always test basements or ground-level homes; tests are inexpensive.',
+          'Termites can cause structural damage costing tens of thousands—require seller treatment if found.',
+          'If lead paint or asbestos is present, you may not need immediate removal, but budget for safe handling during renovations.',
+          'Sewer line scoping can prevent >$10k surprises—highly recommended in older homes.',
+          'In condos/co-ops, focus on building-level risks and maintenance responsibilities.'
         ]
       }
     },
@@ -1060,8 +1062,16 @@ How to complete it:
     },
     {
       id: 'task-mortgage-application',
-      title: 'Submit Mortgage Application & Financials',
-      description: 'Complete the full mortgage application with your chosen lender.',
+      title: 'Complete Loan Application',
+      description: `What it is: The formal application for your mortgage, including full income, asset, debt, and employment documentation. This goes beyond pre-approval, requiring detailed verification.
+
+Why it matters: Lenders won’t issue a loan commitment until they verify everything. The faster you complete this step, the faster you get to “clear to close.”
+
+How to complete it:
+- Gather documents: last 2 years’ tax returns, W-2s or 1099s, recent pay stubs, bank statements, retirement/investment accounts, and government ID.
+- Submit all documents via your lender’s secure portal (never email PDFs).
+- Authorize employment verification and a credit pull.
+- Review the Loan Estimate provided—this outlines rate, monthly payment, and estimated closing costs.`,
       category: 'diligence',
       subcategory: 'financing',
       priority: 'high',
@@ -1070,41 +1080,186 @@ How to complete it:
       linkedPage: 'financing',
       actionLabel: 'Apply for Mortgage',
       assignedTo: 'Buyer',
-      dependencies: ['task-submit-offer', 'task-offer-acceptance-signing']
+      dependencies: ['task-submit-offer', 'task-offer-acceptance-signing'],
+      instructions: {
+        overview: 'Complete the formal mortgage application promptly and upload all requested documents via the secure portal.',
+        steps: [
+          { step: 1, title: 'Gather documents', description: '2 years tax returns, W-2/1099, pay stubs, bank and investment statements, ID', action: 'Organize PDFs before starting' },
+          { step: 2, title: 'Apply and upload securely', description: 'Use lender’s portal to submit the application and documents', action: 'Avoid email for sensitive info' },
+          { step: 3, title: 'Authorize verifications', description: 'Employment and credit checks', action: 'E-sign authorization forms promptly' },
+          { step: 4, title: 'Review Loan Estimate', description: 'Check rate, APR, payments, and estimated closing costs', action: 'Ask questions about fees and points' }
+        ],
+        tips: [
+          'Respond quickly to any additional document requests—every day of delay pushes closing back.',
+          'Don’t change jobs, make big purchases, or take on new debt during this process—it can jeopardize approval.',
+          'Keep at least 2–3 months of reserves in accounts; lenders often want to see post-closing liquidity.'
+        ]
+      }
     },
     {
       id: 'task-send-offer-to-lender',
       title: 'Send Accepted Offer to Lender',
-      description: 'Provide accepted offer and contract to your mortgage lender.',
+      description: `What it is: Providing your lender with the signed purchase agreement once your offer is accepted. This step triggers the formal loan process—underwriting, appraisal ordering, and document review.
+
+Why it matters: The lender cannot move forward without the executed contract. Submitting it immediately keeps the timeline on track. Delays here can jeopardize financing deadlines, breach the contract, or delay closing.
+
+How to complete it:
+- Email your signed purchase contract to your loan officer.
+- CC your agent and attorney so everyone is aligned.
+- Ask the lender to confirm receipt and provide a “next steps” checklist.`,
       category: 'diligence',
       subcategory: 'financing',
       priority: 'high',
       status: isUnderContract ? 'active' : 'pending',
+      estimatedTime: '15-30 minutes',
+      linkedPage: 'financing',
+      actionLabel: 'Send to Lender',
       assignedTo: 'Buyer',
-      dependencies: ['task-offer-acceptance-signing']
+      dependencies: ['task-offer-acceptance-signing'],
+      instructions: {
+        overview: 'Send the executed contract to your lender immediately to kick off underwriting and appraisal.',
+        steps: [
+          { step: 1, title: 'Send executed contract', description: 'Email the fully signed contract to your loan officer', action: 'Attach PDF and include property address and MLS # if available' },
+          { step: 2, title: 'Loop in your team', description: 'CC your agent and attorney for alignment', action: 'Keep everyone on the same thread' },
+          { step: 3, title: 'Request next steps', description: 'Ask for confirmation of receipt and a checklist', action: 'Get a written list of documents and timelines' }
+        ],
+        tips: [
+          'Do this the same day the contract is signed—don’t wait.',
+          'Ask the lender to lock in appraisal scheduling right away; backlogs are common.',
+          'Keep all communications in writing to maintain a clear paper trail.'
+        ]
+      }
     },
     {
       id: 'task-shop-mortgage-terms',
       title: 'Shop for Mortgage Terms',
-      description: 'Compare rates, points, and terms from multiple lenders.',
+      description: `What it is: Comparing rates, products, and fees across lenders (banks, credit unions, mortgage brokers).
+
+Why it matters: Even a 0.25% difference in rate can save or cost tens of thousands over the life of a loan. Choosing the wrong product (e.g., adjustable vs. fixed) can increase risk if rates rise.
+
+How to complete it:
+- Request Loan Estimates from at least 3 lenders on the same day (to control for rate moves).
+- Compare APR (not just rate), lender fees, points, and closing costs.
+- Evaluate product options: 30-year fixed, 15-year fixed, ARM, FHA, VA, USDA.
+- Confirm the lender can close on your timeline—speed matters as much as cost.`,
       category: 'diligence',
       subcategory: 'financing',
       priority: 'medium',
       status: isUnderContract ? 'active' : 'pending',
       assignedTo: 'Buyer',
-      dependencies: ['task-mortgage-preapproval']
+      dependencies: ['task-mortgage-preapproval'],
+      instructions: {
+        overview: 'Obtain same-day quotes from multiple lenders and compare total cost, not just the rate.',
+        steps: [
+          { step: 1, title: 'Request same-day Loan Estimates', description: 'Control for daily rate changes', action: 'Collect at least three quotes' },
+          { step: 2, title: 'Compare APR and fees', description: 'Look at points, lender fees, and closing costs', action: 'Normalize quotes for apples-to-apples' },
+          { step: 3, title: 'Choose the right product', description: 'Fixed vs ARM, and any program eligibility (FHA/VA/USDA)', action: 'Align with your horizon and risk tolerance' },
+          { step: 4, title: 'Verify closing speed', description: 'Confirm the lender can meet your deadlines', action: 'Ask for typical underwriting and appraisal timelines' }
+        ],
+        tips: [
+          'Mortgage brokers can sometimes get better rates, but confirm reliability and communication.',
+          'Don’t chase the absolute lowest teaser rate—evaluate total costs and lender reputation.',
+          'In rising-rate environments, locking quickly can be safer.'
+        ]
+      }
+    },
+    {
+      id: 'task-rate-lock',
+      title: 'Rate Lock Decision',
+      description: `What it is: Choosing to lock your interest rate with the lender for a set period (typically 30–60 days). This guarantees your rate won’t change before closing.
+
+Why it matters: Rates fluctuate daily. A sudden spike could make your loan unaffordable. Locking secures your costs, but locking too early can expire before closing and incur extension fees.
+
+How to complete it:
+- Ask the lender for lock options: 30, 45, 60 days (longer for new construction).
+- Decide based on your expected closing date and appraisal timing.
+- Get written confirmation of the locked rate, duration, and any extension fees.`,
+      category: 'diligence',
+      subcategory: 'financing',
+      priority: 'high',
+      status: isUnderContract ? 'pending' : 'upcoming',
+      assignedTo: 'Buyer & Lender',
+      dependencies: ['task-shop-mortgage-terms', 'task-mortgage-application'],
+      instructions: {
+        overview: 'Secure your rate window aligned to your anticipated closing date.',
+        steps: [
+          { step: 1, title: 'Review lock durations', description: '30/45/60-day options, longer if needed', action: 'Balance cost vs. protection' },
+          { step: 2, title: 'Choose lock window', description: 'Match to expected closing and appraisal timelines', action: 'Avoid lock expiring before close' },
+          { step: 3, title: 'Get written lock confirmation', description: 'Rate, expiration date, extension fees', action: 'Save the lock letter' }
+        ],
+        tips: [
+          'If delays are likely, a longer lock upfront can be cheaper than extensions.',
+          'Never rely on verbal confirmation—always request a written lock letter.',
+          'Ask about float-down options if rates drop.'
+        ]
+      }
     },
     {
       id: 'task-appraisal',
       title: 'Property Appraisal',
-      description: 'Lender will order an appraisal to confirm the property value.',
+      description: `What it is: An independent evaluation of the property’s value, ordered by your lender.
+
+Why it matters: Lenders only lend up to the appraised value. If the appraisal is lower than the purchase price, you may need to renegotiate or bring extra cash.
+
+How to complete it:
+- Lender orders the appraisal—buyers cannot select the appraiser.
+- Appraiser inspects the property, takes photos, and reviews comparable sales.
+- Report is issued in ~1–2 weeks.
+- If value is low, discuss options: price reduction, increased down payment, or reconsideration request.`,
       category: 'diligence',
       subcategory: 'financing',
       priority: 'high',
       status: isUnderContract ? 'pending' : 'upcoming',
       estimatedTime: '1-2 weeks',
       assignedTo: 'Lender',
-      dependencies: ['task-mortgage-application']
+      dependencies: ['task-mortgage-application'],
+      instructions: {
+        overview: 'Appraisal confirms value for the lender; address any shortfalls quickly.',
+        steps: [
+          { step: 1, title: 'Appraisal ordered by lender', description: 'AMC assigns an appraiser per regulations', action: 'Provide access details and contact info' },
+          { step: 2, title: 'On-site appraisal', description: 'Appraiser visits, photographs, and notes comparable sales', action: 'Share CMA and list of upgrades via your agent' },
+          { step: 3, title: 'Receive report', description: 'Typically within 1–2 weeks', action: 'Review value and any noted issues' },
+          { step: 4, title: 'If low, plan response', description: 'Negotiate price, bring extra cash, or challenge with new comps', action: 'Coordinate with agent and lender' }
+        ],
+        tips: [
+          'Provide your agent’s CMA and list of upgrades to inform valuation.',
+          'Attend appraisal if possible or have your agent present to highlight improvements.',
+          'If appraisal is low, don’t panic—many sellers reduce price to keep the deal together.'
+        ]
+      }
+    },
+    {
+      id: 'task-underwriting-conditions',
+      title: 'Satisfy Underwriting Conditions',
+      description: `What it is: Underwriting is the lender’s detailed review of your file. “Conditions” are outstanding items you must resolve before final approval.
+
+Why it matters: Clear-to-close requires all conditions satisfied. Ignoring requests or missing deadlines can cost you the loan.
+
+How to complete it:
+- Respond to the lender’s conditions list quickly.
+- Provide updated pay stubs, bank statements, or explanations as requested.
+- Keep copies of all submissions.
+- Ask for written confirmation when conditions are cleared.`,
+      category: 'diligence',
+      subcategory: 'financing',
+      priority: 'high',
+      status: isUnderContract ? 'pending' : 'upcoming',
+      assignedTo: 'Buyer & Lender',
+      dependencies: ['task-mortgage-application', 'task-appraisal'],
+      instructions: {
+        overview: 'Proactively deliver requested items and track every condition to resolution.',
+        steps: [
+          { step: 1, title: 'Review conditions list', description: 'Identify documentation and explanations requested', action: 'Create a checklist' },
+          { step: 2, title: 'Provide updated docs', description: 'Recent pay stubs, bank statements, letters of explanation', action: 'Label PDFs clearly' },
+          { step: 3, title: 'Track submissions', description: 'Maintain records of what and when you sent items', action: 'Keep a folder of receipts/confirmations' },
+          { step: 4, title: 'Confirm clearance', description: 'Ask for written confirmation when each condition is cleared', action: 'Follow up weekly until CTC' }
+        ],
+        tips: [
+          'Be honest and concise in letters of explanation for large deposits or credit inquiries.',
+          'Submit clean PDFs with clear filenames to speed up review.',
+          'Check in weekly with your loan officer to catch new conditions early.'
+        ]
+      }
     },
     {
       id: 'task-title-search',
@@ -1139,6 +1294,344 @@ How to complete it:
           'Always buy owner’s title insurance—even if optional—it protects your equity.',
           'Ask your attorney to explain easements and their impact on use.',
           'Confirm property taxes are current; delinquencies can delay closing.'
+        ]
+      }
+    },
+    {
+      id: 'task-probate-approval',
+      title: 'Probate / Executor Approval (Estate Sale)',
+      description: `What it is: When the property is being sold by heirs of a deceased owner, the estate executor or administrator must have court authority to transfer ownership.
+
+Why it matters: Without court approval, the contract may not be enforceable. Probate delays can stall closing for weeks or months. Ensuring legal authority prevents you from entering into a contract that cannot close.
+
+How to complete it:
+- Have your attorney request Letters Testamentary (if there is a will) or Letters of Administration (if no will).
+- Confirm that the executor is legally authorized to sign the purchase agreement.
+- Verify if probate court approval is required for the specific sale.`,
+      category: 'contract',
+      subcategory: 'legal',
+      priority: 'high',
+      status: isUnderContract ? 'pending' : 'upcoming',
+      assignedTo: 'Attorney',
+      dependencies: ['task-offer-acceptance-signing', 'task-contract-review', 'task-attorney-selection'],
+      instructions: {
+        overview: 'Confirm the estate has legal authority to sell and transfer title before you proceed further.',
+        steps: [
+          { step: 1, title: 'Request court letters', description: 'Attorney obtains Letters Testamentary/Administration', action: 'Collect official court documentation' },
+          { step: 2, title: 'Confirm signing authority', description: 'Executor or administrator can execute contract', action: 'Validate authority and identity' },
+          { step: 3, title: 'Check for additional approvals', description: 'Determine if separate probate court approval is needed', action: 'Calendar any hearings/approvals' }
+        ],
+        tips: [
+          'Estate sales are often “as-is.” Budget for repairs.',
+          'Timelines may stretch—build flexibility into your plan.',
+          'Confirm how estate debts (taxes, liens) will be cleared before closing.'
+        ]
+      }
+    },
+    {
+      id: 'task-divorce-order',
+      title: 'Confirm Divorce Court Orders (Divorce Sale)',
+      description: `What it is: When sellers are divorcing, both parties must agree and comply with court orders regarding the sale.
+
+Why it matters: If one spouse resists, the sale can stall or be invalid. Court approval ensures both have the right (and obligation) to sell.
+
+How to complete it:
+- Attorney requests a copy of divorce decree or settlement agreement.
+- Confirm both spouses are signatories on the purchase contract.
+- Verify no additional court approval is required before closing.`,
+      category: 'contract',
+      subcategory: 'legal',
+      priority: 'high',
+      status: isUnderContract ? 'pending' : 'upcoming',
+      assignedTo: 'Attorney',
+      dependencies: ['task-offer-acceptance-signing', 'task-contract-review', 'task-attorney-selection'],
+      instructions: {
+        overview: 'Ensure both parties have authority and agreement to sell under court orders.',
+        steps: [
+          { step: 1, title: 'Obtain divorce documents', description: 'Decree or settlement agreement', action: 'Review sale-related provisions' },
+          { step: 2, title: 'Confirm signatories', description: 'Both spouses sign the purchase contract', action: 'Validate identities and authority' },
+          { step: 3, title: 'Check for court conditions', description: 'Identify any additional approvals required', action: 'Coordinate timelines with court orders' }
+        ],
+        tips: [
+          'Expect heightened emotions—keep communication professional and clear.',
+          'Confirm proceeds distribution in writing to avoid disputes at closing.'
+        ]
+      }
+    },
+    {
+      id: 'task-short-sale-approval',
+      title: 'Lender Short Sale Approval (Short Sale)',
+      description: `What it is: A sale where the seller owes more on the mortgage than the home’s value; the lender must approve the reduced payoff.
+
+Why it matters: Without lender approval, the seller legally cannot close. Approval is not guaranteed and can take significant time.`,
+      category: 'contract',
+      subcategory: 'legal',
+      priority: 'high',
+      status: isUnderContract ? 'pending' : 'upcoming',
+      assignedTo: 'Buyer & Agent',
+      dependencies: ['task-offer-acceptance-signing'],
+      instructions: {
+        overview: 'Track lender approval process closely and plan your timeline around it.',
+        steps: [
+          { step: 1, title: 'Seller hardship package', description: 'Seller submits hardship and financials to lender', action: 'Confirm submission and receipt' },
+          { step: 2, title: 'Valuation ordered', description: 'Lender orders BPO or appraisal', action: 'Monitor timing and access' },
+          { step: 3, title: 'Approval decision', description: 'Lender approves, counters, or declines', action: 'Adjust contract timelines as needed' }
+        ],
+        tips: [
+          'Short sales can take 60–120+ days to approve—build in flexibility.',
+          'Do not cancel a lease or sell your current home until approval is official.',
+          'Multiple lienholders may exist—each must approve, extending timelines.'
+        ]
+      }
+    },
+    {
+      id: 'task-reo-bank-addenda',
+      title: 'Execute Bank Addenda (REO / Foreclosure)',
+      description: `What it is: Bank-owned properties include mandatory addenda with special terms that often favor the bank.
+
+Why it matters: These addenda can limit inspections, disclaim liability, and require “as-is” acceptance—review carefully.`,
+      category: 'contract',
+      subcategory: 'legal',
+      priority: 'high',
+      status: isUnderContract ? 'pending' : 'upcoming',
+      assignedTo: 'Buyer & Attorney',
+      dependencies: ['task-offer-acceptance-signing', 'task-contract-review'],
+      instructions: {
+        overview: 'Review and execute required REO bank addenda with your attorney.',
+        steps: [
+          { step: 1, title: 'Review addenda', description: 'Attorney explains risk and limitations', action: 'Capture key caveats in notes' },
+          { step: 2, title: 'Confirm utilities', description: 'Ensure utilities are on for inspections', action: 'Coordinate with listing agent/asset manager' },
+          { step: 3, title: 'Sign and return', description: 'Execute addenda and deliver to bank/agent', action: 'Retain copies with your contract' }
+        ],
+        tips: [
+          'Budget extra for repairs—banks rarely fix items.',
+          'Move quickly—REOs may receive multiple offers.'
+        ]
+      }
+    },
+    {
+      id: 'task-auction-register',
+      title: 'Register to Bid & Accept Terms (Auction)',
+      description: `What it is: Registration process for buying at auction, requiring ID, proof of funds, and agreement to auction rules.
+
+Why it matters: Without registration, you cannot legally bid. Auction terms often override standard protections—understand them before bidding.`,
+      category: 'offer',
+      subcategory: 'general',
+      priority: 'high',
+      status: 'upcoming',
+      assignedTo: 'Buyer',
+      dependencies: ['task-property-search'],
+      instructions: {
+        overview: 'Complete registration and review auction terms prior to bidding.',
+        steps: [
+          { step: 1, title: 'Register online/on-site', description: 'Create account or register at venue', action: 'Provide ID and contact info' },
+          { step: 2, title: 'Submit proof of funds', description: 'Bank letter or pre-approval', action: 'Upload or present as required' },
+          { step: 3, title: 'Review rules/terms', description: 'Understand deposits, timelines, and contingencies (often none)', action: 'Acknowledge and accept terms' }
+        ],
+        tips: [
+          'Auctions are final—no negotiation, no contingencies.',
+          'Visit property beforehand if possible; interior access can be limited.',
+          'Set and stick to a strict maximum bid to avoid overpaying.'
+        ]
+      }
+    },
+    {
+      id: 'task-auction-deposit',
+      title: 'Post Non-Refundable Deposit (Auction)',
+      description: `What it is: A large deposit (often 5–10% of price) due immediately after winning the auction.
+
+Why it matters: Deposit is usually non-refundable, regardless of financing or inspection issues—bid only if funds are ready.`,
+      category: 'contract',
+      subcategory: 'legal',
+      priority: 'high',
+      status: isUnderContract ? 'pending' : 'upcoming',
+      assignedTo: 'Buyer',
+      dependencies: ['task-auction-register'],
+      instructions: {
+        overview: 'Be prepared to fund the auction deposit immediately after winning.',
+        steps: [
+          { step: 1, title: 'Prepare funds', description: 'Bring cashier’s check or wire-ready funds', action: 'Confirm accepted payment methods' },
+          { step: 2, title: 'Submit deposit', description: 'Immediately after the winning bid', action: 'Follow auction instructions precisely' },
+          { step: 3, title: 'Obtain receipt', description: 'Get written confirmation of deposit', action: 'File with your transaction records' }
+        ],
+        tips: [
+          'Only bid if funds are ready; deposits are typically non-refundable.',
+          'Auction homes are almost always “as is”—plan for repairs.'
+        ]
+      }
+    },
+    {
+      id: 'task-bankruptcy-approval',
+      title: 'Bankruptcy Court Approval (Bankruptcy Sale)',
+      description: `What it is: When a seller is in bankruptcy, the court must approve the sale to protect creditors’ rights.
+
+Why it matters: Without court approval, the sale cannot close. Delays are common while the court reviews.`,
+      category: 'contract',
+      subcategory: 'legal',
+      priority: 'high',
+      status: isUnderContract ? 'pending' : 'upcoming',
+      assignedTo: 'Attorney',
+      dependencies: ['task-offer-acceptance-signing', 'task-contract-review'],
+      instructions: {
+        overview: 'Coordinate with seller’s counsel to obtain a sale approval order from the bankruptcy court.',
+        steps: [
+          { step: 1, title: 'Motion for approval', description: 'Seller’s attorney files motion with the court', action: 'Track hearing/decision dates' },
+          { step: 2, title: 'Court order issued', description: 'Order authorizes sale', action: 'Obtain and file the order' },
+          { step: 3, title: 'Confirm “free and clear”', description: 'Ensure order specifies sale free and clear of liens', action: 'Verify against title report' }
+        ],
+        tips: [
+          'Expect longer timelines—build in flexibility.',
+          'Confirm the order explicitly states the sale is free and clear of liens.'
+        ]
+      }
+    },
+    {
+      id: 'task-gov-addenda',
+      title: 'HUD / VA Addenda (Government-Owned Sale)',
+      description: `What it is: Special forms required when buying HUD or VA repossessed properties.
+
+Why it matters: Without these addenda, your contract is not valid. They include acknowledgments of condition and program-specific disclosures.`,
+      category: 'offer',
+      subcategory: 'legal',
+      priority: 'high',
+      status: 'upcoming',
+      assignedTo: 'Buyer & Agent',
+      dependencies: ['task-submit-offer'],
+      instructions: {
+        overview: 'Download, review, and execute the required addenda as part of your offer package.',
+        steps: [
+          { step: 1, title: 'Obtain addenda', description: 'HUD/VA website or provided by agent', action: 'Download correct forms' },
+          { step: 2, title: 'Review disclosures', description: 'Understand limitations and “as-is” nature', action: 'Discuss with your attorney/agent' },
+          { step: 3, title: 'Sign and submit', description: 'Include addenda with offer', action: 'Verify all required fields and signatures' }
+        ],
+        tips: [
+          'Government-owned properties are strictly “as is.”',
+          'Inspect thoroughly—HUD/VA will not make repairs.',
+          'Offer deadlines are rigid—submit promptly.'
+        ]
+      }
+    },
+    {
+      id: 'task-historic-preservation-review',
+      title: 'Historic Preservation Review (Historic Property / Historic District)',
+      description: `What it is: A review process by local preservation boards if the home is designated historic or lies within a historic district. Regulates what changes or renovations can be made.
+
+Why it matters: Owning a historic property can add prestige and charm but comes with restrictions. You may not be allowed to replace windows, paint colors, or modify the exterior without approval.
+
+How to complete it:
+- Check local registry for historic designation.
+- Contact preservation board to understand rules.
+- Submit applications for any planned renovations.`,
+      category: 'diligence',
+      subcategory: 'legal',
+      priority: 'medium',
+      status: isUnderContract ? 'pending' : 'upcoming',
+      assignedTo: 'Buyer & Attorney',
+      dependencies: ['task-offer-acceptance-signing', 'task-contract-review'],
+      instructions: {
+        overview: 'Verify historic restrictions early to avoid costly surprises post-closing.',
+        steps: [
+          { step: 1, title: 'Check designation', description: 'Confirm local/state/national historic registries', action: 'Document status and overlays' },
+          { step: 2, title: 'Engage board/office', description: 'Understand permitted work, materials, and process', action: 'Request written guidelines' },
+          { step: 3, title: 'Plan approvals', description: 'Submit applications for any planned exterior/interior work', action: 'Build extra time and costs into budget' }
+        ],
+        tips: [
+          'Budget extra time and money—approvals can be slow and materials must meet standards.',
+          'Ask about tax credits or incentives for restoration projects.',
+          'In some districts, interior changes can be regulated—verify before buying.'
+        ]
+      }
+    },
+    {
+      id: 'task-as-is-sale-terms',
+      title: 'Confirm “As-Is” Sale Terms (Scenario: As-Is Condition)',
+      description: `What it is: When a seller offers the property “as is,” meaning they will not make repairs or credits for defects discovered in inspection.
+
+Why it matters: “As is” can mean anything from cosmetic issues to severe structural problems. Buyers often underestimate costs and are shocked later.
+
+How to complete it:
+- Still perform inspections—“as is” doesn’t mean “don’t check.”
+- Review inspection reports carefully.
+- Decide if price still makes sense with repair costs factored in.`,
+      category: 'contract',
+      subcategory: 'legal',
+      priority: 'high',
+      status: isUnderContract ? 'pending' : 'upcoming',
+      assignedTo: 'Buyer & Attorney',
+      dependencies: ['task-contract-review', 'task-home-inspection'],
+      instructions: {
+        overview: 'Acknowledge as-is terms while protecting yourself with thorough inspections and cost estimates.',
+        steps: [
+          { step: 1, title: 'Perform full inspections', description: 'General plus any needed specialty tests', action: 'Complete within contingency window' },
+          { step: 2, title: 'Review reports and costs', description: 'Price out major repairs and safety items', action: 'Consult contractors for estimates' },
+          { step: 3, title: 'Reassess price/value', description: 'Decide if deal still makes sense', action: 'Proceed, renegotiate, or walk away per contract rights' }
+        ],
+        tips: [
+          'Sellers may still negotiate if issues are severe—don’t assume zero flexibility.',
+          'Line up contractors during the inspection window to get quotes quickly.',
+          'If you’re not prepared for major renovations, consider walking away.'
+        ]
+      }
+    },
+    {
+      id: 'task-elevation-certificate',
+      title: 'Obtain Elevation Certificate (Flood Zone)',
+      description: `What it is: A FEMA-standard document prepared by a surveyor or engineer, showing the home’s elevation relative to base flood level.
+
+Why it matters: If the property is in a flood zone, this certificate determines insurance cost and whether lenders will require flood insurance. Without it, you can’t get accurate quotes.
+
+How to complete it:
+- Ask seller if a current certificate exists (typically valid ~5 years).
+- If not, hire a licensed surveyor/engineer to measure and prepare one.
+- Provide the certificate to your insurance company for premium calculation.`,
+      category: 'pre-closing',
+      subcategory: 'insurance',
+      priority: 'high',
+      status: isUnderContract ? 'pending' : 'upcoming',
+      assignedTo: 'Buyer & Surveyor',
+      dependencies: ['task-offer-acceptance-signing'],
+      instructions: {
+        overview: 'Obtain an elevation certificate early to get accurate flood insurance quotes.',
+        steps: [
+          { step: 1, title: 'Check for existing certificate', description: 'Request from seller or prior insurer', action: 'Verify recency and validity' },
+          { step: 2, title: 'Hire surveyor/engineer', description: 'Order a new certificate if needed', action: 'Confirm turnaround time and fees' },
+          { step: 3, title: 'Distribute to insurers', description: 'Share with insurance agent to quote', action: 'Store PDF in your docs' }
+        ],
+        tips: [
+          'Flood insurance can range from hundreds to thousands per year—factor into affordability.',
+          'If elevation is above base flood level, premiums may be reduced.',
+          'FEMA maps update—recheck zone status even if seller says “not required.”'
+        ]
+      }
+    },
+    {
+      id: 'task-bind-flood-insurance',
+      title: 'Bind Flood Insurance (Flood Zone)',
+      description: `What it is: Securing a flood insurance policy if the home is in a FEMA-designated flood zone.
+
+Why it matters: Lenders won’t allow closing without proof of flood coverage when required. Flood damage is not covered by standard homeowners policies.
+
+How to complete it:
+- Use the elevation certificate to shop quotes from multiple insurers.
+- Decide between NFIP (federal program) and private insurers.
+- Pay first year’s premium before closing and provide the binder to your lender.`,
+      category: 'pre-closing',
+      subcategory: 'insurance',
+      priority: 'high',
+      status: isUnderContract ? 'pending' : 'upcoming',
+      assignedTo: 'Buyer & Insurance Agent',
+      dependencies: ['task-elevation-certificate', 'task-insurance-get-bids'],
+      instructions: {
+        overview: 'Secure required flood coverage in time for lender approval and closing.',
+        steps: [
+          { step: 1, title: 'Gather quotes', description: 'Use elevation certificate to obtain NFIP and private quotes', action: 'Compare coverage, premiums, and deductibles' },
+          { step: 2, title: 'Choose policy', description: 'Select NFIP vs private', action: 'Confirm renewal terms and lender acceptability' },
+          { step: 3, title: 'Bind and provide proof', description: 'Pay first year and send binder to lender', action: 'Upload to lender portal and file in docs' }
+        ],
+        tips: [
+          'Private policies can be cheaper but may have fewer guarantees of renewal—compare carefully.',
+          'Flood deductibles are often higher than HOI—account for this in your risk planning.',
+          'Ask if the seller’s policy is transferable—assuming it may lower costs.'
         ]
       }
     },
@@ -1406,6 +1899,28 @@ How to complete it:
 'task-closing-review': ['legal'],
     'task-open-escrow': ['legal'],
 
+    // Scenario-specific
+    'task-historic-preservation-review': ['legal', 'scenario-historic'],
+    'task-as-is-sale-terms': ['legal', 'scenario-as-is'],
+    'task-probate-approval': ['legal', 'scenario-probate'],
+    'task-divorce-order': ['legal', 'scenario-divorce'],
+    'task-short-sale-approval': ['legal', 'scenario-short-sale'],
+    'task-reo-bank-addenda': ['legal', 'scenario-reo'],
+    'task-auction-register': ['scenario-auction'],
+    'task-auction-deposit': ['legal', 'scenario-auction'],
+    'task-bankruptcy-approval': ['legal', 'scenario-bankruptcy'],
+    'task-gov-addenda': ['legal', 'scenario-gov-owned'],
+
+    // Financing / Mortgage
+    'task-probate-approval': ['legal', 'scenario-probate'],
+    'task-divorce-order': ['legal', 'scenario-divorce'],
+    'task-short-sale-approval': ['legal', 'scenario-short-sale'],
+    'task-reo-bank-addenda': ['legal', 'scenario-reo'],
+    'task-auction-register': ['scenario-auction'],
+    'task-auction-deposit': ['legal', 'scenario-auction'],
+    'task-bankruptcy-approval': ['legal', 'scenario-bankruptcy'],
+    'task-gov-addenda': ['legal', 'scenario-gov-owned'],
+
     // Financing / Mortgage
 'task-mortgage-preapproval': ['financing'],
     'task-proof-of-funds': ['financing'],
@@ -1413,6 +1928,8 @@ How to complete it:
     'task-shop-mortgage-terms': ['financing'],
     'task-mortgage-application': ['financing'],
     'task-appraisal': ['financing'],
+    'task-rate-lock': ['financing'],
+    'task-underwriting-conditions': ['financing'],
     'task-closing-funds': ['financing'],
     'task-wire-funds': ['financing'],
 
@@ -1493,7 +2010,34 @@ How to complete it:
     'task-shop-mortgage-terms': { anchor: 'acceptance', offset: 2 },
     'task-mortgage-application': { anchor: 'acceptance', offset: 3 },
     'task-appraisal': { anchor: 'acceptance', offset: 14 },
-    'task-title-search': { anchor: 'acceptance', offset: 14 },
+'task-title-search': { anchor: 'acceptance', offset: 14 },
+    'task-rate-lock': { anchor: 'acceptance', offset: 12 },
+    'task-underwriting-conditions': { anchor: 'acceptance', offset: 21 },
+
+    // Scenario-specific scheduling
+    'task-historic-preservation-review': { anchor: 'acceptance', offset: 3 },
+    'task-as-is-sale-terms': { anchor: 'acceptance', offset: 1 },
+    'task-probate-approval': { anchor: 'acceptance', offset: 2 },
+    'task-divorce-order': { anchor: 'acceptance', offset: 1 },
+    'task-short-sale-approval': { anchor: 'acceptance', offset: 1 },
+    'task-reo-bank-addenda': { anchor: 'acceptance', offset: 0 },
+    'task-auction-register': { anchor: 'today', offset: 0 },
+    'task-auction-deposit': { anchor: 'acceptance', offset: 0 },
+    'task-bankruptcy-approval': { anchor: 'acceptance', offset: 2 },
+    'task-gov-addenda': { anchor: 'today', offset: 2 },
+
+    'task-insurance-get-bids': { anchor: 'acceptance', offset: 7 },
+    'task-homeowners-insurance': { anchor: 'acceptance', offset: 22 },
+    'task-elevation-certificate': { anchor: 'acceptance', offset: 8 },
+    'task-bind-flood-insurance': { anchor: 'acceptance', offset: 24 },
+    'task-probate-approval': { anchor: 'acceptance', offset: 2 },
+    'task-divorce-order': { anchor: 'acceptance', offset: 1 },
+    'task-short-sale-approval': { anchor: 'acceptance', offset: 1 },
+    'task-reo-bank-addenda': { anchor: 'acceptance', offset: 0 },
+    'task-auction-register': { anchor: 'today', offset: 0 },
+    'task-auction-deposit': { anchor: 'acceptance', offset: 0 },
+    'task-bankruptcy-approval': { anchor: 'acceptance', offset: 2 },
+    'task-gov-addenda': { anchor: 'today', offset: 2 },
 
     'task-insurance-get-bids': { anchor: 'acceptance', offset: 7 },
     'task-homeowners-insurance': { anchor: 'acceptance', offset: 22 },
@@ -1540,7 +2084,20 @@ How to complete it:
     'task-shop-mortgage-terms': 7,
     'task-mortgage-application': 8,
     'task-appraisal': 20,
-    'task-title-search': 20,
+'task-title-search': 20,
+    'task-rate-lock': 16,
+    'task-underwriting-conditions': 24,
+    'task-elevation-certificate': 13,
+    'task-bind-flood-insurance': 26,
+    // Scenario-specific fallback offsets
+    'task-probate-approval': 18,
+    'task-divorce-order': 17,
+    'task-short-sale-approval': 17,
+    'task-reo-bank-addenda': 16,
+    'task-auction-register': 0,
+    'task-auction-deposit': 5,
+    'task-bankruptcy-approval': 18,
+    'task-gov-addenda': 3,
     'task-insurance-get-bids': 12,
     'task-homeowners-insurance': 22,
     'task-schedule-final-walkthrough': 27,
