@@ -1146,27 +1146,25 @@ const InlinePhaseStepper = ({ phases, currentId, onSelect }: { phases: TaskPhase
     return firstIncomplete >= 0 ? firstIncomplete : Math.max(0, phases.length - 1);
   };
   const cur = computeCurrentIndex();
-  const stateAt = (i: number) => (i < cur ? 'completed' : i === cur ? 'current' : 'upcoming');
   return (
-    <div className="flex items-center isolate rounded-full bg-white px-1.5 py-1 border border-gray-200 shadow-sm">
+    <div className="isolate inline-flex items-center rounded-full ring-1 ring-gray-300 bg-white p-0.5 shadow-sm overflow-hidden">
       {phases.map((p, i) => {
-        const st = stateAt(i);
-        const isCurrent = st === 'current';
-        const base = 'relative inline-flex items-center h-9 px-5 rounded-full text-sm font-medium transition-colors';
-        const colors = isCurrent ? 'bg-blue-600 text-white' : 'bg-white text-gray-700';
-        const ring = isCurrent ? '' : 'ring-1 ring-gray-200';
-        const z = isCurrent ? 'z-20' : i < cur ? 'z-10' : 'z-0';
+        const filled = i <= cur; // completed and current are filled
+        const base = 'relative flex-1 inline-flex items-center justify-center h-9 px-6 text-sm font-medium transition-colors select-none';
+        const colors = filled ? 'bg-indigo-700 text-white' : 'bg-transparent text-gray-600';
+        const radius = `${i === 0 ? 'rounded-l-full' : ''} ${i === phases.length - 1 ? 'rounded-r-full' : ''}`;
+        const divider = filled && i < cur; // show divider between filled steps
         return (
           <button
             key={p.id}
-            className={`${base} ${colors} ${ring} ${z} ${i>0 ? 'ml-3' : ''}`}
-            aria-current={isCurrent ? 'step' : undefined}
+            className={`${base} ${colors} ${radius}`}
+            aria-current={i === cur ? 'step' : undefined}
             onClick={() => onSelect(p.id)}
             title={p.title}
           >
             {p.title}
-            {i < phases.length - 1 && (
-              <span aria-hidden className={`${isCurrent ? 'bg-blue-600' : 'bg-white'} absolute right-[-10px] top-0 h-full w-3 skew-x-12 ${isCurrent ? '' : 'ring-1 ring-gray-200'} rounded-r-full`} />
+            {divider && (
+              <span aria-hidden className="absolute right-0 top-0 h-full w-px bg-indigo-400/70" />
             )}
           </button>
         );
