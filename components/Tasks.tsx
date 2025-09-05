@@ -1669,8 +1669,28 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
 
         <TabsContent value="checklist" className="space-y-6 mt-6 bg-[#F6F7FB]">
           <div className="px-1 space-y-4">
-            {/* Milestone bar above Project Overview, aligned right */}
-            <div className="flex justify-end">
+            {/* Milestone bar + scenarios selector */}
+            <div className="flex items-center justify-between">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="rounded-full h-9 px-4 text-[13px] border-gray-200 bg-white hover:bg-gray-50">
+                    Select scenarios{selectedScenarioKeys.length ? ` (${selectedScenarioKeys.length})` : ''}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[720px] p-3" align="start">
+                  <ScenarioBanner
+                    embedded
+                    selectedKeys={selectedScenarioKeys}
+                    onChange={(nextKeys) => {
+                      setSelectedScenarioKeys(nextKeys);
+                      const map: Record<string, boolean> = {};
+                      nextKeys.forEach(k => { map[k] = true; });
+                      try { saveScenarioSelection(map); } catch {}
+                      try { window.dispatchEvent(new Event('scenariosUpdated')); } catch {}
+                    }}
+                  />
+                </PopoverContent>
+              </Popover>
               <InlinePhaseStepper
                 phases={displayedTaskPhases}
                 currentId={phasePageId || displayedTaskPhases.find(p => p.status === 'active')?.id}
@@ -1725,7 +1745,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
               <div className="lg:col-span-2 space-y-4">
                 {selectedScenarioKeys.length === 0 && (
                   <div className="rounded-[10px] border border-[#E6E8F0] bg-white p-3 text-[13px] text-gray-700">
-                    Before using the checklist, set your Scope and Scenarios in the right panel.
+                    Before using the checklist, click "Select scenarios" above to set your Scope and Scenarios.
                   </div>
                 )}
                 {checklistSubtab === 'todo' && (
@@ -1803,24 +1823,6 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
 
               {/* Right sidebar */}
               <div className="space-y-4">
-                <Card className="shadow-sm">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-[15px] font-semibold tracking-[-0.01em] text-gray-900">Scenario & scope</CardTitle>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    <ScenarioBanner
-                      embedded
-                      selectedKeys={selectedScenarioKeys}
-                      onChange={(nextKeys) => {
-                        setSelectedScenarioKeys(nextKeys);
-                        const map: Record<string, boolean> = {};
-                        nextKeys.forEach(k => { map[k] = true; });
-                        try { saveScenarioSelection(map); } catch {}
-                        try { window.dispatchEvent(new Event('scenariosUpdated')); } catch {}
-                      }}
-                    />
-                  </CardContent>
-                </Card>
 
                 <Card className="shadow-sm">
                   <CardHeader className="pb-2">

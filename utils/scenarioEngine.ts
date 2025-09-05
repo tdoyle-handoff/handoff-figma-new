@@ -263,6 +263,9 @@ export function applyScenarios(baseTasks: Task[]): Task[] {
 
   // 1) Add base schema tasks (respecting visible_if)
   (scenarioSchema.base_tasks || []).forEach((bt: any) => {
+    // Only add base schema tasks if they explicitly depend on selected scenarios
+    // Tasks without visible_if are considered part of the app baseline and should not be injected here
+    if (!bt?.visible_if) return;
     if (!visibleByScenarios(bt, selected)) return;
     const t = toTask(bt);
     // Avoid duplicate titles across systems: only add if not already present by id or same title

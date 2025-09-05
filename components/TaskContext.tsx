@@ -187,7 +187,17 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
     {
       id: 'task-buy-box-template',
       title: 'Complete Property Questionnaire',
-      description: 'Fill out the property questionnaire to define price range, areas, property type, must-haves, and constraints. This powers Home Search and tracking.',
+      description: `What it is: A structured worksheet that captures your budget, desired property features, location preferences, and lifestyle needs. It becomes your "buy box," a framework for quickly filtering listings.
+
+Why it matters: Without a defined buy box, buyers often waste weeks chasing unsuitable properties, becoming overwhelmed and frustrated. This task forces clarity—what you truly need versus what would just be nice. Agents, attorneys, and lenders all work more effectively when your criteria are clear.
+
+How to complete it:
+- Write down your maximum comfortable monthly housing payment, not just purchase price. Factor in mortgage, taxes, insurance, HOA fees, utilities, and maintenance.
+- List your top five must-have features (e.g., 3 bedrooms, parking, washer/dryer).
+- List your top five deal-breakers (e.g., no basement, too far from public transit).
+- Identify target neighborhoods and rank them in order of preference.
+- Capture lifestyle considerations: commute time, school districts, walkability, resale potential.
+- Save this questionnaire and revisit it after you've toured a few homes—you may refine it.`,
       category: 'search',
       subcategory: 'general',
       priority: 'medium',
@@ -195,12 +205,57 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
       estimatedTime: '1-2 hours',
       assignedTo: 'Buyer',
       linkedPage: 'property-search',
-      actionLabel: 'Open Home Search'
+      actionLabel: 'Open Home Search',
+      instructions: {
+        overview: 'Define your criteria clearly so you can filter listings quickly and avoid wasted time.',
+        steps: [],
+        tips: [
+          'Involve all decision-makers early (partners, family) so you avoid conflicts later.',
+          'Limit "must-haves" to 5 items maximum—too many and you will filter out viable homes.',
+          'Be realistic: a perfect home rarely exists. Aim for 80% match.',
+          'If you are working with an agent, share this document so they only send relevant listings.'
+        ]
+      }
+    },
+    {
+      id: 'task-proof-of-funds',
+      title: 'Provide Proof of Funds or Pre-Approval',
+      description: `What it is: Official documentation showing you can afford the property. Cash buyers present recent bank or brokerage statements; financed buyers submit a lender's pre-approval letter.
+
+Why it matters: Sellers rarely consider offers without financial backing. Proof builds credibility, speeds up negotiations, and prevents your offer from being skipped over in competitive markets.
+
+How to complete it:
+- Cash buyers: Request a letter from your bank verifying available funds. Redact account numbers but leave balances visible.
+- Financed buyers: Complete a pre-approval with a lender. Provide pay stubs, W-2s, bank statements, and authorize a credit check.
+- Obtain a formal pre-approval letter on lender letterhead listing loan type, amount, and expiration.
+- Keep documents updated; most expire in 30–60 days.`,
+      category: 'search',
+      subcategory: 'financing',
+      priority: 'high',
+      status: isUnderContract ? 'completed' : 'active',
+      estimatedTime: '1-2 days',
+      assignedTo: 'Buyer',
+      instructions: {
+        steps: [],
+        tips: [
+          'Do not send full bank statements with personal data exposed—redact sensitive details.',
+          'Keep multiple copies ready—some sellers request resubmission if timelines slip.',
+          'Strongest offers include both pre-approval and proof of cash reserves for down payment and closing costs.'
+        ]
+      }
     },
     {
       id: 'task-mortgage-preapproval',
       title: 'Get Pre-approved for Mortgage',
-      description: 'Obtain pre-approval letter from a lender to understand your budget and strengthen your offer.',
+      description: `What it is: A lender's conditional approval after reviewing your credit, income, debt, and assets. It is stronger than pre-qualification and demonstrates buying power.
+
+Why it matters: Pre-approval establishes your maximum budget, prevents wasted time touring unaffordable homes, and signals to sellers that you are serious and capable of closing.
+
+How to complete it:
+- Gather documents: last 2 years of tax returns, W-2s or 1099s, pay stubs, bank statements, list of debts, ID.
+- Apply with 2–3 lenders for rate and fee comparison.
+- Authorize a credit check (hard pull).
+- Review the pre-approval letter and confirm it covers your expected purchase range and loan type.`,
       category: 'search',
       subcategory: 'financing',
       priority: 'high',
@@ -250,10 +305,9 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
           'Gift letter (if applicable)'
         ],
         tips: [
-          'Shop around with multiple lenders to compare rates',
-          'Don\'t make any major purchases before closing',
-          'Keep your employment stable during the process',
-          'Maintain your credit score by paying bills on time'
+          'Rates vary daily. Shop multiple lenders within 2 weeks—credit bureaus treat this as one inquiry.',
+          'Do not change jobs, make large purchases, or open new credit before closing—it may jeopardize approval.',
+          'Ask for both 30-year and 15-year payment scenarios to see long-term costs.'
         ],
         timeline: '2-3 business days for approval',
         cost: 'Usually free for pre-approval'
@@ -262,70 +316,251 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
     {
       id: 'task-agent-selection',
       title: 'Find a Real Estate Agent',
-      description: 'Research and select a qualified buyer\'s agent to represent you in the transaction.',
+      description: `What it is: Choosing a licensed professional who represents you in the search, offer, and negotiation process.
+
+Why it matters: An experienced buyer's agent can save you money, flag red flags, and handle logistics. Sellers usually pay buyer agent commissions, so representation often costs you little to nothing directly.
+
+How to complete it:
+- Interview at least 2–3 agents. Ask about experience with your property type and area.
+- Request references from recent clients.
+- Clarify communication style (text, call, email) and responsiveness.
+- Review agency disclosure forms. Understand if they can act as a dual agent.`,
       category: 'search',
       priority: 'high',
       status: isUnderContract ? 'completed' : 'active',
       estimatedTime: '1-2 weeks',
-      assignedTo: 'Buyer'
+      assignedTo: 'Buyer',
+      instructions: {
+        steps: [],
+        tips: [
+          'Avoid hiring friends/family unless they are truly qualified—it can complicate relationships.',
+          'Choose someone who educates, not pressures.',
+          'Confirm they have closed deals in your exact target neighborhoods.'
+        ]
+      }
     },
     {
       id: 'task-property-search',
       title: 'Begin Property Search',
-      description: 'Start searching for properties that meet your criteria and budget.',
+      description: `What it is: The active stage of identifying listings through MLS, public sites, and private channels.
+
+Why it matters: Most buyers look at dozens of homes before choosing one. The search process reveals trade-offs between features, price, and location, refining your buy box.
+
+How to complete it:
+- Set up MLS alerts with your agent.
+- Browse portals (Zillow, Realtor.com, Redfin) daily.
+- Track listings in a spreadsheet or app—note asking price, square footage, taxes, HOA fees, and initial impressions.
+- Drive or walk through neighborhoods to get a feel beyond online photos.`,
       category: 'search',
       priority: 'medium',
       status: isUnderContract ? 'completed' : 'active',
       estimatedTime: 'Ongoing',
       linkedPage: 'property-search',
       actionLabel: 'Search Properties',
-      assignedTo: 'Buyer & Agent'
+      assignedTo: 'Buyer & Agent',
+      instructions: {
+        steps: [],
+        tips: [
+          "Don't believe listing photos blindly—professional photography can disguise flaws.",
+          'Pay attention to days on market: longer listings may be open to negotiation.',
+          'Keep emotions in check—first homes toured rarely become the final choice.'
+        ]
+      }
+    },
+    {
+      id: 'task-property-tours',
+      title: 'Schedule & Attend Property Tours',
+      description: `What it is: In-person or virtual visits to homes on your shortlist.
+
+Why it matters: Tours reveal details photos cannot: layout, noise levels, condition, smell, natural light, and neighborhood vibe. Many buyers eliminate or choose homes after a single visit.
+
+How to complete it:
+- Ask your agent to schedule tours—often grouped back-to-back for efficiency.
+- Bring a notepad or app to record pros/cons.
+- Check basics: water pressure, windows, heating/cooling systems, and roof condition.
+- Tour the block: look for parking, traffic, noise, safety, and nearby amenities.`,
+      category: 'search',
+      subcategory: 'general',
+      priority: 'medium',
+      status: isUnderContract ? 'completed' : 'active',
+      estimatedTime: 'Ongoing',
+      assignedTo: 'Buyer & Agent',
+      instructions: {
+        steps: [],
+        tips: [
+          'Always check cell service inside the home—weak coverage can be a deal breaker.',
+          'Take photos or videos—memories blur after multiple showings.',
+          'Do not linger too long on cosmetic issues (paint, carpet)—focus on structural and location factors.'
+        ]
+      }
     },
 
     // Phase 2: Offer & Negotiation
     {
+      id: 'task-draft-offer',
+      title: 'Draft Offer',
+      description: `What it is: A written purchase contract where you propose buying the property on specific terms: price, closing date, contingencies (inspection, appraisal, financing), and included/excluded items (appliances, fixtures). This becomes the legal foundation of the transaction once accepted.
+
+Why it matters: Drafting an offer is not just about naming a price. It’s about balancing attractiveness to the seller with adequate protection for you. A poorly written offer can lock you into unfavorable terms, cost you thousands, or even expose you to legal risk if you fail to perform.
+
+How to complete it:
+- Work with your agent/attorney – They’ll use the standard state-approved purchase agreement form.
+- Decide key terms – purchase price, earnest money deposit, closing date, and contingencies.
+- Review seller disclosures – adjust your contingencies if disclosures reveal known issues.
+- Have attorney review – in states requiring it, attorney review is a built-in period; elsewhere, do it voluntarily.
+- Sign electronically – most contracts are signed via DocuSign or similar.`,
+      category: 'offer',
+      priority: 'high',
+      status: isUnderContract ? 'completed' : 'pending',
+      estimatedTime: '1 day',
+      assignedTo: 'Agent',
+      instructions: {
+        overview: 'Prepare a written offer that balances competitiveness with adequate protections.',
+        steps: [
+          { step: 1, title: 'Coordinate with agent/attorney', description: 'Use the standard form for your state', action: 'Engage your agent and, if applicable, attorney' },
+          { step: 2, title: 'Decide key terms', description: 'Price, EMD, closing date, contingencies, inclusions', action: 'Fill the terms in the draft' },
+          { step: 3, title: 'Review disclosures', description: 'Adjust contingencies based on known issues', action: 'Incorporate disclosure findings' },
+          { step: 4, title: 'Attorney review', description: 'Leverage attorney review periods where applicable', action: 'Request legal review' },
+          { step: 5, title: 'Sign electronically', description: 'Execute via e-signature', action: 'Use DocuSign or similar' }
+        ],
+        tips: [
+          'Don’t waive inspection or financing contingencies unless you fully understand the risks.',
+          'Closing date flexibility can be more valuable to a seller than a higher price.',
+          'List exactly what is included (appliances, light fixtures, blinds) to avoid disputes.'
+        ]
+      }
+    },
+    {
       id: 'task-mls-listing-pdf',
       title: 'Collect MLS Listing PDF',
-      description: 'Download and store the official MLS listing PDF for the subject property.',
+      description: `What it is: The MLS (Multiple Listing Service) sheet is the official listing record for the property. It contains property details, photos, disclosures, taxes, HOA information, and agent notes.
+
+Why it matters: It is the authoritative reference that shows what the seller is representing. Discrepancies between MLS and reality can be negotiation leverage or red flags. Having the PDF locked in at offer time protects you if details change later.
+
+How to complete it:
+- Ask your agent to export the full MLS sheet.
+- Save it as a PDF with the date and MLS number.
+- Review: lot size, taxes, HOA fees, property history, disclosures, days on market.
+- Store in your transaction folder with your offer documents.`,
       category: 'offer',
       priority: 'medium',
       status: isUnderContract ? 'completed' : 'pending',
       estimatedTime: '30 minutes',
       assignedTo: 'Agent',
-      dependencies: ['task-property-search']
+      dependencies: ['task-property-search'],
+      instructions: {
+        overview: 'Lock in an authoritative snapshot of the property details at offer time.',
+        steps: [
+          { step: 1, title: 'Export MLS sheet', description: 'Get the full report from the agent', action: 'Request full export' },
+          { step: 2, title: 'Save as PDF', description: 'Include date and MLS number in filename', action: 'Name: mls_<number>_<date>.pdf' },
+          { step: 3, title: 'Review key fields', description: 'Lot size, taxes, HOA, history, disclosures, DOM', action: 'Note discrepancies' },
+          { step: 4, title: 'File it', description: 'Store with offer documents', action: 'Upload to documents workspace' }
+        ],
+        tips: [
+          'Compare MLS data against public records to catch errors.',
+          'Pay close attention to HOA fees and property taxes—they impact affordability.',
+          'If disclosures are missing from MLS, request them before submitting your offer.'
+        ]
+      }
     },
     {
       id: 'task-market-analysis',
-      title: 'Comparative Market Analysis',
-      description: 'Analyze recent sales of similar properties to determine fair market value.',
+      title: 'Comparative Market Analysis (CMA)',
+      description: `What it is: A CMA is a report showing recent sales of comparable homes. It is the basis for determining what your offer price should be.
+
+Why it matters: Overpaying reduces your equity; underbidding risks losing the property. A CMA helps strike the right balance and supports your negotiation stance.
+
+How to complete it:
+- Have your agent pull at least 3–6 sold comparables from the last 90 days.
+- Compare size, age, condition, location, and amenities.
+- Adjust values: if your target is newer/bigger, adjust upward; if older/smaller, adjust downward.
+- Consider market momentum: rising or falling prices may justify adjusting above/below comps.`,
       category: 'offer',
       priority: 'high',
       status: isUnderContract ? 'completed' : 'pending',
       estimatedTime: '1-2 days',
-      assignedTo: 'Agent'
-    },
+      assignedTo: 'Agent',
+      instructions: {
+        overview: 'Use recent comparable sales to calibrate a defensible offer price.',
+        steps: [
+          { step: 1, title: 'Pull comps', description: '3–6 closed comps in 90 days', action: 'Ask agent for a CMA report' },
+          { step: 2, title: 'Normalize differences', description: 'Size, age, condition, amenities', action: 'Apply reasonable adjustments' },
+          { step: 3, title: 'Read the market', description: 'Is pricing trending up or down?', action: 'Adjust for momentum' }
+        ],
+        tips: [
+          "Don’t rely on a single Zestimate—automated values can be off by tens of thousands.",
+          'Include pending sales—they reveal current demand.',
+          'Factor in seasonality: spring tends to be hotter; winter slower.'
+        ]
+      }
+    }
     {
       id: 'task-submit-offer',
       title: 'Submit Purchase Offer',
-      description: 'Prepare and submit a competitive purchase offer with appropriate terms and contingencies.',
+      description: `What it is: Delivery of your signed purchase agreement to the seller’s side (agent or directly).
+
+Why it matters: An unsigned offer is meaningless. Once delivered, the seller can accept, reject, or counter. The response timeline typically starts when the offer is officially presented.
+
+How to complete it:
+- Sign the drafted contract (usually via electronic signature platform).
+- Attach pre-approval letter or proof of funds.
+- Have your agent send to seller’s agent with confirmation of receipt.
+- Track deadlines: offers often include an expiration date (e.g., 24–48 hours).`,
       category: 'offer',
       priority: 'high',
       status: isUnderContract ? 'completed' : 'pending',
       estimatedTime: '1 day',
       linkedPage: 'documents',
       actionLabel: 'Prepare Offer',
-      assignedTo: 'Agent'
-    },
+      assignedTo: 'Agent',
+      instructions: {
+        overview: 'Deliver a complete, signed offer package and confirm receipt.',
+        steps: [
+          { step: 1, title: 'Sign contract', description: 'Execute via e-sign', action: 'Use DocuSign or similar' },
+          { step: 2, title: 'Attach proof', description: 'Pre-approval or proof of funds', action: 'Include lender letter or bank letter' },
+          { step: 3, title: 'Send and confirm', description: 'Transmit to seller’s agent', action: 'Request explicit receipt confirmation' },
+          { step: 4, title: 'Track expiration', description: 'Stay on top of your offer deadline', action: 'Calendar a reminder' }
+        ],
+        tips: [
+          'A short offer expiration can compel a quick response—avoid making it unrealistically short.',
+          'A polished, professional cover note highlighting your qualifications can build goodwill.',
+          'Double-check earnest money details: amount, due date, escrow agent.'
+        ]
+      }
+    }
     {
       id: 'task-offer-negotiation',
       title: 'Negotiate Offer Terms',
-      description: 'Work with seller to negotiate price, terms, and contingencies.',
+      description: `What it is: The back-and-forth process of refining terms until both parties agree. This can involve multiple counteroffers adjusting price, timing, and contingencies.
+
+Why it matters: Negotiation determines your ultimate deal—both financially and logistically. Many buyers lose money by focusing only on price, overlooking hidden costs like closing credits, repair concessions, or leasebacks.
+
+How to complete it:
+- Review the seller’s counter carefully with your agent/attorney.
+- Identify your non-negotiables (budget, timing, inspection rights).
+- Make strategic concessions (price, closing date, repair flexibility) in exchange for what matters most.
+- Put every agreed change in writing—verbal agreements mean nothing.`,
       category: 'offer',
       priority: 'high',
       status: isUnderContract ? 'completed' : 'pending',
       estimatedTime: '1-3 days',
-      assignedTo: 'Agent'
-    },
+      assignedTo: 'Agent',
+      instructions: {
+        overview: 'Iterate terms strategically to arrive at a mutually acceptable agreement.',
+        steps: [
+          { step: 1, title: 'Review counter', description: 'Discuss with agent/attorney', action: 'Identify risks and opportunities' },
+          { step: 2, title: 'Define limits', description: 'Fix your max price and key constraints', action: 'Document non-negotiables' },
+          { step: 3, title: 'Propose tradeoffs', description: 'Price/date/repairs flexibility', action: 'Offer concessions for priorities' },
+          { step: 4, title: 'Confirm in writing', description: 'Formalize every agreed change', action: 'Use amendments/counter forms' }
+        ],
+        tips: [
+          'Set your maximum price in advance and stick to it—avoid emotional bidding.',
+          'Flexibility on closing date can beat a slightly higher competing price.',
+          'Request seller disclosures early—hidden issues can shift your stance.',
+          'If multiple offers exist, consider an escalation clause with a clear cap.'
+        ]
+      }
+    }
 
     // Phase 3: Contract & Legal
     {
@@ -902,7 +1137,8 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
     'task-closing-review': ['legal'],
 
     // Financing / Mortgage
-    'task-mortgage-preapproval': ['financing'],
+'task-mortgage-preapproval': ['financing'],
+    'task-proof-of-funds': ['financing'],
     'task-send-offer-to-lender': ['financing'],
     'task-shop-mortgage-terms': ['financing'],
     'task-mortgage-application': ['financing'],
@@ -929,8 +1165,10 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
     // General / Buyer Tasks
     'task-buy-box-template': ['general'],
     'task-agent-selection': ['general'],
-    'task-property-search': ['general'],
-    'task-mls-listing-pdf': ['general'],
+'task-property-search': ['general'],
+    'task-property-tours': ['general'],
+'task-mls-listing-pdf': ['general'],
+    'task-draft-offer': ['general'],
     'task-market-analysis': ['general'],
     'task-submit-offer': ['general'],
     'task-offer-negotiation': ['general'],
@@ -958,11 +1196,14 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
   // Scheduling rules per task (anchor + offset days). Anchor missing -> fallback to today offsets below.
   const scheduleRules: Record<string, { anchor: 'acceptance' | 'closing' | 'today'; offset: number }> = {
     'task-buy-box-template': { anchor: 'today', offset: 0 },
+    'task-proof-of-funds': { anchor: 'today', offset: 2 },
     'task-mortgage-preapproval': { anchor: 'today', offset: 3 },
     'task-mls-listing-pdf': { anchor: 'today', offset: 1 },
     'task-property-search': { anchor: 'today', offset: 0 },
+    'task-property-tours': { anchor: 'today', offset: 0 },
     'task-market-analysis': { anchor: 'today', offset: 1 },
-    'task-submit-offer': { anchor: 'today', offset: 2 },
+'task-submit-offer': { anchor: 'today', offset: 2 },
+    'task-draft-offer': { anchor: 'today', offset: 2 },
 
     'task-offer-acceptance-signing': { anchor: 'acceptance', offset: 0 },
     'task-attorney-selection': { anchor: 'acceptance', offset: 2 },
@@ -1005,9 +1246,13 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
   // Default due dates tuned to workflow (relative to today) where not already set
   const offsetDaysById: Record<string, number> = {
     'task-buy-box-template': 0,
+    'task-proof-of-funds': 2,
     'task-mortgage-preapproval': 3,
     'task-mls-listing-pdf': 1,
-    'task-submit-offer': 2,
+    'task-property-search': 0,
+    'task-property-tours': 0,
+'task-submit-offer': 2,
+    'task-draft-offer': 2,
     'task-offer-acceptance-signing': 5,
     'task-attorney-selection': 7,
     'task-contract-riders': 9,
