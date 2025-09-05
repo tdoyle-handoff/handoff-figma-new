@@ -1547,8 +1547,32 @@ export default function Tasks({ onNavigate }: TasksProps) {
   // Tab state management
   const [activeTab, setActiveTab] = useState<string>('checklist');
 const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
+  const [tagFilter, setTagFilter] = useState<string>('all');
   // When set, show only this phase as its own page
   const [phasePageId, setPhasePageId] = useState<string | null>(null);
+
+  const availableTags = React.useMemo(() => {
+    const set = new Set<string>();
+    displayedTaskPhases.forEach(p => p.tasks.forEach(t => (t.tags || []).forEach(tag => set.add(tag))));
+    const order = ['legal','financing','inspections','insurance','general'];
+    const arr = Array.from(set);
+    arr.sort((a,b) => {
+      const ia = order.indexOf(a);
+      const ib = order.indexOf(b);
+      if (ia === -1 && ib === -1) return a.localeCompare(b);
+      if (ia === -1) return 1;
+      if (ib === -1) return -1;
+      return ia - ib;
+    });
+    return arr;
+  }, [displayedTaskPhases]);
+
+  const matchesTag = React.useCallback((t: Task) => {
+    if (tagFilter === 'all') return true;
+    const tags = (t.tags || []).map(s => s.toLowerCase());
+    if (tags.includes(tagFilter)) return true;
+    return (t.subcategory || '').toLowerCase() === tagFilter;
+  }, [tagFilter]);
 
   // selection state for sidebar -> detail
   const [selectedPhaseId, setSelectedPhaseId] = useState<string | undefined>(displayedTaskPhases.find(p => p.status === 'active')?.id);
@@ -1680,6 +1704,20 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                   <TabsTrigger value="done" className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 pb-2 px-4 text-gray-600 data-[state=active]:text-gray-900">Done</TabsTrigger>
                 </TabsList>
               </Tabs>
+              <div className="flex items-center gap-2 mt-2">
+                <Label className="text-xs">Tag</Label>
+                <Select value={tagFilter} onValueChange={(v) => setTagFilter(v)}>
+                  <SelectTrigger className="h-8 w-[200px]">
+                    <SelectValue placeholder="All" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All</SelectItem>
+                    {availableTags.map((tag) => (
+                      <SelectItem key={tag} value={tag}>{tag.charAt(0).toUpperCase() + tag.slice(1)}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -1703,15 +1741,16 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                       </div>
                     )}
                     {(phasePageId ? displayedTaskPhases.filter(p => p.id === phasePageId) : displayedTaskPhases).map((phase) => {
-                      const tasks = phase.tasks.filter(t => t.status !== 'completed');
+                      let tasks = phase.tasks.filter(t => t.status !== 'completed');
+                      if (tagFilter !== 'all') tasks = tasks.filter(matchesTag);
                       if (tasks.length === 0) return null;
 
                       const isDiligence = phase.id.toLowerCase().includes('diligence') || phase.title.toLowerCase().includes('diligence');
                       if (isDiligence) {
-                        const legal = tasks.filter(t => ((t.subcategory || '') as string).toLowerCase() === 'legal');
-                        const inspections = tasks.filter(t => ['inspections','inspection'].includes(((t.subcategory || '') as string).toLowerCase()));
-                        const insurance = tasks.filter(t => ((t.subcategory || '') as string).toLowerCase() === 'insurance');
-                        const mortgage = tasks.filter(t => ['financing','mortgage'].includes(((t.subcategory || '') as string).toLowerCase()));
+                        const legal = tasks.filter(t => ((t.subcategory || '') as string).toLowerCase() === 'legal' || (t.tags || []).includes('legal'));
+                        const inspections = tasks.filter(t => ['inspections','inspection'].includes(((t.subcategory || '') as string).toLowerCase()) || (t.tags || []).includes('inspections'));
+                        const insurance = tasks.filter(t => ((t.subcategory || '') as string).toLowerCase() === 'insurance' || (t.tags || []).includes('insurance'));
+                        const mortgage = tasks.filter(t => ['financing','mortgage'].includes(((t.subcategory || '') as string).toLowerCase()) || (t.tags || []).includes('financing'));
                         return (
                           <div key={phase.id} id={`phase-card-${phase.id}`}>
                             <TaskTableCardGrouped
@@ -1746,16 +1785,20 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                     })}
                   </>
                 )}
-                {checklistSubtab === 'done' && (
-                  <TaskTableCard
-                    title="Completed"
-                    tasks={displayedTaskPhases.flatMap(p => p.tasks.filter(t => t.status === 'completed'))}
-                    onNavigate={onNavigate}
-                    onUpdateTask={handleUpdateTask}
-                    onUpdateTaskFields={handleUpdateTaskFields}
-                    tasksById={tasksById}
-                  />
-                )}
+                {checklistSubtab === 'done' && (() => {
+                  const completed = displayedTaskPhases.flatMap(p => p.tasks.filter(t => t.status === 'completed'));
+                  const filtered = tagFilter === 'all' ? completed : completed.filter(matchesTag);
+                  return (
+                    <TaskTableCard
+                      title="Completed"
+                      tasks={filtered}
+                      onNavigate={onNavigate}
+                      onUpdateTask={handleUpdateTask}
+                      onUpdateTaskFields={handleUpdateTaskFields}
+                      tasksById={tasksById}
+                    />
+                  );
+                })()}
               </div>
 
               {/* Right sidebar */}

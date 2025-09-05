@@ -10,6 +10,7 @@ export interface Task {
   description: string;
   category: 'search' | 'offer' | 'contract' | 'diligence' | 'pre-closing' | 'closing' | 'post-closing';
   subcategory?: 'financing' | 'legal' | 'inspections' | 'insurance' | 'general';
+  tags?: string[];
   priority: 'high' | 'medium' | 'low';
   status: 'completed' | 'in-progress' | 'pending' | 'overdue' | 'active' | 'upcoming';
   completed?: boolean;
@@ -87,6 +88,7 @@ interface TaskContextType {
   getTasksByCategory: (category: string) => Task[];
   getActiveTasksByCategory: (category: string) => Task[];
   getTasksByStatus: (status: string) => Task[];
+  getTasksByTag: (tag: string) => Task[];
   getHighPriorityTasks: () => Task[];
   updateTaskStatus: (taskId: string, status: Task['status']) => void;
   addTask: (task: Omit<Task, 'id'>) => void;
@@ -849,6 +851,66 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
     }
   ];
 
+  // Assign tags to tasks for filtering
+  const tagsById: Record<string, string[]> = {
+    // Legal
+    'task-offer-acceptance-signing': ['legal'],
+    'task-contract-review': ['legal'],
+    'task-attorney-selection': ['legal'],
+    'task-contract-riders': ['legal'],
+    'task-send-lawyer-signed-contract': ['legal'],
+    'task-earnest-money-deposit': ['legal'],
+    'task-title-search': ['legal'],
+    'task-closing-review': ['legal'],
+
+    // Financing / Mortgage
+    'task-mortgage-preapproval': ['financing'],
+    'task-send-offer-to-lender': ['financing'],
+    'task-shop-mortgage-terms': ['financing'],
+    'task-mortgage-application': ['financing'],
+    'task-appraisal': ['financing'],
+    'task-closing-funds': ['financing'],
+    'task-wire-funds': ['financing'],
+
+    // Inspections
+    'task-shop-inspectors': ['inspections'],
+    'task-home-inspection': ['inspections'],
+    'task-schedule-specialized-inspections': ['inspections'],
+    'task-review-inspection-results': ['inspections'],
+    'task-submit-repair-requests': ['inspections'],
+    'task-finalize-inspection-remedies': ['inspections'],
+    'task-confirm-repairs-complete': ['inspections'],
+    'task-schedule-final-walkthrough': ['inspections'],
+    'task-final-walkthrough': ['inspections'],
+    'task-renegotiate-new-findings': ['inspections'],
+
+    // Insurance
+    'task-insurance-get-bids': ['insurance'],
+    'task-homeowners-insurance': ['insurance'],
+
+    // General / Buyer Tasks
+    'task-buy-box-template': ['general'],
+    'task-agent-selection': ['general'],
+    'task-property-search': ['general'],
+    'task-mls-listing-pdf': ['general'],
+    'task-market-analysis': ['general'],
+    'task-submit-offer': ['general'],
+    'task-offer-negotiation': ['general'],
+    'task-escrow-wire-instructions': ['general'],
+    'task-closing-meeting': ['general'],
+    'task-utilities-transfer': ['general'],
+    'task-move-in': ['general'],
+    'task-change-address': ['general'],
+    'task-home-maintenance': ['general'],
+  };
+
+  tasks.forEach((t) => {
+    const tags = tagsById[t.id] || [];
+    const fromSub = t.subcategory ? [t.subcategory] : [];
+    const merged = Array.from(new Set([...(tags.map(s => s.toLowerCase())), ...(fromSub.map(s => s.toLowerCase()))]));
+    if (merged.length > 0) t.tags = merged;
+  });
+
   // Scheduling rules per task (anchor + offset days). Anchor missing -> fallback to today offsets below.
   const scheduleRules: Record<string, { anchor: 'acceptance' | 'closing' | 'today'; offset: number }> = {
     'task-buy-box-template': { anchor: 'today', offset: 0 },
@@ -1268,6 +1330,15 @@ export function TaskProvider({ children, userProfile }: TaskProviderProps) {
     return tasks.filter(task => task.status === status);
   };
 
+  const getTasksByTag = (tag: string): Task[] => {
+    const needle = (tag || '').toLowerCase();
+    if (!needle || needle === 'all') return tasks;
+    return tasks.filter(task => {
+      const tags = (task.tags || []).map(t => t.toLowerCase());
+      return tags.includes(needle) || (task.subcategory || '').toLowerCase() === needle;
+    });
+  };
+
   const getTasksByPhase = (phaseId: string): Task[] => {
     const phase = taskPhases.find(p => p.id === phaseId);
     return phase ? phase.tasks : [];
@@ -1417,6 +1488,7 @@ export function TaskProvider({ children, userProfile }: TaskProviderProps) {
     getTasksByCategory,
     getActiveTasksByCategory,
     getTasksByStatus,
+    getTasksByTag,
     getHighPriorityTasks,
     updateTaskStatus,
     addTask,
