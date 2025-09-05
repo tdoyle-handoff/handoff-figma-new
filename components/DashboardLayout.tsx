@@ -197,6 +197,7 @@ export default function DashboardLayout({
 
   // Pull Transaction Checklist to the top of the list
   const tasksItem = navigationItems.find((i) => i.id === 'tasks');
+  const calendarItem = navigationItems.find((i) => i.id === 'calendar');
 
   return (
     <div className="flex h-screen bg-slate-50">
@@ -261,24 +262,53 @@ export default function DashboardLayout({
               const Icon = tasksItem.icon;
               const isActive = currentPage === tasksItem.id;
               return (
-                <button
-                  key={tasksItem.id}
-                  className={cn(
-                    "w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 text-left",
-                    isActive ? "bg-white text-blue-900 shadow-sm" : "text-blue-100 hover:bg-blue-800/50 hover:text-white",
-                    !sidebarOpen && "justify-center px-3"
-                  )}
-                  onClick={() => onPageChange(tasksItem.id)}
-                >
-                  <Icon className="h-5 w-5 flex-shrink-0" />
-                  {sidebarOpen && (
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-sm">{tasksItem.label}</span>
+                <>
+                  <button
+                    key={tasksItem.id}
+                    className={cn(
+                      "w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 text-left",
+                      isActive ? "bg-white text-blue-900 shadow-sm" : "text-blue-100 hover:bg-blue-800/50 hover:text-white",
+                      !sidebarOpen && "justify-center px-3"
+                    )}
+                    onClick={() => onPageChange(tasksItem.id)}
+                  >
+                    <Icon className="h-5 w-5 flex-shrink-0" />
+                    {sidebarOpen && (
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-sm">{tasksItem.label}</span>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </button>
+                    )}
+                  </button>
+
+                  {/* Calendar child under Transaction Checklist */}
+                  {calendarItem && (() => {
+                    const CalIcon = calendarItem.icon;
+                    return (
+                      <button
+                        key={calendarItem.id}
+                        className={cn(
+                          "w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 text-left ml-6",
+                          currentPage === calendarItem.id
+                            ? "bg-white text-blue-900 shadow-sm"
+                            : "text-blue-100 hover:bg-blue-800/50 hover:text-white",
+                          !sidebarOpen && "justify-center px-3 ml-0"
+                        )}
+                        onClick={() => onPageChange(calendarItem.id)}
+                      >
+                        <CalIcon className="h-5 w-5 flex-shrink-0" />
+                        {sidebarOpen && (
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium text-sm">{calendarItem.label}</span>
+                            </div>
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })()}
+                </>
               );
             })()}
 
@@ -290,14 +320,9 @@ export default function DashboardLayout({
                   </div>
                 )}
                 {items.map((item) => {
-                  if (item.id === 'tasks') return null; // already rendered at top
+                  if (item.id === 'tasks' || item.id === 'calendar') return null; // already rendered at top
                   const Icon = item.icon;
                   const isActive = currentPage === item.id;
-
-                  // Show calendar as a child only when Transaction Checklist is active (or on calendar page)
-                  if (item.id === 'calendar' && !(currentPage === 'tasks' || currentPage === 'calendar')) {
-                    return null;
-                  }
 
                   return (
                     <button
@@ -307,8 +332,7 @@ export default function DashboardLayout({
                         isActive
                           ? "bg-white text-blue-900 shadow-sm"
                           : "text-blue-100 hover:bg-blue-800/50 hover:text-white",
-                        !sidebarOpen && "justify-center px-3",
-                        item.id === 'calendar' && sidebarOpen && 'ml-6'
+                        !sidebarOpen && "justify-center px-3"
                       )}
                       onClick={() => onPageChange(item.id)}
                     >

@@ -283,11 +283,7 @@ export default function MobileLayout({
                             const Icon = item.icon;
                             const isActive = currentPage === item.id;
 
-                            // Only show Calendar child when on Transaction Checklist (or on calendar)
-                            if (item.id === 'calendar' && !(currentPage === 'tasks' || currentPage === 'calendar')) {
-                              return null;
-                            }
-                            
+                            // Calendar shown as child item under Transaction Checklist
                             return (
                               <Button
                                 key={item.id}
