@@ -840,6 +840,44 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
       assignedTo: 'Buyer'
     },
     {
+      id: 'task-deed-recorded',
+      title: 'Confirm Deed Recordation with County',
+      description: 'Verify the deed is recorded and obtain a copy for your records.',
+      category: 'post-closing',
+      priority: 'medium',
+      status: 'upcoming',
+      assignedTo: 'Buyer'
+    },
+    {
+      id: 'task-mortgage-servicer-setup',
+      title: 'Set Up Mortgage Servicer Account',
+      description: 'Create your mortgage servicer account and enroll in autopay if desired.',
+      category: 'post-closing',
+      subcategory: 'financing',
+      priority: 'medium',
+      status: 'upcoming',
+      assignedTo: 'Buyer'
+    },
+    {
+      id: 'task-tax-homestead',
+      title: 'Apply for Homestead Exemption (if applicable)',
+      description: 'File for homestead or other primary residence tax exemptions with your county.',
+      category: 'post-closing',
+      subcategory: 'legal',
+      priority: 'medium',
+      status: 'upcoming',
+      assignedTo: 'Buyer'
+    },
+    {
+      id: 'task-warranty-transfer',
+      title: 'Transfer Seller Warranties',
+      description: 'Ensure appliance, roof, and builder warranties are transferred to your name.',
+      category: 'post-closing',
+      priority: 'low',
+      status: 'upcoming',
+      assignedTo: 'Buyer'
+    },
+    {
       id: 'task-home-maintenance',
       title: 'Set Up Home Maintenance Schedule',
       description: 'Create a maintenance schedule to protect your investment.',
@@ -901,7 +939,13 @@ const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] 
     'task-utilities-transfer': ['general'],
     'task-move-in': ['general'],
     'task-change-address': ['general'],
-    'task-home-maintenance': ['general'],
+'task-home-maintenance': ['general'],
+
+    // Post-closing enhancements
+    'task-deed-recorded': ['general'],
+    'task-mortgage-servicer-setup': ['financing'],
+    'task-tax-homestead': ['legal'],
+    'task-warranty-transfer': ['general'],
   };
 
   tasks.forEach((t) => {
