@@ -2287,7 +2287,7 @@ Homes need regular maintenance. Neglect leads to costly repairs and reduced valu
     'task-international-wire-clearance': ['financing', 'scenario-international-buyer'],
     'task-home-sale-contingency': ['legal', 'scenario-home-sale-contingency'],
     'task-backup-offer': ['legal', 'scenario-backup-offer'],
-    'task-dual-escrows': ['legal'],
+'task-dual-escrows': ['legal', 'scenario-simultaneous-close'],
 
     // Financing / Mortgage
     'task-probate-approval': ['legal', 'scenario-probate'],

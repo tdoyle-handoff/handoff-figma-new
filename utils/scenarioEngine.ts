@@ -181,13 +181,13 @@ const SCHEMA_ID_TO_TASK_ID: Record<string, string> = {
   variance_application: 'task-zoning-variance',
   design_review: 'task-historic-district-design-review',
   firpta_tax: 'task-firpta-compliance',
-  wire_clearance: 'task-intl-wire-clearance',
+  wire_clearance: 'task-international-wire-clearance',
   litigation_review: 'task-hoa-litigation-review',
   escrow_holdback: 'task-escrow-holdback',
 
   // Timing
   list_and_sell_current: 'task-home-sale-contingency',
-  coord_dual_escrows: 'task-dual-escrow-coordination',
+  coord_dual_escrows: 'task-dual-escrows',
   backup_addendum: 'task-backup-offer',
 };
 
@@ -289,6 +289,39 @@ export function applyScenarios(baseTasks: Task[]): Task[] {
   // 5) Apply conflicts
   applyConflicts(out, selected);
 
-  return out;
+  // 6) Filter any baseline tasks that are scenario-gated via tags
+  const selectedSet = new Set(selected);
+  const TAG_TO_KEY: Record<string, string> = {
+    'scenario-probate': 'estate',
+    'scenario-divorce': 'divorce',
+    'scenario-short-sale': 'short_sale',
+    'scenario-reo': 'reo_foreclosure',
+    'scenario-auction': 'auction',
+    'scenario-bankruptcy': 'bankruptcy_trustee',
+    'scenario-gov-owned': 'government_owned',
+    'scenario-historic': 'historic',
+    'scenario-as-is': 'as_is',
+    'scenario-flood-zone': 'flood_zone',
+    'scenario-historic-district': 'historic_district',
+    'scenario-hoa-litigation': 'hoa_litigation',
+    'scenario-international-buyer': 'international_buyer',
+    'scenario-international-seller': 'international_buyer',
+    'scenario-home-sale-contingency': 'home_sale_contingency',
+    'scenario-backup-offer': 'backup_offer',
+    'scenario-simultaneous-close': 'simultaneous_close',
+  };
+
+  const filtered = out.filter((t) => {
+    const tags = (t.tags || []) as string[];
+    const scenarioTags = tags.filter((tg) => tg.startsWith('scenario-'));
+    if (scenarioTags.length === 0) return true;
+    // Keep if any corresponding scenario is selected
+    return scenarioTags.some((tg) => {
+      const key = TAG_TO_KEY[tg] || tg.replace(/^scenario-/, '').replace(/-/g, '_');
+      return selectedSet.has(key);
+    });
+  });
+
+  return filtered;
 }
 
