@@ -1147,24 +1147,29 @@ const InlinePhaseStepper = ({ phases, currentId, onSelect }: { phases: TaskPhase
   };
   const cur = computeCurrentIndex();
   return (
-    <div className="isolate inline-flex items-center rounded-full ring-1 ring-gray-300 bg-white p-0.5 shadow-sm overflow-hidden">
+    <div className="isolate inline-flex items-center rounded-full ring-1 ring-gray-300 bg-white shadow-sm overflow-hidden">
       {phases.map((p, i) => {
-        const filled = i <= cur; // completed and current are filled
-        const base = 'relative flex-1 inline-flex items-center justify-center h-9 px-6 text-sm font-medium transition-colors select-none';
-        const colors = filled ? 'bg-indigo-700 text-white' : 'bg-transparent text-gray-600';
-        const radius = `${i === 0 ? 'rounded-l-full' : ''} ${i === phases.length - 1 ? 'rounded-r-full' : ''}`;
-        const divider = filled && i < cur; // show divider between filled steps
+        const isFilled = i <= cur; // completed + current
+        const isCurrent = i === cur;
+        const isFirst = i === 0;
+        const base = 'relative flex-1 inline-flex items-center justify-center h-9 px-5 text-[13px] font-medium transition-colors select-none';
+        const colors = isFilled ? 'bg-blue-600 text-white' : 'bg-transparent text-gray-600';
+        const rounding = [
+          isFilled && isFirst ? 'rounded-l-full' : '',
+          isFilled && isCurrent ? 'rounded-r-full' : '',
+        ].join(' ').trim();
+        const showFilledDivider = i < cur; // divider between filled steps only (before current)
         return (
           <button
             key={p.id}
-            className={`${base} ${colors} ${radius}`}
-            aria-current={i === cur ? 'step' : undefined}
+            className={`${base} ${colors} ${rounding}`}
+            aria-current={isCurrent ? 'step' : undefined}
             onClick={() => onSelect(p.id)}
             title={p.title}
           >
             {p.title}
-            {divider && (
-              <span aria-hidden className="absolute right-0 top-0 h-full w-px bg-indigo-400/70" />
+            {showFilledDivider && (
+              <span aria-hidden className="absolute right-0 top-0 h-full w-px bg-blue-500/70" />
             )}
           </button>
         );
