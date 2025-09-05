@@ -1640,18 +1640,74 @@ How to complete it:
     {
       id: 'task-insurance-get-bids',
       title: 'Get Insurance Bids & Coverage Options',
-      description: 'Gather quotes for home, flood, wind, hurricane, liability, PMI as applicable from brokers or direct.',
+      description: `Shopping for homeowners insurance policies to protect your property and satisfy lender requirements.
+
+Why it matters:
+Your lender will not allow closing without proof of coverage. The right policy also shields you from financial loss if the home is damaged or destroyed. Premiums can vary widely, so comparison-shopping saves money.
+
+How to complete it:
+
+Gather details: year built, square footage, roof age, systems updates.
+
+Request quotes from at least 3 insurers.
+
+Compare coverage for dwelling, personal property, liability, and loss-of-use.
+
+Check deductibles and optional add-ons (flood, earthquake, sewer backup).
+
+Tips:
+
+Bundle with auto insurance to lower premiums.
+
+Ask about replacement cost vs. actual cash value coverage—replacement cost is better.
+
+Verify insurer financial strength (A.M. Best rating) before committing.
+`,
       category: 'pre-closing',
       subcategory: 'insurance',
       priority: 'high',
       status: isUnderContract ? 'pending' : 'upcoming',
       assignedTo: 'Buyer',
-      dependencies: ['task-offer-acceptance-signing']
+      dependencies: ['task-offer-acceptance-signing'],
+      instructions: {
+        overview: 'Shop and compare homeowners insurance policies to protect your investment and meet lender requirements.',
+        steps: [
+          { step: 1, title: 'Gather Property Details', description: 'Year built, square footage, roof age, updates', action: 'Collect accurate data' },
+          { step: 2, title: 'Request Quotes', description: 'Contact at least 3 insurance providers', action: 'Submit details for quote' },
+          { step: 3, title: 'Compare Coverage', description: 'Dwelling, personal property, liability, loss-of-use', action: 'Analyze differences and costs' },
+          { step: 4, title: 'Evaluate Deductibles and Add-ons', description: 'Flood, earthquake, sewer backup coverage options', action: 'Consider needs and budget' }
+        ],
+        tips: [
+          'Bundle with auto insurance to save on premiums.',
+          'Favor replacement cost over actual cash value coverage.',
+          'Check insurer financial ratings for stability.'
+        ]
+      }
     },
     {
       id: 'task-homeowners-insurance',
       title: 'Secure Homeowners Insurance',
-      description: 'Obtain homeowners insurance policy required by lender.',
+      description: `Selecting and binding the final homeowners insurance policy.
+
+Why it matters:
+You must provide an insurance "binder" (proof of coverage) to your lender at least a few days before closing. Without it, your loan cannot fund.
+
+How to complete it:
+
+Choose the best policy after comparing quotes.
+
+Pay the first year’s premium upfront (often included in closing costs).
+
+Have the insurer send the binder directly to your lender and escrow company.
+
+Tips:
+
+Effective date should align with closing date—verify with insurer.
+
+Keep your insurance agent’s contact details handy for last-minute changes.
+
+Consider higher deductibles to lower monthly premiums, balancing risk.
+`,
       category: 'pre-closing',
       subcategory: 'insurance',
       priority: 'high',
@@ -1662,45 +1718,17 @@ How to complete it:
       assignedTo: 'Buyer',
       dependencies: ['task-insurance-get-bids'],
       instructions: {
-        overview: 'Homeowners insurance is required by your lender and protects your investment.',
+        overview: 'Select and secure your homeowners insurance to meet lender requirements and protect your investment.',
         steps: [
-          {
-            step: 1,
-            title: 'Determine Coverage Needs',
-            description: 'Calculate appropriate coverage amounts',
-            action: 'Review property value and replacement cost',
-            duration: '1 hour'
-          },
-          {
-            step: 2,
-            title: 'Get Multiple Quotes',
-            description: 'Shop around with different insurance companies',
-            action: 'Contact at least 3 insurers for quotes',
-            duration: '2-3 hours'
-          },
-          {
-            step: 3,
-            title: 'Compare Policies',
-            description: 'Review coverage options and deductibles',
-            action: 'Compare coverage types, limits, and costs',
-            duration: '1-2 hours'
-          },
-          {
-            step: 4,
-            title: 'Purchase Policy',
-            description: 'Buy policy and provide proof to lender',
-            action: 'Complete application and pay premium',
-            duration: '1 hour'
-          }
+          { step: 1, title: 'Choose Policy', description: 'Select the best policy after reviewing bids', action: 'Evaluate coverage and pricing' },
+          { step: 2, title: 'Pay Premium', description: 'Pay the first year’s premium upfront', action: 'Arrange payment or include in closing costs' },
+          { step: 3, title: 'Binder Submission', description: 'Ensure insurer sends binder to lender and escrow', action: 'Confirm timely delivery' }
         ],
         tips: [
-          'Bundle with auto insurance for potential discounts',
-          'Consider replacement cost vs actual cash value',
-          'Review coverage annually and adjust as needed',
-          'Understand what\'s covered and what requires additional coverage'
-        ],
-        timeline: 'Must be in place before closing',
-        cost: 'Typically $800-$2,000 annually'
+          'Match effective date to closing date; double check with insurer.',
+          'Keep insurance agent contact handy for any last-minute questions or changes.',
+          'Higher deductibles may reduce premiums but increase out-of-pocket costs during claims.'
+        ]
       }
     },
     {
@@ -1763,45 +1791,171 @@ How to complete it:
     {
       id: 'task-escrow-wire-instructions',
       title: 'Escrow Account & Wire Instructions Prepared',
-      description: 'Title/escrow company prepares wire instructions for deposit and closing funds.',
+      description: `Escrow (or the closing attorney in some states) provides instructions for wiring your closing funds. This includes the escrow account number, bank routing info, and exact format for your transfer.
+
+Why it matters:
+Real estate wire fraud is rampant. Hackers send fake instructions, tricking buyers into wiring funds to criminal accounts. Once wired incorrectly, funds are usually unrecoverable. Correct instructions protect your money.
+`,
       category: 'closing',
       priority: 'high',
       status: 'upcoming',
       assignedTo: 'Title Company',
-      dependencies: ['task-earnest-money-deposit']
+      dependencies: ['task-earnest-money-deposit'],
+      instructions: {
+        overview: 'Protect your funds by verifying official wiring instructions directly and following secure delivery steps.',
+        steps: [
+          { step: 1, title: 'Receive official instructions', description: 'Escrow/attorney sends via secure portal or phone', action: 'Look for secure delivery or direct call' },
+          { step: 2, title: 'Verify by phone', description: 'Call the escrow office at a verified number (not from the email)', action: 'Confirm account/routing details verbally' },
+          { step: 3, title: 'Store and deliver to bank', description: 'Save instructions and provide them to your bank for transfer', action: 'Share with your banker exactly as provided' }
+        ],
+        tips: [
+          'Never trust wiring instructions sent only by email—always verify by phone.',
+          'Confirm whether you’ll wire full funds or just the balance after earnest money.',
+          'Arrange transfer early in the day—banks often have 2–3 PM cutoffs.'
+        ]
+      }
     },
     {
       id: 'task-closing-funds',
       title: 'Prepare Closing Funds',
-      description: 'Arrange for certified funds needed at closing.',
+      description: `Gathering the total amount you must bring to closing, including down payment, closing costs, prepaid taxes, insurance, and lender fees.
+
+Why it matters:
+If you don’t have full funds ready, closing cannot occur. Banks, attorneys, and sellers are all coordinated—delays can mean breach of contract.
+`,
       category: 'closing',
       priority: 'high',
       status: 'upcoming',
       estimatedTime: '1 day',
       assignedTo: 'Buyer',
-      dependencies: ['task-closing-review', 'task-insurance-get-bids', 'task-homeowners-insurance']
+      dependencies: ['task-closing-review', 'task-insurance-get-bids', 'task-homeowners-insurance'],
+      instructions: {
+        overview: 'Ensure sufficient, ready-to-send funds per your Closing Disclosure and Settlement Statement.',
+        steps: [
+          { step: 1, title: 'Review final figures', description: 'Closing Disclosure and Settlement Statement for “cash to close”', action: 'Confirm the total amount due' },
+          { step: 2, title: 'Stage funds', description: 'Withdraw/transfer to the account you’ll wire from', action: 'Move money to the origin account' },
+          { step: 3, title: 'Confirm bank limits', description: 'Daily wire limits and any special bank requirements', action: 'Call your bank to verify limits' },
+          { step: 4, title: 'Plan backup method', description: 'Arrange cashier’s check if wiring isn’t possible', action: 'Confirm check is acceptable with escrow/attorney' }
+        ],
+        tips: [
+          'Add a cushion ($500–$1,000)—wire fees or prorations can shift final numbers slightly.',
+          'Wire a day before if possible—last-minute delays can be catastrophic.',
+          'Keep proof of wire receipt from your bank.'
+        ]
+      }
     },
     {
       id: 'task-wire-funds',
       title: 'Wire Funds / Produce Cashier’s Check',
-      description: 'On closing day, wire funds or bring a cashier’s check as required.',
+      description: `The actual transfer of money to escrow or the closing attorney for closing.
+
+Why it matters:
+No money, no deed. Funds must clear before title is transferred.
+`,
       category: 'closing',
       priority: 'high',
       status: 'upcoming',
       estimatedTime: '1 day',
       assignedTo: 'Buyer',
-      dependencies: ['task-closing-funds', 'task-escrow-wire-instructions']
+      dependencies: ['task-closing-funds', 'task-escrow-wire-instructions'],
+      instructions: {
+        overview: 'Execute the transfer and confirm receipt so closing can fund on time.',
+        steps: [
+          { step: 1, title: 'Visit or contact your bank', description: 'Bring verified wire instructions to your bank', action: 'Present instructions and identity documents' },
+          { step: 2, title: 'Authorize the transfer', description: 'Approve wire in person or online depending on bank policy', action: 'Complete authorization steps' },
+          { step: 3, title: 'Get confirmation', description: 'Request confirmation number and receipt', action: 'Save proof of transmission' },
+          { step: 4, title: 'Notify escrow/attorney', description: 'Let them know funds were sent and provide confirmation', action: 'Email confirmation with reference number' }
+        ],
+        tips: [
+          'Send funds at least one business day before closing.',
+          'Some banks require in-person authorization for large wires—schedule ahead.',
+          'If cashier’s check is allowed, confirm it’s acceptable and bring it to closing.'
+        ]
+      }
     },
     {
       id: 'task-closing-meeting',
       title: 'Attend Closing',
-      description: 'Sign all documents and complete the property purchase.',
+      description: `The meeting where buyer and seller (or their representatives) sign all final documents and funds are disbursed.
+
+Why it matters:
+This is when ownership officially transfers. You’ll sign loan documents, deed, title forms, and tax documents. Once complete, you receive keys.
+`,
       category: 'closing',
       priority: 'high',
       status: 'upcoming',
       estimatedTime: '2-3 hours',
       assignedTo: 'All Parties',
-      dependencies: ['task-wire-funds']
+      dependencies: ['task-wire-funds'],
+      instructions: {
+        overview: 'Complete final signing accurately and verify the terms match your Closing Disclosure.',
+        steps: [
+          { step: 1, title: 'Bring ID', description: 'Government-issued ID (passport or driver’s license)', action: 'Have ID ready for notary/attorney' },
+          { step: 2, title: 'Review documents', description: 'Loan note, mortgage/deed of trust, closing disclosure', action: 'Verify rate, payment, and escrow match prior disclosures' },
+          { step: 3, title: 'Sign with notary/attorney', description: 'Execute all required forms', action: 'Sign where indicated and ask questions if unclear' },
+          { step: 4, title: 'Receive copies', description: 'Obtain copies of all signed documents', action: 'Keep digital backups for your records' }
+        ],
+        tips: [
+          'Closings can take 60–90 minutes—plan accordingly.',
+          'Don’t rush—read what you’re signing and ask for explanations.',
+          'Verify loan terms match your final Closing Disclosure.'
+        ]
+      }
+    },
+
+    {
+      id: 'task-firpta-compliance',
+      title: 'FIRPTA / Tax Compliance (Scenario: International Seller)',
+      description: `Federal law requires withholding of a percentage of the sale price when the seller is a foreign person (Foreign Investment in Real Property Tax Act).
+
+Why it matters:
+If the seller is international and withholding isn’t handled properly, the IRS can pursue the buyer for unpaid tax.
+`,
+      category: 'closing',
+      subcategory: 'legal',
+      priority: 'high',
+      status: 'upcoming',
+      assignedTo: 'Attorney & Escrow',
+      dependencies: ['task-open-escrow', 'task-closing-review'],
+      instructions: {
+        overview: 'Confirm seller residency status and ensure required tax withholding is made to stay compliant with IRS rules.',
+        steps: [
+          { step: 1, title: 'Confirm residency status', description: 'Obtain seller affidavits regarding tax residency', action: 'Have attorney/escrow collect and review' },
+          { step: 2, title: 'Withhold funds if required', description: 'Escrow withholds required FIRPTA amount (often ~15%)', action: 'Calculate based on current IRS guidance' },
+          { step: 3, title: 'Remit to IRS', description: 'Send withheld funds to the IRS per procedure', action: 'File appropriate forms and keep proof' }
+        ],
+        tips: [
+          'Do not skip FIRPTA—buyers can be liable if withholding is not made.',
+          'Confirm with your attorney if FIRPTA applies in your transaction.'
+        ]
+      }
+    },
+    {
+      id: 'task-international-wire-clearance',
+      title: 'International Wire Clearance (Scenario: International Buyer)',
+      description: `Ensuring that large incoming funds from foreign accounts clear through U.S. banks in time for closing.
+
+Why it matters:
+International wires can take longer due to anti-money laundering checks. If delayed, you may breach contract by failing to fund closing on time.
+`,
+      category: 'closing',
+      subcategory: 'financing',
+      priority: 'high',
+      status: 'upcoming',
+      assignedTo: 'Buyer & Bank',
+      dependencies: ['task-closing-funds', 'task-escrow-wire-instructions'],
+      instructions: {
+        overview: 'Begin international transfers early and coordinate with banks to ensure funds clear before closing.',
+        steps: [
+          { step: 1, title: 'Start transfer early', description: 'Initiate several days before closing', action: 'Allow for AML and compliance checks' },
+          { step: 2, title: 'Provide details to bank', description: 'Share escrow account and wiring instructions early', action: 'Verify routing and intermediary bank details' },
+          { step: 3, title: 'Track clearance', description: 'Monitor transfer status until cleared in the U.S.', action: 'Confirm receipt with escrow/attorney' }
+        ],
+        tips: [
+          'Confirm your bank’s maximum daily transfer limits—may require multiple transfers.',
+          'Work with U.S. correspondent banks for smoother transactions.'
+        ]
+      }
     },
 
     // Phase 7: Post-Closing
@@ -1839,11 +1993,27 @@ How to complete it:
     {
       id: 'task-deed-recorded',
       title: 'Confirm Deed Recordation with County',
-      description: 'Verify the deed is recorded and obtain a copy for your records.',
+      description: `After signing and funding, the deed and mortgage documents are recorded with the county clerk or recorder. This makes the transfer official.
+
+Why it matters:
+Recording is the legal moment you become the owner. Without recording, the seller technically still owns the property.
+`,
       category: 'post-closing',
       priority: 'medium',
       status: 'upcoming',
-      assignedTo: 'Buyer'
+      assignedTo: 'Buyer',
+      instructions: {
+        overview: 'Ensure your deed is recorded and obtain proof for your records before moving in.',
+        steps: [
+          { step: 1, title: 'Submission to county', description: 'Escrow/attorney submits signed documents for recording', action: 'Confirm submission post-signing' },
+          { step: 2, title: 'Wait for confirmation', description: 'Recording same day or within 24–48 hours', action: 'Request official confirmation once recorded' },
+          { step: 3, title: 'Funds disbursed', description: 'After recording, escrow disburses funds to seller/agents', action: 'Receive final settlement confirmation' }
+        ],
+        tips: [
+          'Do not move in until you receive confirmation of recording—rarely, deals can fail post-signing if recording is blocked.',
+          'Ask escrow/attorney for a copy of the recorded deed for your records.'
+        ]
+      }
     },
     {
       id: 'task-mortgage-servicer-setup',
@@ -1910,6 +2080,8 @@ How to complete it:
     'task-auction-deposit': ['legal', 'scenario-auction'],
     'task-bankruptcy-approval': ['legal', 'scenario-bankruptcy'],
     'task-gov-addenda': ['legal', 'scenario-gov-owned'],
+    'task-firpta-compliance': ['legal', 'scenario-international-seller'],
+    'task-international-wire-clearance': ['financing', 'scenario-international-buyer'],
 
     // Financing / Mortgage
     'task-probate-approval': ['legal', 'scenario-probate'],
@@ -2025,6 +2197,8 @@ How to complete it:
     'task-auction-deposit': { anchor: 'acceptance', offset: 0 },
     'task-bankruptcy-approval': { anchor: 'acceptance', offset: 2 },
     'task-gov-addenda': { anchor: 'today', offset: 2 },
+    'task-firpta-compliance': { anchor: 'acceptance', offset: 5 },
+    'task-international-wire-clearance': { anchor: 'closing', offset: -5 },
 
     'task-insurance-get-bids': { anchor: 'acceptance', offset: 7 },
     'task-homeowners-insurance': { anchor: 'acceptance', offset: 22 },
@@ -2098,6 +2272,8 @@ How to complete it:
     'task-auction-deposit': 5,
     'task-bankruptcy-approval': 18,
     'task-gov-addenda': 3,
+    'task-firpta-compliance': 21,
+    'task-international-wire-clearance': 29,
     'task-insurance-get-bids': 12,
     'task-homeowners-insurance': 22,
     'task-schedule-final-walkthrough': 27,
