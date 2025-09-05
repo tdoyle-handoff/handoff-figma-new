@@ -560,7 +560,7 @@ How to complete it:
           'If multiple offers exist, consider an escalation clause with a clear cap.'
         ]
       }
-    }
+    },
 
     // Phase 3: Contract & Legal
     {
@@ -820,18 +820,50 @@ How to complete it:
     {
       id: 'task-shop-inspectors',
       title: 'Shop for Inspectors',
-      description: 'Identify and vet general and specialized inspectors.',
+      description: `What it is: The process of identifying and interviewing professional inspectors who will evaluate the property. Inspections go far beyond what a buyer can see during a tour—they cover structural integrity, electrical and plumbing systems, roof condition, safety issues, and environmental hazards.
+
+Why it matters: The inspector is your eyes and ears. A strong inspector finds hidden issues that could cost tens of thousands to repair. A weak inspector might overlook serious problems, leaving you stuck with unexpected costs after closing. Choosing the right inspector is one of the most important decisions in the entire process.
+
+How to complete it:
+- Ask your agent for 2–3 recommendations, but also search independently (Yelp, Google, local associations).
+- Request sample reports—good inspectors provide detailed photos, clear explanations, and recommendations, not just checklists.
+- Confirm licensing and certifications (ASHI or InterNACHI membership is a plus).
+- Ask about scope: appliances testing, attic/crawlspace, moisture measurement, thermal imaging.
+- Book early—good inspectors often have waiting lists.`,
       category: 'diligence',
       subcategory: 'inspections',
       priority: 'medium',
       status: isUnderContract ? 'pending' : 'upcoming',
       assignedTo: 'Buyer',
-      dependencies: ['task-offer-acceptance-signing']
+      dependencies: ['task-offer-acceptance-signing'],
+      instructions: {
+        overview: 'Identify a thorough, credentialed inspector and book within your contingency window.',
+        steps: [
+          { step: 1, title: 'Gather candidates', description: 'Ask agent for 2–3 and search independently', action: 'Build a shortlist' },
+          { step: 2, title: 'Evaluate sample reports', description: 'Look for photos, clear narratives, recommendations', action: 'Request PDFs' },
+          { step: 3, title: 'Verify credentials', description: 'Licensing where required; ASHI/InterNACHI memberships', action: 'Confirm license and certifications' },
+          { step: 4, title: 'Confirm scope', description: 'Attic/crawlspace, moisture testing, thermal imaging, appliances', action: 'Align expectations' },
+          { step: 5, title: 'Book early', description: 'Good inspectors fill up fast', action: 'Schedule within contingency period' }
+        ],
+        tips: [
+          'Don’t just choose the cheapest provider—quality matters more than saving a small amount.',
+          'Read reviews for thoroughness to avoid “drive-by” inspections.',
+          'Attend the inspection in person to learn and ask questions.'
+        ]
+      }
     },
     {
       id: 'task-home-inspection',
       title: 'Schedule Home Inspection',
-      description: 'Arrange for a professional home inspection to identify any potential issues.',
+      description: `What it is: A comprehensive review of the property’s condition by a licensed professional. Covers structural, mechanical, electrical, plumbing, HVAC, roof, and basic safety systems.
+
+Why it matters: Inspections reveal problems not visible at first glance: hidden water damage, outdated wiring, foundation cracks, roof leaks, or unsafe installations. The results can determine whether you move forward, renegotiate, or walk away.
+
+How to complete it:
+- Schedule within the contract’s inspection period (often 7–10 days after acceptance).
+- Attend in person. Walk through each room and system with the inspector.
+- Receive a detailed report (PDF) within 24–48 hours.
+- Review findings with your agent/attorney to decide next steps.`,
       category: 'diligence',
       subcategory: 'inspections',
       priority: 'high',
@@ -887,10 +919,10 @@ How to complete it:
           'Any previous inspection reports'
         ],
         tips: [
-          'Always attend the inspection in person',
-          'Don\'t expect perfection - focus on major issues',
-          'Get estimates for significant repairs',
-          'Understand what\'s included vs excluded in inspection'
+          'Take your own photos and notes during the inspection for later review.',
+          'Don’t panic at a long report—inspectors flag even minor issues. Focus on health, safety, and big-ticket items.',
+          'Ask the inspector to ballpark repair costs where possible.',
+          "Understand what's included vs excluded in the inspection scope."
         ],
         timeline: 'Must be completed within inspection contingency period',
         cost: '$300-$600 depending on property size'
@@ -899,46 +931,132 @@ How to complete it:
     {
       id: 'task-schedule-specialized-inspections',
       title: 'Schedule Specialized Inspections',
-      description: 'Schedule pest, septic, lead, radon, roof, structural, well water, or other specialty inspections as needed.',
+      description: `What it is: Targeted evaluations for issues outside the scope of a general inspection, such as radon, mold, lead paint, pest infestations, septic systems, well water quality, asbestos, sewer lines, or structural engineering.
+
+Why it matters: Certain risks are property-specific. Rural homes often need septic inspections; older homes may need asbestos checks; wooded areas may require pest assessments. Skipping these can expose you to hidden health and financial risks.
+
+How to complete it:
+- Review general inspection results to decide which specialized inspections are necessary.
+- Ask your inspector or agent for vetted specialists.
+- Schedule before your inspection contingency expires.
+- Get written reports with test results and recommendations.`,
       category: 'diligence',
       subcategory: 'inspections',
       priority: 'medium',
       status: isUnderContract ? 'pending' : 'upcoming',
       assignedTo: 'Buyer',
-      dependencies: ['task-home-inspection']
+      dependencies: ['task-home-inspection'],
+      instructions: {
+        overview: 'Order targeted inspections guided by the general findings and property type.',
+        steps: [
+          { step: 1, title: 'Review general report', description: 'Identify areas needing deeper evaluation', action: 'List required specialties' },
+          { step: 2, title: 'Select specialists', description: 'Use referrals from inspector/agent', action: 'Vet credentials and availability' },
+          { step: 3, title: 'Schedule promptly', description: 'Complete before contingency deadline', action: 'Calendar tests (e.g., 48-hour radon)' },
+          { step: 4, title: 'Collect reports', description: 'Obtain written results and recommendations', action: 'File in your transaction folder' }
+        ],
+        tips: [
+          'Sewer line scoping is often overlooked but can prevent >$10k surprises.',
+          'Radon tests usually take ~48 hours—plan this into your timeline.',
+          'In condos/co-ops, some tests (pest, sewer line) may be unnecessary—focus on building-level maintenance.'
+        ]
+      }
     },
     {
       id: 'task-review-inspection-results',
       title: 'Review Inspection Results',
-      description: 'Read inspection reports and identify issues to address.',
+      description: `What it is: Analyzing the findings from the general and specialized inspections to decide your next move: proceed as is, renegotiate, or walk away.
+
+Why it matters: This is your chance to adjust the deal. Inspection results are one of the only moments where buyers can reopen negotiations. Without careful review, you risk missing costly defects or letting minor cosmetic issues derail you unnecessarily.
+
+How to complete it:
+- Read full reports, not just summaries. Highlight major issues.
+- Discuss with inspector, agent, and attorney what’s serious vs. minor.
+- Prioritize safety issues and big-ticket items (roof, HVAC, foundation).
+- Prepare a repair or credit request list to send to the seller.`,
       category: 'diligence',
       subcategory: 'inspections',
       priority: 'high',
       status: isUnderContract ? 'pending' : 'upcoming',
       assignedTo: 'Buyer & Agent',
-      dependencies: ['task-home-inspection']
+      dependencies: ['task-home-inspection'],
+      instructions: {
+        overview: 'Translate reports into a focused action plan for negotiations.',
+        steps: [
+          { step: 1, title: 'Read reports in full', description: 'Highlight major/safety issues', action: 'Separate critical vs minor' },
+          { step: 2, title: 'Consult team', description: 'Inspector, agent, attorney input', action: 'Align on severity and remedies' },
+          { step: 3, title: 'Prioritize essentials', description: 'Safety and high-cost items', action: 'Create a shortlist' },
+          { step: 4, title: 'Draft request list', description: 'Repairs or credits with specifics', action: 'Prepare for seller submission' }
+        ],
+        tips: [
+          'Avoid a laundry list—focus on 3–5 big items for credibility.',
+          'Use dollar amounts for credits rather than vague “fix this.”',
+          'In hot markets, sellers may refuse repairs—credits are often easier.'
+        ]
+      }
     },
     {
       id: 'task-submit-repair-requests',
       title: 'Submit Repair Requests / Begin Negotiations',
-      description: 'Compile items to address and submit to the seller to begin negotiations.',
+      description: `What it is: Formally asking the seller to fix defects or provide financial credit. This is a negotiation round based on inspection findings.
+
+Why it matters: Repairs can cost thousands. Negotiating them upfront prevents out-of-pocket surprises later. It’s also your chance to walk away if the seller refuses.
+
+How to complete it:
+- Draft a repair addendum with your attorney/agent.
+- Specify whether you want repairs completed before closing or a closing credit.
+- Submit within the inspection contingency deadline.
+- Expect the seller to accept, counter, or reject.`,
       category: 'diligence',
       subcategory: 'inspections',
       priority: 'high',
       status: isUnderContract ? 'pending' : 'upcoming',
       assignedTo: 'Buyer & Agent',
-      dependencies: ['task-review-inspection-results']
+      dependencies: ['task-review-inspection-results'],
+      instructions: {
+        overview: 'Turn prioritized issues into a precise, time-bound request.',
+        steps: [
+          { step: 1, title: 'Draft addendum', description: 'List repairs and/or credit amounts', action: 'Work with attorney/agent' },
+          { step: 2, title: 'Define remedy type', description: 'Repairs before closing vs credit at closing', action: 'State preference clearly' },
+          { step: 3, title: 'Submit on time', description: 'Within inspection contingency period', action: 'Send to seller and track deadline' },
+          { step: 4, title: 'Prepare for responses', description: 'Accept, counter, or reject', action: 'Plan negotiation tactics' }
+        ],
+        tips: [
+          'Credits are often cleaner than repairs; sellers may cut corners on fixes.',
+          'If you request repairs, require receipts from licensed contractors.',
+          'If the seller refuses, you can usually cancel and recover earnest money (verify your contract).'
+        ]
+      }
     },
     {
       id: 'task-finalize-inspection-remedies',
       title: 'Finalize Inspection Remedies & Timelines',
-      description: 'Finalize extensions, riders, and timelines for agreed inspection remedies.',
+      description: `What it is: Agreeing in writing on how inspection issues will be resolved and by when.
+
+Why it matters: Without specificity, sellers may leave repairs incomplete or misrepresented. Documented agreements protect you at closing.
+
+How to complete it:
+- Once negotiation ends, sign an inspection addendum detailing credits or repairs.
+- Set deadlines (before closing or prior to final walkthrough).
+- Save receipts and agreements in your transaction file.`,
       category: 'diligence',
       subcategory: 'inspections',
       priority: 'medium',
       status: isUnderContract ? 'pending' : 'upcoming',
       assignedTo: 'Buyer & Agent',
-      dependencies: ['task-submit-repair-requests']
+      dependencies: ['task-submit-repair-requests'],
+      instructions: {
+        overview: 'Lock in the agreed remedies in enforceable, time-bound language.',
+        steps: [
+          { step: 1, title: 'Execute addendum', description: 'Credits and/or repairs clearly defined', action: 'Sign with counterparties' },
+          { step: 2, title: 'Set timelines', description: 'Before closing or prior to walkthrough', action: 'Specify dates and responsible party' },
+          { step: 3, title: 'Maintain records', description: 'Receipts, warranties, correspondence', action: 'Organize in transaction folder' }
+        ],
+        tips: [
+          'Schedule a re-inspection for major promised repairs.',
+          'Be specific: “replace shingles on rear slope” is enforceable; “repair roof” is vague.',
+          'Stay polite but firm—this stage often involves pushback.'
+        ]
+      }
     },
     {
       id: 'task-mortgage-application',
@@ -991,7 +1109,15 @@ How to complete it:
     {
       id: 'task-title-search',
       title: 'Title Search & Insurance',
-      description: 'Verify clear title and obtain title insurance policy.',
+      description: `What it is: A title company or attorney reviews property records to confirm legal ownership and reveal liens, easements, unpaid taxes, or disputes. Title insurance protects you and your lender against future claims.
+
+Why it matters: Without clear title, you could buy a home only to discover unpaid debts, boundary disputes, or even a fraudulent seller. Title insurance ensures you’re protected.
+
+How to complete it:
+- Escrow/title company orders the search.
+- You receive a preliminary title report. Review with your attorney.
+- Resolve any defects (seller pays off liens, clears judgments).
+- Purchase an owner’s title insurance policy (one-time fee).`,
       category: 'diligence',
       subcategory: 'legal',
       priority: 'high',
@@ -1000,7 +1126,21 @@ How to complete it:
       linkedPage: 'legal',
       actionLabel: 'Review Title',
       assignedTo: 'Title Company',
-      dependencies: ['task-offer-acceptance-signing']
+      dependencies: ['task-offer-acceptance-signing'],
+      instructions: {
+        overview: 'Confirm marketable title and secure protection against future claims.',
+        steps: [
+          { step: 1, title: 'Order title search', description: 'Escrow/title initiates records review', action: 'Provide contract details' },
+          { step: 2, title: 'Review prelim report', description: 'Go over exceptions with your attorney', action: 'List issues to resolve' },
+          { step: 3, title: 'Clear defects', description: 'Seller resolves liens/judgments as needed', action: 'Obtain proof of release' },
+          { step: 4, title: 'Bind owner’s policy', description: 'One-time premium for owner protection', action: 'Confirm coverage and premium' }
+        ],
+        tips: [
+          'Always buy owner’s title insurance—even if optional—it protects your equity.',
+          'Ask your attorney to explain easements and their impact on use.',
+          'Confirm property taxes are current; delinquencies can delay closing.'
+        ]
+      }
     },
 
     // Phase 5: Pre-Closing
