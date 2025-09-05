@@ -1152,7 +1152,7 @@ const InlinePhaseStepper = ({ phases, currentId, onSelect }: { phases: TaskPhase
         const isFilled = i <= cur; // completed + current
         const isCurrent = i === cur;
         const isFirst = i === 0;
-        const base = 'relative flex-1 inline-flex items-center justify-center h-9 px-5 text-[13px] font-medium transition-colors select-none';
+        const base = 'relative flex-1 inline-flex items-center justify-center h-11 px-5 text-[13px] font-medium transition-colors select-none';
         const colors = isFilled ? 'bg-blue-600 text-white' : 'bg-transparent text-gray-600';
         const rounding = [
           isFilled && isFirst ? 'rounded-l-full' : '',

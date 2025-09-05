@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { cn } from './ui/utils';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
 import { Badge } from './ui/badge';
 import { Separator } from './ui/separator';
 import { usePropertyContext } from './PropertyContext';
@@ -157,7 +158,7 @@ export default function DashboardLayout({
         {phases.map((p, i) => {
           const st = stateAt(i);
           const isCurrent = st === 'current';
-          const base = 'relative inline-flex items-center h-9 px-5 rounded-full text-sm font-medium transition-colors';
+          const base = 'relative inline-flex items-center h-11 px-5 rounded-full text-sm font-medium transition-colors';
           const colors = isCurrent
             ? 'bg-blue-600 text-white'
             : 'bg-white text-gray-700';
@@ -411,7 +412,7 @@ export default function DashboardLayout({
               <img
                 src={handoffLogo}
                 alt="Handoff Logo"
-                className="h-8 w-auto object-contain"
+                className="h-8 w-auto object-contain invert brightness-0"
               />
               <span className="sr-only">{navigation.getPageTitle(currentPage)}</span>
             </div>
@@ -437,16 +438,34 @@ export default function DashboardLayout({
 
             {/* Right: User */}
             <div className="flex items-center gap-3">
-              <Avatar className="h-9 w-9 ring-2 ring-white/20">
-                <AvatarImage src="" />
-                <AvatarFallback className="bg-blue-600 text-white">
-                  {getInitials(getUserDisplayName())}
-                </AvatarFallback>
-              </Avatar>
-              <div className="hidden md:block leading-tight">
-                <div className="text-sm font-medium">{getUserDisplayName()}</div>
-                <div className="text-xs text-white/70 truncate max-w-[220px]">{getUserDisplayEmail()}</div>
-              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center gap-3 focus:outline-none">
+                    <Avatar className="h-9 w-9 ring-2 ring-white/20">
+                      <AvatarImage src="" />
+                      <AvatarFallback className="bg-blue-600 text-white">
+                        {getInitials(getUserDisplayName())}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="hidden md:block leading-tight text-left">
+                      <div className="text-sm font-medium">{getUserDisplayName()}</div>
+                      <div className="text-xs text-white/70 truncate max-w-[220px]">{getUserDisplayEmail()}</div>
+                    </div>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => onPageChange('settings')} className="cursor-pointer">
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Settings</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={onSignOut} className="cursor-pointer">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Sign out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </header>
