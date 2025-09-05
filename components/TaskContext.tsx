@@ -1962,97 +1962,213 @@ International wires can take longer due to anti-money laundering checks. If dela
     {
       id: 'task-utilities-transfer',
       title: 'Transfer Utilities',
-      description: 'Set up or transfer utilities to your name.',
+      description: `Switching electricity, gas, water, internet, and trash service into your name.
+
+Why it matters:
+If service lapses, you may face reconnection fees or find your home without power or water on move-in day.
+`,
       category: 'post-closing',
       priority: 'medium',
       status: 'upcoming',
       estimatedTime: '2-3 hours',
-      assignedTo: 'Buyer'
+      assignedTo: 'Buyer',
+      instructions: {
+        overview: 'Line up all utility services in advance to avoid gaps on move‑in day.',
+        steps: [
+          { step: 1, title: 'Contact providers 1–2 weeks prior', description: 'Call electricity, gas, water/sewer, internet, trash', action: 'Provide move-in date and service address' },
+          { step: 2, title: 'Provide ID and proof', description: 'Driver’s license plus deed/closing statement or lease', action: 'Have documents ready for account setup' },
+          { step: 3, title: 'Schedule activation', description: 'Target the day of or day after closing', action: 'Confirm technician windows if needed' }
+        ],
+        tips: [
+          'Ask the seller for a list of current providers to speed the process.',
+          'Don’t cancel utilities too early in your old home—schedule overlap for a smooth move.'
+        ]
+      }
     },
     {
       id: 'task-move-in',
-      title: 'Move-in',
-      description: 'Plan and execute the move-in once closing is complete.',
+      title: 'Move-In',
+      description: `Physically relocating to your new home and getting it set up for daily living.
+
+Why it matters:
+Moving day sets the tone for your first weeks in the property. Poor planning causes stress and damage.
+`,
       category: 'post-closing',
       priority: 'medium',
       status: 'upcoming',
       estimatedTime: '1-3 days',
       assignedTo: 'Buyer',
-      dependencies: ['task-closing-meeting']
+      dependencies: ['task-closing-meeting'],
+      instructions: {
+        overview: 'Plan movers, supplies, and timing so you’re ready once the deal has fully closed and recorded.',
+        steps: [
+          { step: 1, title: 'Book movers or truck', description: 'Reserve 2–3 weeks in advance', action: 'Confirm date/time and insurance coverage' },
+          { step: 2, title: 'Pack and label', description: 'Pack room-by-room and label clearly', action: 'Protect fragile items and inventory boxes' },
+          { step: 3, title: 'Move after confirmation', description: 'Only after closing is 100% confirmed', action: 'Avoid delivery before recording confirmation' },
+          { step: 4, title: 'Pre-move clean', description: 'Clean home before moving furniture in', action: 'Wipe, vacuum, and sanitize surfaces' }
+        ],
+        tips: [
+          'Photograph meter readings at move-in for accurate billing.',
+          'Change locks immediately—old keys may still be circulating.',
+          'Pack an “essentials box” for the first night (toiletries, bedding, tools, chargers).'
+        ]
+      }
     },
     {
       id: 'task-change-address',
       title: 'Change Address',
-      description: 'Update your address with banks, employers, and government agencies.',
+      description: `Updating your mailing address with USPS, banks, credit cards, employers, subscriptions, and government agencies.
+
+Why it matters:
+Missed mail could mean missed bills, late fees, or even compromised personal data.
+`,
       category: 'post-closing',
       priority: 'medium',
       status: 'upcoming',
       estimatedTime: '2-3 hours',
-      assignedTo: 'Buyer'
+      assignedTo: 'Buyer',
+      instructions: {
+        overview: 'Update forwarding and profile records everywhere to avoid missed bills and notices.',
+        steps: [
+          { step: 1, title: 'USPS change of address', description: 'File online or at the post office', action: 'Set start date and keep confirmation' },
+          { step: 2, title: 'Update IDs and registrations', description: 'Driver’s license, voter registration, tax filings', action: 'Follow state/county processes' },
+          { step: 3, title: 'Notify financials and employer', description: 'Banks, lenders, credit cards, insurance, employer', action: 'Update billing and contact info' },
+          { step: 4, title: 'Update subscriptions and deliveries', description: 'Amazon, streaming, other services', action: 'Change shipping and billing addresses' }
+        ],
+        tips: [
+          'USPS forwards mail for 12 months (letters) and 60 days (magazines)—still update with each company.',
+          'Order new checks if you still use them.'
+        ]
+      }
     },
     {
       id: 'task-deed-recorded',
       title: 'Confirm Deed Recordation with County',
-      description: `After signing and funding, the deed and mortgage documents are recorded with the county clerk or recorder. This makes the transfer official.
+      description: `Verification that your deed has been officially recorded with the county clerk or recorder’s office. This makes you the legal owner of record.
 
 Why it matters:
-Recording is the legal moment you become the owner. Without recording, the seller technically still owns the property.
+Until recorded, ownership technically remains with the seller. Mistakes or delays in recording can create title issues later (e.g., disputes, liens incorrectly attached).
 `,
       category: 'post-closing',
       priority: 'medium',
       status: 'upcoming',
       assignedTo: 'Buyer',
       instructions: {
-        overview: 'Ensure your deed is recorded and obtain proof for your records before moving in.',
+        overview: 'Confirm the deed is recorded and retain permanent proof of ownership.',
         steps: [
-          { step: 1, title: 'Submission to county', description: 'Escrow/attorney submits signed documents for recording', action: 'Confirm submission post-signing' },
-          { step: 2, title: 'Wait for confirmation', description: 'Recording same day or within 24–48 hours', action: 'Request official confirmation once recorded' },
-          { step: 3, title: 'Funds disbursed', description: 'After recording, escrow disburses funds to seller/agents', action: 'Receive final settlement confirmation' }
+          { step: 1, title: 'Deed submitted', description: 'Escrow/attorney typically e-records after closing', action: 'Confirm submission timing' },
+          { step: 2, title: 'Request confirmation', description: 'Recording receipt or stamped deed', action: 'Ask for official confirmation from escrow/attorney' },
+          { step: 3, title: 'Store safely', description: 'Keep recorded deed in digital and physical formats', action: 'Back up copies in secure storage' }
         ],
         tips: [
-          'Do not move in until you receive confirmation of recording—rarely, deals can fail post-signing if recording is blocked.',
-          'Ask escrow/attorney for a copy of the recorded deed for your records.'
+          'Ask the county for a certified copy for long-term records.',
+          'Confirm your property tax mailing address has been updated to yours.'
         ]
       }
     },
     {
       id: 'task-mortgage-servicer-setup',
       title: 'Set Up Mortgage Servicer Account',
-      description: 'Create your mortgage servicer account and enroll in autopay if desired.',
+      description: `Your loan will be serviced by a lender or third-party company. You need an online account to manage payments, escrow, and statements.
+
+Why it matters:
+Missing your first mortgage payment (usually due the month after closing) can harm credit. Having an account ensures you don’t miss deadlines.
+`,
       category: 'post-closing',
       subcategory: 'financing',
       priority: 'medium',
       status: 'upcoming',
-      assignedTo: 'Buyer'
+      assignedTo: 'Buyer',
+      instructions: {
+        overview: 'Create your servicer login early so payments and escrow run smoothly.',
+        steps: [
+          { step: 1, title: 'Watch for welcome package', description: 'Arrives ~2–4 weeks after closing', action: 'Follow instructions to register' },
+          { step: 2, title: 'Create online account', description: 'Set up login and link bank account', action: 'Enable statements and notifications' },
+          { step: 3, title: 'Verify escrow balances', description: 'Confirm taxes and insurance escrow amounts', action: 'Contact servicer if numbers look off' }
+        ],
+        tips: [
+          'Servicing may transfer within months—only change payment details after a written notice from both old and new servicers.',
+          'Set up autopay, but still review statements monthly for accuracy.'
+        ]
+      }
     },
     {
       id: 'task-tax-homestead',
-      title: 'Apply for Homestead Exemption (if applicable)',
-      description: 'File for homestead or other primary residence tax exemptions with your county.',
+      title: 'Apply for Homestead Exemption (if available)',
+      description: `A property tax exemption offered in many states for primary residences, lowering your annual tax bill.
+
+Why it matters:
+Savings can be substantial—hundreds to thousands annually. But you must apply; it isn’t automatic.
+`,
       category: 'post-closing',
       subcategory: 'legal',
       priority: 'medium',
       status: 'upcoming',
-      assignedTo: 'Buyer'
+      assignedTo: 'Buyer',
+      instructions: {
+        overview: 'Check local eligibility and file on time to capture savings on your primary residence.',
+        steps: [
+          { step: 1, title: 'Check eligibility', description: 'County tax assessor’s website for rules', action: 'Confirm owner‑occupancy and ID requirements' },
+          { step: 2, title: 'Submit application', description: 'Provide proof of residency (ID, utility bill, deed)', action: 'Upload/mail forms per county instructions' },
+          { step: 3, title: 'Meet the deadline', description: 'Often within the first year of ownership', action: 'Add reminders so you don’t miss cutoff' }
+        ],
+        tips: [
+          'Some states (e.g., Florida, Texas) offer generous homestead protections—don’t miss out.',
+          'Ask about additional exemptions (senior, veteran, disability).'
+        ]
+      }
     },
     {
       id: 'task-warranty-transfer',
       title: 'Transfer Seller Warranties',
-      description: 'Ensure appliance, roof, and builder warranties are transferred to your name.',
+      description: `Ensuring warranties on systems, appliances, or roof transfer to you as the new owner.
+
+Why it matters:
+If something breaks shortly after closing, you may be covered—but only if warranties are properly transferred.
+`,
       category: 'post-closing',
       priority: 'low',
       status: 'upcoming',
-      assignedTo: 'Buyer'
+      assignedTo: 'Buyer',
+      instructions: {
+        overview: 'Collect and register warranties so coverage follows you after closing.',
+        steps: [
+          { step: 1, title: 'Gather documents', description: 'Request all warranty documents at closing', action: 'Keep copies with your deed and closing package' },
+          { step: 2, title: 'Register products', description: 'Register online with manufacturers under your name', action: 'Provide serial numbers and purchase dates' },
+          { step: 3, title: 'Note builder warranty', description: 'Track coverage period (often 1–10 years)', action: 'Calendar any inspection/warranty deadlines' }
+        ],
+        tips: [
+          'Many appliance warranties require online registration within 30–90 days.',
+          'Keep receipts and serial numbers in a digital file.'
+        ]
+      }
     },
     {
       id: 'task-home-maintenance',
       title: 'Set Up Home Maintenance Schedule',
-      description: 'Create a maintenance schedule to protect your investment.',
+      description: `Creating a recurring calendar of upkeep tasks (HVAC servicing, gutter cleaning, smoke detector checks, lawn care).
+
+Why it matters:
+Homes need regular maintenance. Neglect leads to costly repairs and reduced value. A structured plan keeps you ahead of issues.
+`,
       category: 'post-closing',
       priority: 'low',
       status: 'upcoming',
       estimatedTime: '1-2 hours',
-      assignedTo: 'Buyer'
+      assignedTo: 'Buyer',
+      instructions: {
+        overview: 'Turn one-time move-in into long-term ownership with a plan for routine upkeep.',
+        steps: [
+          { step: 1, title: 'List seasonal tasks', description: 'HVAC service, roof/gutter checks, winterization, landscaping', action: 'Create a master checklist' },
+          { step: 2, title: 'Schedule reminders', description: 'Add recurring events to your calendar/app', action: 'Assign monthly/quarterly/annual frequencies' },
+          { step: 3, title: 'Track work and receipts', description: 'Maintain a maintenance log', action: 'Store contractor invoices and photos' }
+        ],
+        tips: [
+          'Budget 1–3% of home value annually for maintenance/repairs.',
+          'Join local homeowner groups for contractor recommendations.',
+          'Schedule big tasks (HVAC, gutters) during off-peak times for better pricing.'
+        ]
+      }
     }
   ];
 
