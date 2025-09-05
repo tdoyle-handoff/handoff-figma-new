@@ -1184,9 +1184,9 @@ const getPhaseIcon = (title: string) => {
   if (t.includes('search')) return <SearchIcon className="w-6 h-6" />;
   if (t.includes('offer')) return <FileText className="w-6 h-6" />;
   if (t.includes('contract') || t.includes('legal')) return <Scale className="w-6 h-6" />;
-  if (t.includes('diligence')) return <SearchIcon className="w-6 h-6" />;
-  if (t.includes('closing')) return <KeyRound className="w-6 h-6" />;
-  if (t.includes('post')) return <Home className="w-6 h-6" />;
+  if (t.includes('diligence') || t.includes('inspection')) return <SearchIcon className="w-6 h-6" />;
+  if (t.includes('closing') || t.includes('final prep') || t.includes('pre-closing')) return <KeyRound className="w-6 h-6" />;
+  if (t.includes('after') || t.includes('post')) return <Home className="w-6 h-6" />;
   return <CheckSquare className="w-6 h-6" />;
 };
 

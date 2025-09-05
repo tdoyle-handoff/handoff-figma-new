@@ -976,7 +976,7 @@ const generateRealEstateTaskPhases = (tasks: Task[], propertyData: PropertyData 
   const phases: TaskPhase[] = [
     {
       id: 'phase-search',
-      title: 'Search & Preparation',
+      title: 'Search & Prep',
       description: 'Get pre-approved and start your property search',
       status: 'active',
       order: 1,
@@ -986,7 +986,7 @@ const generateRealEstateTaskPhases = (tasks: Task[], propertyData: PropertyData 
     },
     {
       id: 'phase-offer',
-      title: 'Offer & Negotiation',
+      title: 'Making an Offer',
       description: 'Make an offer and negotiate terms',
       status: 'upcoming',
       order: 2,
@@ -996,7 +996,7 @@ const generateRealEstateTaskPhases = (tasks: Task[], propertyData: PropertyData 
     },
     {
       id: 'phase-contract',
-      title: 'Contract & Legal Review',
+      title: 'Legal Review',
       description: 'Review and finalize the purchase agreement',
       status: 'upcoming',
       order: 3,
@@ -1006,7 +1006,7 @@ const generateRealEstateTaskPhases = (tasks: Task[], propertyData: PropertyData 
     },
     {
       id: 'phase-diligence',
-      title: 'Due Diligence',
+      title: 'Inspections & Diligence',
       description: 'Inspect the property and secure financing',
       status: 'upcoming',
       order: 4,
@@ -1016,7 +1016,7 @@ const generateRealEstateTaskPhases = (tasks: Task[], propertyData: PropertyData 
     },
     {
       id: 'phase-pre-closing',
-      title: 'Pre-Closing Preparation',
+      title: 'Final Prep',
       description: 'Final preparations before closing day',
       status: 'upcoming',
       order: 5,
@@ -1026,7 +1026,7 @@ const generateRealEstateTaskPhases = (tasks: Task[], propertyData: PropertyData 
     },
     {
       id: 'phase-closing',
-      title: 'Closing',
+      title: 'Closing Day',
       description: 'Complete the purchase transaction',
       status: 'upcoming',
       order: 6,
@@ -1036,7 +1036,7 @@ const generateRealEstateTaskPhases = (tasks: Task[], propertyData: PropertyData 
     },
     {
       id: 'phase-post-closing',
-      title: 'Post-Closing',
+      title: 'After Closing',
       description: 'Complete move-in tasks and set up your new home',
       status: 'upcoming',
       order: 7,
