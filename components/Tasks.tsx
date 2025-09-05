@@ -1148,27 +1148,25 @@ const InlinePhaseStepper = ({ phases, currentId, onSelect }: { phases: TaskPhase
   const cur = computeCurrentIndex();
   const stateAt = (i: number) => (i < cur ? 'completed' : i === cur ? 'current' : 'upcoming');
   return (
-    <div className="flex items-center isolate">
+    <div className="flex items-center isolate rounded-full bg-white px-1.5 py-1 border border-gray-200 shadow-sm">
       {phases.map((p, i) => {
         const st = stateAt(i);
         const isCurrent = st === 'current';
-        const isLast = i === phases.length - 1;
-        const base = 'relative inline-flex items-center h-9 px-5 text-sm font-medium transition-colors';
-        const colors = isCurrent ? 'bg-blue-600 text-white ring-1 ring-blue-600' : 'bg-white text-gray-700 ring-1 ring-gray-200 hover:bg-gray-50';
+        const base = 'relative inline-flex items-center h-9 px-5 rounded-full text-sm font-medium transition-colors';
+        const colors = isCurrent ? 'bg-blue-600 text-white' : 'bg-white text-gray-700';
+        const ring = isCurrent ? '' : 'ring-1 ring-gray-200';
         const z = isCurrent ? 'z-20' : i < cur ? 'z-10' : 'z-0';
         return (
           <button
             key={p.id}
-            className={`${base} ${colors} ${z} ${i>0 ? '-ml-2' : ''} ${isLast ? 'rounded-full' : 'rounded-l-full rounded-r-none'}`}
+            className={`${base} ${colors} ${ring} ${z} ${i>0 ? 'ml-3' : ''}`}
             aria-current={isCurrent ? 'step' : undefined}
             onClick={() => onSelect(p.id)}
             title={p.title}
           >
             {p.title}
-            {!isLast && (
-              <svg className="absolute right-[-16px] top-0 h-[36px] w-[22px] pointer-events-none" viewBox="0 0 22 36" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-                <path d="M0 0 L22 18 L0 36" fill={isCurrent ? '#2563eb' : '#ffffff'} stroke={isCurrent ? '#2563eb' : '#e5e7eb'} />
-              </svg>
+            {i < phases.length - 1 && (
+              <span aria-hidden className={`${isCurrent ? 'bg-blue-600' : 'bg-white'} absolute right-[-10px] top-0 h-full w-3 skew-x-12 ${isCurrent ? '' : 'ring-1 ring-gray-200'} rounded-r-full`} />
             )}
           </button>
         );
