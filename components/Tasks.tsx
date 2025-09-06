@@ -514,11 +514,11 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
 
   ${task.id==='task-buy-box-template' ? `
   <div class="section-title">Questionnaire</div>
-  <div class="row"><button id="openSearch">Open Home Search</button><button id="downloadPdf" class="primary">Download Questionnaire PDF</button></div>`:''}
+  <div class="row"><button id="downloadPdf" class="primary">Download Questionnaire PDF</button></div>`:''}
 
   ${task.id==='task-property-search' ? `
   <div class="section-title">Search Links</div>
-  <div class="row"><button id="openSearch2">Open Property Search</button><button id="openTrack">Open Home Tracking</button></div>`:''}
+  <div class="row"><button id="openTrack">Open Home Tracking</button></div>`:''}
 
   <div class="btns">
     <button id="closeBtn">Close</button>
@@ -549,9 +549,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
     window.close();
   };
   document.getElementById('closeBtn').onclick = () => window.close();
-  const os=document.getElementById('openSearch'); if(os) os.onclick=()=>{window.opener && window.opener.postMessage({type:'navigate', page:'property-search'}, '*')};
   const d=document.getElementById('downloadPdf'); if(d) d.onclick=()=>{window.opener && window.opener.postMessage({ type:'download-questionnaire'}, '*')};
-  const os2=document.getElementById('openSearch2'); if(os2) os2.onclick=()=>{window.opener && window.opener.postMessage({type:'navigate', page:'property-search'}, '*')};
   const ot=document.getElementById('openTrack'); if(ot) ot.onclick=()=>{window.opener && window.opener.postMessage({type:'navigate', page:'home-tracking'}, '*')};
 </script>
 </body></html>`;
@@ -798,7 +796,6 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
             {/* Questionnaire helpers */}
             {task.id === 'task-buy-box-template' && (
               <div className="flex flex-wrap gap-2">
-                <Button size="sm" variant="outline" onClick={() => onNavigate('property-search')}>Open Home Search</Button>
                 <Button size="sm" onClick={handleDownloadQuestionnairePDF}>Download Questionnaire PDF</Button>
               </div>
             )}
@@ -806,7 +803,6 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
             {/* Property search helpers */}
             {task.id === 'task-property-search' && (
               <div className="flex flex-wrap gap-2">
-                <Button size="sm" variant="outline" onClick={() => onNavigate('property-search')}>Open Property Search</Button>
                 <Button size="sm" variant="outline" onClick={() => onNavigate('home-tracking')}>Open Home Tracking</Button>
               </div>
             )}
@@ -1998,9 +1994,6 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                     <CardTitle className="text-[15px] font-semibold tracking-[-0.01em] text-gray-900">Quick links</CardTitle>
                   </CardHeader>
                   <CardContent className="pt-0 space-y-2">
-                    <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => onNavigate('property-search')}>
-                      <SearchIcon className="w-4 h-4 mr-2" /> Property search
-                    </Button>
                     <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => onNavigate('home-tracking')}>
                       <Home className="w-4 h-4 mr-2" /> Home tracking
                     </Button>

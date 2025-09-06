@@ -15,21 +15,14 @@ import BuyerIntakeForm from './BuyerIntakeForm'
 import SimpleOnboardingForm from './SimpleOnboardingForm'
 
 // Home Search Landing Page with AI MLS Integration
-import HomeSearchLanding from './HomeSearchLanding'
 
 export default function PropertySearchTabs() {
-  const [tabValue, setTabValue] = React.useState<string>('home-search');
+  const [tabValue, setTabValue] = React.useState<string>('get-started');
 
   return (
     <div className="w-full max-w-7xl mx-auto p-4 md:p-6">
       <Tabs value={tabValue} onValueChange={setTabValue} className="w-full">
         <TabsList className="w-full bg-transparent h-auto p-0 border-b border-gray-200 rounded-none flex justify-start">
-          <TabsTrigger
-            value="home-search"
-            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200"
-          >
-            Home Search
-          </TabsTrigger>
           <TabsTrigger
             value="get-started"
             className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200"
@@ -50,10 +43,6 @@ export default function PropertySearchTabs() {
           </TabsTrigger>
         </TabsList>
 
-        {/* Home Search - AI-Powered Landing Page */}
-        <TabsContent value="home-search" className="space-y-6 mt-8">
-          <HomeSearchLanding />
-        </TabsContent>
 
         {/* Get Started */}
         <TabsContent value="get-started" className="space-y-6 mt-8">
