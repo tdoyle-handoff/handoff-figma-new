@@ -671,7 +671,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <div className={`${minimal ? 'border border-gray-200 rounded-lg bg-white hover:shadow-sm' : 'border border-gray-200 rounded-lg bg-white transition-all hover:shadow-md'}`}>
-        <CollapsibleTrigger className={`${row ? 'w-full px-2.5 py-2 text-left' : (minimal ? 'w-full px-3 py-2 sm:px-4 sm:py-3 text-left' : 'w-full px-5 py-4 md:px-6 md:py-5 text-left')}`} onClick={(e) => { if (openInWindow) { e.preventDefault(); e.stopPropagation(); openTaskPopup(); } else if (onOpenModal) { e.preventDefault(); e.stopPropagation(); onOpenModal(task); } }}>
+        <CollapsibleTrigger className={`${row ? 'w-full px-3 py-3 min-h-[56px] text-left' : (minimal ? 'w-full px-4 py-3 sm:px-5 sm:py-4 min-h-[60px] text-left' : 'w-full px-6 py-5 md:px-7 md:py-6 min-h-[68px] text-left')}`} onClick={(e) => { if (openInWindow) { e.preventDefault(); e.stopPropagation(); openTaskPopup(); } else if (onOpenModal) { e.preventDefault(); e.stopPropagation(); onOpenModal(task); } }}>
           {row ? (
             <div className="grid grid-cols-12 items-center gap-2">
               <div className="col-span-5 flex items-center gap-2 min-w-0">
