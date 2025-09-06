@@ -18,12 +18,13 @@ import { ScrollArea } from './ui/scroll-area';
 import { Checkbox } from './ui/checkbox';
 import ChecklistLegalTabs from './checklist/LegalTabs';
 import ChecklistInspectionTabs from './checklist/InspectionTabs';
-import ChecklistInsuranceTabs from './checklist/InsuranceTabs';
 import ChecklistSidebar from './checklist/ChecklistSidebar';
 import ChecklistDetail from './checklist/ChecklistDetail';
 import ChecklistCalendar from './checklist/ChecklistCalendar';
 import ChecklistKanban from './checklist/ChecklistKanban';
 import { useTaskContext, Task, TaskPhase } from './TaskContext';
+import InsuranceCalculator from './InsuranceCalculator';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { scenarioSchema } from '../utils/scenarioSchema';
 import { getSelectedScenarios as getScenarioKeys, setSelectedScenarios as saveScenarioSelection } from '../utils/scenarioEngine';
 
@@ -240,10 +241,52 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
   const [editDueDate, setEditDueDate] = useState<string>(task.dueDate || '');
   const [editNotes, setEditNotes] = useState<string>(task.notes || '');
   const currentAttorney = (task.contacts || []).find(c => c.role.toLowerCase().includes('attorney'));
+
+  // Insurance (homeowners) task state
+  const [openInsuranceCalc, setOpenInsuranceCalc] = useState(false);
+  const [insProvider, setInsProvider] = useState<string>((task as any).customFields?.insurance?.provider || '');
+  const [insPolicyNumber, setInsPolicyNumber] = useState<string>((task as any).customFields?.insurance?.policyNumber || '');
+  const [insCoverage, setInsCoverage] = useState<string>((task as any).customFields?.insurance?.coverage || '');
+  const [insPremium, setInsPremium] = useState<string>((task as any).customFields?.insurance?.premium || '');
+  const [insEffectiveDate, setInsEffectiveDate] = useState<string>((task as any).customFields?.insurance?.effectiveDate || '');
+  const [insurancePolicies, setInsurancePolicies] = useState<Array<{ name: string; url?: string; type?: string; size?: number }>>(((task as any).customFields?.insurance?.policies) || []);
+
+  const persistInsurance = React.useCallback(() => {
+    if (!onUpdateTaskFields) return;
+    const updates: Partial<Task> = {
+      customFields: {
+        ...(task as any).customFields,
+        insurance: {
+          provider: insProvider || undefined,
+          policyNumber: insPolicyNumber || undefined,
+          coverage: insCoverage || undefined,
+          premium: insPremium || undefined,
+          effectiveDate: insEffectiveDate || undefined,
+          policies: insurancePolicies
+        }
+      } as any
+    };
+    onUpdateTaskFields(task.id, updates);
+    try { window.dispatchEvent(new Event('tasksUpdated')); } catch {}
+  }, [onUpdateTaskFields, task, insProvider, insPolicyNumber, insCoverage, insPremium, insEffectiveDate, insurancePolicies]);
   const [attorneyName, setAttorneyName] = useState<string>(currentAttorney?.name || '');
   const [attorneyEmail, setAttorneyEmail] = useState<string>(currentAttorney?.email || '');
   const [attorneyPhone, setAttorneyPhone] = useState<string>(currentAttorney?.phone || '');
   const [dueLocked, setDueLocked] = useState<boolean>(!!task.dueDateLocked);
+
+  // Agent info (for agent selection)
+  const currentAgent = (task.contacts || []).find(c => (c.role || '').toLowerCase().includes('agent'));
+  const [agentName, setAgentName] = useState<string>((currentAgent as any)?.name || '');
+  const [agentEmail, setAgentEmail] = useState<string>((currentAgent as any)?.email || '');
+  const [agentPhone, setAgentPhone] = useState<string>((currentAgent as any)?.phone || '');
+  const [agentBrokerage, setAgentBrokerage] = useState<string>((task as any).customFields?.agent?.brokerage || '');
+
+  // Lender / pre-approval info
+  const pre = ((task as any).customFields?.preApproval) || {};
+  const [lenderNamePA, setLenderNamePA] = useState<string>(pre.lenderName || '');
+  const [preApprovalAmount, setPreApprovalAmount] = useState<string>(pre.amount || '');
+  const [preApprovalRate, setPreApprovalRate] = useState<string>(pre.rate || '');
+  const [preApprovalExpiry, setPreApprovalExpiry] = useState<string>(pre.expirationDate || '');
 
   // Build updates object from current local state (reused by Save and autosave)
   const buildUpdatesFromState = React.useCallback((): Partial<Task> => {
@@ -372,19 +415,6 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
     }, 400) as unknown as number;
   }, [buildUpdatesFromState, onUpdateTaskFields, task.id]);
 
-  // Agent info (for agent selection)
-  const currentAgent = (task.contacts || []).find(c => (c.role || '').toLowerCase().includes('agent'));
-  const [agentName, setAgentName] = useState<string>((currentAgent as any)?.name || '');
-  const [agentEmail, setAgentEmail] = useState<string>((currentAgent as any)?.email || '');
-  const [agentPhone, setAgentPhone] = useState<string>((currentAgent as any)?.phone || '');
-  const [agentBrokerage, setAgentBrokerage] = useState<string>((task as any).customFields?.agent?.brokerage || '');
-
-  // Lender / pre-approval info
-  const pre = ((task as any).customFields?.preApproval) || {};
-  const [lenderNamePA, setLenderNamePA] = useState<string>(pre.lenderName || '');
-  const [preApprovalAmount, setPreApprovalAmount] = useState<string>(pre.amount || '');
-  const [preApprovalRate, setPreApprovalRate] = useState<string>(pre.rate || '');
-  const [preApprovalExpiry, setPreApprovalExpiry] = useState<string>(pre.expirationDate || '');
 
   const getQuestionnaireData = () => {
     try {
@@ -807,6 +837,78 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
               </div>
             )}
 
+            {/* Insurance helpers */}
+            {task.id === 'task-homeowners-insurance' && (
+              <div className="space-y-3">
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" onClick={() => setOpenInsuranceCalc(true)}>
+                    <Calculator className="w-4 h-4 mr-2" /> Insurance calculator
+                  </Button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div>
+                    <Label className="text-xs">Provider</Label>
+                    <Input value={insProvider} onChange={(e) => { setInsProvider(e.target.value); }} onBlur={persistInsurance} />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Policy number</Label>
+                    <Input value={insPolicyNumber} onChange={(e) => { setInsPolicyNumber(e.target.value); }} onBlur={persistInsurance} />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Coverage</Label>
+                    <Input value={insCoverage} onChange={(e) => { setInsCoverage(e.target.value); }} onBlur={persistInsurance} placeholder="$" />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Premium</Label>
+                    <Input value={insPremium} onChange={(e) => { setInsPremium(e.target.value); }} onBlur={persistInsurance} placeholder="$ / year" />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Effective date</Label>
+                    <Input type="date" value={insEffectiveDate} onChange={(e) => { setInsEffectiveDate(e.target.value); }} onBlur={persistInsurance} />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-xs">Upload insurance policies</Label>
+                  <Input type="file" multiple accept="application/pdf,image/*" onChange={(e) => {
+                    const files = Array.from(e.target.files || []);
+                    if (files.length === 0) return;
+                    const newItems = files.map(f => ({ name: f.name, type: f.type, size: f.size, url: URL.createObjectURL(f) }));
+                    setInsurancePolicies(prev => {
+                      const merged = [...prev, ...newItems];
+                      setTimeout(persistInsurance, 0);
+                      return merged;
+                    });
+                  }} />
+                  {insurancePolicies && insurancePolicies.length > 0 && (
+                    <ul className="list-disc ml-5 space-y-1">
+                      {insurancePolicies.map((p) => (
+                        <li key={p.name} className="text-xs text-gray-700 flex items-center gap-2">
+                          <span className="truncate max-w-[260px]" title={p.name}>{p.name}</span>
+                          <Button variant="ghost" size="sm" className="h-6 px-2" onClick={() => {
+                            setInsurancePolicies(prev => prev.filter(x => x.name !== p.name));
+                            setTimeout(persistInsurance, 0);
+                          }}>Remove</Button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
+                <Dialog open={openInsuranceCalc} onOpenChange={setOpenInsuranceCalc}>
+                  <DialogContent className="max-w-3xl">
+                    <DialogHeader>
+                      <DialogTitle>Insurance Calculator</DialogTitle>
+                    </DialogHeader>
+                    <div className="max-h-[75vh] overflow-auto">
+                      <InsuranceCalculator />
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            )}
+
             {/* Offer/Contract helpers */}
             {task.id === 'task-submit-offer' && (
               <div className="flex flex-col gap-3">
@@ -1006,6 +1108,21 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                       const others = (task.contacts || []).filter(c => !(c.role && c.role.toLowerCase().includes('lender')));
                       (updates as any).contacts = [...others, lenderContact];
                     }
+                  }
+
+                  // Homeowners insurance details
+                  if (task.id === 'task-homeowners-insurance') {
+                    (updates as any).customFields = {
+                      ...(task as any).customFields,
+                      insurance: {
+                        provider: insProvider || undefined,
+                        policyNumber: insPolicyNumber || undefined,
+                        coverage: insCoverage || undefined,
+                        premium: insPremium || undefined,
+                        effectiveDate: insEffectiveDate || undefined,
+                        policies: insurancePolicies,
+                      }
+                    };
                   }
 
                   const newAttorney = (attorneyName || attorneyEmail || attorneyPhone) ? {
@@ -1961,9 +2078,6 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                     <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => setActiveTab('inspections')}>
                       <FileCheck className="w-4 h-4 mr-2" /> Inspections
                     </Button>
-                    <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => setActiveTab('insurance')}>
-                      <Shield className="w-4 h-4 mr-2" /> Insurance
-                    </Button>
                   </CardContent>
                 </Card>
 
@@ -2172,9 +2286,6 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
           <ChecklistInspectionTabs selectedTask={selectedTask} />
         </TabsContent>
 
-        <TabsContent value="insurance" className="space-y-6 mt-6 bg-[#F6F7FB]">
-          <ChecklistInsuranceTabs selectedTask={selectedTask} />
-        </TabsContent>
       </Tabs>
 
       {modalTask && (
