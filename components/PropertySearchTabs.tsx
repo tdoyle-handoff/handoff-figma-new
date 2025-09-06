@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { Badge } from './ui/badge'
 import { Button } from './ui/button'
-import { Search as SearchIcon, ListChecks, Database, Play, Home, CheckCircle } from 'lucide-react'
+import { Search as SearchIcon, ListChecks, Database, Play, Home, CheckCircle, X } from 'lucide-react'
 
 // Home Tracker for tracking and ranking interested homes
 import HomeTracker from './HomeTracker'
@@ -19,6 +19,9 @@ import SimpleOnboardingForm from './SimpleOnboardingForm'
 
 export default function PropertySearchTabs() {
   const [tabValue, setTabValue] = React.useState<string>('get-started');
+  const [showPSHelp, setShowPSHelp] = React.useState<boolean>(() => {
+    try { return localStorage.getItem('handoff-dismiss-alert-propertysearch-v1') !== 'true'; } catch { return true; }
+  });
 
   return (
     <div className="w-full max-w-7xl mx-auto p-4 md:p-6">
@@ -46,6 +49,23 @@ export default function PropertySearchTabs() {
           </div>
         </aside>
         <section className="col-span-12 md:col-span-9">
+          {showPSHelp && (
+            <div className="rounded-md border border-amber-200 bg-amber-50 text-amber-900 p-3 mb-4 flex items-start justify-between gap-3">
+              <div className="text-sm">
+                <div className="font-medium">Using Property Search</div>
+                <p className="mt-1">
+                  Use Get Started to capture your preferences, Track & Compare to save and rank homes, and Property Analysis to review data. Use the left menu to switch views.
+                </p>
+              </div>
+              <button
+                aria-label="Dismiss"
+                className="p-1 text-amber-900/70 hover:text-amber-900"
+                onClick={() => { setShowPSHelp(false); try { localStorage.setItem('handoff-dismiss-alert-propertysearch-v1','true'); } catch {} }}
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          )}
           <Tabs value={tabValue} onValueChange={setTabValue} className="w-full">
             {/* Get Started */}
             <TabsContent value="get-started" className="space-y-6 mt-0">

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CheckCircle, Circle, Clock, AlertTriangle, Calendar, User, ArrowRight, Filter, ChevronDown, ChevronRight, ExternalLink, Scale, Calculator, FileCheck, Shield, CheckSquare, Lock, Unlock, Search as SearchIcon, Home, FileText, KeyRound, Plus } from 'lucide-react';
+import { CheckCircle, Circle, Clock, AlertTriangle, Calendar, User, ArrowRight, Filter, ChevronDown, ChevronRight, ExternalLink, Scale, Calculator, FileCheck, Shield, CheckSquare, Lock, Unlock, Search as SearchIcon, Home, FileText, KeyRound, Plus, X } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -2087,6 +2087,9 @@ export default function Tasks({ onNavigate }: TasksProps) {
   // Tab state management
   const [activeTab, setActiveTab] = useState<string>('checklist');
 const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
+  const [showChecklistHelp, setShowChecklistHelp] = useState<boolean>(() => {
+    try { return localStorage.getItem('handoff-dismiss-alert-tasks-v1') !== 'true'; } catch { return true; }
+  });
   const [tagFilter, setTagFilter] = useState<string>('all');
   // When set, show only this phase as its own page
   const [phasePageId, setPhasePageId] = useState<string | null>(null);
@@ -2208,6 +2211,23 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
 
         <TabsContent value="checklist" className="space-y-6 mt-6 bg-[#F6F7FB]">
+          {showChecklistHelp && (
+            <div className="rounded-md border border-amber-200 bg-amber-50 text-amber-900 p-3 flex items-start justify-between gap-3">
+              <div className="text-sm">
+                <div className="font-medium">Using the Transaction Checklist and Calendar</div>
+                <p className="mt-1">
+                  Track tasks by phase in the checklist. Select a task to see “What it is”, “Why it matters”, and “How to complete it.” Use the Calendar to drag-and-drop due dates and open task details by clicking a task.
+                </p>
+              </div>
+              <button
+                aria-label="Dismiss"
+                className="p-1 text-amber-900/70 hover:text-amber-900"
+                onClick={() => { setShowChecklistHelp(false); try { localStorage.setItem('handoff-dismiss-alert-tasks-v1','true'); } catch {} }}
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          )}
           <div className="px-1 space-y-4">
             {/* Milestone bar + scenarios selector */}
             <div className="flex items-center justify-between">
