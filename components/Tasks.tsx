@@ -288,6 +288,38 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
   const [preApprovalRate, setPreApprovalRate] = useState<string>(pre.rate || '');
   const [preApprovalExpiry, setPreApprovalExpiry] = useState<string>(pre.expirationDate || '');
 
+  // Inspections state (scheduled + issues + negotiations + remedies)
+  type ScheduledInspection = { id: string; type?: string; title?: string; date?: string; time?: string; provider?: string; company?: string; phone?: string; cost?: string; notes?: string };
+  type InspectionIssue = { id: string; category?: string; severity?: 'high'|'medium'|'low'; issue?: string; description?: string; recommendation?: string; cost?: string; status?: 'identified'|'negotiating'|'resolved'|'accepted'; resolution?: string; negotiationNotes?: string[] };
+  type NegotiationRequest = { id: string; description?: string; requestType?: 'repair'|'credit'; amount?: string; status?: 'submitted'|'accepted'|'rejected'|'pending' };
+  type RemedyItem = { id: string; description?: string; dueDate?: string; party?: 'seller'|'buyer'; status?: 'pending'|'completed' };
+
+  const inspectionsCF: any = (task as any).customFields?.inspections || {};
+  const [scheduledInspections, setScheduledInspections] = useState<ScheduledInspection[]>(inspectionsCF.scheduled || []);
+  const [inspectionIssues, setInspectionIssues] = useState<InspectionIssue[]>(inspectionsCF.issues || []);
+  const [inspectionNegotiations, setInspectionNegotiations] = useState<NegotiationRequest[]>(inspectionsCF.negotiations || []);
+  const [inspectionRemedies, setInspectionRemedies] = useState<RemedyItem[]>(inspectionsCF.remedies || []);
+
+  const persistInspectionFields = React.useCallback(() => {
+    if (!onUpdateTaskFields) return;
+    const prev = ((task as any).customFields?.inspections) || {};
+    const next = {
+      ...prev,
+      ...(scheduledInspections ? { scheduled: scheduledInspections } : {}),
+      ...(inspectionIssues ? { issues: inspectionIssues } : {}),
+      ...(inspectionNegotiations ? { negotiations: inspectionNegotiations } : {}),
+      ...(inspectionRemedies ? { remedies: inspectionRemedies } : {}),
+    };
+    const updates: Partial<Task> = {
+      customFields: {
+        ...(task as any).customFields,
+        inspections: next,
+      } as any,
+    };
+    onUpdateTaskFields(task.id, updates);
+    try { window.dispatchEvent(new Event('tasksUpdated')); } catch {}
+  }, [onUpdateTaskFields, task, scheduledInspections, inspectionIssues, inspectionNegotiations, inspectionRemedies]);
+
   // Build updates object from current local state (reused by Save and autosave)
   const buildUpdatesFromState = React.useCallback((): Partial<Task> => {
     const updates: Partial<Task> = {
@@ -909,6 +941,221 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
               </div>
             )}
 
+            {/* Inspection scheduling (inline) */}
+            {(task.id === 'task-home-inspection' || task.id === 'task-schedule-specialized-inspections') && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Label className="text-xs">Scheduled inspections</Label>
+                    <span className="text-[11px] text-gray-500">These will appear on your Calendar.</span>
+                  </div>
+                  <Button size="sm" onClick={() => {
+                    const def: ScheduledInspection = { id: String(Date.now()), type: task.id === 'task-home-inspection' ? 'General Home Inspection' : 'Specialty', title: task.id === 'task-home-inspection' ? 'General Home Inspection' : 'Specialty Inspection', date: '', time: '', provider: '', cost: '', notes: '' };
+                    setScheduledInspections(prev => { const next = [...prev, def]; setTimeout(persistInspectionFields, 0); return next; });
+                  }}>Add</Button>
+                </div>
+
+                {scheduledInspections.length === 0 && (
+                  <div className="text-xs text-gray-600">No inspections added yet.</div>
+                )}
+                <div className="space-y-3">
+                  {scheduledInspections.map((ins, idx) => (
+                    <div key={ins.id || idx} className="grid grid-cols-1 md:grid-cols-6 gap-2 items-end border rounded-md p-2">
+                      <div className="md:col-span-2">
+                        <Label className="text-xs">Type</Label>
+                        <Select value={ins.type || ''} onValueChange={(v) => { const next = [...scheduledInspections]; next[idx] = { ...ins, type: v, title: v }; setScheduledInspections(next); setTimeout(persistInspectionFields, 0); }}>
+                          <SelectTrigger className="h-8"><SelectValue placeholder="Inspection type" /></SelectTrigger>
+                          <SelectContent>
+                            {['General Home Inspection','Termite','Radon','Septic','Well Water','Sewer Scope','Mold','Lead Paint','Asbestos','Chimney','Pool/Spa','HVAC'].map(t => (
+                              <SelectItem key={t} value={t}>{t}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label className="text-xs">Date</Label>
+                        <Input type="date" value={ins.date || ''} onChange={(e) => { const next = [...scheduledInspections]; next[idx] = { ...ins, date: e.target.value }; setScheduledInspections(next); }} onBlur={persistInspectionFields} />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Time</Label>
+                        <Input placeholder="e.g., 09:00 AM" value={ins.time || ''} onChange={(e) => { const next = [...scheduledInspections]; next[idx] = { ...ins, time: e.target.value }; setScheduledInspections(next); }} onBlur={persistInspectionFields} />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Provider</Label>
+                        <Input value={ins.provider || ''} onChange={(e) => { const next = [...scheduledInspections]; next[idx] = { ...ins, provider: e.target.value }; setScheduledInspections(next); }} onBlur={persistInspectionFields} />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Cost</Label>
+                        <Input placeholder="$" value={ins.cost || ''} onChange={(e) => { const next = [...scheduledInspections]; next[idx] = { ...ins, cost: e.target.value }; setScheduledInspections(next); }} onBlur={persistInspectionFields} />
+                      </div>
+                      <div className="md:col-span-6">
+                        <Label className="text-xs">Notes</Label>
+                        <Textarea rows={2} value={ins.notes || ''} onChange={(e) => { const next = [...scheduledInspections]; next[idx] = { ...ins, notes: e.target.value }; setScheduledInspections(next); }} onBlur={persistInspectionFields} />
+                      </div>
+                      <div className="flex justify-end md:col-span-6">
+                        <Button variant="ghost" size="sm" className="h-7" onClick={() => { setScheduledInspections(prev => { const next = prev.filter((x) => (x.id || '') !== (ins.id || '')); setTimeout(persistInspectionFields, 0); return next; }); }}>Remove</Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Inspection results (moved from workspace) */}
+            {task.id === 'task-review-inspection-results' && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label className="text-xs">Inspection results</Label>
+                  <Button size="sm" onClick={() => {
+                    const nu: InspectionIssue = { id: String(Date.now()), category: '', severity: 'medium', issue: '', description: '', recommendation: '', cost: '', status: 'identified' };
+                    setInspectionIssues(prev => { const next = [...prev, nu]; setTimeout(persistInspectionFields, 0); return next; });
+                  }}>Add issue</Button>
+                </div>
+                {inspectionIssues.length === 0 && (
+                  <div className="text-xs text-gray-600">No issues recorded yet.</div>
+                )}
+                <div className="space-y-2">
+                  {inspectionIssues.map((it, idx) => (
+                    <div key={it.id || idx} className="border rounded-md p-2 grid grid-cols-1 md:grid-cols-6 gap-2 items-end">
+                      <div>
+                        <Label className="text-xs">Category</Label>
+                        <Input value={it.category || ''} onChange={(e) => { const next = [...inspectionIssues]; next[idx] = { ...it, category: e.target.value }; setInspectionIssues(next); }} onBlur={persistInspectionFields} />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Severity</Label>
+                        <Select value={it.severity || 'medium'} onValueChange={(v) => { const next = [...inspectionIssues]; next[idx] = { ...it, severity: v as any }; setInspectionIssues(next); setTimeout(persistInspectionFields,0); }}>
+                          <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="high">High</SelectItem>
+                            <SelectItem value="medium">Medium</SelectItem>
+                            <SelectItem value="low">Low</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="md:col-span-2">
+                        <Label className="text-xs">Issue</Label>
+                        <Input value={it.issue || ''} onChange={(e) => { const next = [...inspectionIssues]; next[idx] = { ...it, issue: e.target.value }; setInspectionIssues(next); }} onBlur={persistInspectionFields} />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Cost</Label>
+                        <Input value={it.cost || ''} onChange={(e) => { const next = [...inspectionIssues]; next[idx] = { ...it, cost: e.target.value }; setInspectionIssues(next); }} onBlur={persistInspectionFields} />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Status</Label>
+                        <Select value={it.status || 'identified'} onValueChange={(v) => { const next = [...inspectionIssues]; next[idx] = { ...it, status: v as any }; setInspectionIssues(next); setTimeout(persistInspectionFields,0); }}>
+                          <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="identified">Identified</SelectItem>
+                            <SelectItem value="negotiating">Negotiating</SelectItem>
+                            <SelectItem value="resolved">Resolved</SelectItem>
+                            <SelectItem value="accepted">Accepted</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="md:col-span-3">
+                        <Label className="text-xs">Description</Label>
+                        <Textarea rows={2} value={it.description || ''} onChange={(e) => { const next = [...inspectionIssues]; next[idx] = { ...it, description: e.target.value }; setInspectionIssues(next); }} onBlur={persistInspectionFields} />
+                      </div>
+                      <div className="md:col-span-3">
+                        <Label className="text-xs">Recommendation</Label>
+                        <Textarea rows={2} value={it.recommendation || ''} onChange={(e) => { const next = [...inspectionIssues]; next[idx] = { ...it, recommendation: e.target.value }; setInspectionIssues(next); }} onBlur={persistInspectionFields} />
+                      </div>
+                      <div className="flex justify-end md:col-span-6">
+                        <Button variant="ghost" size="sm" className="h-7" onClick={() => { setInspectionIssues(prev => { const next = prev.filter((x) => (x.id || '') !== (it.id || '')); setTimeout(persistInspectionFields,0); return next; }); }}>Remove</Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Inspection negotiations (moved from workspace) */}
+            {task.id === 'task-submit-repair-requests' && (
+              <div className="space-y-3">
+                <Label className="text-xs">Negotiations on issues</Label>
+                {inspectionIssues.length === 0 && (
+                  <div className="text-xs text-gray-600">No issues found yet. Add issues under "Review Inspection Results" first.</div>
+                )}
+                <div className="space-y-2">
+                  {inspectionIssues.map((it, idx) => (
+                    <div key={it.id || idx} className="border rounded-md p-2 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="text-sm font-medium truncate">{it.issue || '(untitled issue)'}</div>
+                        <Select value={it.status || 'identified'} onValueChange={(v) => { const next = [...inspectionIssues]; next[idx] = { ...it, status: v as any }; setInspectionIssues(next); setTimeout(persistInspectionFields,0); }}>
+                          <SelectTrigger className="h-7 w-[140px]"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="identified">Identified</SelectItem>
+                            <SelectItem value="negotiating">Negotiating</SelectItem>
+                            <SelectItem value="resolved">Resolved</SelectItem>
+                            <SelectItem value="accepted">Accepted</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label className="text-xs">Negotiation notes</Label>
+                        <Textarea rows={2} value={(it.negotiationNotes || []).join('\n')} onChange={(e) => {
+                          const notes = e.target.value.split('\n').filter(Boolean);
+                          const next = [...inspectionIssues];
+                          next[idx] = { ...it, negotiationNotes: notes };
+                          setInspectionIssues(next);
+                        }} onBlur={persistInspectionFields} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Inspection remedies/finalization (moved from workspace) */}
+            {task.id === 'task-finalize-inspection-remedies' && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label className="text-xs">Final remedies and timelines</Label>
+                  <Button size="sm" onClick={() => { const nu: RemedyItem = { id: String(Date.now()), description: '', dueDate: '', party: 'seller', status: 'pending' }; setInspectionRemedies(prev => { const next = [...prev, nu]; setTimeout(persistInspectionFields, 0); return next; }); }}>Add remedy</Button>
+                </div>
+                {inspectionRemedies.length === 0 && (
+                  <div className="text-xs text-gray-600">No remedies recorded yet.</div>
+                )}
+                <div className="space-y-2">
+                  {inspectionRemedies.map((r, idx) => (
+                    <div key={r.id || idx} className="grid grid-cols-1 md:grid-cols-5 gap-2 items-end border rounded-md p-2">
+                      <div className="md:col-span-2">
+                        <Label className="text-xs">Description</Label>
+                        <Input value={r.description || ''} onChange={(e) => { const next = [...inspectionRemedies]; next[idx] = { ...r, description: e.target.value }; setInspectionRemedies(next); }} onBlur={persistInspectionFields} />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Due date</Label>
+                        <Input type="date" value={r.dueDate || ''} onChange={(e) => { const next = [...inspectionRemedies]; next[idx] = { ...r, dueDate: e.target.value }; setInspectionRemedies(next); }} onBlur={persistInspectionFields} />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Party</Label>
+                        <Select value={r.party || 'seller'} onValueChange={(v) => { const next = [...inspectionRemedies]; next[idx] = { ...r, party: v as any }; setInspectionRemedies(next); setTimeout(persistInspectionFields,0); }}>
+                          <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="seller">Seller</SelectItem>
+                            <SelectItem value="buyer">Buyer</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label className="text-xs">Status</Label>
+                        <Select value={r.status || 'pending'} onValueChange={(v) => { const next = [...inspectionRemedies]; next[idx] = { ...r, status: v as any }; setInspectionRemedies(next); setTimeout(persistInspectionFields,0); }}>
+                          <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="pending">Pending</SelectItem>
+                            <SelectItem value="completed">Completed</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="flex justify-end md:col-span-5">
+                        <Button variant="ghost" size="sm" className="h-7" onClick={() => { setInspectionRemedies(prev => { const next = prev.filter((x) => (x.id || '') !== (r.id || '')); setTimeout(persistInspectionFields, 0); return next; }); }}>Remove</Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Offer/Contract helpers */}
             {task.id === 'task-submit-offer' && (
               <div className="flex flex-col gap-3">
@@ -1121,6 +1368,21 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                         premium: insPremium || undefined,
                         effectiveDate: insEffectiveDate || undefined,
                         policies: insurancePolicies,
+                      }
+                    };
+                  }
+
+                  // Inspections data inline (scheduled / results / negotiations / remedies)
+                  if (['task-home-inspection','task-schedule-specialized-inspections','task-review-inspection-results','task-submit-repair-requests','task-finalize-inspection-remedies'].includes(task.id)) {
+                    const prevInspections = ((task as any).customFields?.inspections) || {};
+                    (updates as any).customFields = {
+                      ...(task as any).customFields,
+                      inspections: {
+                        ...prevInspections,
+                        ...(scheduledInspections ? { scheduled: scheduledInspections } : {}),
+                        ...(inspectionIssues ? { issues: inspectionIssues } : {}),
+                        ...(inspectionNegotiations ? { negotiations: inspectionNegotiations } : {}),
+                        ...(inspectionRemedies ? { remedies: inspectionRemedies } : {}),
                       }
                     };
                   }
@@ -2067,19 +2329,22 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
               {/* Right sidebar */}
               <div className="space-y-4">
 
-                <Card className="shadow-sm">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-[15px] font-semibold tracking-[-0.01em] text-gray-900">Workspaces</CardTitle>
-                  </CardHeader>
-                  <CardContent className="pt-0 space-y-2">
-                    <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => setActiveTab('legal')}>
-                      <Scale className="w-4 h-4 mr-2" /> Legal
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => setActiveTab('inspections')}>
-                      <FileCheck className="w-4 h-4 mr-2" /> Inspections
-                    </Button>
-                  </CardContent>
-                </Card>
+                {/* Workspaces card hidden after integrating inline flows */}
+                {false && (
+                  <Card className="shadow-sm">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-[15px] font-semibold tracking-[-0.01em] text-gray-900">Workspaces</CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-0 space-y-2">
+                      <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => setActiveTab('legal')}>
+                        <Scale className="w-4 h-4 mr-2" /> Legal
+                      </Button>
+                      <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => setActiveTab('inspections')}>
+                        <FileCheck className="w-4 h-4 mr-2" /> Inspections
+                      </Button>
+                    </CardContent>
+                  </Card>
+                )}
 
                 <Card className="shadow-sm">
                   <CardHeader className="pb-2">

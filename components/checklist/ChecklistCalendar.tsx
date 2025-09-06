@@ -96,6 +96,42 @@ export default function ChecklistCalendar({ tasks, onUpdateTask }: ChecklistCale
     return map;
   }, [tasks]);
 
+  // Also surface scheduled inspections (from tasks.customFields.inspections.scheduled)
+  type CalendarInspectionEvent = {
+    id: string;
+    taskId: string;
+    type?: string;
+    title: string;
+    time?: string;
+    provider?: string;
+  };
+  const inspectionEventsByDate = useMemo(() => {
+    const map = new Map<string, CalendarInspectionEvent[]>();
+    for (const t of tasks) {
+      const sub = (t.subcategory || '').toLowerCase();
+      const cf: any = (t as any).customFields || {};
+      const scheduled: any[] = cf?.inspections?.scheduled || [];
+      if (sub === 'inspections' && Array.isArray(scheduled)) {
+        for (const it of scheduled) {
+          const d = it?.date;
+          if (!d) continue;
+          const key = String(d);
+          if (!map.has(key)) map.set(key, []);
+          const ev: CalendarInspectionEvent = {
+            id: `${t.id}::${it.id || it.type || it.date}`,
+            taskId: t.id,
+            type: it.type,
+            title: it.title || it.type || 'Inspection',
+            time: it.time,
+            provider: it.provider || it.company,
+          };
+          map.get(key)!.push(ev);
+        }
+      }
+    }
+    return map;
+  }, [tasks]);
+
   const unscheduled = useMemo(() => tasks.filter(t => !t.dueDate), [tasks]);
 
   const handlePrevMonth = () => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1));
@@ -241,6 +277,30 @@ export default function ChecklistCalendar({ tasks, onUpdateTask }: ChecklistCale
                       <span className="truncate">{t.title}</span>
                     </div>
                   ))}
+
+                  {/* Scheduled inspections */}
+                  {(() => {
+                    const key = formatISODate(day);
+                    const events = inspectionEventsByDate.get(key) || [];
+                    if (events.length === 0) return null;
+                    return (
+                      <div className="pt-1 border-t mt-1">
+                        {events.map((ev) => (
+                          <div
+                            key={ev.id}
+                            className="text-[11px] bg-amber-50 border border-amber-200 text-amber-800 rounded px-1.5 py-1 flex items-center justify-between gap-2"
+                            title={`${ev.title}${ev.provider ? ' — ' + ev.provider : ''}${ev.time ? ' at ' + ev.time : ''}`}
+                          >
+                            <span className="truncate">
+                              {ev.title}{ev.time ? ` @ ${ev.time}` : ''}
+                              {ev.provider ? ` • ${ev.provider}` : ''}
+                            </span>
+                            <Badge variant="outline" className="text-[10px]">Inspection</Badge>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
             );
