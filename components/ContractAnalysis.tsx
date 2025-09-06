@@ -125,7 +125,12 @@ export default function ContractAnalysis({ onNavigate }: ContractAnalysisProps) 
       setTimeout(() => {
         setContracts(prev => prev.map(contract =>
           contract.id === newContract.id
-            ? { ...contract, status: 'analyzed', analysisComplete: true }
+            ? { 
+                ...contract, 
+                status: 'analyzed', 
+                analysisComplete: true,
+                keyPoints: generateMockKeyPoints(contract.file)
+              }
             : contract
         ));
         setAnalyzing(false);
@@ -141,6 +146,70 @@ export default function ContractAnalysis({ onNavigate }: ContractAnalysisProps) 
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+  };
+
+  // Temporary helper to generate placeholder key points until real analysis is wired up
+  const generateMockKeyPoints = (file?: File): ContractKeyPoints => {
+    const today = new Date();
+    const fmt = (d: Date) => d.toLocaleDateString();
+    const inDays = (n: number) => fmt(new Date(today.getTime() + n * 24 * 60 * 60 * 1000));
+
+    return {
+      summary: `Automated overview for ${file?.name ?? 'contract'}: This appears to be a residential purchase agreement. Key economic terms and contingency timelines are summarized below.`,
+      purchasePrice: '$500,000',
+      earnestMoney: '$10,000',
+      closingDate: inDays(30),
+      inspectionPeriod: '10 days',
+      financingContingency: '15 days',
+      appraisalContingency: '20 days',
+      contingencies: [
+        {
+          name: 'Inspection Contingency',
+          deadline: inDays(10),
+          status: 'active',
+          description: 'Buyer may terminate based on inspection findings within the inspection period.',
+          daysRemaining: 10,
+          critical: true,
+        },
+        {
+          name: 'Financing Contingency',
+          deadline: inDays(15),
+          status: 'active',
+          description: 'Contract contingent on buyer obtaining financing approval.',
+          daysRemaining: 15,
+          critical: true,
+        },
+        {
+          name: 'Appraisal Contingency',
+          deadline: inDays(20),
+          status: 'active',
+          description: 'Property must appraise at or above the purchase price.',
+          daysRemaining: 20,
+          critical: false,
+        },
+      ],
+      importantDates: [
+        { event: 'Offer Acceptance', date: fmt(today), description: 'Contract effective date', status: 'completed' },
+        { event: 'Inspection Deadline', date: inDays(10), description: 'Last day to complete inspections', status: 'upcoming', daysUntil: 10 },
+        { event: 'Financing Deadline', date: inDays(15), description: 'Loan commitment due', status: 'upcoming', daysUntil: 15 },
+        { event: 'Closing', date: inDays(30), description: 'Target closing date', status: 'upcoming', daysUntil: 30 },
+      ],
+      risks: [
+        { level: 'medium', category: 'Financing', description: 'Tight timeline for loan approval may cause delays.', recommendation: 'Engage lender immediately and order appraisal early.' },
+        { level: 'low', category: 'Inspection', description: 'Standard inspection period and remedies.', recommendation: 'Schedule inspection within 48 hours.' },
+      ],
+      recommendations: [
+        'Confirm lender can meet the financing deadline; request pre-underwriting.',
+        'Schedule inspection and share report promptly with seller if issues arise.',
+        'Order appraisal early to avoid bottlenecks.',
+      ],
+      keyTerms: [
+        { term: 'Purchase Price', value: '$500,000', section: 'Price', importance: 'critical' },
+        { term: 'Earnest Money', value: '$10,000', section: 'Deposits', importance: 'important' },
+        { term: 'Closing Date', value: inDays(30), section: 'Timeline', importance: 'important' },
+        { term: 'Inspection Period', value: '10 days', section: 'Contingencies', importance: 'standard' },
+      ],
+    };
   };
 
   const handleDrag = (e: React.DragEvent) => {
