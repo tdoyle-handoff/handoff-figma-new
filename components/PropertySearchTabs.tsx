@@ -24,10 +24,10 @@ export default function PropertySearchTabs() {
   });
 
   return (
-    <div className="w-full max-w-7xl mx-auto p-4 md:p-6">
-      <div className="grid grid-cols-12 gap-6">
-        <aside className="col-span-12 md:col-span-3">
-          <div className="bg-white border rounded-lg p-2 space-y-1">
+    <div className="w-full p-0 md:-ml-8 md:pr-8">
+      <div className="grid grid-cols-12 gap-0 md:gap-6">
+        <aside className="col-span-12 md:col-span-3 md:border-r bg-white">
+          <div className="p-2 space-y-1">
             <button
               className={`w-full text-left px-3 py-2 rounded-md ${tabValue==='get-started' ? 'bg-blue-50 text-[#0B1F44] font-semibold' : 'text-[#0B1F44] hover:bg-gray-50'}`}
               onClick={() => setTabValue('get-started')}
@@ -48,7 +48,7 @@ export default function PropertySearchTabs() {
             </button>
           </div>
         </aside>
-        <section className="col-span-12 md:col-span-9">
+        <section className="col-span-12 md:col-span-9 p-4 md:p-6">
           {showPSHelp && (
             <div className="rounded-md border border-amber-200 bg-amber-50 text-amber-900 p-3 mb-4 flex items-start justify-between gap-3">
               <div className="text-sm">
@@ -68,8 +68,9 @@ export default function PropertySearchTabs() {
           )}
           <Tabs value={tabValue} onValueChange={setTabValue} className="w-full">
             {/* Get Started */}
-            <TabsContent value="get-started" className="space-y-6 mt-0">
-              <SimpleOnboardingForm
+            <TabsContent value="get-started" className="mt-0">
+              <div className="bg-white border rounded-xl shadow-sm p-4 md:p-6 min-h-[75vh]">
+                <SimpleOnboardingForm
                 onComplete={(data) => {
                   // Handle onboarding completion
                   alert(`Welcome! Your onboarding is complete. Budget: ${data.budget}, Location: ${data.location}`);
@@ -84,6 +85,7 @@ export default function PropertySearchTabs() {
                   }
                 }}
               />
+              </div>
             </TabsContent>
 
             {/* Track & Compare */}

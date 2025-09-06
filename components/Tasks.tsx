@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CheckCircle, Circle, Clock, AlertTriangle, Calendar, User, ArrowRight, Filter, ChevronDown, ChevronRight, ExternalLink, Scale, Calculator, FileCheck, Shield, CheckSquare, Lock, Unlock, Search as SearchIcon, Home, FileText, KeyRound, Plus, X } from 'lucide-react';
+import { CheckCircle, Circle, Clock, AlertTriangle, Calendar, User, ArrowRight, Filter, ChevronDown, ChevronRight, ExternalLink, Scale, Calculator, FileCheck, Shield, CheckSquare, Lock, Unlock, Search as SearchIcon, Home, FileText, KeyRound, Plus, X, Info } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -23,6 +23,7 @@ import ChecklistDetail from './checklist/ChecklistDetail';
 import ChecklistCalendar from './checklist/ChecklistCalendar';
 import ChecklistKanban from './checklist/ChecklistKanban';
 import { useTaskContext, Task, TaskPhase } from './TaskContext';
+import { usePropertyContext } from './PropertyContext';
 import InsuranceCalculator from './InsuranceCalculator';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { scenarioSchema } from '../utils/scenarioSchema';
@@ -96,6 +97,22 @@ const formatShortDate = (dateStr?: string) => {
   return `${m}/${dd}/${yy}`;
 };
 
+const daysLeft = (dateStr?: string) => {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return '';
+  const today = new Date();
+  // normalize to midnight
+  d.setHours(0,0,0,0);
+  today.setHours(0,0,0,0);
+  const diff = Math.ceil((d.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  if (diff > 1) return `${diff} days left`;
+  if (diff === 1) return `1 day left`;
+  if (diff === 0) return `Due today`;
+  if (diff === -1) return `1 day overdue`;
+  return `${Math.abs(diff)} days overdue`;
+};
+
 const priorityLabel = (p: Task['priority']) => {
   if (p === 'high') return 'High';
   if (p === 'medium') return 'Medium';
@@ -119,6 +136,24 @@ const statusLabel = (s: string) => {
   };
   if (!s) return '';
   return map[s] || s.charAt(0).toUpperCase() + s.slice(1);
+};
+
+// Small colored status dot for quick scan
+const StatusDot = ({ status }: { status: Task['status'] }) => {
+  const color = status === 'completed'
+    ? 'bg-green-500'
+    : (status === 'active' || status === 'in-progress')
+      ? 'bg-blue-500'
+      : status === 'overdue'
+        ? 'bg-red-500'
+        : 'bg-gray-400';
+  const label = statusLabel(status);
+  return (
+    <span className="inline-flex items-center gap-1" title={label}>
+      <span aria-hidden className={`inline-block w-2.5 h-2.5 rounded-full ${color}`} />
+      <span className="sr-only">{label}</span>
+    </span>
+  );
 };
 
 // Assignee avatars (initials), derived from task.contacts once info is entered
@@ -695,7 +730,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                 })()}
               </div>
               <div className="col-span-2">
-<span className="text-[11px] text-gray-700">{statusLabel(task.status)}</span>
+                <StatusDot status={task.status} />
               </div>
               <div className="col-span-2 text-[12px] text-gray-700 truncate flex items-center gap-1">
                 <div className="flex items-center -space-x-2 mr-1">
@@ -707,7 +742,10 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                 </div>
               </div>
               <div className="col-span-2 text-[12px] text-gray-700">
-                {formatShortDate(task.dueDate)}
+                <div>{formatShortDate(task.dueDate)}</div>
+                {task.dueDate && (
+                  <div className="text-[11px] text-gray-500">{daysLeft(task.dueDate)}</div>
+                )}
               </div>
               <div className="col-span-1 flex items-center justify-end gap-2">
                 <span className={priorityPill(task.priority)}>{priorityLabel(task.priority)}</span>
@@ -727,6 +765,42 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                 <div className="flex items-center justify-between gap-3 sm:gap-4">
                   <h4 className={`font-semibold ${isCompleted ? 'text-gray-500 line-through' : 'text-gray-900'} break-words leading-snug tracking-tight flex-1 m-0 text-[15px] sm:text-base`}>
                     {task.title}
+                    {/* Scenario badge(s) */}
+                    {Array.isArray(task.tags) && task.tags.filter(t => t.startsWith('scenario-')).slice(0,2).map((t) => (
+                      <span key={t} className="ml-2 inline-flex items-center rounded-full border px-1.5 py-0.5 text-[10px] bg-indigo-50 text-indigo-700 border-indigo-200 capitalize">
+                        {t.replace(/^scenario-/, '').replace(/-/g, ' ')}
+                      </span>
+                    ))}
+                    {/* Inline education popover */}
+                    {(whatInfo || whyInfo) && (
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <button className="ml-2 inline-flex items-center justify-center w-5 h-5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200" aria-label="Info">
+                            <Info className="w-3 h-3" />
+                          </button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-80 p-3">
+                          <div className="text-sm">
+                            {whatInfo && (
+                              <div className="mb-2">
+                                <div className="font-medium">Overview</div>
+                                <div className="text-gray-700 mt-1">
+                                  {renderBulleted(whatInfo)}
+                                </div>
+                              </div>
+                            )}
+                            {whyInfo && (
+                              <div>
+                                <div className="font-medium">Why It Matters</div>
+                                <div className="text-gray-700 mt-1">
+                                  {renderBulleted(whyInfo)}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+                    )}
                   </h4>
                   <div className="flex items-center gap-2.5 flex-shrink-0">
                     {task.completedDate && (
@@ -802,6 +876,24 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                 </ul>
               </div>
             )}
+
+            {/* Up Next within same swim lane */}
+            {(() => {
+              const sub = (task.subcategory || '').toLowerCase();
+              if (!sub) return null;
+              const all = tasksById ? Object.values(tasksById) : [];
+              const pending = all.filter(t => (t.subcategory || '').toLowerCase() === sub && t.status !== 'completed' && t.id !== task.id);
+              if (pending.length === 0) return null;
+              const next = pending.find(t => ['active','in-progress','overdue'].includes(t.status)) || pending[0];
+              return (
+                <div className="rounded-md bg-gray-50 border border-gray-200 px-3 py-2 text-xs text-gray-700">
+                  <span className="font-medium mr-1">Up Next:</span>
+                  <button className="underline" onClick={() => onOpenModal ? onOpenModal(next) : window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: next.linkedPage } }))}>
+                    {next.title}
+                  </button>
+                </div>
+              );
+            })()}
 
             {/* Dependencies chips */}
             {Array.isArray(task.dependencies) && task.dependencies.length > 0 && (
@@ -1786,14 +1878,22 @@ const InlinePhaseStepper = ({ phases, currentId, onSelect }: { phases: TaskPhase
         ].join(' ').trim();
         const showFilledDivider = i < cur; // divider between filled steps only (before current)
         return (
-          <button
+            <button
             key={p.id}
             className={`${base} ${colors} ${rounding}`}
             aria-current={isCurrent ? 'step' : undefined}
             onClick={() => onSelect(p.id)}
             title={p.title}
           >
-            {p.title}
+            <span className="truncate max-w-[180px]">{p.title}</span>
+            <span className={`ml-2 text-[11px] ${isCurrent ? 'text-white/90' : 'text-gray-600'}`}>
+              {(() => {
+                const total = p.tasks.length || 0;
+                const done = p.tasks.filter(t => t.status === 'completed').length;
+                const pct = total > 0 ? Math.round((done/total)*100) : 0;
+                return pct === 100 ? '✔' : `${pct}%`;
+              })()}
+            </span>
             {showFilledDivider && (
               <span aria-hidden className="absolute right-0 top-0 h-full w-px bg-blue-500/70" />
             )}
@@ -2110,6 +2210,7 @@ function GroupMultiSelect({ label, options, selectedKeys, onChange, count }: { l
 export default function Tasks({ onNavigate }: TasksProps) {
   const isMobile = useIsMobile();
   const taskContext = useTaskContext();
+  const propertyContext = usePropertyContext();
 
   // Feature flags for visibility
   const SHOW_TASK_CATEGORIES = false;
@@ -2177,6 +2278,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
     try { return localStorage.getItem('handoff-dismiss-alert-tasks-v1') !== 'true'; } catch { return true; }
   });
   const [tagFilter, setTagFilter] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
   // When set, show only this phase as its own page
   const [phasePageId, setPhasePageId] = useState<string | null>(null);
 
@@ -2202,6 +2304,18 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
     if (tags.includes(tagFilter)) return true;
     return (t.subcategory || '').toLowerCase() === tagFilter;
   }, [tagFilter]);
+
+  const matchesSearch = React.useCallback((t: Task) => {
+    if (!searchQuery) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      (t.title || '').toLowerCase().includes(q) ||
+      (t.longTitle || '').toLowerCase().includes(q) ||
+      (t.description || '').toLowerCase().includes(q) ||
+      (t.instructions?.what || '').toLowerCase().includes(q) ||
+      (t.instructions?.why || '').toLowerCase().includes(q)
+    );
+  }, [searchQuery]);
 
   // selection state for sidebar -> detail
   const [selectedPhaseId, setSelectedPhaseId] = useState<string | undefined>(displayedTaskPhases.find(p => p.status === 'active')?.id);
@@ -2352,7 +2466,12 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
             </div>
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-semibold">Project Overview</h2>
+                <h2 className="text-xl font-semibold">
+                  {(() => {
+                    const addr = propertyContext?.propertyData?.address;
+                    return addr ? `Your Transaction — ${addr}` : 'Your Transaction';
+                  })()}
+                </h2>
                 <p className="text-sm text-gray-600">The transaction overview outlines objectives, timelines, and progress updates.</p>
               </div>
               <div className="flex items-center gap-3">
@@ -2370,19 +2489,25 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                   <TabsTrigger value="done" className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 pb-2 px-4 text-gray-600 data-[state=active]:text-gray-900">Done</TabsTrigger>
                 </TabsList>
               </Tabs>
-              <div className="flex items-center gap-2 mt-2">
-                <Label className="text-xs">Tag</Label>
-                <Select value={tagFilter} onValueChange={(v) => setTagFilter(v)}>
-                  <SelectTrigger className="h-8 w-[200px]">
-                    <SelectValue placeholder="All" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All</SelectItem>
-                    {availableTags.map((tag) => (
-                      <SelectItem key={tag} value={tag}>{tag.charAt(0).toUpperCase() + tag.slice(1)}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="flex items-center gap-2 mt-2 flex-wrap">
+                <div className="flex items-center gap-2">
+                  <Label className="text-xs">Tag</Label>
+                  <Select value={tagFilter} onValueChange={(v) => setTagFilter(v)}>
+                    <SelectTrigger className="h-8 w-[200px]">
+                      <SelectValue placeholder="All" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All</SelectItem>
+                      {availableTags.map((tag) => (
+                        <SelectItem key={tag} value={tag}>{tag.charAt(0).toUpperCase() + tag.slice(1)}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Label className="text-xs">Search</Label>
+                  <Input className="h-8 w-[220px]" placeholder="Find tasks..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+                </div>
               </div>
             </div>
 
@@ -2409,6 +2534,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                     {(phasePageId ? displayedTaskPhases.filter(p => p.id === phasePageId) : displayedTaskPhases).map((phase) => {
                       let tasks = phase.tasks.filter(t => t.status !== 'completed');
                       if (tagFilter !== 'all') tasks = tasks.filter(matchesTag);
+                      if (searchQuery) tasks = tasks.filter(matchesSearch);
                       if (tasks.length === 0) return null;
 
                       const isDiligence = phase.id.toLowerCase().includes('diligence') || phase.title.toLowerCase().includes('diligence');
@@ -2453,7 +2579,8 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                 )}
                 {checklistSubtab === 'done' && (() => {
                   const completed = displayedTaskPhases.flatMap(p => p.tasks.filter(t => t.status === 'completed'));
-                  const filtered = tagFilter === 'all' ? completed : completed.filter(matchesTag);
+                  let filtered = tagFilter === 'all' ? completed : completed.filter(matchesTag);
+                  if (searchQuery) filtered = filtered.filter(matchesSearch);
                   return (
                     <TaskTableCard
                       title="Completed"
@@ -2492,6 +2619,16 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                     <CardTitle className="text-[15px] font-semibold tracking-[-0.01em] text-gray-900">Contract dates</CardTitle>
                   </CardHeader>
                   <CardContent className="pt-0">
+                    {(() => {
+                      const closing = taskContext.scheduleAnchors.closingDate || propertyContext?.propertyData?.targetClosingDate || '';
+                      const label = daysLeft(closing);
+                      return closing ? (
+                        <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1 text-xs">
+                          <Calendar className="w-3.5 h-3.5" />
+                          <span>{label || 'Closing date set'}</span>
+                        </div>
+                      ) : null;
+                    })()}
                     <div className="flex flex-col gap-3">
                       <div>
                         <Label className="text-xs">Offer Accepted</Label>
@@ -2519,6 +2656,12 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                     </Button>
                     <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => onNavigate('documents')}>
                       <FileText className="w-4 h-4 mr-2" /> Documents
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => onNavigate('team')}>
+                      <User className="w-4 h-4 mr-2" /> Contacts
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => onNavigate('financing')}>
+                      <Calculator className="w-4 h-4 mr-2" /> Finances
                     </Button>
                     <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => onNavigate('calendar')}>
                       <Calendar className="w-4 h-4 mr-2" /> Calendar
