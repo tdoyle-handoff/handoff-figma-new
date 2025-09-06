@@ -2329,6 +2329,59 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
   const [selectedTaskId, setSelectedTaskId] = useState<string | undefined>(firstActiveTask?.id);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
+  // Aggregate contacts from all checklist tasks (unique by email|name|role)
+  const checklistContacts = React.useMemo(() => {
+    const seen = new Set<string>();
+    const out: Array<{ name?: string; role?: string; email?: string; phone?: string; when?: string }> = [];
+    displayedTaskPhases.forEach(phase => {
+      phase.tasks.forEach(t => {
+        (t.contacts || []).forEach((c: any) => {
+          const key = `${(c.email||'').toLowerCase()}|${(c.name||'').toLowerCase()}|${(c.role||'').toLowerCase()}`;
+          if (!seen.has(key)) {
+            seen.add(key);
+            out.push({ name: c.name, role: c.role, email: c.email, phone: c.phone, when: c.when });
+          }
+        });
+      });
+    });
+    return out;
+  }, [displayedTaskPhases]);
+
+  // Aggregate documents from all tasks
+  const allTaskDocuments = React.useMemo(() => {
+    type Doc = { name: string; url?: string; sourceTaskId?: string; sourceTaskTitle?: string };
+    const docs: Doc[] = [];
+    displayedTaskPhases.forEach(phase => {
+      phase.tasks.forEach(t => {
+        // names-only documents array
+        (t.documents || []).forEach((name) => {
+          docs.push({ name, sourceTaskId: t.id, sourceTaskTitle: t.title });
+        });
+        const cf: any = (t as any).customFields || {};
+        // generic attachments
+        (cf.attachments || []).forEach((a: any) => {
+          if (!a) return;
+          docs.push({ name: a.name || 'Attachment', url: a.url, sourceTaskId: t.id, sourceTaskTitle: t.title });
+        });
+        // contract PDF
+        if (cf.contractPdfUrl) {
+          docs.push({ name: 'Contract PDF', url: cf.contractPdfUrl, sourceTaskId: t.id, sourceTaskTitle: t.title });
+        }
+        // inspections reports
+        (cf.inspections?.reports || []).forEach((r: any) => {
+          if (!r) return;
+          docs.push({ name: r.name || 'Inspection Report', url: r.url, sourceTaskId: t.id, sourceTaskTitle: t.title });
+        });
+        // insurance policies
+        (cf.insurance?.policies || []).forEach((p: any) => {
+          if (!p) return;
+          docs.push({ name: p.name || 'Insurance Policy', url: p.url, sourceTaskId: t.id, sourceTaskTitle: t.title });
+        });
+      });
+    });
+    return docs;
+  }, [displayedTaskPhases]);
+
   // Handle task selection and tab synchronization
   const handleSelectTask = (taskId: string) => {
     setSelectedTaskId(taskId);
@@ -2647,24 +2700,47 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
 
                 <Card className="shadow-sm">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-[15px] font-semibold tracking-[-0.01em] text-gray-900">Quick links</CardTitle>
+                    <CardTitle className="text-[15px] font-semibold tracking-[-0.01em] text-gray-900">Contacts</CardTitle>
                   </CardHeader>
                   <CardContent className="pt-0 space-y-2">
-                    <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => { try { localStorage.setItem('handoff-propertysearch-selected-tab','find-home'); } catch {} onNavigate('property'); }}>
-                      <Home className="w-4 h-4 mr-2" /> Home tracking
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => onNavigate('documents')}>
-                      <FileText className="w-4 h-4 mr-2" /> Documents
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => onNavigate('team')}>
-                      <User className="w-4 h-4 mr-2" /> Contacts
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => onNavigate('financing')}>
-                      <Calculator className="w-4 h-4 mr-2" /> Finances
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => onNavigate('calendar')}>
-                      <Calendar className="w-4 h-4 mr-2" /> Calendar
-                    </Button>
+                    {checklistContacts.length === 0 ? (
+                      <div className="text-sm text-gray-600">
+                        No contacts yet. Add contacts within checklist tasks and they will appear here.
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        {checklistContacts.slice(0, 6).map((c, idx) => (
+                          <div key={`${c.email||c.name||idx}`} className="p-2 border rounded-lg bg-white">
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="min-w-0">
+                                <div className="font-medium text-gray-900 truncate">{c.name || 'Contact'}</div>
+                                <div className="text-xs text-gray-600 truncate">{c.role || ''}{c.when ? ` • ${c.when}` : ''}</div>
+                                <div className="text-xs text-gray-500 truncate">{c.email || ''}</div>
+                                <div className="text-xs text-gray-500 truncate">{c.phone || ''}</div>
+                              </div>
+                              <div className="flex flex-col gap-1 flex-shrink-0">
+                                {c.phone && (
+                                  <Button size="sm" variant="outline" className="h-7 px-2" onClick={() => { window.location.href = `tel:${c.phone}`; }}>
+                                    <Phone className="w-3.5 h-3.5 mr-1" /> Call
+                                  </Button>
+                                )}
+                                {c.email && (
+                                  <Button size="sm" variant="outline" className="h-7 px-2" onClick={() => { window.location.href = `mailto:${c.email}`; }}>
+                                    <Mail className="w-3.5 h-3.5 mr-1" /> Email
+                                  </Button>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                        {checklistContacts.length > 6 && (
+                          <div className="text-xs text-gray-600">And {checklistContacts.length - 6} more…</div>
+                        )}
+                        <div className="pt-1">
+                          <Button size="sm" variant="outline" className="w-full" onClick={() => setActiveTab('quicklinks')}>View all documents</Button>
+                        </div>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
 
@@ -2832,6 +2908,37 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
 
         <TabsContent value="inspections" className="space-y-6 mt-6 bg-[#F6F7FB]">
           <ChecklistInspectionTabs selectedTask={selectedTask} />
+        </TabsContent>
+
+        <TabsContent value="quicklinks" className="space-y-6 mt-6 bg-[#F6F7FB]">
+          <Card className="shadow-sm bg-white">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-[15px] font-semibold tracking-[-0.01em] text-gray-900">All Documents</CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              {allTaskDocuments.length === 0 ? (
+                <div className="text-sm text-gray-600">No documents uploaded yet. Upload files within checklist tasks and they will appear here.</div>
+              ) : (
+                <div className="divide-y">
+                  {allTaskDocuments.map((d, i) => (
+                    <div key={`${d.name}-${i}`} className="py-2 flex items-center justify-between gap-2">
+                      <div className="min-w-0">
+                        <div className="font-medium text-gray-900 truncate">{d.name}</div>
+                        <div className="text-xs text-gray-600 truncate">{d.sourceTaskTitle || d.sourceTaskId}</div>
+                      </div>
+                      <div className="flex-shrink-0">
+                        {d.url ? (
+                          <Button size="sm" variant="outline" onClick={() => window.open(d.url, '_blank')}>Open</Button>
+                        ) : (
+                          <Badge variant="secondary" className="text-[11px]">No link</Badge>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
 
       </Tabs>
