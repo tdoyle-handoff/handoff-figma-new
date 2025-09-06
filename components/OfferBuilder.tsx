@@ -1277,8 +1277,8 @@ export default function OfferBuilder() {
                   <SelectContent>
                     <SelectItem value="Cash">Cash</SelectItem>
                     <SelectItem value="Conventional">Conventional</SelectItem>
-                    <SelectItem value="FHA">FHA</SelectItem>
-                    <SelectItem value="VA">VA</SelectItem>
+                    <SelectItem value="FHA">FHA Loan</SelectItem>
+                    <SelectItem value="VA">VA Loan</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

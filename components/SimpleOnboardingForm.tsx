@@ -549,8 +549,8 @@ export function SimpleOnboardingForm({ onComplete, onSkip }: SimpleOnboardingFor
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="conventional">Conventional</SelectItem>
-                <SelectItem value="fha">FHA</SelectItem>
-                <SelectItem value="va">VA</SelectItem>
+                <SelectItem value="fha">FHA Loan</SelectItem>
+                <SelectItem value="va">VA Loan</SelectItem>
                 <SelectItem value="cash">Cash</SelectItem>
               </SelectContent>
             </Select>

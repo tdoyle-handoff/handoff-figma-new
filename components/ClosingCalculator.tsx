@@ -276,9 +276,9 @@ export default function ClosingCalculator({ onBack }: ClosingCalculatorProps) {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="conventional">Conventional</SelectItem>
-                      <SelectItem value="fha">Federal Housing Administration (FHA)</SelectItem>
-                      <SelectItem value="va">U.S. Department of Veterans Affairs (VA)</SelectItem>
-                      <SelectItem value="usda">U.S. Department of Agriculture (USDA)</SelectItem>
+                      <SelectItem value="fha">FHA Loan</SelectItem>
+                      <SelectItem value="va">VA Loan</SelectItem>
+                      <SelectItem value="usda">USDA Loan</SelectItem>
                       <SelectItem value="jumbo">Jumbo</SelectItem>
                     </SelectContent>
                   </Select>
