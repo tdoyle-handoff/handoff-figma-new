@@ -19,6 +19,7 @@ import {
   Heart
 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { useAuth } from '../hooks/useAuth';
 
 type InterestLabel = 'dream-home' | 'very-interested' | 'maybe' | 'not-interested';
 
@@ -48,7 +49,7 @@ export default function HomeTracker() {
     label: 'very-interested' as InterestLabel
   });
 
-  const { userProfile, isGuestMode, updateUserProfile } = require('../hooks/useAuth').useAuth();
+  const { userProfile, isGuestMode, updateUserProfile } = useAuth();
   const persistTimerRef = useRef<number | null>(null);
 
   // Load saved homes on mount
