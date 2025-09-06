@@ -491,12 +491,37 @@ export default function HomeSearchLanding() {
               <Separator className="flex-1" />
             </div>
 
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="basics">Basics</TabsTrigger>
-                <TabsTrigger value="details">Details</TabsTrigger>
-                <TabsTrigger value="features">Features</TabsTrigger>
-                <TabsTrigger value="budget">Budget</TabsTrigger>
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full md:flex-row gap-6">
+              {/* Left sidebar nav */}
+              <TabsList className="bg-transparent p-0 h-auto w-full md:w-56 lg:w-64 flex flex-col items-stretch justify-start gap-1">
+                <TabsTrigger
+                  value="basics"
+                  className="justify-start w-full gap-3 px-3 py-2 text-left rounded-xl hover:bg-muted data-[state=active]:bg-muted"
+                >
+                  <Home className="w-4 h-4" />
+                  <span>Basics</span>
+                </TabsTrigger>
+                <TabsTrigger
+                  value="details"
+                  className="justify-start w-full gap-3 px-3 py-2 text-left rounded-xl hover:bg-muted data-[state=active]:bg-muted"
+                >
+                  <Square className="w-4 h-4" />
+                  <span>Details</span>
+                </TabsTrigger>
+                <TabsTrigger
+                  value="features"
+                  className="justify-start w-full gap-3 px-3 py-2 text-left rounded-xl hover:bg-muted data-[state=active]:bg-muted"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>Features</span>
+                </TabsTrigger>
+                <TabsTrigger
+                  value="budget"
+                  className="justify-start w-full gap-3 px-3 py-2 text-left rounded-xl hover:bg-muted data-[state=active]:bg-muted"
+                >
+                  <DollarSign className="w-4 h-4" />
+                  <span>Budget</span>
+                </TabsTrigger>
               </TabsList>
 
 
