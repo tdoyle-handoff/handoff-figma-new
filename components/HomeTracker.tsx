@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -47,6 +47,47 @@ export default function HomeTracker() {
     notes: '',
     label: 'very-interested' as InterestLabel
   });
+
+  const { userProfile, isGuestMode, updateUserProfile } = require('../hooks/useAuth').useAuth();
+  const persistTimerRef = useRef<number | null>(null);
+
+  // Load saved homes on mount
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('handoff-home-tracker');
+      if (raw) {
+        const parsed = JSON.parse(raw) as TrackedHome[];
+        if (Array.isArray(parsed)) setHomes(parsed);
+      }
+    } catch (e) {
+      console.warn('Failed to load saved homes:', e);
+    }
+  }, []);
+
+  // Persist homes whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem('handoff-home-tracker', JSON.stringify(homes));
+    } catch (e) {
+      console.warn('Failed to save homes:', e);
+    }
+    try {
+      if (userProfile && !isGuestMode && typeof updateUserProfile === 'function') {
+        if (persistTimerRef.current) window.clearTimeout(persistTimerRef.current);
+        persistTimerRef.current = window.setTimeout(async () => {
+          try {
+            const currentPrefs = (userProfile as any)?.preferences || {};
+            await updateUserProfile({ preferences: { ...currentPrefs, homeTracker: homes } as any });
+          } catch (err) {
+            console.warn('Failed to sync homes to profile:', err);
+          }
+        }, 1500) as unknown as number;
+      }
+    } catch {}
+    return () => {
+      if (persistTimerRef.current) window.clearTimeout(persistTimerRef.current);
+    };
+  }, [homes, userProfile, isGuestMode, updateUserProfile]);
 
   const addHome = () => {
     if (!newHome.address.trim()) return;

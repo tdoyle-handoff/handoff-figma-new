@@ -47,6 +47,16 @@ export function ComprehensivePropertyAnalysis({
   const handlePropertyFound = (data: any) => {
     setPropertyData(data);
     setReportGenerated(true);
+
+    // Persist analysis snapshot for reloads
+    try {
+      localStorage.setItem('handoff-comprehensive-property-data', JSON.stringify({
+        data,
+        timestamp: new Date().toISOString(),
+      }));
+    } catch (e) {
+      console.warn('Failed to save comprehensive property data:', e);
+    }
     
     // Auto-scroll to results on mobile
     if (isMobile) {

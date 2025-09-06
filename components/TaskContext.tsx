@@ -1259,7 +1259,7 @@ How to complete it:
     {
       id: 'task-appraisal',
       title: 'Property Appraisal',
-      tags: ['scenario-conv_mortgage','scenario-fha','scenario-va','scenario-usda','scenario-hard_money','scenario-assumable'],
+      tags: ['scenario-conv_mortgage','scenario-fha','scenario-va','scenario-usda','scenario-hard_money','scenario-assumable','scenario-seller_financing'],
       description: `What it is: An independent evaluation of the property’s value, ordered by your lender.
 
 Why it matters: Lenders only lend up to the appraised value. If the appraisal is lower than the purchase price, you may need to renegotiate or bring extra cash.
@@ -2341,8 +2341,10 @@ Homes need regular maintenance. Neglect leads to costly repairs and reduced valu
     'task-renegotiate-new-findings': ['inspections'],
 
     // Insurance
-    'task-insurance-get-bids': ['insurance'],
+'task-insurance-get-bids': ['insurance'],
     'task-homeowners-insurance': ['insurance'],
+    'task-elevation-certificate': ['insurance','scenario-flood-zone'],
+    'task-bind-flood-insurance': ['insurance','scenario-flood-zone'],
 
     // General / Buyer Tasks
     'task-buy-box-template': ['general'],

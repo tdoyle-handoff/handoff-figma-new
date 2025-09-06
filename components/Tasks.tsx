@@ -214,6 +214,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
   row?: boolean;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const autoSaveTimerRef = React.useRef<number | null>(null);
   React.useEffect(() => { if (forceOpen) setIsOpen(true); }, [forceOpen]);
   const isCompleted = task.status === 'completed';
   const isActive = ['active', 'in-progress', 'overdue'].includes(task.status);
@@ -243,6 +244,133 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
   const [attorneyEmail, setAttorneyEmail] = useState<string>(currentAttorney?.email || '');
   const [attorneyPhone, setAttorneyPhone] = useState<string>(currentAttorney?.phone || '');
   const [dueLocked, setDueLocked] = useState<boolean>(!!task.dueDateLocked);
+
+  // Build updates object from current local state (reused by Save and autosave)
+  const buildUpdatesFromState = React.useCallback((): Partial<Task> => {
+    const updates: Partial<Task> = {
+      title: editTitle,
+      assignedTo: editAssignedTo,
+      dueDate: editDueDate || undefined,
+      dueDateLocked: editDueDate ? dueLocked : false,
+      notes: editNotes,
+      documents: editDocuments,
+      customFields: {
+        ...(task as any).customFields,
+        attachments,
+        ...(contractPdfUrl ? { contractPdfUrl } : {}),
+      } as any,
+    };
+
+    // Contract details + schedule anchors
+    if (task.id === 'task-submit-offer') {
+      const details: any = {
+        purchasePrice: contractPrice,
+        earnestAmount: contractEarnest,
+        acceptanceDate: contractAcceptance,
+        closingDate: contractClosing,
+        inspectionDays: contractInspectionDays,
+        financingDays: contractFinancingDays,
+      };
+      (updates as any).customFields = {
+        ...((updates as any).customFields || (task as any).customFields),
+        contractDetails: details,
+      };
+    }
+
+    // Merge agent details
+    if (task.id === 'task-agent-selection') {
+      const agent = (agentName || agentEmail || agentPhone || agentBrokerage) ? {
+        name: agentName,
+        role: 'Agent',
+        email: agentEmail || undefined,
+        phone: agentPhone || undefined,
+        when: 'General representation',
+      } : undefined;
+      if (agent) {
+        const others = (task.contacts || []).filter(c => !(c.role && c.role.toLowerCase().includes('agent')));
+        (updates as any).contacts = [...others, agent as any];
+      }
+      (updates as any).customFields = {
+        ...((updates as any).customFields || (task as any).customFields),
+        agent: { brokerage: agentBrokerage }
+      };
+    }
+
+    // Merge pre-approval details
+    if (task.id === 'task-mortgage-preapproval') {
+      (updates as any).customFields = {
+        ...((updates as any).customFields || (task as any).customFields),
+        preApproval: {
+          lenderName: lenderNamePA,
+          amount: preApprovalAmount,
+          rate: preApprovalRate,
+          expirationDate: preApprovalExpiry,
+        }
+      };
+
+      if (lenderNamePA) {
+        const lenderContact = {
+          name: lenderNamePA,
+          role: 'Lender',
+          when: 'Pre-approval / financing',
+        } as any;
+        const others = (task.contacts || []).filter(c => !(c.role && c.role.toLowerCase().includes('lender')));
+        (updates as any).contacts = [...(updates as any).contacts || others, lenderContact];
+      }
+    }
+
+    // Attorney contact (for attorney selection and general legal tasks)
+    const newAttorney = (attorneyName || attorneyEmail || attorneyPhone) ? {
+      name: attorneyName,
+      role: 'Attorney',
+      email: attorneyEmail || undefined,
+      phone: attorneyPhone || undefined,
+      when: 'Contract review',
+    } : undefined;
+    if (newAttorney) {
+      const others = (task.contacts || []).filter(c => !(c.role && c.role.toLowerCase().includes('attorney')));
+      (updates as any).contacts = [...((updates as any).contacts || others), newAttorney as any];
+    }
+
+    return updates;
+  }, [
+    editTitle,
+    editAssignedTo,
+    editDueDate,
+    dueLocked,
+    editNotes,
+    editDocuments,
+    attachments,
+    contractPdfUrl,
+    contractPrice,
+    contractEarnest,
+    contractAcceptance,
+    contractClosing,
+    contractInspectionDays,
+    contractFinancingDays,
+    agentName,
+    agentEmail,
+    agentPhone,
+    agentBrokerage,
+    lenderNamePA,
+    preApprovalAmount,
+    preApprovalRate,
+    preApprovalExpiry,
+    attorneyName,
+    attorneyEmail,
+    attorneyPhone,
+    task
+  ]);
+
+  const triggerAutoSave = React.useCallback(() => {
+    if (!onUpdateTaskFields) return;
+    const updates = buildUpdatesFromState();
+    if (autoSaveTimerRef.current) window.clearTimeout(autoSaveTimerRef.current);
+    autoSaveTimerRef.current = window.setTimeout(() => {
+      onUpdateTaskFields(task.id, updates);
+      try { window.dispatchEvent(new Event('tasksUpdated')); } catch {}
+    }, 400) as unknown as number;
+  }, [buildUpdatesFromState, onUpdateTaskFields, task.id]);
 
   // Agent info (for agent selection)
   const currentAgent = (task.contacts || []).find(c => (c.role || '').toLowerCase().includes('agent'));
@@ -564,11 +692,11 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label className="text-xs">Title</Label>
-                <Input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} />
+                <Input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} onBlur={triggerAutoSave} />
               </div>
               <div>
                 <Label className="text-xs">Assigned to</Label>
-                <Select value={editAssignedTo || ''} onValueChange={(v) => setEditAssignedTo(v)}>
+                <Select value={editAssignedTo || ''} onValueChange={(v) => { setEditAssignedTo(v); triggerAutoSave(); }}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select assignee" />
                   </SelectTrigger>
@@ -586,12 +714,12 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
               <div>
                 <Label className="text-xs">Due date</Label>
                 <div className="flex items-center gap-2">
-                  <Input type="date" value={editDueDate} onChange={(e) => { setEditDueDate(e.target.value); setDueLocked(!!e.target.value); }} />
+                  <Input type="date" value={editDueDate} onChange={(e) => { setEditDueDate(e.target.value); setDueLocked(!!e.target.value); }} onBlur={triggerAutoSave} />
                   <Button
                     type="button"
                     size="icon"
                     variant={dueLocked ? 'default' : 'outline'}
-                    onClick={() => setDueLocked((v) => !v)}
+                    onClick={() => { setDueLocked((v) => !v); setTimeout(triggerAutoSave, 0); }}
                     title={dueLocked ? 'Unlock to allow dynamic recalculation' : 'Lock to prevent recalculation'}
                   >
                     {dueLocked ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
@@ -601,7 +729,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
               </div>
               <div>
                 <Label className="text-xs">Notes</Label>
-                <Textarea rows={3} value={editNotes} onChange={(e) => setEditNotes(e.target.value)} />
+                <Textarea rows={3} value={editNotes} onChange={(e) => setEditNotes(e.target.value)} onBlur={triggerAutoSave} />
               </div>
             </div>
 
@@ -610,15 +738,15 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <Label className="text-xs">Attorney name</Label>
-                  <Input value={attorneyName} onChange={(e) => setAttorneyName(e.target.value)} />
+                  <Input value={attorneyName} onChange={(e) => setAttorneyName(e.target.value)} onBlur={triggerAutoSave} />
                 </div>
                 <div>
                   <Label className="text-xs">Attorney email</Label>
-                  <Input type="email" value={attorneyEmail} onChange={(e) => setAttorneyEmail(e.target.value)} />
+                  <Input type="email" value={attorneyEmail} onChange={(e) => setAttorneyEmail(e.target.value)} onBlur={triggerAutoSave} />
                 </div>
                 <div>
                   <Label className="text-xs">Attorney phone</Label>
-                  <Input value={attorneyPhone} onChange={(e) => setAttorneyPhone(e.target.value)} />
+                  <Input value={attorneyPhone} onChange={(e) => setAttorneyPhone(e.target.value)} onBlur={triggerAutoSave} />
                 </div>
               </div>
             )}
@@ -628,19 +756,19 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
                   <Label className="text-xs">Agent name</Label>
-                  <Input value={agentName} onChange={(e) => setAgentName(e.target.value)} />
+                  <Input value={agentName} onChange={(e) => setAgentName(e.target.value)} onBlur={triggerAutoSave} />
                 </div>
                 <div>
                   <Label className="text-xs">Agent email</Label>
-                  <Input type="email" value={agentEmail} onChange={(e) => setAgentEmail(e.target.value)} />
+                  <Input type="email" value={agentEmail} onChange={(e) => setAgentEmail(e.target.value)} onBlur={triggerAutoSave} />
                 </div>
                 <div>
                   <Label className="text-xs">Agent phone</Label>
-                  <Input value={agentPhone} onChange={(e) => setAgentPhone(e.target.value)} />
+                  <Input value={agentPhone} onChange={(e) => setAgentPhone(e.target.value)} onBlur={triggerAutoSave} />
                 </div>
                 <div>
                   <Label className="text-xs">Brokerage</Label>
-                  <Input value={agentBrokerage} onChange={(e) => setAgentBrokerage(e.target.value)} />
+                  <Input value={agentBrokerage} onChange={(e) => setAgentBrokerage(e.target.value)} onBlur={triggerAutoSave} />
                 </div>
               </div>
             )}
@@ -650,19 +778,19 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
                   <Label className="text-xs">Lender name</Label>
-                  <Input value={lenderNamePA} onChange={(e) => setLenderNamePA(e.target.value)} />
+                  <Input value={lenderNamePA} onChange={(e) => setLenderNamePA(e.target.value)} onBlur={triggerAutoSave} />
                 </div>
                 <div>
                   <Label className="text-xs">Pre-approval amount</Label>
-                  <Input value={preApprovalAmount} onChange={(e) => setPreApprovalAmount(e.target.value)} placeholder="$" />
+                  <Input value={preApprovalAmount} onChange={(e) => setPreApprovalAmount(e.target.value)} placeholder="$" onBlur={triggerAutoSave} />
                 </div>
                 <div>
                   <Label className="text-xs">Rate</Label>
-                  <Input value={preApprovalRate} onChange={(e) => setPreApprovalRate(e.target.value)} placeholder="%" />
+                  <Input value={preApprovalRate} onChange={(e) => setPreApprovalRate(e.target.value)} placeholder="%" onBlur={triggerAutoSave} />
                 </div>
                 <div>
                   <Label className="text-xs">Expiration</Label>
-                  <Input type="date" value={preApprovalExpiry} onChange={(e) => setPreApprovalExpiry(e.target.value)} />
+                  <Input type="date" value={preApprovalExpiry} onChange={(e) => setPreApprovalExpiry(e.target.value)} onBlur={triggerAutoSave} />
                 </div>
               </div>
             )}
@@ -704,6 +832,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                       setContractPdfUrl(url);
                       setEditDocuments((prev) => Array.from(new Set([...(prev || []), f.name])));
                       setAttachments((prev) => [...prev, { name: f.name, type: f.type, size: f.size, url }]);
+                      setTimeout(triggerAutoSave, 0);
                     }} />
                   </div>
                 </div>
@@ -753,6 +882,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                     });
                     setEditDocuments((prev) => Array.from(new Set([...(prev || []), ...names])));
                     setAttachments((prev) => [...prev, ...newAtts]);
+                    setTimeout(triggerAutoSave, 0);
                   }} />
                 </div>
                 {editDocuments && editDocuments.length > 0 && (
