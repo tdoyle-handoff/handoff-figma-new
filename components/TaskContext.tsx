@@ -2280,7 +2280,6 @@ Homes need regular maintenance. Neglect leads to costly repairs and reduced valu
     'task-offer-acceptance-signing': ['legal'],
     'task-contract-review': ['legal'],
     'task-attorney-selection': ['legal'],
-    'task-contract-riders': ['legal'],
     'task-send-lawyer-signed-contract': ['legal'],
     'task-earnest-money-deposit': ['legal'],
     'task-title-search': ['legal'],
@@ -2389,7 +2388,6 @@ Homes need regular maintenance. Neglect leads to costly repairs and reduced valu
 
     'task-offer-acceptance-signing': { anchor: 'acceptance', offset: 0 },
     'task-attorney-selection': { anchor: 'acceptance', offset: 2 },
-    'task-contract-riders': { anchor: 'acceptance', offset: 3 },
     'task-send-lawyer-signed-contract': { anchor: 'acceptance', offset: 3 },
     'task-open-escrow': { anchor: 'acceptance', offset: 1 },
     'task-earnest-money-deposit': { anchor: 'acceptance', offset: 2 },
@@ -2470,7 +2468,6 @@ Homes need regular maintenance. Neglect leads to costly repairs and reduced valu
     'task-draft-offer': 2,
     'task-offer-acceptance-signing': 5,
     'task-attorney-selection': 7,
-    'task-contract-riders': 9,
     'task-send-lawyer-signed-contract': 9,
     'task-open-escrow': 6,
     'task-earnest-money-deposit': 10,
