@@ -65,6 +65,8 @@ const statusIcon = (status: Task['status']) => {
 // Tag/subcategory color mapping for visual categorization
 function getTaskCategoryKey(t: Task): 'financing' | 'legal' | 'inspections' | 'insurance' | 'scenario' | 'general' {
   const tags = (t.tags || []).map(x => (x || '').toLowerCase());
+  // Treat VA/FHA as financing with explicit labels; other scenarios remain scenario
+  if (tags.includes('scenario-va') || tags.includes('scenario-fha')) return 'financing';
   if (tags.some(x => x.startsWith('scenario-'))) return 'scenario';
   const sub = (t.subcategory || '').toLowerCase();
   if (sub === 'financing') return 'financing';
@@ -265,7 +267,7 @@ title={`${t.title}${t.description ? ' — ' + t.description : ''}`}
                     >
                       {statusIcon(t.status)}
                       <span className={`inline-block w-2 h-2 rounded-full ${catStyles[getTaskCategoryKey(t)].dot}`} aria-hidden="true" />
-                      <span className="sr-only">Category: {catStyles[getTaskCategoryKey(t)].label}</span>
+                      <span className="sr-only">Category: {(t.tags || []).map(x => x.toLowerCase()).includes('scenario-va') ? 'VA Loan' : (t.tags || []).map(x => x.toLowerCase()).includes('scenario-fha') ? 'FHA Loan' : catStyles[getTaskCategoryKey(t)].label}</span>
                       <span className="truncate">{t.shortTitle || t.title}</span>
                     </div>
                   ))}
@@ -327,7 +329,7 @@ title={`${t.title}${t.description ? ' — ' + t.description : ''}`}
                     >
                       {statusIcon(t.status)}
                       <span className={`inline-block w-2 h-2 rounded-full ${catStyles[getTaskCategoryKey(t)].dot}`} aria-hidden="true" />
-                      <span className="sr-only">Category: {catStyles[getTaskCategoryKey(t)].label}</span>
+                      <span className="sr-only">Category: {(t.tags || []).map(x => x.toLowerCase()).includes('scenario-va') ? 'VA Loan' : (t.tags || []).map(x => x.toLowerCase()).includes('scenario-fha') ? 'FHA Loan' : catStyles[getTaskCategoryKey(t)].label}</span>
                       <span className="truncate">{t.shortTitle || t.title}</span>
                     </div>
                   ))}
