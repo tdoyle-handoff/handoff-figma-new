@@ -222,6 +222,53 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
   const isOverdue = task.status === 'overdue';
   const effectiveTips = (task.instructions?.tips && task.instructions.tips.length > 0) ? task.instructions.tips : defaultTipsForTask(task);
 
+  // Derive Overview / Why It Matters / How to Complete for in-card details
+  const descParts = React.useMemo(() => {
+    const desc = task.description || '';
+    const getIdx = (label: string) => desc.indexOf(label);
+    const markers = ["What it is:", "Why it matters:", "How to complete it:"];
+    const idxWhat = getIdx(markers[0]);
+    const idxWhy = getIdx(markers[1]);
+    const idxHow = getIdx(markers[2]);
+    const end = desc.length;
+    const slice = (start: number, end: number) => desc.slice(start, end).trim();
+    const parts: { what?: string; why?: string; how?: string } = {};
+    if (idxWhat >= 0) {
+      const next = [idxWhy, idxHow].filter((i) => i >= 0).sort((a, b) => a - b)[0] ?? end;
+      parts.what = slice(idxWhat + markers[0].length, next);
+    }
+    if (idxWhy >= 0) {
+      const next = [idxHow].filter((i) => i >= 0).sort((a, b) => a - b)[0] ?? end;
+      parts.why = slice(idxWhy + markers[1].length, next);
+    }
+    if (idxHow >= 0) {
+      parts.how = slice(idxHow + markers[2].length, end);
+    }
+    return parts;
+  }, [task.description]);
+  const whatInfo = task.instructions?.what || (task as any).instructions?.overview || descParts.what;
+  const whyInfo = task.instructions?.why || descParts.why;
+  const hasStepsInfo = Array.isArray(task.instructions?.steps) && (task.instructions!.steps.length > 0);
+  const howTextInfo = !hasStepsInfo ? descParts.how : undefined;
+  const renderBulleted = (text?: string) => {
+    if (!text) return null;
+    const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    const items = lines.filter(l => /^[-•]/.test(l));
+    if (items.length > 0) {
+      return (
+        <ul className="space-y-2">
+          {items.map((it, i) => (
+            <li key={i} className="flex gap-2 text-sm">
+              <span className="text-gray-400">•</span>
+              <span className="text-gray-700">{it.replace(/^[-•]\s*/, '')}</span>
+            </li>
+          ))}
+        </ul>
+      );
+    }
+    return <p className="text-sm text-gray-700 whitespace-pre-line">{text}</p>;
+  };
+
   // Local editable state
   const [editTitle, setEditTitle] = useState<string>(task.title);
   const [editAssignedTo, setEditAssignedTo] = useState<string>(task.assignedTo || '');
@@ -705,6 +752,45 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
         <CollapsibleContent className={`${minimal ? (row ? 'px-3 pb-3' : 'px-4 pb-4') : 'px-5 pb-5'}`}>
           <div className={`${minimal ? 'ml-6 space-y-2 pt-1.5' : 'ml-8 space-y-3 pt-2 border-t border-gray-100'}`}>
             <p className="text-sm text-gray-600">{task.description}</p>
+
+            {(whatInfo || whyInfo || hasStepsInfo || howTextInfo) && (
+              <div className="mt-2 space-y-3">
+                {whatInfo && (
+                  <div>
+                    <h5 className="text-sm font-medium text-gray-900 mb-1">Overview</h5>
+                    {renderBulleted(whatInfo)}
+                  </div>
+                )}
+                {whyInfo && (
+                  <div>
+                    <h5 className="text-sm font-medium text-gray-900 mb-1">Why It Matters</h5>
+                    {renderBulleted(whyInfo)}
+                  </div>
+                )}
+                {(hasStepsInfo || howTextInfo) && (
+                  <div>
+                    <h5 className="text-sm font-medium text-gray-900 mb-1">How to Complete</h5>
+                    {hasStepsInfo ? (
+                      <ul className="space-y-2">
+                        {task.instructions!.steps.map((step, i) => (
+                          <li key={i} className="flex gap-2 text-sm">
+                            <span className="text-gray-400">•</span>
+                            <div className="text-gray-700">
+                              <span className="font-medium">{step.title}</span>
+                              {(step.action || step.description) && (
+                                <p className="text-gray-600 mt-1">{step.action || step.description}</p>
+                              )}
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <div>{renderBulleted(howTextInfo)}</div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
 
             {effectiveTips.length > 0 && (
               <div className="pt-1">

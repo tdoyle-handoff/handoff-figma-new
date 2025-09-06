@@ -58,7 +58,6 @@ export default function DashboardLayout({
   isPropertySetupComplete,
   children
 }: DashboardLayoutProps) {
-  const [tasksMenuOpen, setTasksMenuOpen] = useState(false);
   const propertyContext = usePropertyContext();
   const navigation = useNavigation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -423,45 +422,6 @@ export default function DashboardLayout({
             <nav className="flex items-center gap-2">
               {navigationItems.map((item) => {
                 const isActive = currentPage === item.id;
-                if (item.id === 'tasks') {
-                  return (
-                    <div key={item.id} className="relative">
-                      <button
-                        aria-haspopup="menu"
-                        aria-expanded={tasksMenuOpen}
-                        onClick={() => setTasksMenuOpen((v) => !v)}
-                        className={cn(
-                          "px-5 py-2 rounded-xl text-sm font-medium transition-colors",
-                          isActive || tasksMenuOpen ? "bg-white/15 text-white" : "text-white/80 hover:text-white"
-                        )}
-                      >
-                        {item.label}
-                      </button>
-                      {tasksMenuOpen && (
-                        <div className="absolute left-0 top-full mt-2 w-48 bg-white text-slate-800 rounded-md shadow-lg border z-50">
-                          <button
-                            className="w-full text-left px-3 py-2 text-sm hover:bg-slate-50 rounded-t-md"
-                            onClick={() => {
-                              setTasksMenuOpen(false);
-                              onPageChange('tasks');
-                            }}
-                          >
-                            Checklist
-                          </button>
-                          <button
-                            className="w-full text-left px-3 py-2 text-sm hover:bg-slate-50 rounded-b-md"
-                            onClick={() => {
-                              setTasksMenuOpen(false);
-                              onPageChange('calendar');
-                            }}
-                          >
-                            Calendar
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  );
-                }
                 return (
                   <button
                     key={item.id}

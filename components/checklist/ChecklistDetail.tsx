@@ -188,7 +188,7 @@ export default function ChecklistDetail({ task, onAction, onUpdateTask }: Detail
             <CardContent className="space-y-5 pt-4">
               {what && (
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-2">What it is</h4>
+                  <h4 className="font-medium text-gray-900 mb-2">Overview</h4>
                   <div className="text-gray-700 text-sm leading-relaxed">
                     {renderBulletedText(what)}
                   </div>
@@ -197,37 +197,31 @@ export default function ChecklistDetail({ task, onAction, onUpdateTask }: Detail
 
               {why && (
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Why it matters</h4>
+                  <h4 className="font-medium text-gray-900 mb-2">Why It Matters</h4>
                   <div className="text-gray-700 text-sm leading-relaxed">
                     {renderBulletedText(why)}
                   </div>
                 </div>
               )}
 
-              {/* How to complete it */}
+              {/* How to Complete */}
               {(hasSteps || howText) && (
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-3">How to complete it</h4>
+                  <h4 className="font-medium text-gray-900 mb-3">How to Complete</h4>
                   {hasSteps ? (
-                    <ol className="space-y-3">
+                    <ul className="space-y-2">
                       {task.instructions!.steps.map((step, i) => (
-                        <li key={i} className="flex gap-3">
-                          <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 text-xs font-medium rounded-full flex items-center justify-center">
-                            {step.step || i + 1}
-                          </span>
-                          <div className="flex-1">
-                            <h5 className="font-medium text-gray-900 text-sm">{step.title}</h5>
-                            <p className="text-gray-600 text-sm mt-1">{step.action || step.description}</p>
-                            {step.duration && (
-                              <div className="text-xs text-gray-500 mt-1 inline-flex items-center gap-1">
-                                <Clock className="w-3.5 h-3.5" />
-                                <span>{step.duration}</span>
-                              </div>
+                        <li key={i} className="flex gap-2 text-sm">
+                          <span className="text-gray-400">•</span>
+                          <div className="text-gray-700">
+                            <span className="font-medium">{step.title}</span>
+                            {(step.action || step.description) && (
+                              <p className="text-gray-600 mt-1">{step.action || step.description}</p>
                             )}
                           </div>
                         </li>
                       ))}
-                    </ol>
+                    </ul>
                   ) : (
                     <div>{renderBulletedText(howText)}</div>
                   )}
