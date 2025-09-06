@@ -210,8 +210,8 @@ How to complete it:
       status: isUnderContract ? 'completed' : 'active',
       estimatedTime: '1-2 hours',
       assignedTo: 'Buyer',
-      linkedPage: 'property-search',
-      actionLabel: 'Open Home Search',
+      linkedPage: 'property',
+      actionLabel: 'Open Questionnaire',
       instructions: {
         overview: 'Define your criteria clearly so you can filter listings quickly and avoid wasted time.',
         steps: [],
@@ -220,6 +220,9 @@ How to complete it:
           'Limit "must-haves" to 5 items maximum—too many and you will filter out viable homes.',
           'Be realistic: a perfect home rarely exists. Aim for 80% match.',
           'If you are working with an agent, share this document so they only send relevant listings.'
+        ],
+        nextSteps: [
+          'After completing the questionnaire, send it to your realtor/agent and discuss your criteria together.'
         ]
       }
     },
@@ -361,7 +364,7 @@ How to complete it:
       priority: 'medium',
       status: isUnderContract ? 'completed' : 'active',
       estimatedTime: 'Ongoing',
-      linkedPage: 'property-search',
+      linkedPage: 'property',
       actionLabel: 'Search Properties',
       assignedTo: 'Buyer & Agent',
       instructions: {
@@ -433,6 +436,22 @@ How to complete it:
           'Don’t waive inspection or financing contingencies unless you fully understand the risks.',
           'Closing date flexibility can be more valuable to a seller than a higher price.',
           'List exactly what is included (appliances, light fixtures, blinds) to avoid disputes.'
+        ],
+        nextSteps: [
+          'Inspection Contingency Rider — Allows you to cancel, renegotiate, or request repairs/credits based on inspection results within a specified period.',
+          'Appraisal Contingency Rider — If the appraisal comes in below the purchase price, you can renegotiate, increase cash, or cancel without penalty.',
+          'Financing/Loan Commitment Rider — Makes the offer contingent on receiving formal loan approval by a certain date (rate/program defined).',
+          'Attorney Review Rider — Provides a short window (e.g., 3–5 business days) for attorneys to review/modify terms or cancel.',
+          'Title and Survey Rider — Requires clear/marketable title and an acceptable survey; addresses encroachments or boundary issues.',
+          'Environmental Testing Riders (Radon/Mold/Lead) — Permits testing and cancellation/renegotiation if results exceed agreed thresholds; pre-1978 homes require Lead disclosures.',
+          'Personal Property/Inclusions Rider — Lists specific items conveying with the sale (appliances, window treatments, fixtures) to avoid disputes.',
+          'As-Is/Repair Limitation Rider — Confirms sale “as is” or caps seller repair obligations; clarifies health/safety exceptions if desired.',
+          'Closing Cost Credit Rider — Seller provides a credit at closing to offset buyer costs; ensure lender program allows the credit.',
+          'Escalation Clause Rider — Automatically increases your offer over competing bona fide offers up to a specified cap (with proof terms).',
+          'Use & Occupancy / Rent-Back Rider — Allows the seller to remain in the home after closing under set rent, deposit, and insurance terms.',
+          'Home Sale Contingency Rider — Makes your purchase contingent on the sale/closing of your current home within a defined timeframe.',
+          'Condo/HOA Disclosure Rider — Provides a review period for bylaws, budgets, reserves, special assessments, and right to cancel if unacceptable.',
+          'Well/Septic/Water Quality Rider — Requires acceptable well/septic inspections and water tests; defines remedies if standards are not met.'
         ]
       }
     },
@@ -768,33 +787,6 @@ How to complete it:
           'Don’t wait: attorney review windows can be short (3–5 days in some states).',
           'Ask about fees up front (flat vs hourly).',
           'Prioritize responsiveness—real estate timelines move quickly.'
-        ]
-      }
-    },
-    {
-      id: 'task-contract-riders',
-      title: 'Add Contract Riders',
-      description: `What it is: Optional add-on clauses that customize the standard purchase agreement (e.g., inspection remedies, financing timelines, appraisal conditions, rent-back agreements).
-
-Why it matters: Riders tailor the deal to your needs. Without them, boilerplate language may leave you unprotected or too rigid.`,
-      category: 'contract',
-      subcategory: 'legal',
-      priority: 'medium',
-      status: isUnderContract ? 'pending' : 'upcoming',
-      estimatedTime: '1 day',
-      assignedTo: 'Attorney',
-      dependencies: ['task-offer-acceptance-signing'],
-      instructions: {
-        overview: 'Draft, negotiate, and execute only the riders necessary to protect your priorities.',
-        steps: [
-          { step: 1, title: 'Identify needs', description: 'Inspection, financing, appraisal, rent-back', action: 'List relevant riders with your attorney/agent' },
-          { step: 2, title: 'Draft precisely', description: 'Clear, specific terms to reduce disputes', action: 'Avoid vague language' },
-          { step: 3, title: 'Execute riders', description: 'Ensure both parties sign', action: 'Attach to contract' }
-        ],
-        tips: [
-          'Keep riders clear and specific—ambiguity invites disputes.',
-          'Too many riders can reduce offer appeal—focus on essentials.',
-          'Consider adding an appraisal rider to address low appraisal risk.'
         ]
       }
     },
