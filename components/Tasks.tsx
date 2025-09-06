@@ -1886,14 +1886,14 @@ const InlinePhaseStepper = ({ phases, currentId, onSelect }: { phases: TaskPhase
             title={p.title}
           >
             <span className="truncate max-w-[180px]">{p.title}</span>
-            <span className={`ml-2 text-[11px] ${isCurrent ? 'text-white/90' : 'text-gray-600'}`}>
-              {(() => {
-                const total = p.tasks.length || 0;
-                const done = p.tasks.filter(t => t.status === 'completed').length;
-                const pct = total > 0 ? Math.round((done/total)*100) : 0;
-                return pct === 100 ? '✔' : `${pct}%`;
-              })()}
-            </span>
+            {(() => {
+              const total = p.tasks.length || 0;
+              const done = p.tasks.filter(t => t.status === 'completed').length;
+              const pct = total > 0 ? Math.round((done/total)*100) : 0;
+              return pct === 100 ? (
+                <span className={`ml-2 text-[11px] ${isCurrent ? 'text-white/90' : 'text-gray-600'}`}>✔</span>
+              ) : null;
+            })()}
             {showFilledDivider && (
               <span aria-hidden className="absolute right-0 top-0 h-full w-px bg-blue-500/70" />
             )}
@@ -2418,6 +2418,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                 <p className="mt-1">
                   Track tasks by phase in the checklist. Select a task to see “What it is”, “Why it matters”, and “How to complete it.” Use the Calendar to drag-and-drop due dates and open task details by clicking a task.
                 </p>
+                <p className="mt-1">Before using the checklist, click "Select scenarios" above to set your Scope and Scenarios.</p>
               </div>
               <button
                 aria-label="Dismiss"
@@ -2514,11 +2515,6 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               {/* Left: To-do / Done content */}
               <div className="lg:col-span-2 space-y-4">
-                {selectedScenarioKeys.length === 0 && (
-                  <div className="rounded-[10px] border border-[#E6E8F0] bg-white p-3 text-[13px] text-gray-700">
-                    Before using the checklist, click "Select scenarios" above to set your Scope and Scenarios.
-                  </div>
-                )}
                 {checklistSubtab === 'todo' && (
                   <>
                     {phasePageId && (
