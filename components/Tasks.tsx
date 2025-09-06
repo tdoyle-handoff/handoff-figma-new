@@ -16,9 +16,6 @@ import { Switch } from './ui/switch';
 import { Popover, PopoverTrigger, PopoverContent } from './ui/popover';
 import { ScrollArea } from './ui/scroll-area';
 import { Checkbox } from './ui/checkbox';
-import ChecklistLegalTabs from './checklist/LegalTabs';
-import ChecklistInspectionTabs from './checklist/InspectionTabs';
-import ChecklistInsuranceTabs from './checklist/InsuranceTabs';
 import ChecklistSidebar from './checklist/ChecklistSidebar';
 import ChecklistDetail from './checklist/ChecklistDetail';
 import ChecklistCalendar from './checklist/ChecklistCalendar';
@@ -1784,7 +1781,7 @@ const TaskTableCard = ({ title, tasks, onNavigate, onUpdateTask, onUpdateTaskFie
   return (
     <Card className="shadow-sm bg-white">
       <CardHeader className="pb-2">
-        <CardTitle className="text-[15px] font-semibold tracking-[-0.01em] text-gray-900">{title}</CardTitle>
+        <CardTitle className="text-sm font-semibold tracking-[-0.01em] text-gray-900">{title}</CardTitle>
       </CardHeader>
       <CardContent className="pt-0">
         <div className="grid grid-cols-12 text-[12px] font-medium text-gray-500 px-2 py-1.5">
@@ -2329,6 +2326,8 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
   const firstActiveTask = flatTasks.find(t => ['active','in-progress','overdue'].includes(t.status)) || flatTasks[0] || null;
   const [selectedTaskId, setSelectedTaskId] = useState<string | undefined>(firstActiveTask?.id);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [openInsuranceCalcModal, setOpenInsuranceCalcModal] = useState(false);
+  const [openAllDocsModal, setOpenAllDocsModal] = useState(false);
 
   // Aggregate contacts from all checklist tasks (unique by email|name|role)
   const checklistContacts = React.useMemo(() => {
@@ -2390,22 +2389,6 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
     setSelectedTask(task || null);
 
     // Auto-switch to appropriate tab based on task subcategory
-    if (task?.subcategory) {
-      switch (task.subcategory) {
-        case 'legal':
-          setActiveTab('legal');
-          break;
-        case 'inspections':
-          setActiveTab('inspections');
-          break;
-        case 'insurance':
-          setActiveTab('insurance');
-          break;
-        default:
-          // Stay on checklist tab for general tasks
-          break;
-      }
-    }
   };
   
   // Get active tasks for quick actions
@@ -2467,24 +2450,6 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
     <div className="space-y-8 max-w-none bg-[#F6F7FB] p-4 sm:p-6 [&_button]:shadow-none [&_button:focus]:outline-none [&_button:focus]:ring-0 [&_button:focus-visible]:outline-none [&_button:focus-visible]:ring-0 [&_button:active]:font-semibold">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
 
-        {/* Main workspace tabs visible on all viewports */}
-        <TabsList className="w-full bg-white border border-gray-200 rounded-xl p-1 flex overflow-x-auto">
-          <TabsTrigger value="checklist" className="shrink-0 rounded-lg data-[state=active]:bg-blue-600 data-[state=active]:text-white">
-            <CheckSquare className="w-4 h-4 mr-2" /> Checklist
-          </TabsTrigger>
-          <TabsTrigger value="legal" className="shrink-0 rounded-lg data-[state=active]:bg-blue-600 data-[state=active]:text-white">
-            <Scale className="w-4 h-4 mr-2" /> Legal
-          </TabsTrigger>
-          <TabsTrigger value="inspections" className="shrink-0 rounded-lg data-[state=active]:bg-blue-600 data-[state=active]:text-white">
-            <FileCheck className="w-4 h-4 mr-2" /> Inspections
-          </TabsTrigger>
-          <TabsTrigger value="insurance" className="shrink-0 rounded-lg data-[state=active]:bg-blue-600 data-[state=active]:text-white">
-            <Shield className="w-4 h-4 mr-2" /> Insurance
-          </TabsTrigger>
-          <TabsTrigger value="quicklinks" className="shrink-0 rounded-lg data-[state=active]:bg-blue-600 data-[state=active]:text-white">
-            <FileText className="w-4 h-4 mr-2" /> Documents
-          </TabsTrigger>
-        </TabsList>
 
         <TabsContent value="checklist" className="space-y-6 mt-4 md:mt-6 bg-[#F6F7FB]">
           {showChecklistHelp && (
@@ -2670,6 +2635,26 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
 
               {/* Right sidebar */}
               <div className="space-y-4">
+                {/* Quick Links card */}
+                <Card className="shadow-sm">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-semibold tracking-[-0.01em] text-gray-900">Quick Links</CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-0 space-y-2">
+                    <Button size="sm" className="w-full justify-start h-9" onClick={() => setOpenInsuranceCalcModal(true)}>
+                      <Calculator className="w-4 h-4 mr-2" /> Insurance Calculator
+                    </Button>
+                    <Button size="sm" variant="outline" className="w-full justify-start h-9" onClick={() => {
+                      const el = document.getElementById('contacts-card');
+                      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }}>
+                      <Users className="w-4 h-4 mr-2" /> Contacts
+                    </Button>
+                    <Button size="sm" variant="outline" className="w-full justify-start h-9" onClick={() => setOpenAllDocsModal(true)}>
+                      <FileText className="w-4 h-4 mr-2" /> All Documents
+                    </Button>
+                  </CardContent>
+                </Card>
 
                 {/* Workspaces card hidden after integrating inline flows */}
                 {false && (
@@ -2690,7 +2675,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
 
                 <Card className="shadow-sm">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-[15px] font-semibold tracking-[-0.01em] text-gray-900">Contract dates</CardTitle>
+                    <CardTitle className="text-sm font-semibold tracking-[-0.01em] text-gray-900">Contract dates</CardTitle>
                   </CardHeader>
                   <CardContent className="pt-0">
                     {(() => {
@@ -2720,9 +2705,9 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                   </CardContent>
                 </Card>
 
-                <Card className="shadow-sm">
+                <Card id="contacts-card" className="shadow-sm">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-[15px] font-semibold tracking-[-0.01em] text-gray-900">Contacts</CardTitle>
+                    <CardTitle className="text-sm font-semibold tracking-[-0.01em] text-gray-900">Contacts</CardTitle>
                   </CardHeader>
                   <CardContent className="pt-0 space-y-2">
                     {checklistContacts.length === 0 ? (
@@ -2759,7 +2744,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                           <div className="text-xs text-gray-600">And {checklistContacts.length - 6} more…</div>
                         )}
                         <div className="pt-1">
-                          <Button size="sm" variant="outline" className="w-full" onClick={() => setActiveTab('quicklinks')}>View all documents</Button>
+                          <Button size="sm" variant="outline" className="w-full" onClick={() => setOpenAllDocsModal(true)}>View all documents</Button>
                         </div>
                       </div>
                     )}
@@ -2922,50 +2907,52 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
 
-        <TabsContent value="legal" className="space-y-6 mt-6 bg-[#F6F7FB]">
-          <ChecklistLegalTabs selectedTask={selectedTask} />
-        </TabsContent>
+          {/* Insurance Calculator Modal */}
+          <Dialog open={openInsuranceCalcModal} onOpenChange={setOpenInsuranceCalcModal}>
+            <DialogContent className="max-w-3xl">
+              <DialogHeader>
+                <DialogTitle>Insurance Calculator</DialogTitle>
+              </DialogHeader>
+              <div className="max-h-[75vh] overflow-auto">
+                <InsuranceCalculator />
+              </div>
+            </DialogContent>
+          </Dialog>
 
-        <TabsContent value="inspections" className="space-y-6 mt-6 bg-[#F6F7FB]">
-          <ChecklistInspectionTabs selectedTask={selectedTask} />
-        </TabsContent>
-
-        <TabsContent value="insurance" className="space-y-6 mt-6 bg-[#F6F7FB]">
-          <ChecklistInsuranceTabs selectedTask={selectedTask} />
-        </TabsContent>
-
-        <TabsContent value="quicklinks" className="space-y-6 mt-6 bg-[#F6F7FB]">
-          <Card className="shadow-sm bg-white">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-[15px] font-semibold tracking-[-0.01em] text-gray-900">All Documents</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              {allTaskDocuments.length === 0 ? (
-                <div className="text-sm text-gray-600">No documents uploaded yet. Upload files within checklist tasks and they will appear here.</div>
-              ) : (
-                <div className="divide-y">
-                  {allTaskDocuments.map((d, i) => (
-                    <div key={`${d.name}-${i}`} className="py-2 flex items-center justify-between gap-2">
-                      <div className="min-w-0">
-                        <div className="font-medium text-gray-900 truncate">{d.name}</div>
-                        <div className="text-xs text-gray-600 truncate">{d.sourceTaskTitle || d.sourceTaskId}</div>
+          {/* All Documents Modal */}
+          <Dialog open={openAllDocsModal} onOpenChange={setOpenAllDocsModal}>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>All Documents</DialogTitle>
+              </DialogHeader>
+              <div className="max-h-[70vh] overflow-auto">
+                {allTaskDocuments.length === 0 ? (
+                  <div className="text-sm text-gray-600 p-2">No documents uploaded yet. Upload files within checklist tasks and they will appear here.</div>
+                ) : (
+                  <div className="divide-y">
+                    {allTaskDocuments.map((d, i) => (
+                      <div key={`${d.name}-${i}`} className="py-2 flex items-center justify-between gap-2">
+                        <div className="min-w-0">
+                          <div className="font-medium text-gray-900 truncate text-sm">{d.name}</div>
+                          <div className="text-xs text-gray-600 truncate">{d.sourceTaskTitle || d.sourceTaskId}</div>
+                        </div>
+                        <div className="flex-shrink-0">
+                          {d.url ? (
+                            <Button size="sm" variant="outline" onClick={() => window.open(d.url, '_blank')}>Open</Button>
+                          ) : (
+                            <Badge variant="secondary" className="text-[11px]">No link</Badge>
+                          )}
+                        </div>
                       </div>
-                      <div className="flex-shrink-0">
-                        {d.url ? (
-                          <Button size="sm" variant="outline" onClick={() => window.open(d.url, '_blank')}>Open</Button>
-                        ) : (
-                          <Badge variant="secondary" className="text-[11px]">No link</Badge>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </DialogContent>
+          </Dialog>
         </TabsContent>
+
 
       </Tabs>
 
