@@ -18,6 +18,7 @@ import { ScrollArea } from './ui/scroll-area';
 import { Checkbox } from './ui/checkbox';
 import ChecklistLegalTabs from './checklist/LegalTabs';
 import ChecklistInspectionTabs from './checklist/InspectionTabs';
+import ChecklistInsuranceTabs from './checklist/InsuranceTabs';
 import ChecklistSidebar from './checklist/ChecklistSidebar';
 import ChecklistDetail from './checklist/ChecklistDetail';
 import ChecklistCalendar from './checklist/ChecklistCalendar';
@@ -2172,7 +2173,7 @@ function GroupMultiSelect({ label, options, selectedKeys, onChange, count }: { l
           {count > 0 && <span className="shrink-0 text-gray-500">({count})</span>}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[360px] p-0 bg-white border shadow-lg max-h-[60vh] overflow-hidden flex flex-col" align="start">
+      <PopoverContent className="w-[360px] max-w-[92vw] p-0 bg-white border shadow-lg max-h-[60vh] overflow-hidden flex flex-col" align="start">
         <div className="border-b px-3 py-2 flex items-center justify-between bg-gray-50">
           <div className="font-medium text-sm">{label}</div>
           <div className="flex items-center gap-2">
@@ -2466,7 +2467,26 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
     <div className="space-y-8 max-w-none bg-[#F6F7FB] p-4 sm:p-6 [&_button]:shadow-none [&_button:focus]:outline-none [&_button:focus]:ring-0 [&_button:focus-visible]:outline-none [&_button:focus-visible]:ring-0 [&_button:active]:font-semibold">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
 
-        <TabsContent value="checklist" className="space-y-6 mt-6 bg-[#F6F7FB]">
+        {/* Main workspace tabs visible on all viewports */}
+        <TabsList className="w-full bg-white border border-gray-200 rounded-xl p-1 flex overflow-x-auto">
+          <TabsTrigger value="checklist" className="shrink-0 rounded-lg data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+            <CheckSquare className="w-4 h-4 mr-2" /> Checklist
+          </TabsTrigger>
+          <TabsTrigger value="legal" className="shrink-0 rounded-lg data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+            <Scale className="w-4 h-4 mr-2" /> Legal
+          </TabsTrigger>
+          <TabsTrigger value="inspections" className="shrink-0 rounded-lg data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+            <FileCheck className="w-4 h-4 mr-2" /> Inspections
+          </TabsTrigger>
+          <TabsTrigger value="insurance" className="shrink-0 rounded-lg data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+            <Shield className="w-4 h-4 mr-2" /> Insurance
+          </TabsTrigger>
+          <TabsTrigger value="quicklinks" className="shrink-0 rounded-lg data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+            <FileText className="w-4 h-4 mr-2" /> Documents
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="checklist" className="space-y-6 mt-4 md:mt-6 bg-[#F6F7FB]">
           {showChecklistHelp && (
             <div className="rounded-md border border-amber-200 bg-amber-50 text-amber-900 p-3 flex items-start justify-between gap-3">
               <div className="text-sm">
@@ -2487,14 +2507,14 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
           )}
           <div className="px-1 space-y-4">
             {/* Milestone bar + scenarios selector */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
               <Popover>
                 <PopoverTrigger asChild>
                   <Button variant="outline" className="rounded-full h-9 px-4 text-[13px] border-gray-200 bg-white hover:bg-gray-50">
                     Select scenarios{selectedScenarioKeys.length ? ` (${selectedScenarioKeys.length})` : ''}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[720px] p-3 bg-white" align="start">
+                <PopoverContent className="w-[720px] max-w-[92vw] p-3 bg-white" align="start">
                   <ScenarioBanner
                     embedded
                     selectedKeys={selectedScenarioKeys}
@@ -2508,18 +2528,20 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                   />
                 </PopoverContent>
               </Popover>
-              <InlinePhaseStepper
-                phases={displayedTaskPhases}
-                currentId={phasePageId || displayedTaskPhases.find(p => p.status === 'active')?.id}
-                onSelect={(id) => {
-                  setPhasePageId(id);
-                  setChecklistSubtab('todo');
-                  setTimeout(() => {
-                    const el = document.getElementById(`phase-card-${id}`);
-                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }, 0);
-                }}
-              />
+              <div className="w-full md:w-auto overflow-x-auto">
+                <InlinePhaseStepper
+                  phases={displayedTaskPhases}
+                  currentId={phasePageId || displayedTaskPhases.find(p => p.status === 'active')?.id}
+                  onSelect={(id) => {
+                    setPhasePageId(id);
+                    setChecklistSubtab('todo');
+                    setTimeout(() => {
+                      const el = document.getElementById(`phase-card-${id}`);
+                      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 0);
+                  }}
+                />
+              </div>
             </div>
             <div className="flex items-center justify-between">
               <div>
@@ -2908,6 +2930,10 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
 
         <TabsContent value="inspections" className="space-y-6 mt-6 bg-[#F6F7FB]">
           <ChecklistInspectionTabs selectedTask={selectedTask} />
+        </TabsContent>
+
+        <TabsContent value="insurance" className="space-y-6 mt-6 bg-[#F6F7FB]">
+          <ChecklistInsuranceTabs selectedTask={selectedTask} />
         </TabsContent>
 
         <TabsContent value="quicklinks" className="space-y-6 mt-6 bg-[#F6F7FB]">

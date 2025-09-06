@@ -11,14 +11,12 @@ import {
   Home, 
   FileText, 
   CheckSquare, 
-  Users, 
   BookOpen, 
   Settings, 
   LogOut,
   DollarSign,
   Scale,
   Shield,
-  MessageSquare,
   Menu,
   Calculator,
   Eye,
@@ -92,20 +90,8 @@ export default function MobileLayout({
     
     // Additional Services
     {
-      id: 'communications',
-      label: 'Communication Suite',
-      icon: MessageSquare,
-      category: 'Services'
-    },
-    {
-      id: 'team',
-      label: 'Team',
-      icon: Users,
-      category: 'Services'
-    },
-    {
       id: 'documents',
-      label: 'Offer & Document Hub',
+      label: 'Contract Builder',
       icon: FileText,
       category: 'Services'
     },
@@ -120,9 +106,9 @@ export default function MobileLayout({
   // Bottom navigation items (most important)
   const bottomNavItems: { id: PageType; label: string; icon: React.ElementType }[] = [
     {
-      id: 'overview',
-      label: 'Analytics & Budget',
-      icon: BarChart3
+      id: 'tasks',
+      label: 'Transaction Checklist',
+      icon: CheckSquare
     },
     {
       id: 'property',
@@ -130,9 +116,9 @@ export default function MobileLayout({
       icon: Home
     },
     {
-      id: 'tasks',
-      label: 'Transaction Checklist',
-      icon: CheckSquare
+      id: 'overview',
+      label: 'Analytics & Budget',
+      icon: BarChart3
     },
     {
       id: 'calendar',
