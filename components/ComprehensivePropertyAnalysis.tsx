@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -34,6 +34,8 @@ export function ComprehensivePropertyAnalysis({
   const NOTES_KEY = 'handoff-comprehensive-property-notes';
   const propertyKey = initialAttomId || initialAddress || 'default-report';
   const [reportNotes, setReportNotes] = useState<string>('');
+  const { userProfile, isGuestMode, updateUserProfile } = require('../hooks/useAuth').useAuth();
+  const notesTimerRef = useRef<number | null>(null);
 
   // Load any saved property data
   useEffect(() => {
@@ -55,6 +57,24 @@ export function ComprehensivePropertyAnalysis({
       }
     } catch {}
   }, []);
+
+  // Sync notes to user profile (debounced)
+  useEffect(() => {
+    if (notesTimerRef.current) window.clearTimeout(notesTimerRef.current);
+    notesTimerRef.current = window.setTimeout(async () => {
+      try {
+        if (userProfile && !isGuestMode && typeof updateUserProfile === 'function') {
+          const currentPrefs = (userProfile as any)?.preferences || {};
+          const prev = (currentPrefs.comprehensivePropertyNotes || {}) as Record<string, any>;
+          const next = { ...prev, [propertyKey]: reportNotes };
+          await updateUserProfile({ preferences: { ...currentPrefs, comprehensivePropertyNotes: next } as any });
+        }
+      } catch (e) {
+        console.warn('Failed to sync comprehensive analysis notes to profile:', e);
+      }
+    }, 800) as unknown as number;
+    return () => { if (notesTimerRef.current) window.clearTimeout(notesTimerRef.current); };
+  }, [reportNotes, propertyKey, userProfile, isGuestMode, updateUserProfile]);
 
   const handlePropertyFound = (data: any) => {
     setPropertyData(data);

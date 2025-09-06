@@ -51,6 +51,7 @@ export function PropertyAnalysisReport({
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['overview']));
   const [rawApiData, setRawApiData] = useState<any>(null);
   const isMobile = useIsMobile();
+  const { userProfile, isGuestMode, updateUserProfile } = require('../hooks/useAuth').useAuth();
 
   const { searchByAddress, isLoading, error } = useAttomData({
     onPropertyFound: (foundProperty) => {
@@ -86,19 +87,29 @@ export function PropertyAnalysisReport({
     }
   }, [propertyKey]);
 
-  // Persist overrides (debounced)
+  // Persist overrides (debounced) and sync to profile
   useEffect(() => {
     try {
       const raw = localStorage.getItem(SAVE_KEY);
       const all = raw ? JSON.parse(raw) : {};
       all[propertyKey] = { overrides, lastUpdated: new Date().toISOString(), propertyId: propertyKey };
       if (saveTimerRef.current) window.clearTimeout(saveTimerRef.current);
-      saveTimerRef.current = window.setTimeout(() => {
+      saveTimerRef.current = window.setTimeout(async () => {
         try { localStorage.setItem(SAVE_KEY, JSON.stringify(all)); } catch {}
-      }, 600) as unknown as number;
+        try {
+          if (userProfile && !isGuestMode && typeof updateUserProfile === 'function') {
+            const currentPrefs = (userProfile as any)?.preferences || {};
+            const prev = (currentPrefs.propertyAnalysisOverrides || {}) as Record<string, any>;
+            const next = { ...prev, [propertyKey]: overrides };
+            await updateUserProfile({ preferences: { ...currentPrefs, propertyAnalysisOverrides: next } as any });
+          }
+        } catch (e) {
+          console.warn('Failed to sync property analysis overrides to profile:', e);
+        }
+      }, 800) as unknown as number;
     } catch {}
     return () => { if (saveTimerRef.current) window.clearTimeout(saveTimerRef.current); };
-  }, [overrides, propertyKey]);
+  }, [overrides, propertyKey, userProfile, isGuestMode, updateUserProfile]);
 
   // Load raw API data from localStorage if available
   useEffect(() => {
