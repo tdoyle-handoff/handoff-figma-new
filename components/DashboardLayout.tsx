@@ -67,12 +67,14 @@ export default function DashboardLayout({
 
   // Navigation items organized by workflow categories
   const navigationItems: NavigationItem[] = [
+    // Purchasing Your Home (prioritized)
+    { id: 'tasks', label: 'Transaction Checklist', icon: CheckSquare, category: 'Purchasing Your Home' },
+
     // Finding your Dream Home
     { id: 'property', label: 'Property Search', icon: Home, category: 'Finding your Dream Home' },
     { id: 'overview', label: 'Analytics & Budget', icon: TrendingUp, category: 'Finding your Dream Home' },
 
     // Purchasing Your Home
-    { id: 'tasks', label: 'Transaction Checklist', icon: CheckSquare, category: 'Purchasing Your Home' },
     { id: 'calendar', label: 'Calendar', icon: Calendar, category: 'Purchasing Your Home' },
     { id: 'documents', label: 'Contract Builder', icon: FileText, category: 'Purchasing Your Home' },
 

@@ -2094,7 +2094,14 @@ interface TasksProps {
 function ScenarioBanner({ selectedKeys, onChange, embedded }: { selectedKeys: string[]; onChange: (keys: string[]) => void; embedded?: boolean }) {
   const selected = new Set(selectedKeys);
   const groups: string[] = (scenarioSchema.merge_rules?.order || []) as string[];
-  const pretty = (s: string) => s.replace(/_/g, ' ').replace(/\b\w/g, (m) => m.toUpperCase());
+  const pretty = (s: string) => {
+    const key = s.toLowerCase();
+    if (key === 'fha') return 'FHA';
+    if (key === 'va') return 'VA';
+    if (key === 'usda') return 'USDA';
+    if (key === 'conv_mortgage' || key === 'conventional' || key === 'conv') return 'Conventional';
+    return s.replace(/_/g, ' ').replace(/\b\w/g, (m) => m.toUpperCase());
+  };
 
   const setForGroup = (group: string, keys: string[]) => {
     const next = new Set(selected);
@@ -2434,7 +2441,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                     Select scenarios{selectedScenarioKeys.length ? ` (${selectedScenarioKeys.length})` : ''}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[720px] p-3" align="start">
+                <PopoverContent className="w-[720px] p-3 bg-white" align="start">
                   <ScenarioBanner
                     embedded
                     selectedKeys={selectedScenarioKeys}
