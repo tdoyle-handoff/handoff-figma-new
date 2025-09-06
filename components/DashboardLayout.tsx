@@ -284,17 +284,18 @@ export default function DashboardLayout({
                   {calendarItem && (() => {
                     const CalIcon = calendarItem.icon;
                     return (
-                      <button
-                        key={calendarItem.id}
-                        className={cn(
-                          "w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 text-left ml-6",
-                          currentPage === calendarItem.id
-                            ? "bg-white text-blue-900 shadow-sm"
-                            : "text-blue-100 hover:bg-blue-800/50 hover:text-white",
-                          !sidebarOpen && "justify-center px-3 ml-0"
-                        )}
-                        onClick={() => onPageChange(calendarItem.id)}
-                      >
+<button
+                    key={calendarItem.id}
+                    className={cn(
+                      "w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 text-left ml-6",
+                      currentPage === calendarItem.id
+                        ? "bg-white text-blue-900 shadow-sm"
+                        : "text-blue-100 hover:bg-blue-800/50 hover:text-white",
+                      !sidebarOpen && "justify-center px-3 ml-0"
+                    )}
+                    aria-current={currentPage === calendarItem.id ? 'page' : undefined}
+                    onClick={() => onPageChange(calendarItem.id)}
+                  >
                         <CalIcon className="h-5 w-5 flex-shrink-0" />
                         {sidebarOpen && (
                           <div className="flex-1">

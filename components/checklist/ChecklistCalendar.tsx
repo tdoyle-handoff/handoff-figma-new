@@ -62,6 +62,27 @@ const statusIcon = (status: Task['status']) => {
 };
 
 
+// Tag/subcategory color mapping for visual categorization
+function getTaskCategoryKey(t: Task): 'financing' | 'legal' | 'inspections' | 'insurance' | 'scenario' | 'general' {
+  const tags = (t.tags || []).map(x => (x || '').toLowerCase());
+  if (tags.some(x => x.startsWith('scenario-'))) return 'scenario';
+  const sub = (t.subcategory || '').toLowerCase();
+  if (sub === 'financing') return 'financing';
+  if (sub === 'legal') return 'legal';
+  if (sub === 'inspections') return 'inspections';
+  if (sub === 'insurance') return 'insurance';
+  return 'general';
+}
+
+const catStyles: Record<ReturnType<typeof getTaskCategoryKey>, { dot: string; badgeBg: string; badgeBorder: string; badgeText: string; label: string }> = {
+  financing: { dot: 'bg-blue-500', badgeBg: 'bg-blue-50', badgeBorder: 'border-blue-200', badgeText: 'text-blue-700', label: 'Financing' },
+  legal: { dot: 'bg-purple-500', badgeBg: 'bg-purple-50', badgeBorder: 'border-purple-200', badgeText: 'text-purple-700', label: 'Legal' },
+  inspections: { dot: 'bg-amber-500', badgeBg: 'bg-amber-50', badgeBorder: 'border-amber-200', badgeText: 'text-amber-700', label: 'Inspections' },
+  insurance: { dot: 'bg-cyan-500', badgeBg: 'bg-cyan-50', badgeBorder: 'border-cyan-200', badgeText: 'text-cyan-700', label: 'Insurance' },
+  scenario: { dot: 'bg-rose-500', badgeBg: 'bg-rose-50', badgeBorder: 'border-rose-200', badgeText: 'text-rose-700', label: 'Scenario' },
+  general: { dot: 'bg-gray-400', badgeBg: 'bg-gray-50', badgeBorder: 'border-gray-200', badgeText: 'text-gray-700', label: 'General' },
+};
+
 export default function ChecklistCalendar({ tasks, onUpdateTask }: ChecklistCalendarProps) {
   const [cursor, setCursor] = useState<Date>(new Date());
   const [editOpen, setEditOpen] = useState(false);
@@ -240,10 +261,12 @@ export default function ChecklistCalendar({ tasks, onUpdateTask }: ChecklistCale
                       draggable
                       onDragStart={(e) => onDragStart(e, t.id)}
                       className="cursor-move text-xs border rounded px-2 py-1 flex items-center gap-2 hover:bg-gray-50"
-                      title={`${t.title}${t.description ? ' — ' + t.description : ''}`}
+title={`${t.title}${t.description ? ' — ' + t.description : ''}`}
                     >
                       {statusIcon(t.status)}
-                      <span className="truncate">{t.title}</span>
+                      <span className={`inline-block w-2 h-2 rounded-full ${catStyles[getTaskCategoryKey(t)].dot}`} aria-hidden="true" />
+                      <span className="sr-only">Category: {catStyles[getTaskCategoryKey(t)].label}</span>
+                      <span className="truncate">{t.shortTitle || t.title}</span>
                     </div>
                   ))}
                 </div>
@@ -300,10 +323,12 @@ export default function ChecklistCalendar({ tasks, onUpdateTask }: ChecklistCale
                         setEditOpen(true);
                       }}
                       className="group cursor-move text-xs border rounded px-1.5 py-1 flex items-center gap-1 hover:bg-gray-50"
-                      title={`${t.title}${t.description ? ' — ' + t.description : ''}`}
+title={`${t.title}${t.description ? ' — ' + t.description : ''}`}
                     >
                       {statusIcon(t.status)}
-                      <span className="truncate">{t.title}</span>
+                      <span className={`inline-block w-2 h-2 rounded-full ${catStyles[getTaskCategoryKey(t)].dot}`} aria-hidden="true" />
+                      <span className="sr-only">Category: {catStyles[getTaskCategoryKey(t)].label}</span>
+                      <span className="truncate">{t.shortTitle || t.title}</span>
                     </div>
                   ))}
 
@@ -343,12 +368,21 @@ export default function ChecklistCalendar({ tasks, onUpdateTask }: ChecklistCale
         </div>
         </div>
 
-        {/* Legend */}
-        <div className="flex items-center gap-3 mt-3 text-xs text-gray-600">
-          <div className="flex items-center gap-1"><CheckCircle className="w-3.5 h-3.5 text-green-600" /> Completed</div>
-          <div className="flex items-center gap-1"><Circle className="w-3.5 h-3.5 text-blue-600" /> Active/In-progress</div>
-          <div className="flex items-center gap-1"><AlertTriangle className="w-3.5 h-3.5 text-red-600" /> Overdue</div>
-          <div className="flex items-center gap-1"><Circle className="w-3.5 h-3.5 text-gray-400" /> Other</div>
+{/* Legend */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 mt-3 text-xs text-gray-600">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1"><CheckCircle className="w-3.5 h-3.5 text-green-600" /> Completed</div>
+            <div className="flex items-center gap-1"><Circle className="w-3.5 h-3.5 text-blue-600" /> Active/In-progress</div>
+            <div className="flex items-center gap-1"><AlertTriangle className="w-3.5 h-3.5 text-red-600" /> Overdue</div>
+            <div className="flex items-center gap-1"><Circle className="w-3.5 h-3.5 text-gray-400" /> Other</div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1"><span className={`inline-block w-2 h-2 rounded-full ${catStyles.financing.dot}`} /> Financing</div>
+            <div className="flex items-center gap-1"><span className={`inline-block w-2 h-2 rounded-full ${catStyles.legal.dot}`} /> Legal</div>
+            <div className="flex items-center gap-1"><span className={`inline-block w-2 h-2 rounded-full ${catStyles.inspections.dot}`} /> Inspections</div>
+            <div className="flex items-center gap-1"><span className={`inline-block w-2 h-2 rounded-full ${catStyles.insurance.dot}`} /> Insurance</div>
+            <div className="flex items-center gap-1"><span className={`inline-block w-2 h-2 rounded-full ${catStyles.scenario.dot}`} /> Scenario</div>
+          </div>
         </div>
       </CardContent>
     </Card>

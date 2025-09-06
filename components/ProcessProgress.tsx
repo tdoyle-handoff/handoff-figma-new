@@ -134,7 +134,7 @@ export function ProcessProgress() {
     <div className="bg-card rounded-lg border border-border p-3">
       <div className="mb-3">
         <div className="flex items-center justify-between mb-1">
-          <h3 className="text-base font-semibold">Your Progress</h3>
+<h3 className="text-sm font-semibold">Your Progress</h3>
           <Button
             variant="ghost"
             size="sm"

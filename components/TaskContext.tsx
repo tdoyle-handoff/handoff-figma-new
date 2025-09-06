@@ -7,6 +7,9 @@ import { applyScenarios } from '../utils/scenarioEngine';
 export interface Task {
   id: string;
   title: string;
+  // Optional alternative titles for different contexts
+  shortTitle?: string;
+  longTitle?: string;
   description: string;
   category: 'search' | 'offer' | 'contract' | 'diligence' | 'pre-closing' | 'closing' | 'post-closing';
   subcategory?: 'financing' | 'legal' | 'inspections' | 'insurance' | 'general';
@@ -33,6 +36,9 @@ export interface Task {
 
 export interface TaskInstructions {
   overview: string;
+  // Optional structured sections for detail formatting
+  what?: string;
+  why?: string;
   steps: TaskStep[];
   requiredDocuments?: string[];
   contacts?: TaskContact[];
