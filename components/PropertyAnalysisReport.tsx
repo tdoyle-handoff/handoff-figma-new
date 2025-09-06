@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Textarea } from './ui/textarea';
 import { Badge } from './ui/badge';
 import { Separator } from './ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
@@ -41,6 +43,11 @@ export function PropertyAnalysisReport({
   className 
 }: PropertyAnalysisReportProps) {
   const [property, setProperty] = useState<AttomProperty | null>(initialProperty || null);
+  const [editMode, setEditMode] = useState<boolean>(false);
+  type FieldOverride = { value?: string; note?: string };
+  const [overrides, setOverrides] = useState<Record<string, FieldOverride>>({});
+  const saveTimerRef = useRef<number | null>(null);
+  const SAVE_KEY = 'handoff-property-analysis-userdata';
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['overview']));
   const [rawApiData, setRawApiData] = useState<any>(null);
   const isMobile = useIsMobile();
@@ -55,12 +62,43 @@ export function PropertyAnalysisReport({
     }
   });
 
+  // Compute stable property key for saving user edits
+  const propertyKey = (property as any)?.attom_id || address || 'unknown-property';
+  const slug = (s: string) => (s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  const fieldKey = (sectionTitle: string, fieldLabel: string) => `${slug(sectionTitle)}__${slug(fieldLabel)}`;
+
   // Load property data on address change
   useEffect(() => {
     if (address && !initialProperty) {
       handleRefreshData();
     }
   }, [address, initialProperty]);
+
+  // Load saved user overrides for this property
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(SAVE_KEY);
+      const all = raw ? JSON.parse(raw) : {};
+      const entry = all[propertyKey];
+      if (entry && entry.overrides) setOverrides(entry.overrides as Record<string, FieldOverride>);
+    } catch (e) {
+      // non-fatal
+    }
+  }, [propertyKey]);
+
+  // Persist overrides (debounced)
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(SAVE_KEY);
+      const all = raw ? JSON.parse(raw) : {};
+      all[propertyKey] = { overrides, lastUpdated: new Date().toISOString(), propertyId: propertyKey };
+      if (saveTimerRef.current) window.clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = window.setTimeout(() => {
+        try { localStorage.setItem(SAVE_KEY, JSON.stringify(all)); } catch {}
+      }, 600) as unknown as number;
+    } catch {}
+    return () => { if (saveTimerRef.current) window.clearTimeout(saveTimerRef.current); };
+  }, [overrides, propertyKey]);
 
   // Load raw API data from localStorage if available
   useEffect(() => {
@@ -371,6 +409,13 @@ export function PropertyAnalysisReport({
               </CardDescription>
             </div>
             <div className="flex items-center space-x-2">
+              <Button 
+                variant={editMode ? 'default' : 'outline'} 
+                size="sm" 
+                onClick={() => setEditMode(v => !v)}
+              >
+                {editMode ? 'Done' : 'Edit'}
+              </Button>
               <Badge variant="secondary">
                 <CheckCircle className="w-3 h-3 mr-1" />
                 Verified
@@ -503,8 +548,50 @@ export function PropertyAnalysisReport({
                             </label>
                           </div>
                           <div className="text-sm text-muted-foreground">
-                            {formatValue(field.value, field.format)}
+                            {(() => {
+                              const k = fieldKey(section.title, field.label);
+                              const ov = overrides[k];
+                              const hasOverride = !!(ov && ov.value && ov.value.trim() !== '');
+                              const val = hasOverride ? ov!.value! : formatValue(field.value, field.format);
+                              return (
+                                <span>
+                                  {val}
+                                  {hasOverride && (
+                                    <Badge variant="outline" className="ml-2 text-[10px]">Overridden</Badge>
+                                  )}
+                                </span>
+                              );
+                            })()}
                           </div>
+                          {editMode && (
+                            <div className="mt-2 space-y-2">
+                              <Input
+                                placeholder="Override value (optional)"
+                                value={(() => { const ov = overrides[fieldKey(section.title, field.label)]; return ov?.value ?? ''; })()}
+                                onChange={(e) => {
+                                  const k = fieldKey(section.title, field.label);
+                                  const next = { ...(overrides[k] || {}), value: e.target.value } as FieldOverride;
+                                  setOverrides(prev => ({ ...prev, [k]: next }));
+                                }}
+                              />
+                              <Textarea
+                                rows={2}
+                                placeholder="Notes (optional)"
+                                value={(() => { const ov = overrides[fieldKey(section.title, field.label)]; return ov?.note ?? ''; })()}
+                                onChange={(e) => {
+                                  const k = fieldKey(section.title, field.label);
+                                  const next = { ...(overrides[k] || {}), note: e.target.value } as FieldOverride;
+                                  setOverrides(prev => ({ ...prev, [k]: next }));
+                                }}
+                              />
+                              {(() => { const ov = overrides[fieldKey(section.title, field.label)]; return (ov && (ov.value || ov.note)) ? (
+                                <Button size="sm" variant="outline" onClick={() => {
+                                  const k = fieldKey(section.title, field.label);
+                                  setOverrides(prev => { const n = { ...prev }; delete n[k]; return n; });
+                                }}>Reset</Button>
+                              ) : null; })()}
+                            </div>
+                          )}
                           {field.description && (
                             <p className="text-xs text-muted-foreground italic">
                               {field.description}

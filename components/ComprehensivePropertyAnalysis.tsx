@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
+import { Textarea } from './ui/textarea';
 import { Alert, AlertDescription } from './ui/alert';
 import { ComprehensivePropertyDetails } from './ComprehensivePropertyDetails';
 import { useIsMobile } from './ui/use-mobile';
@@ -30,6 +31,9 @@ export function ComprehensivePropertyAnalysis({
   const isMobile = useIsMobile();
   const [propertyData, setPropertyData] = useState<any>(null);
   const [reportGenerated, setReportGenerated] = useState(false);
+  const NOTES_KEY = 'handoff-comprehensive-property-notes';
+  const propertyKey = initialAttomId || initialAddress || 'default-report';
+  const [reportNotes, setReportNotes] = useState<string>('');
 
   // Load any saved property data
   useEffect(() => {
@@ -42,6 +46,14 @@ export function ComprehensivePropertyAnalysis({
     } catch (error) {
       console.warn('Failed to load saved property data:', error);
     }
+    // Load report notes
+    try {
+      const raw = localStorage.getItem(NOTES_KEY);
+      const all = raw ? JSON.parse(raw) : {};
+      if (all[propertyKey] && typeof all[propertyKey].notes === 'string') {
+        setReportNotes(all[propertyKey].notes);
+      }
+    } catch {}
   }, []);
 
   const handlePropertyFound = (data: any) => {
@@ -226,6 +238,29 @@ export function ComprehensivePropertyAnalysis({
               </div>
             </div>
           </div>
+        </div>
+      </Card>
+
+      {/* Report Notes (user editable, persisted) */}
+      <Card className="modern-card">
+        <div className="p-6">
+          <h3 className="text-lg font-semibold mb-2">Your Notes</h3>
+          <p className="text-sm text-muted-foreground mb-3">Add any personal notes or highlights. These are saved locally and will persist on reload.</p>
+          <Textarea
+            rows={4}
+            placeholder="Add your notes about this property..."
+            value={reportNotes}
+            onChange={(e) => {
+              const val = e.target.value;
+              setReportNotes(val);
+              try {
+                const raw = localStorage.getItem(NOTES_KEY);
+                const all = raw ? JSON.parse(raw) : {};
+                all[propertyKey] = { ...(all[propertyKey] || {}), notes: val, updatedAt: new Date().toISOString() };
+                localStorage.setItem(NOTES_KEY, JSON.stringify(all));
+              } catch {}
+            }}
+          />
         </div>
       </Card>
 

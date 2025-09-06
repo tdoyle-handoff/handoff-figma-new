@@ -62,6 +62,16 @@ export default function HomeTracker() {
     } catch (e) {
       console.warn('Failed to load saved homes:', e);
     }
+    // Load simple UI state (filter)
+    try {
+      const uiRaw = localStorage.getItem('handoff-home-tracker-ui');
+      if (uiRaw) {
+        const ui = JSON.parse(uiRaw) as { labelFilter?: InterestLabel | 'all' };
+        if (ui && ui.labelFilter) setLabelFilter(ui.labelFilter);
+      }
+    } catch (e) {
+      // non-fatal
+    }
   }, []);
 
   // Persist homes whenever they change
@@ -88,6 +98,13 @@ export default function HomeTracker() {
       if (persistTimerRef.current) window.clearTimeout(persistTimerRef.current);
     };
   }, [homes, userProfile, isGuestMode, updateUserProfile]);
+
+  // Persist simple UI state
+  useEffect(() => {
+    try {
+      localStorage.setItem('handoff-home-tracker-ui', JSON.stringify({ labelFilter }));
+    } catch {}
+  }, [labelFilter]);
 
   const addHome = () => {
     if (!newHome.address.trim()) return;
