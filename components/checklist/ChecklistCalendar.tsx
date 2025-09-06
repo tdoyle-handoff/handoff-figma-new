@@ -150,9 +150,38 @@ export default function ChecklistCalendar({ tasks, onUpdateTask }: ChecklistCale
 
   const onDrop = (e: React.DragEvent<HTMLDivElement>, date: Date) => {
     e.preventDefault();
+
+    // First, handle scheduled inspection event drag
+    const insp = e.dataTransfer.getData('text/inspection-event');
+    if (insp) {
+      try {
+        const [taskId, eventKey] = insp.split('::');
+        const task = tasks.find(t => t.id === taskId);
+        if (task) {
+          const cf: any = { ...(task.customFields || {}) };
+          const ins: any = { ...(cf.inspections || {}) };
+          const scheduled: any[] = Array.isArray(ins.scheduled) ? [...ins.scheduled] : [];
+          const matchKey = (x: any) => String(x?.id || x?.type || x?.date || '');
+          const idx = scheduled.findIndex((x) => matchKey(x) === eventKey);
+          if (idx >= 0) {
+            scheduled[idx] = { ...scheduled[idx], date: formatISODate(date) };
+            onUpdateTask(taskId, {
+              customFields: {
+                ...cf,
+                inspections: { ...ins, scheduled },
+              } as any,
+            });
+            return;
+          }
+        }
+      } catch {}
+    }
+
+    // Fallback: dragging a task card to set its due date
     const taskId = e.dataTransfer.getData('text/task-id');
-    if (!taskId) return;
-    onUpdateTask(taskId, { dueDate: formatISODate(date) });
+    if (taskId) {
+      onUpdateTask(taskId, { dueDate: formatISODate(date) });
+    }
   };
 
   const onDropUnscheduled = (e: React.DragEvent<HTMLDivElement>) => {
@@ -288,7 +317,12 @@ export default function ChecklistCalendar({ tasks, onUpdateTask }: ChecklistCale
                         {events.map((ev) => (
                           <div
                             key={ev.id}
-                            className="text-[11px] bg-amber-50 border border-amber-200 text-amber-800 rounded px-1.5 py-1 flex items-center justify-between gap-2"
+                            draggable
+                            onDragStart={(e) => {
+                              e.dataTransfer.setData('text/inspection-event', ev.id);
+                              e.dataTransfer.effectAllowed = 'move';
+                            }}
+                            className="cursor-move text-[11px] bg-amber-50 border border-amber-200 text-amber-800 rounded px-1.5 py-1 flex items-center justify-between gap-2 hover:bg-amber-100"
                             title={`${ev.title}${ev.provider ? ' — ' + ev.provider : ''}${ev.time ? ' at ' + ev.time : ''}`}
                           >
                             <span className="truncate">

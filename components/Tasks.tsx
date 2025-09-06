@@ -299,6 +299,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
   const [inspectionIssues, setInspectionIssues] = useState<InspectionIssue[]>(inspectionsCF.issues || []);
   const [inspectionNegotiations, setInspectionNegotiations] = useState<NegotiationRequest[]>(inspectionsCF.negotiations || []);
   const [inspectionRemedies, setInspectionRemedies] = useState<RemedyItem[]>(inspectionsCF.remedies || []);
+  const [inspectionReports, setInspectionReports] = useState<Array<{ name: string; url?: string; type?: string; size?: number }>>(inspectionsCF.reports || []);
 
   const persistInspectionFields = React.useCallback(() => {
     if (!onUpdateTaskFields) return;
@@ -309,6 +310,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
       ...(inspectionIssues ? { issues: inspectionIssues } : {}),
       ...(inspectionNegotiations ? { negotiations: inspectionNegotiations } : {}),
       ...(inspectionRemedies ? { remedies: inspectionRemedies } : {}),
+      ...(inspectionReports ? { reports: inspectionReports } : {}),
     };
     const updates: Partial<Task> = {
       customFields: {
@@ -318,7 +320,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
     };
     onUpdateTaskFields(task.id, updates);
     try { window.dispatchEvent(new Event('tasksUpdated')); } catch {}
-  }, [onUpdateTaskFields, task, scheduledInspections, inspectionIssues, inspectionNegotiations, inspectionRemedies]);
+  }, [onUpdateTaskFields, task, scheduledInspections, inspectionIssues, inspectionNegotiations, inspectionRemedies, inspectionReports]);
 
   // Build updates object from current local state (reused by Save and autosave)
   const buildUpdatesFromState = React.useCallback((): Partial<Task> => {
@@ -1103,6 +1105,38 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                     </div>
                   ))}
                 </div>
+
+                {/* Upload inspection reports */}
+                <div className="space-y-2">
+                  <Label className="text-xs">Upload inspection reports</Label>
+                  <Input type="file" multiple accept="application/pdf,image/*" onChange={(e) => {
+                    const files = Array.from(e.target.files || []);
+                    if (files.length === 0) return;
+                    const newItems = files.map(f => ({ name: f.name, type: f.type, size: f.size, url: URL.createObjectURL(f) }));
+                    setInspectionReports(prev => {
+                      const merged = [...prev, ...newItems];
+                      setTimeout(persistInspectionFields, 0);
+                      return merged;
+                    });
+                  }} />
+                  {inspectionReports && inspectionReports.length > 0 && (
+                    <ul className="list-disc ml-5 space-y-1">
+                      {inspectionReports.map((p) => (
+                        <li key={p.name} className="text-xs text-gray-700 flex items-center gap-2">
+                          {p.url ? (
+                            <a href={p.url} target="_blank" rel="noreferrer" className="underline truncate max-w-[220px]" title={p.name}>{p.name}</a>
+                          ) : (
+                            <span className="truncate max-w-[220px]" title={p.name}>{p.name}</span>
+                          )}
+                          <Button variant="ghost" size="sm" className="h-6 px-2" onClick={() => {
+                            setInspectionReports(prev => prev.filter(x => x.name !== p.name));
+                            setTimeout(persistInspectionFields, 0);
+                          }}>Remove</Button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
               </div>
             )}
 
@@ -1383,6 +1417,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                         ...(inspectionIssues ? { issues: inspectionIssues } : {}),
                         ...(inspectionNegotiations ? { negotiations: inspectionNegotiations } : {}),
                         ...(inspectionRemedies ? { remedies: inspectionRemedies } : {}),
+                        ...(inspectionReports ? { reports: inspectionReports } : {}),
                       }
                     };
                   }
