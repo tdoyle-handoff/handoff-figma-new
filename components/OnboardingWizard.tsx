@@ -47,9 +47,9 @@ const PROPERTY_TYPES = [
 // Financing options
 const FINANCING_OPTIONS = [
   { value: 'conventional', label: 'Conventional Loan', description: 'Traditional mortgage with 3-20% down' },
-  { value: 'fha', label: 'FHA Loan', description: 'Government-backed, as low as 3.5% down' },
-  { value: 'va', label: 'VA Loan', description: 'For veterans, often 0% down' },
-  { value: 'usda', label: 'USDA Loan', description: 'Rural properties, 0% down' },
+  { value: 'fha', label: 'Federal Housing Administration (FHA) Loan', description: 'Government-backed, as low as 3.5% down' },
+  { value: 'va', label: 'U.S. Department of Veterans Affairs (VA) Loan', description: 'For veterans, often 0% down' },
+  { value: 'usda', label: 'U.S. Department of Agriculture (USDA) Loan', description: 'Rural properties, 0% down' },
   { value: 'cash', label: 'Cash Purchase', description: 'No financing needed' },
   { value: 'other', label: 'Other/Unsure', description: 'Will determine later' }
 ];

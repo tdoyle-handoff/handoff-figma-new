@@ -256,12 +256,12 @@ export function PropertyAnalysisReport({
         ]
       },
       {
-        title: 'HOA & Community',
+        title: 'Homeowners Association (HOA) & Community',
         icon: <Users className="w-5 h-5" />,
         fields: [
-          { label: 'Has HOA', value: prop.neighborhood?.hoa_info?.has_hoa },
-          { label: 'Monthly HOA Fee', value: prop.neighborhood?.hoa_info?.monthly_fee, format: formatCurrency },
-          { label: 'Annual HOA Fee', value: prop.neighborhood?.hoa_info?.annual_fee, format: formatCurrency },
+          { label: 'Has Homeowners Association (HOA)', value: prop.neighborhood?.hoa_info?.has_hoa },
+          { label: 'Monthly Homeowners Association (HOA) Fee', value: prop.neighborhood?.hoa_info?.monthly_fee, format: formatCurrency },
+          { label: 'Annual Homeowners Association (HOA) Fee', value: prop.neighborhood?.hoa_info?.annual_fee, format: formatCurrency },
         ]
       },
       {

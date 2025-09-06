@@ -410,8 +410,8 @@ export default function Dashboard({ setupData }: DashboardProps) {
             </div>
             <div>
               <LabelWithTooltip
-                text="HOA (Monthly)"
-                tooltip="Monthly Homeowners Association fees for shared amenities and maintenance. Common in condos, townhomes, and planned communities. Enter 0 if no HOA."
+                text="Homeowners Association (HOA) (Monthly)"
+                tooltip="Monthly Homeowners Association (HOA) fees for shared amenities and maintenance. Common in condominiums, townhomes, and planned communities. Enter 0 if no Homeowners Association (HOA)."
               />
               <div className="relative mt-1">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
@@ -605,7 +605,7 @@ export default function Dashboard({ setupData }: DashboardProps) {
                       <span className="font-medium">{shortCurrency(insuranceMonthly)}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">HOA</span>
+                      <span className="text-muted-foreground">Homeowners Association (HOA)</span>
                       <span className="font-medium">{shortCurrency(hoaMonthly)}</span>
                     </div>
                     <div className="flex justify-between text-sm">
@@ -623,7 +623,7 @@ export default function Dashboard({ setupData }: DashboardProps) {
                     <div className="mt-4">
                     <LabelWithTooltip
                       text="Rent comparison"
-                      tooltip="How your total monthly housing costs (including mortgage, taxes, insurance, HOA, and maintenance) compare to your current rent payment."
+                    tooltip="How your total monthly housing costs (including mortgage, taxes, insurance, Homeowners Association (HOA) fees, and maintenance) compare to your current rent payment."
                       className="text-sm text-muted-foreground mb-1"
                     />
                     <div className="text-sm font-medium text-orange-600">{rentDeltaCopy}</div>
@@ -680,7 +680,7 @@ export default function Dashboard({ setupData }: DashboardProps) {
                   <div>🏠 Mortgage</div><div className="text-right">{shortCurrency(pAndI)}</div>
                   <div>📜 Taxes</div><div className="text-right">{shortCurrency(taxesMonthly)}</div>
                   <div>🛡️ Insurance</div><div className="text-right">{shortCurrency(insuranceMonthly)}</div>
-                  <div>🏢 HOA</div><div className="text-right">{shortCurrency(hoaMonthly)}</div>
+                  <div>🏢 Homeowners Association (HOA)</div><div className="text-right">{shortCurrency(hoaMonthly)}</div>
                   <div>🛠️ Upkeep</div><div className="text-right">{shortCurrency(maintenanceMonthly)}</div>
                 </div>
                 <Separator className="my-3" />
@@ -869,7 +869,7 @@ export default function Dashboard({ setupData }: DashboardProps) {
             <CardContent className="grid gap-6 text-sm text-muted-foreground md:grid-cols-3 p-6">
               <LabelWithTooltip
                 text="Monthly Home Cost explanation"
-                tooltip="Your total monthly housing expense including mortgage principal & interest, property taxes, homeowner's insurance, HOA fees, and estimated maintenance costs."
+                tooltip="Your total monthly housing expense including mortgage principal & interest, property taxes, homeowners insurance, Homeowners Association (HOA) fees, and estimated maintenance costs."
                 className="text-sm text-muted-foreground"
               />
               <LabelWithTooltip

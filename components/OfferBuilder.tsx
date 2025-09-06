@@ -1164,7 +1164,7 @@ export default function OfferBuilder() {
                 <Input type="number" value={listPrice} onChange={e=>setListPrice(Number(e.target.value))} className="text-sm sm:text-base" />
               </div>
               <div>
-                <Label className="text-sm sm:text-base">HOA Fees (Monthly)</Label>
+                <Label className="text-sm sm:text-base">Homeowners Association (HOA) Fees (Monthly)</Label>
                 <Input type="number" value={hoaMonthly} onChange={e=>setHoaMonthly(Number(e.target.value))} placeholder="0" className="text-sm sm:text-base" />
               </div>
               <div>
@@ -1541,7 +1541,7 @@ export default function OfferBuilder() {
                   )}
                   <div className="text-sm">Taxes/mo: {formatMoney(taxesM)}</div>
                   <div className="text-sm">Insurance/mo: {formatMoney(insM)}</div>
-                  <div className="text-sm">HOA/mo: {formatMoney(hoaMonthly)}</div>
+                  <div className="text-sm">Homeowners Association (HOA)/mo: {formatMoney(hoaMonthly)}</div>
                   <div className="text-sm font-medium">Estimated monthly total: {formatMoney(estMonthly)}</div>
                 </div>
               </div>
@@ -1642,7 +1642,7 @@ export default function OfferBuilder() {
                 {financingType !== 'Cash' && <div className="flex justify-between"><span>Principal & Interest</span><span>{formatMoney(pi)}</span></div>}
                 <div className="flex justify-between"><span>Property Taxes</span><span>{formatMoney(taxesM)}</span></div>
                 <div className="flex justify-between"><span>Insurance</span><span>{formatMoney(insM)}</span></div>
-                {hoaMonthly > 0 && <div className="flex justify-between"><span>HOA Fees</span><span>{formatMoney(hoaMonthly)}</span></div>}
+{hoaMonthly > 0 && <div className="flex justify-between"><span>Homeowners Association (HOA) Fees</span><span>{formatMoney(hoaMonthly)}</span></div>}
                 {needsPMI && <div className="flex justify-between text-xs"><span>PMI (until 20% equity)</span><span>{formatMoney(pmiMonthly)}</span></div>}
                 <div className="flex justify-between font-medium border-t pt-2 mt-2"><span>Total Monthly</span><span>{formatMoney(totalMonthlyPayment)}</span></div>
               </div>
