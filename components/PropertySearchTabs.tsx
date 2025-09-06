@@ -27,7 +27,7 @@ export default function PropertySearchTabs() {
     <div className="w-full p-0 md:-ml-8 md:pr-8">
       <div className="grid grid-cols-12 gap-0 md:gap-6">
         <aside className="col-span-12 md:col-span-3 md:border-r bg-white">
-          <div className="p-2 space-y-1">
+          <div className="p-2 space-y-1 md:sticky md:top-0 md:h-[calc(100vh-0px)] md:overflow-auto">
             <button
               className={`w-full text-left px-3 py-2 rounded-md ${tabValue==='get-started' ? 'bg-blue-50 text-[#0B1F44] font-semibold' : 'text-[#0B1F44] hover:bg-gray-50'}`}
               onClick={() => setTabValue('get-started')}
