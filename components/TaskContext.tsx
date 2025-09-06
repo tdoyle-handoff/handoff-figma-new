@@ -565,6 +565,7 @@ How to complete it:
     {
       id: 'task-home-sale-contingency',
       title: 'List & Sell Current Home (Home Sale Contingency)',
+      tags: ['scenario-home-sale-contingency'],
       description: `If your purchase is contingent on selling your current home, you must list, market, and close on that home before—or at the same time as—your new purchase.
 
 Why it matters:
@@ -593,6 +594,7 @@ Most sellers won’t wait forever. A home sale contingency protects you from own
     {
       id: 'task-backup-offer',
       title: 'Draft Backup Offer Addendum (Backup Offer)',
+      tags: ['scenario-backup-offer'],
       description: `An agreement making your offer a “backup” in case the seller’s primary contract falls through.
 
 Why it matters:
@@ -1120,6 +1122,7 @@ How to complete it:
     {
       id: 'task-mortgage-application',
       title: 'Complete Loan Application',
+      tags: ['scenario-conv_mortgage','scenario-fha','scenario-va','scenario-usda','scenario-hard_money','scenario-assumable','scenario-bridge_or_heloc','scenario-seller_financing'],
       description: `What it is: The formal application for your mortgage, including full income, asset, debt, and employment documentation. This goes beyond pre-approval, requiring detailed verification.
 
 Why it matters: Lenders won’t issue a loan commitment until they verify everything. The faster you complete this step, the faster you get to “clear to close.”
@@ -1156,6 +1159,7 @@ How to complete it:
     {
       id: 'task-send-offer-to-lender',
       title: 'Send Accepted Offer to Lender',
+      tags: ['scenario-conv_mortgage','scenario-fha','scenario-va','scenario-usda','scenario-hard_money','scenario-assumable','scenario-bridge_or_heloc','scenario-seller_financing'],
       description: `What it is: Providing your lender with the signed purchase agreement once your offer is accepted. This step triggers the formal loan process—underwriting, appraisal ordering, and document review.
 
 Why it matters: The lender cannot move forward without the executed contract. Submitting it immediately keeps the timeline on track. Delays here can jeopardize financing deadlines, breach the contract, or delay closing.
@@ -1223,6 +1227,7 @@ How to complete it:
     {
       id: 'task-rate-lock',
       title: 'Rate Lock Decision',
+      tags: ['scenario-conv_mortgage','scenario-fha','scenario-va','scenario-usda','scenario-hard_money','scenario-assumable','scenario-bridge_or_heloc','scenario-seller_financing'],
       description: `What it is: Choosing to lock your interest rate with the lender for a set period (typically 30–60 days). This guarantees your rate won’t change before closing.
 
 Why it matters: Rates fluctuate daily. A sudden spike could make your loan unaffordable. Locking secures your costs, but locking too early can expire before closing and incur extension fees.
@@ -1254,6 +1259,7 @@ How to complete it:
     {
       id: 'task-appraisal',
       title: 'Property Appraisal',
+      tags: ['scenario-conv_mortgage','scenario-fha','scenario-va','scenario-usda','scenario-hard_money','scenario-assumable'],
       description: `What it is: An independent evaluation of the property’s value, ordered by your lender.
 
 Why it matters: Lenders only lend up to the appraised value. If the appraisal is lower than the purchase price, you may need to renegotiate or bring extra cash.
@@ -1288,6 +1294,7 @@ How to complete it:
     {
       id: 'task-underwriting-conditions',
       title: 'Satisfy Underwriting Conditions',
+      tags: ['scenario-conv_mortgage','scenario-fha','scenario-va','scenario-usda','scenario-hard_money','scenario-assumable','scenario-bridge_or_heloc','scenario-seller_financing'],
       description: `What it is: Underwriting is the lender’s detailed review of your file. “Conditions” are outstanding items you must resolve before final approval.
 
 Why it matters: Clear-to-close requires all conditions satisfied. Ignoring requests or missing deadlines can cost you the loan.
@@ -1357,6 +1364,7 @@ How to complete it:
     {
       id: 'task-probate-approval',
       title: 'Probate / Executor Approval (Estate Sale)',
+      tags: ['scenario-probate'],
       description: `What it is: When the property is being sold by heirs of a deceased owner, the estate executor or administrator must have court authority to transfer ownership.
 
 Why it matters: Without court approval, the contract may not be enforceable. Probate delays can stall closing for weeks or months. Ensuring legal authority prevents you from entering into a contract that cannot close.
@@ -1388,6 +1396,7 @@ How to complete it:
     {
       id: 'task-divorce-order',
       title: 'Confirm Divorce Court Orders (Divorce Sale)',
+      tags: ['scenario-divorce'],
       description: `What it is: When sellers are divorcing, both parties must agree and comply with court orders regarding the sale.
 
 Why it matters: If one spouse resists, the sale can stall or be invalid. Court approval ensures both have the right (and obligation) to sell.
@@ -1418,6 +1427,7 @@ How to complete it:
     {
       id: 'task-short-sale-approval',
       title: 'Lender Short Sale Approval (Short Sale)',
+      tags: ['scenario-short-sale'],
       description: `What it is: A sale where the seller owes more on the mortgage than the home’s value; the lender must approve the reduced payoff.
 
 Why it matters: Without lender approval, the seller legally cannot close. Approval is not guaranteed and can take significant time.`,
@@ -1444,6 +1454,7 @@ Why it matters: Without lender approval, the seller legally cannot close. Approv
     {
       id: 'task-reo-bank-addenda',
       title: 'Execute Bank Addenda (REO / Foreclosure)',
+      tags: ['scenario-reo'],
       description: `What it is: Bank-owned properties include mandatory addenda with special terms that often favor the bank.
 
 Why it matters: These addenda can limit inspections, disclaim liability, and require “as-is” acceptance—review carefully.`,
@@ -1469,6 +1480,7 @@ Why it matters: These addenda can limit inspections, disclaim liability, and req
     {
       id: 'task-auction-register',
       title: 'Register to Bid & Accept Terms (Auction)',
+      tags: ['scenario-auction'],
       description: `What it is: Registration process for buying at auction, requiring ID, proof of funds, and agreement to auction rules.
 
 Why it matters: Without registration, you cannot legally bid. Auction terms often override standard protections—understand them before bidding.`,
@@ -1495,6 +1507,7 @@ Why it matters: Without registration, you cannot legally bid. Auction terms ofte
     {
       id: 'task-auction-deposit',
       title: 'Post Non-Refundable Deposit (Auction)',
+      tags: ['scenario-auction'],
       description: `What it is: A large deposit (often 5–10% of price) due immediately after winning the auction.
 
 Why it matters: Deposit is usually non-refundable, regardless of financing or inspection issues—bid only if funds are ready.`,
@@ -1520,6 +1533,7 @@ Why it matters: Deposit is usually non-refundable, regardless of financing or in
     {
       id: 'task-bankruptcy-approval',
       title: 'Bankruptcy Court Approval (Bankruptcy Sale)',
+      tags: ['scenario-bankruptcy'],
       description: `What it is: When a seller is in bankruptcy, the court must approve the sale to protect creditors’ rights.
 
 Why it matters: Without court approval, the sale cannot close. Delays are common while the court reviews.`,
@@ -1545,6 +1559,7 @@ Why it matters: Without court approval, the sale cannot close. Delays are common
     {
       id: 'task-gov-addenda',
       title: 'HUD / VA Addenda (Government-Owned Sale)',
+      tags: ['scenario-gov-owned'],
       description: `What it is: Special forms required when buying HUD or VA repossessed properties.
 
 Why it matters: Without these addenda, your contract is not valid. They include acknowledgments of condition and program-specific disclosures.`,
@@ -1571,6 +1586,7 @@ Why it matters: Without these addenda, your contract is not valid. They include 
     {
       id: 'task-historic-preservation-review',
       title: 'Historic Preservation Review (Historic Property / Historic District)',
+      tags: ['scenario-historic','scenario-historic-district'],
       description: `What it is: A review process by local preservation boards if the home is designated historic or lies within a historic district. Regulates what changes or renovations can be made.
 
 Why it matters: Owning a historic property can add prestige and charm but comes with restrictions. You may not be allowed to replace windows, paint colors, or modify the exterior without approval.
@@ -1602,6 +1618,7 @@ How to complete it:
     {
       id: 'task-as-is-sale-terms',
       title: 'Confirm “As-Is” Sale Terms (Scenario: As-Is Condition)',
+      tags: ['scenario-as-is'],
       description: `What it is: When a seller offers the property “as is,” meaning they will not make repairs or credits for defects discovered in inspection.
 
 Why it matters: “As is” can mean anything from cosmetic issues to severe structural problems. Buyers often underestimate costs and are shocked later.

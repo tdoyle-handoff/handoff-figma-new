@@ -244,8 +244,27 @@ function applyConflicts(tasks: Task[], selected: string[]) {
       if (Array.isArray(rule.then_remove)) {
         rule.then_remove.forEach((id: string) => {
           const schemaId = makeTaskId(id);
-          const idx = tasks.findIndex((t) => t.id === id || t.id === schemaId);
-          if (idx >= 0) tasks.splice(idx, 1);
+          const mappedId = (SCHEMA_ID_TO_TASK_ID as any)[id] as string | undefined;
+          const targetTitle = String(id || '').replace(/_/g, ' ').toLowerCase();
+          let removed = false;
+          // Remove by direct id, schema id, or mapped id
+          for (let i = tasks.length - 1; i >= 0; i--) {
+            const t = tasks[i];
+            if (t.id === id || t.id === schemaId || (mappedId && t.id === mappedId)) {
+              tasks.splice(i, 1);
+              removed = true;
+            }
+          }
+          if (!removed) {
+            // Fallback: remove by title contains id words (e.g., 'loan application' matches 'Complete Loan Application')
+            for (let i = tasks.length - 1; i >= 0; i--) {
+              const t = tasks[i];
+              const title = (t.title || '').toLowerCase();
+              if (targetTitle && title.includes(targetTitle)) {
+                tasks.splice(i, 1);
+              }
+            }
+          }
         });
       }
       if (Array.isArray(rule.then_set)) {

@@ -83,6 +83,7 @@ check_and_set_secret "SUPABASE_SERVICE_ROLE_KEY" "Service role key for admin ope
 # Check and set optional secrets
 check_and_set_secret "GOOGLE_PLACES_API_KEY" "Google Places API for address validation"
 check_and_set_secret "ATTOM_API_KEY" "ATTOM Data API for property information"
+check_and_set_secret "OPENAI_API_KEY" "OpenAI API key for contract analysis"
 check_and_set_secret "SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID" "Google OAuth Client ID"
 check_and_set_secret "SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET" "Google OAuth Client Secret"
 
