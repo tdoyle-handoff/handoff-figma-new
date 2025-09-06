@@ -18,16 +18,26 @@ import SimpleOnboardingForm from './SimpleOnboardingForm'
 // Home Search Landing Page with AI MLS Integration
 
 export default function PropertySearchTabs() {
-  const [tabValue, setTabValue] = React.useState<string>('get-started');
+  const [tabValue, setTabValue] = React.useState<string>(() => {
+    try {
+      return localStorage.getItem('handoff-propertysearch-selected-tab') || 'get-started'
+    } catch {
+      return 'get-started'
+    }
+  });
   const [showPSHelp, setShowPSHelp] = React.useState<boolean>(() => {
     try { return localStorage.getItem('handoff-dismiss-alert-propertysearch-v1') !== 'true'; } catch { return true; }
   });
+
+  React.useEffect(() => {
+    try { localStorage.setItem('handoff-propertysearch-selected-tab', tabValue); } catch {}
+  }, [tabValue]);
 
   return (
     <div className="w-full p-0 md:-ml-8 md:pr-8">
       <div className="grid grid-cols-12 gap-0 md:gap-6">
         <aside className="col-span-12 md:col-span-3 md:border-r bg-white">
-          <div className="p-2 space-y-1 md:sticky md:top-0 md:h-[calc(100vh-0px)] md:overflow-auto">
+          <div className="p-2 space-y-1 sticky top-0 h-[calc(100vh-0px)] overflow-auto">
             <button
               className={`w-full text-left px-3 py-2 rounded-md ${tabValue==='get-started' ? 'bg-blue-50 text-[#0B1F44] font-semibold' : 'text-[#0B1F44] hover:bg-gray-50'}`}
               onClick={() => setTabValue('get-started')}

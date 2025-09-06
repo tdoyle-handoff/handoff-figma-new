@@ -221,26 +221,42 @@ export default function ChecklistCalendar({ tasks, onUpdateTask }: ChecklistCale
   return (
     <>
     <Card className="shadow-sm">
-      <CardHeader className="pb-3">
+          <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-base flex items-center gap-2">
-            <CalendarDays className="w-4 h-4" />
+            <CalendarDays className="w-5 h-5" />
             {monthLabel}
           </CardTitle>
           <div className="flex items-center gap-2">
             <button onClick={handlePrevMonth} className="p-2 rounded hover:bg-gray-100" aria-label="Previous month">
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-5 h-5" />
             </button>
             <button onClick={handleToday} className="px-3 py-1.5 text-sm rounded border hover:bg-gray-50">
               Today
             </button>
             <button onClick={handleNextMonth} className="p-2 rounded hover:bg-gray-100" aria-label="Next month">
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-5 h-5" />
             </button>
           </div>
         </div>
       </CardHeader>
       <CardContent>
+        {/* Legend (moved to top) */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-3 text-xs text-gray-600">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1"><CheckCircle className="w-3.5 h-3.5 text-green-600" /> Completed</div>
+            <div className="flex items-center gap-1"><Circle className="w-3.5 h-3.5 text-blue-600" /> Active/In-progress</div>
+            <div className="flex items-center gap-1"><AlertTriangle className="w-3.5 h-3.5 text-red-600" /> Overdue</div>
+            <div className="flex items-center gap-1"><Circle className="w-3.5 h-3.5 text-gray-400" /> Other</div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1"><span className={`inline-block w-2 h-2 rounded-full ${catStyles.financing.dot}`} /> Financing</div>
+            <div className="flex items-center gap-1"><span className={`inline-block w-2 h-2 rounded-full ${catStyles.legal.dot}`} /> Legal</div>
+            <div className="flex items-center gap-1"><span className={`inline-block w-2 h-2 rounded-full ${catStyles.inspections.dot}`} /> Inspections</div>
+            <div className="flex items-center gap-1"><span className={`inline-block w-2 h-2 rounded-full ${catStyles.insurance.dot}`} /> Insurance</div>
+            <div className="flex items-center gap-1"><span className={`inline-block w-2 h-2 rounded-full ${catStyles.scenario.dot}`} /> Scenario</div>
+          </div>
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
           {/* Unscheduled panel */}
           <div className="lg:col-span-3">
@@ -324,7 +340,7 @@ title={`${t.title}${t.description ? ' — ' + t.description : ''}`}
                         setEditNotes(t.notes || '');
                         setEditOpen(true);
                       }}
-                      className="group cursor-move text-xs border rounded px-1.5 py-1 flex items-center gap-1 hover:bg-gray-50"
+                      className="group cursor-move text-xs border rounded px-2 py-1 flex items-center gap-2 hover:bg-gray-50"
 title={`${t.title}${t.description ? ' — ' + t.description : ''}`}
                     >
                       {statusIcon(t.status)}
@@ -349,7 +365,7 @@ title={`${t.title}${t.description ? ' — ' + t.description : ''}`}
                               e.dataTransfer.setData('text/inspection-event', ev.id);
                               e.dataTransfer.effectAllowed = 'move';
                             }}
-                            className="cursor-move text-[11px] bg-amber-50 border border-amber-200 text-amber-800 rounded px-1.5 py-1 flex items-center justify-between gap-2 hover:bg-amber-100"
+                            className="cursor-move text-xs bg-amber-50 border border-amber-200 text-amber-800 rounded px-2 py-1 flex items-center justify-between gap-2 hover:bg-amber-100"
                             title={`${ev.title}${ev.provider ? ' — ' + ev.provider : ''}${ev.time ? ' at ' + ev.time : ''}`}
                           >
                             <span className="truncate">
@@ -370,22 +386,6 @@ title={`${t.title}${t.description ? ' — ' + t.description : ''}`}
         </div>
         </div>
 
-{/* Legend */}
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3 mt-3 text-xs text-gray-600">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1"><CheckCircle className="w-3.5 h-3.5 text-green-600" /> Completed</div>
-            <div className="flex items-center gap-1"><Circle className="w-3.5 h-3.5 text-blue-600" /> Active/In-progress</div>
-            <div className="flex items-center gap-1"><AlertTriangle className="w-3.5 h-3.5 text-red-600" /> Overdue</div>
-            <div className="flex items-center gap-1"><Circle className="w-3.5 h-3.5 text-gray-400" /> Other</div>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1"><span className={`inline-block w-2 h-2 rounded-full ${catStyles.financing.dot}`} /> Financing</div>
-            <div className="flex items-center gap-1"><span className={`inline-block w-2 h-2 rounded-full ${catStyles.legal.dot}`} /> Legal</div>
-            <div className="flex items-center gap-1"><span className={`inline-block w-2 h-2 rounded-full ${catStyles.inspections.dot}`} /> Inspections</div>
-            <div className="flex items-center gap-1"><span className={`inline-block w-2 h-2 rounded-full ${catStyles.insurance.dot}`} /> Insurance</div>
-            <div className="flex items-center gap-1"><span className={`inline-block w-2 h-2 rounded-full ${catStyles.scenario.dot}`} /> Scenario</div>
-          </div>
-        </div>
       </CardContent>
     </Card>
 

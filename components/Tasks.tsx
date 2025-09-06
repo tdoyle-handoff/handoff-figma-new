@@ -150,7 +150,7 @@ const StatusDot = ({ status }: { status: Task['status'] }) => {
   const label = statusLabel(status);
   return (
     <span className="inline-flex items-center gap-1" title={label}>
-      <span aria-hidden className={`inline-block w-2.5 h-2.5 rounded-full ${color}`} />
+      <span aria-hidden className={`inline-block w-3.5 h-3.5 rounded-full ${color}`} />
       <span className="sr-only">{label}</span>
     </span>
   );
@@ -696,7 +696,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
   };
   document.getElementById('closeBtn').onclick = () => window.close();
   const d=document.getElementById('downloadPdf'); if(d) d.onclick=()=>{window.opener && window.opener.postMessage({ type:'download-questionnaire'}, '*')};
-  const ot=document.getElementById('openTrack'); if(ot) ot.onclick=()=>{window.opener && window.opener.postMessage({type:'navigate', page:'home-tracking'}, '*')};
+  const ot=document.getElementById('openTrack'); if(ot) ot.onclick=()=>{window.opener && window.opener.postMessage({type:'navigate', page:'property', tab:'find-home'}, '*')};
 </script>
 </body></html>`;
     w.document.write(html);
@@ -1065,7 +1065,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
             {/* Property search helpers */}
             {task.id === 'task-property-search' && (
               <div className="flex flex-wrap gap-2">
-                <Button size="sm" variant="outline" onClick={() => onNavigate('home-tracking')}>Open Home Tracking</Button>
+                <Button size="sm" variant="outline" onClick={() => { try { localStorage.setItem('handoff-propertysearch-selected-tab','find-home'); } catch {} onNavigate('property'); }}>Open Home Tracking</Button>
               </div>
             )}
 
@@ -2363,6 +2363,9 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
       if (data.type === 'task-update' && data.taskId) {
         taskContext.updateTask(data.taskId, data.updates || {});
       } else if (data.type === 'navigate' && data.page) {
+        if (data.tab === 'find-home') {
+          try { localStorage.setItem('handoff-propertysearch-selected-tab','find-home'); } catch {}
+        }
         onNavigate(data.page);
       } else if (data.type === 'download-questionnaire') {
         // trigger the questionnaire PDF from current window if needed
@@ -2640,7 +2643,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                     <CardTitle className="text-[15px] font-semibold tracking-[-0.01em] text-gray-900">Quick links</CardTitle>
                   </CardHeader>
                   <CardContent className="pt-0 space-y-2">
-                    <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => onNavigate('home-tracking')}>
+                    <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => { try { localStorage.setItem('handoff-propertysearch-selected-tab','find-home'); } catch {} onNavigate('property'); }}>
                       <Home className="w-4 h-4 mr-2" /> Home tracking
                     </Button>
                     <Button variant="outline" className="w-full justify-start h-11 text-[13px] font-medium text-gray-800 px-3 whitespace-normal leading-normal rounded-[10px] border border-[#E6E8F0] bg-white hover:bg-[#F5F7FB]" onClick={() => onNavigate('documents')}>
