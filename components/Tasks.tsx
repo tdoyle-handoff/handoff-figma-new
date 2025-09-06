@@ -825,7 +825,18 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
         
         <CollapsibleContent className={`${minimal ? (row ? 'px-3 pb-3' : 'px-4 pb-4') : 'px-5 pb-5'}`}>
           <div className={`${minimal ? 'ml-6 space-y-2 pt-1.5' : 'ml-8 space-y-3 pt-2 border-t border-gray-100'}`}>
-            <p className="text-sm text-gray-600">{task.description}</p>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-gray-600">
+              <span className="inline-flex items-center gap-1"><StatusDot status={task.status} /><span>{statusLabel(task.status)}</span></span>
+              <span className={priorityPill(task.priority)}>{priorityLabel(task.priority)}</span>
+              {editDueDate && (
+                <span className="inline-flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /><span>Due: {formatDate(editDueDate)}</span><span className="text-gray-400">({daysLeft(editDueDate)})</span>{dueLocked && <Lock className="inline w-3 h-3 ml-0.5" />}</span>
+              )}
+              <span className="inline-flex items-center gap-1"><User className="w-3.5 h-3.5" /><span>{editAssignedTo || 'Unassigned'}</span></span>
+              {task.completedDate && <span className="inline-flex items-center gap-1 text-green-600"><CheckCircle className="w-3.5 h-3.5" /><span>Completed {task.completedDate}</span></span>}
+            </div>
+            {!(whatInfo || whyInfo || hasStepsInfo || howTextInfo) && (
+              <p className="text-sm text-gray-600">{task.description}</p>
+            )}
 
             {(whatInfo || whyInfo || hasStepsInfo || howTextInfo) && (
               <div className="mt-2 space-y-3">
@@ -868,7 +879,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
 
             {effectiveTips.length > 0 && (
               <div className="pt-1">
-                <Label className="text-xs">Tips</Label>
+                <Label className="text-xs">Pro tips</Label>
                 <ul className="list-disc ml-5 mt-1 space-y-1">
                   {effectiveTips.map((tip, idx) => (
                     <li key={idx} className="text-xs text-gray-600">{tip}</li>
@@ -887,17 +898,22 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
               const next = pending.find(t => ['active','in-progress','overdue'].includes(t.status)) || pending[0];
               return (
                 <div className="rounded-md bg-gray-50 border border-gray-200 px-3 py-2 text-xs text-gray-700">
-                  <span className="font-medium mr-1">Up Next:</span>
+                  <div className="font-medium mb-1">Related</div>
+                  <div>
+                    <span className="font-medium mr-1">Up next:</span>
                   <button className="underline" onClick={() => onOpenModal ? onOpenModal(next) : window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: next.linkedPage } }))}>
                     {next.title}
                   </button>
+                  </div>
                 </div>
               );
             })()}
 
             {/* Dependencies chips */}
             {Array.isArray(task.dependencies) && task.dependencies.length > 0 && (
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="rounded-md bg-gray-50 border border-gray-200 px-3 py-2">
+                <div className="text-xs font-medium text-gray-700 mb-1">Prerequisites</div>
+                <div className="flex flex-wrap items-center gap-2">
                 {task.dependencies.map((depId) => {
                   const dep = tasksById ? tasksById[depId] : undefined;
                   if (!dep) return (
@@ -925,11 +941,14 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                     Blocked
                   </span>
                 )}
+                </div>
               </div>
             )}
 
             {/* Editable fields */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <h5 className="text-sm font-medium text-gray-900">Key details</h5>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label className="text-xs">Title</Label>
                 <Input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} onBlur={triggerAutoSave} />
@@ -970,6 +989,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
               <div>
                 <Label className="text-xs">Notes</Label>
                 <Textarea rows={3} value={editNotes} onChange={(e) => setEditNotes(e.target.value)} onBlur={triggerAutoSave} />
+              </div>
               </div>
             </div>
 
@@ -1458,33 +1478,6 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
               </div>
             )}
 
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">
-                <div className="flex items-center gap-1">
-                  <User className="w-4 h-4" />
-                  <span>{editAssignedTo || 'Unassigned'}</span>
-                </div>
-                <Badge variant="outline" className="text-xs">
-                  {task.category}
-                </Badge>
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline" className={`text-xs ${getPriorityColor(task.priority)}`}>
-                    {priorityLabel(task.priority)}
-                  </Badge>
-                  <span className="text-xs text-muted-foreground">
-                    {task.priority} priority
-                  </span>
-                  {editDueDate && (
-                    <span className="text-xs text-primary">
-                      Due: {formatDate(editDueDate)} {dueLocked && <Lock className="inline w-3 h-3 ml-1" />}
-                    </span>
-                  )}
-                </div>
-              </div>
-              {task.completedDate && (
-                <span className="text-sm text-gray-600">Completed {task.completedDate}</span>
-              )}
-            </div>
 
             <div className="flex flex-wrap gap-3 pt-2">
               <Button
