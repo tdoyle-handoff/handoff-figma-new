@@ -1191,11 +1191,11 @@ const labelMap: Record<string, string> = { legal: 'Legal', inspection: 'Inspecti
                 </div>
 
                 <Dialog open={openInsuranceCalc} onOpenChange={setOpenInsuranceCalc}>
-                  <DialogContent className="w-[90vw] max-w-[1280px]">
+                  <DialogContent className="w-[96vw] max-w-[1600px]">
                     <DialogHeader>
                       <DialogTitle>Insurance Calculator</DialogTitle>
                     </DialogHeader>
-                    <div className="max-h-[75vh] overflow-auto">
+                    <div className="max-h-[85vh] overflow-auto">
                       <InsuranceCalculator />
                     </div>
                   </DialogContent>
@@ -3033,11 +3033,11 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
 
           {/* Insurance Calculator Modal */}
           <Dialog open={openInsuranceCalcModal} onOpenChange={setOpenInsuranceCalcModal}>
-            <DialogContent className="w-[90vw] max-w-[1280px]">
+            <DialogContent className="w-[96vw] max-w-[1600px]">
               <DialogHeader>
                 <DialogTitle>Insurance Calculator</DialogTitle>
               </DialogHeader>
-              <div className="max-h-[75vh] overflow-auto">
+              <div className="max-h-[85vh] overflow-auto">
                 <InsuranceCalculator />
               </div>
             </DialogContent>
