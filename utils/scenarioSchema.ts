@@ -96,7 +96,9 @@ export const scenarioSchema: any = {
     financing: [
       {
         key: "cash",
-        adds: [],
+        adds: [
+          { id: "appraisal", title: "Appraisal (Optional for Cash)", phase: "financing", required: false }
+        ],
         overrides: [
           { task_id: "appraisal", required: false, visible_if: null }
         ],

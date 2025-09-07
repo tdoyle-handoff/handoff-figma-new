@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, useRe
 import { UserProfile } from '../utils/supabase/client';
 import { PropertyData } from './PropertyContext';
 import { useAuth } from '../hooks/useAuth';
-import { applyScenarios } from '../utils/scenarioEngine';
+import { applyScenarios, getSelectedScenarios } from '../utils/scenarioEngine';
 
 export interface Task {
   id: string;
@@ -187,6 +187,11 @@ const saveScheduleAnchors = async (
 // Helper: detect cash purchase and filter out mortgage tasks (keep Proof of Funds only)
 const isCashPurchase = (pd: PropertyData | null): boolean => {
   try {
+    // Respect explicit scenario selection first
+    const selected = getSelectedScenarios();
+    if (Array.isArray(selected) && selected.includes('cash')) return true;
+
+    // Fall back to property data heuristics
     const mt = (pd as any)?.mortgageType;
     if (typeof mt === 'string' && mt.toLowerCase().includes('cash')) return true;
     if ((pd as any)?.hasLender === false) return true;
@@ -195,9 +200,13 @@ const isCashPurchase = (pd: PropertyData | null): boolean => {
 };
 
 const filterMortgageTasksForCash = (tasks: Task[], pd: PropertyData | null): Task[] => {
-  if (!isCashPurchase(pd)) return tasks;
+  const cash = isCashPurchase(pd);
+  if (!cash) return tasks;
   return tasks.filter((t) => {
+    // Always keep Proof of Funds for cash
     if (t.id === 'task-proof-of-funds') return true;
+    // Keep Appraisal (optional) for cash scenario
+    if (t.id === 'task-appraisal') return true;
     const sub = (t.subcategory || '').toLowerCase();
     const tags = (t.tags || []).map((s) => s.toLowerCase());
     const isFinancing = sub === 'financing' || tags.includes('financing');
