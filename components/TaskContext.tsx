@@ -2317,7 +2317,7 @@ Homes need regular maintenance. Neglect leads to costly repairs and reduced valu
     'task-open-escrow': ['legal'],
 
     // Scenario-specific
-    'task-historic-preservation-review': ['legal', 'scenario-historic'],
+'task-historic-preservation-review': ['legal', 'scenario-historic', 'scenario-historic-district'],
     'task-as-is-sale-terms': ['legal', 'scenario-as-is'],
     'task-probate-approval': ['legal', 'scenario-probate'],
     'task-divorce-order': ['legal', 'scenario-divorce'],
@@ -2327,7 +2327,7 @@ Homes need regular maintenance. Neglect leads to costly repairs and reduced valu
     'task-auction-deposit': ['legal', 'scenario-auction'],
     'task-bankruptcy-approval': ['legal', 'scenario-bankruptcy'],
     'task-gov-addenda': ['legal', 'scenario-gov-owned'],
-    'task-firpta-compliance': ['legal', 'scenario-international-seller'],
+'task-firpta-compliance': ['legal', 'scenario-international-buyer'],
     'task-international-wire-clearance': ['financing', 'scenario-international-buyer'],
     'task-home-sale-contingency': ['legal', 'scenario-home-sale-contingency'],
     'task-backup-offer': ['legal', 'scenario-backup-offer'],
@@ -2398,9 +2398,10 @@ Homes need regular maintenance. Neglect leads to costly repairs and reduced valu
   };
 
   tasks.forEach((t) => {
-    const tags = tagsById[t.id] || [];
-    const fromSub = t.subcategory ? [t.subcategory] : [];
-    const merged = Array.from(new Set([...(tags.map(s => s.toLowerCase())), ...(fromSub.map(s => s.toLowerCase()))]));
+    const existing = (t.tags || []).map((s) => s.toLowerCase());
+    const extra = (tagsById[t.id] || []).map((s) => s.toLowerCase());
+    const fromSub = t.subcategory ? [String(t.subcategory).toLowerCase()] : [];
+    const merged = Array.from(new Set([...existing, ...extra, ...fromSub]));
     if (merged.length > 0) t.tags = merged;
   });
 

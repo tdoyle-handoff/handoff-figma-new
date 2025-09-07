@@ -118,7 +118,7 @@ const SCHEMA_ID_TO_TASK_ID: Record<string, string> = {
   // Financing module
   loan_application: 'task-mortgage-application',
   rate_lock: 'task-rate-lock',
-  loan_conditions: 'task-loan-conditions',
+  loan_conditions: 'task-underwriting-conditions',
   fha_amendatory_clause: 'task-fha-amendatory-clause',
   fha_minimum_property_standards: 'task-fha-mps-repairs',
   va_escape_clause: 'task-va-escape-clause',
@@ -152,13 +152,13 @@ const SCHEMA_ID_TO_TASK_ID: Record<string, string> = {
 
   // Seller circumstance
   probate_approval: 'task-probate-approval',
-  court_orders: 'task-divorce-court-orders',
+  court_orders: 'task-divorce-order',
   lender_short_sale_approval: 'task-short-sale-approval',
   bank_addenda: 'task-reo-bank-addenda',
-  bid_registration: 'task-auction-bid-reg',
-  nonrefundable_deposit: 'task-auction-nr-deposit',
-  bk_court_approval: 'task-bk-court-approval',
-  hud_va_addenda: 'task-hud-addenda',
+  bid_registration: 'task-auction-register',
+  nonrefundable_deposit: 'task-auction-deposit',
+  bk_court_approval: 'task-bankruptcy-approval',
+  hud_va_addenda: 'task-gov-addenda',
 
   // Legal title
   lien_resolution: 'task-lien-resolution',
@@ -168,7 +168,7 @@ const SCHEMA_ID_TO_TASK_ID: Record<string, string> = {
   specialty_tests: 'task-specialty-tests',
   elevation_cert: 'task-flood-elevation',
   bind_flood_ins: 'task-bind-flood-insurance',
-  historic_review: 'task-historic-preservation',
+  historic_review: 'task-historic-preservation-review',
 
   // Contract structures
   leaseback_addendum: 'task-leaseback-addendum',
@@ -219,10 +219,12 @@ function visibleByScenarios(schemaTask: any, selected: string[]): boolean {
 
 function applyOverrides(tasks: Task[], overrides: any[]) {
   overrides.forEach((ov) => {
+    const id = String(ov.task_id || '');
+    const mappedId = (SCHEMA_ID_TO_TASK_ID as any)[id] as string | undefined;
     const target =
-      findTask(tasks, [ov.task_id]) ||
+      tasks.find((x) => x.id === id || x.id === makeTaskId(id) || (mappedId ? x.id === mappedId : false)) ||
       tasks.find((t) =>
-        t.title.toLowerCase().includes(String(ov.task_id ?? '').replace(/_/g, ' ').toLowerCase())
+        t.title.toLowerCase().includes(id.replace(/_/g, ' ').toLowerCase())
       );
     if (!target) return;
     const updated = cloneTask(target);
@@ -324,7 +326,6 @@ export function applyScenarios(baseTasks: Task[]): Task[] {
     'scenario-historic-district': 'historic_district',
     'scenario-hoa-litigation': 'hoa_litigation',
     'scenario-international-buyer': 'international_buyer',
-    'scenario-international-seller': 'international_buyer',
     'scenario-home-sale-contingency': 'home_sale_contingency',
     'scenario-backup-offer': 'backup_offer',
     'scenario-simultaneous-close': 'simultaneous_close',
