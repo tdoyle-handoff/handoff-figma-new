@@ -146,7 +146,7 @@ const simpleTaskStatusLabel = (s: Task['status']): string => {
   const v = simpleTaskStatus(s);
   if (v === 'complete') return 'Complete';
   if (v === 'in_progress') return 'In Progress';
-  return 'New';
+  return 'Upcoming';
 };
 const fromSimpleTaskStatus = (v: 'new' | 'in_progress' | 'complete'): Task['status'] => {
   if (v === 'complete') return 'completed';
@@ -988,7 +988,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="new">New</SelectItem>
+                    <SelectItem value="new">Upcoming</SelectItem>
                     <SelectItem value="in_progress">In Progress</SelectItem>
                     <SelectItem value="complete">Complete</SelectItem>
                   </SelectContent>
@@ -1177,7 +1177,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                 </div>
 
                 <Dialog open={openInsuranceCalc} onOpenChange={setOpenInsuranceCalc}>
-                  <DialogContent className="max-w-5xl">
+                  <DialogContent className="w-[90vw] max-w-[1280px]">
                     <DialogHeader>
                       <DialogTitle>Insurance Calculator</DialogTitle>
                     </DialogHeader>
@@ -2998,7 +2998,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
 
           {/* Insurance Calculator Modal */}
           <Dialog open={openInsuranceCalcModal} onOpenChange={setOpenInsuranceCalcModal}>
-            <DialogContent className="max-w-5xl">
+            <DialogContent className="w-[90vw] max-w-[1280px]">
               <DialogHeader>
                 <DialogTitle>Insurance Calculator</DialogTitle>
               </DialogHeader>

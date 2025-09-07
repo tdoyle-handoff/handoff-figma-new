@@ -184,6 +184,27 @@ const saveScheduleAnchors = async (
   }
 };
 
+// Helper: detect cash purchase and filter out mortgage tasks (keep Proof of Funds only)
+const isCashPurchase = (pd: PropertyData | null): boolean => {
+  try {
+    const mt = (pd as any)?.mortgageType;
+    if (typeof mt === 'string' && mt.toLowerCase().includes('cash')) return true;
+    if ((pd as any)?.hasLender === false) return true;
+  } catch {}
+  return false;
+};
+
+const filterMortgageTasksForCash = (tasks: Task[], pd: PropertyData | null): Task[] => {
+  if (!isCashPurchase(pd)) return tasks;
+  return tasks.filter((t) => {
+    if (t.id === 'task-proof-of-funds') return true;
+    const sub = (t.subcategory || '').toLowerCase();
+    const tags = (t.tags || []).map((s) => s.toLowerCase());
+    const isFinancing = sub === 'financing' || tags.includes('financing');
+    return !isFinancing;
+  });
+};
+
 // Task generation function - generates comprehensive real estate transaction checklist
 const generateRealEstateTransactionTasks = (propertyData: PropertyData): Task[] => {
   const isUnderContract = isHouseUnderContract();
@@ -2550,7 +2571,10 @@ Homes need regular maintenance. Neglect leads to costly repairs and reduced valu
     }
   });
 
-  return tasks;
+  // Important: filter out mortgage tasks for cash purchases (keep Proof of Funds)
+  const pd = propertyData || (getPropertyData() as PropertyData | null);
+  const result = filterMortgageTasksForCash(tasks, pd);
+  return result;
 };
 
 // Generate organized task phases for better user experience
@@ -2704,8 +2728,9 @@ export function TaskProvider({ children, userProfile }: TaskProviderProps) {
     const pd = propertyData ?? getPropertyData();
     const base = generateRealEstateTransactionTasks(pd || {} as PropertyData);
     const scenarioBase = applyScenarios(base);
+    const filtered = filterMortgageTasksForCash(scenarioBase, pd || null);
     const saved = savedOverride ?? loadSavedTasks();
-    const effectiveTasks = saved.length > 0 ? mergeTasks(scenarioBase, saved) : scenarioBase;
+    const effectiveTasks = saved.length > 0 ? mergeTasks(filtered, saved) : filtered;
     const phases = generateRealEstateTaskPhases(effectiveTasks, pd);
     setTasks(effectiveTasks);
     setTaskPhases(phases);
@@ -2716,8 +2741,9 @@ export function TaskProvider({ children, userProfile }: TaskProviderProps) {
     const propertyData = getPropertyData();
     const base = generateRealEstateTransactionTasks(propertyData || {} as PropertyData);
     const scenarioBase = applyScenarios(base);
+    const filtered = filterMortgageTasksForCash(scenarioBase, propertyData);
     const saved = loadSavedTasks();
-    const effectiveTasks = saved.length > 0 ? mergeTasks(scenarioBase, saved) : scenarioBase;
+    const effectiveTasks = saved.length > 0 ? mergeTasks(filtered, saved) : filtered;
     const phases = generateRealEstateTaskPhases(effectiveTasks, propertyData);
 
     setTasks(effectiveTasks);
@@ -2765,8 +2791,9 @@ export function TaskProvider({ children, userProfile }: TaskProviderProps) {
    const generatePersonalizedTasks = (propertyData: PropertyData) => {
     const base = generateRealEstateTransactionTasks(propertyData);
     const scenarioBase = applyScenarios(base);
+    const filtered = filterMortgageTasksForCash(scenarioBase, propertyData);
     const saved = loadSavedTasks();
-    const effectiveTasks = saved.length > 0 ? mergeTasks(scenarioBase, saved) : scenarioBase;
+    const effectiveTasks = saved.length > 0 ? mergeTasks(filtered, saved) : filtered;
     const phases = generateRealEstateTaskPhases(effectiveTasks, propertyData);
     setTasks(effectiveTasks);
     setTaskPhases(phases);
