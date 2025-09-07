@@ -79,13 +79,22 @@ export default function PropertySearchTabs() {
           <Tabs value={tabValue} onValueChange={setTabValue} className="w-full">
             {/* Get Started */}
             <TabsContent value="get-started" className="mt-0">
-              <div className="bg-white border rounded-xl shadow-sm p-4 md:p-6 min-h-[75vh]">
+              <div className="bg-white border rounded-xl shadow-sm p-4 md:p-6 min-h-[75vh] space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-gray-600">Work through the questionnaire then mark the checklist task complete.</div>
+                  <Button size="sm" variant="outline" onClick={() => {
+                    try { window.dispatchEvent(new CustomEvent('openTaskDetails', { detail: { taskId: 'task-buy-box-template' } })); } catch {}
+                  }}>
+                    <ListChecks className="w-4 h-4 mr-2" /> View Questionnaire Task
+                  </Button>
+                </div>
                 <SimpleOnboardingForm
                 onComplete={(data) => {
                   // Handle onboarding completion
                   alert(`Welcome! Your onboarding is complete. Budget: ${data.budget}, Location: ${data.location}`);
                   // In a real app, this would save the data and navigate to next step
                   localStorage.setItem('onboarding-complete', JSON.stringify(data));
+                  try { window.dispatchEvent(new CustomEvent('openTaskDetails', { detail: { taskId: 'task-buy-box-template' } })); } catch {}
                 }}
                 onSkip={() => {
                   // Handle onboarding skip

@@ -1127,7 +1127,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                 </div>
 
                 <Dialog open={openInsuranceCalc} onOpenChange={setOpenInsuranceCalc}>
-                  <DialogContent className="max-w-3xl">
+                  <DialogContent className="max-w-5xl">
                     <DialogHeader>
                       <DialogTitle>Insurance Calculator</DialogTitle>
                     </DialogHeader>
@@ -2445,6 +2445,25 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
       window.removeEventListener('selectPhase', onSelectPhase as any);
     };
   }, [taskContext, onNavigate]);
+
+  // Global task-details open handler (from Calendar, Property Search, etc.)
+  React.useEffect(() => {
+    const onOpenTask = (e: any) => {
+      try {
+        const id = e?.detail?.taskId as string | undefined;
+        if (!id) return;
+        const task = tasksById[id];
+        if (task) {
+          setActiveTab('checklist');
+          setModalTask(task);
+        }
+      } catch {}
+    };
+    window.addEventListener('openTaskDetails', onOpenTask as any);
+    return () => {
+      window.removeEventListener('openTaskDetails', onOpenTask as any);
+    };
+  }, [tasksById]);
   
   return (
     <div className="space-y-8 max-w-none bg-[#F6F7FB] p-4 sm:p-6 [&_button]:shadow-none [&_button:focus]:outline-none [&_button:focus]:ring-0 [&_button:focus-visible]:outline-none [&_button:focus-visible]:ring-0 [&_button:active]:font-semibold">
@@ -2910,7 +2929,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
 
           {/* Insurance Calculator Modal */}
           <Dialog open={openInsuranceCalcModal} onOpenChange={setOpenInsuranceCalcModal}>
-            <DialogContent className="max-w-3xl">
+            <DialogContent className="max-w-5xl">
               <DialogHeader>
                 <DialogTitle>Insurance Calculator</DialogTitle>
               </DialogHeader>
