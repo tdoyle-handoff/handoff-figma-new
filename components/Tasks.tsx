@@ -253,11 +253,12 @@ const sortTasksByDependencies = (tasks: Task[], tasksById: Record<string, Task> 
   return outIds.map(id => byId[id]).filter(Boolean);
 };
 
-const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields, tasksById, minimal, openInWindow, onOpenModal, forceOpen, row }: {
+const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields, onDeleteTask, tasksById, minimal, openInWindow, onOpenModal, forceOpen, row }: {
   task: Task;
   onNavigate: (page: string) => void;
   onUpdateTask?: (taskId: string, status: Task['status']) => void;
   onUpdateTaskFields?: (taskId: string, updates: Partial<Task>) => void;
+  onDeleteTask?: (taskId: string) => void;
   tasksById?: Record<string, Task>;
   minimal?: boolean;
   openInWindow?: boolean;
@@ -1032,6 +1033,19 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                 <p className="text-xs text-gray-500 mt-1">{dueLocked ? 'Locked: will not change when anchors update.' : 'Will update when anchors change.'}</p>
               </div>
               <div>
+                <Label className="text-xs">Priority</Label>
+                <Select value={task.priority} onValueChange={(v) => onUpdateTaskFields?.(task.id, { priority: v as Task['priority'] })}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="high">High</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="low">Low</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
                 <Label className="text-xs">Notes</Label>
                 <Textarea rows={3} value={editNotes} onChange={(e) => setEditNotes(e.target.value)} onBlur={triggerAutoSave} />
               </div>
@@ -1530,6 +1544,17 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
             <div className="flex flex-wrap gap-3 pt-2">
               <Button
                 size="sm"
+                variant="destructive"
+                onClick={() => {
+                  if (!onDeleteTask) return;
+                  const ok = window.confirm('Delete this task? This action cannot be undone.');
+                  if (ok) onDeleteTask(task.id);
+                }}
+              >
+                Delete
+              </Button>
+              <Button
+                size="sm"
                 onClick={() => {
                   const updates: Partial<Task> = {
                     title: editTitle,
@@ -1705,11 +1730,12 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
   );
 };
 
-const PhaseCard = ({ phase, onNavigate, onUpdateTask, onUpdateTaskFields, tasksById, onAddTask }: {
+const PhaseCard = ({ phase, onNavigate, onUpdateTask, onUpdateTaskFields, onDeleteTask, tasksById, onAddTask }: {
   phase: TaskPhase;
   onNavigate: (page: string) => void;
   onUpdateTask?: (taskId: string, status: Task['status']) => void;
   onUpdateTaskFields?: (taskId: string, updates: Partial<Task>) => void;
+  onDeleteTask?: (taskId: string) => void;
   tasksById?: Record<string, Task>;
   onAddTask?: (phase: TaskPhase, title: string) => void;
 }) => {
@@ -1781,6 +1807,7 @@ const PhaseCard = ({ phase, onNavigate, onUpdateTask, onUpdateTaskFields, tasksB
                   onNavigate={onNavigate}
                   onUpdateTask={onUpdateTask}
                   onUpdateTaskFields={onUpdateTaskFields}
+                  onDeleteTask={onDeleteTask}
                   tasksById={tasksById}
                 />
               ))}
@@ -1816,7 +1843,7 @@ const PhaseCard = ({ phase, onNavigate, onUpdateTask, onUpdateTaskFields, tasksB
 };
 
 // Table-style phase card matching the provided design
-const TaskTableCard = ({ title, tasks, onNavigate, onUpdateTask, onUpdateTaskFields, tasksById }: { title: string; tasks: Task[]; onNavigate: (page: string) => void; onUpdateTask?: (taskId: string, status: Task['status']) => void; onUpdateTaskFields?: (taskId: string, updates: Partial<Task>) => void; tasksById?: Record<string, Task>; }) => {
+const TaskTableCard = ({ title, tasks, onNavigate, onUpdateTask, onUpdateTaskFields, onDeleteTask, tasksById }: { title: string; tasks: Task[]; onNavigate: (page: string) => void; onUpdateTask?: (taskId: string, status: Task['status']) => void; onUpdateTaskFields?: (taskId: string, updates: Partial<Task>) => void; onDeleteTask?: (taskId: string) => void; tasksById?: Record<string, Task>; }) => {
   const sortedTasks = sortTasksByDependencies(tasks, tasksById || {});
   return (
     <Card className="shadow-sm bg-white">
@@ -1834,7 +1861,7 @@ const TaskTableCard = ({ title, tasks, onNavigate, onUpdateTask, onUpdateTaskFie
         <div className="divide-y">
           {sortedTasks.map((task) => (
             <div key={task.id} className="px-1">
-              <ExpandableTaskCard task={task} onNavigate={onNavigate} onUpdateTask={onUpdateTask} onUpdateTaskFields={onUpdateTaskFields} tasksById={tasksById} minimal row />
+              <ExpandableTaskCard task={task} onNavigate={onNavigate} onUpdateTask={onUpdateTask} onUpdateTaskFields={onUpdateTaskFields} onDeleteTask={onDeleteTask} tasksById={tasksById} minimal row />
             </div>
           ))}
         </div>
@@ -1843,7 +1870,7 @@ const TaskTableCard = ({ title, tasks, onNavigate, onUpdateTask, onUpdateTaskFie
   );
 };
 
-const TaskTableCardGrouped = ({ title, groups, onNavigate, onUpdateTask, onUpdateTaskFields, tasksById }: { title: string; groups: { label: string; tasks: Task[] }[]; onNavigate: (page: string) => void; onUpdateTask?: (taskId: string, status: Task['status']) => void; onUpdateTaskFields?: (taskId: string, updates: Partial<Task>) => void; tasksById?: Record<string, Task>; }) => {
+const TaskTableCardGrouped = ({ title, groups, onNavigate, onUpdateTask, onUpdateTaskFields, onDeleteTask, tasksById }: { title: string; groups: { label: string; tasks: Task[] }[]; onNavigate: (page: string) => void; onUpdateTask?: (taskId: string, status: Task['status']) => void; onUpdateTaskFields?: (taskId: string, updates: Partial<Task>) => void; onDeleteTask?: (taskId: string) => void; tasksById?: Record<string, Task>; }) => {
   const present = groups.filter(g => g.tasks && g.tasks.length > 0);
   return (
     <Card className="shadow-sm bg-white">
@@ -1866,7 +1893,7 @@ const TaskTableCardGrouped = ({ title, groups, onNavigate, onUpdateTask, onUpdat
                 <div className="bg-gray-50 px-2 py-1 text-[11px] font-medium text-gray-600">{g.label}</div>
                 {sorted.map((task) => (
                   <div key={task.id} className="px-1">
-                    <ExpandableTaskCard task={task} onNavigate={onNavigate} onUpdateTask={onUpdateTask} onUpdateTaskFields={onUpdateTaskFields} tasksById={tasksById} minimal row />
+                    <ExpandableTaskCard task={task} onNavigate={onNavigate} onUpdateTask={onUpdateTask} onUpdateTaskFields={onUpdateTaskFields} onDeleteTask={onDeleteTask} tasksById={tasksById} minimal row />
                   </div>
                 ))}
               </div>
@@ -2071,6 +2098,7 @@ const PhaseOverviewCard = ({ phase, ordinal, totalPhases, onAddTask, onNavigate,
                           onNavigate={onNavigate}
                           onUpdateTask={onUpdateTask}
                           onUpdateTaskFields={onUpdateTaskFields}
+                          onDeleteTask={onDeleteTask}
                           tasksById={tasksById}
                           minimal
                           onOpenModal={onOpenModal}
@@ -2091,6 +2119,7 @@ const PhaseOverviewCard = ({ phase, ordinal, totalPhases, onAddTask, onNavigate,
                         onNavigate={onNavigate}
                         onUpdateTask={onUpdateTask}
                         onUpdateTaskFields={onUpdateTaskFields}
+                        onDeleteTask={onDeleteTask}
                         tasksById={tasksById}
                         minimal
                         onOpenModal={onOpenModal}
@@ -2303,6 +2332,10 @@ export default function Tasks({ onNavigate }: TasksProps) {
 
   const handleUpdateTask = (taskId: string, status: Task['status']) => {
     taskContext.updateTaskStatus(taskId, status);
+  };
+
+  const handleDeleteTask = (taskId: string) => {
+    taskContext.deleteTask(taskId);
   };
 
   const handleUpdateTaskFields = (taskId: string, updates: Partial<Task>) => {
@@ -2683,6 +2716,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                               onNavigate={onNavigate}
                               onUpdateTask={handleUpdateTask}
                               onUpdateTaskFields={handleUpdateTaskFields}
+                              onDeleteTask={handleDeleteTask}
                               tasksById={tasksById}
                             />
                           </div>
@@ -2715,6 +2749,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                       onNavigate={onNavigate}
                       onUpdateTask={handleUpdateTask}
                       onUpdateTaskFields={handleUpdateTaskFields}
+                      onDeleteTask={handleDeleteTask}
                       tasksById={tasksById}
                     />
                   );
@@ -2785,10 +2820,10 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                         <Label className="text-xs">Closing Date</Label>
                         <Input type="date" defaultValue={taskContext.scheduleAnchors.closingDate || ''} onChange={(e) => taskContext.setScheduleAnchors({ closingDate: e.target.value || undefined })} />
                       </div>
-                      <div className="flex items-center justify-between text-xs text-gray-600">
-                        <span>Due dates update dynamically from anchors (locked dates are preserved).</span>
-                        <Button size="sm" variant="outline" onClick={() => taskContext.recomputeDueDates()}>Recompute</Button>
-                      </div>
+                        <div className="flex items-center justify-between text-xs text-gray-600">
+                          <span>Due dates update dynamically from anchors (locked dates are preserved).</span>
+                          <Button size="sm" variant="outline" onClick={() => taskContext.recomputeDueDates()}>Update</Button>
+                        </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -3097,6 +3132,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
               onNavigate={onNavigate}
               onUpdateTask={handleUpdateTask}
               onUpdateTaskFields={handleUpdateTaskFields}
+              onDeleteTask={handleDeleteTask}
               tasksById={tasksById}
               minimal
               forceOpen
