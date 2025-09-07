@@ -136,6 +136,24 @@ const statusLabel = (s: string) => {
   return map[s] || s.charAt(0).toUpperCase() + s.slice(1);
 };
 
+// Simplified task status view: New, In Progress, Complete
+const simpleTaskStatus = (s: Task['status']): 'new' | 'in_progress' | 'complete' => {
+  if (s === 'completed') return 'complete';
+  if (s === 'active' || s === 'in-progress' || s === 'overdue') return 'in_progress';
+  return 'new';
+};
+const simpleTaskStatusLabel = (s: Task['status']): string => {
+  const v = simpleTaskStatus(s);
+  if (v === 'complete') return 'Complete';
+  if (v === 'in_progress') return 'In Progress';
+  return 'New';
+};
+const fromSimpleTaskStatus = (v: 'new' | 'in_progress' | 'complete'): Task['status'] => {
+  if (v === 'complete') return 'completed';
+  if (v === 'in_progress') return 'active';
+  return 'upcoming';
+};
+
 // Small colored status dot for quick scan
 const StatusDot = ({ status }: { status: Task['status'] }) => {
   const color = status === 'completed'
@@ -727,8 +745,9 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                   ) : null;
                 })()}
               </div>
-              <div className="col-span-2">
+              <div className="col-span-2 flex items-center gap-1 text-[12px] text-gray-700">
                 <StatusDot status={task.status} />
+                <span>{simpleTaskStatusLabel(task.status)}</span>
               </div>
               <div className="col-span-2 text-[12px] text-gray-700 truncate flex items-center gap-1">
                 <div className="flex items-center -space-x-2 mr-1">
@@ -833,7 +852,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
         <CollapsibleContent className={`${minimal ? (row ? 'px-3 pb-3' : 'px-4 pb-4') : 'px-5 pb-5'}`}>
           <div className={`${minimal ? 'ml-6 space-y-2 pt-1.5' : 'ml-8 space-y-3 pt-2 border-t border-gray-100'}`}>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-gray-600">
-              <span className="inline-flex items-center gap-1"><StatusDot status={task.status} /><span>{statusLabel(task.status)}</span></span>
+              <span className="inline-flex items-center gap-1"><StatusDot status={task.status} /><span>{simpleTaskStatusLabel(task.status)}</span></span>
               <span className={priorityPill(task.priority)}>{priorityLabel(task.priority)}</span>
               {editDueDate && (
                 <span className="inline-flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /><span>Due: {formatDate(editDueDate)}</span><span className="text-gray-400">({daysLeft(editDueDate)})</span>{dueLocked && <Lock className="inline w-3 h-3 ml-0.5" />}</span>
@@ -956,6 +975,25 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
             <div className="space-y-2">
               <h5 className="text-sm font-medium text-gray-900">Key details</h5>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label className="text-xs">Status</Label>
+                <Select
+                  value={simpleTaskStatus(task.status)}
+                  onValueChange={(v) => {
+                    const next = fromSimpleTaskStatus(v as any);
+                    onUpdateTask?.(task.id, next);
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="new">New</SelectItem>
+                    <SelectItem value="in_progress">In Progress</SelectItem>
+                    <SelectItem value="complete">Complete</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <div>
                 <Label className="text-xs">Title</Label>
                 <Input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} onBlur={triggerAutoSave} />
@@ -1622,16 +1660,6 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
               >
                 Save
               </Button>
-              {task.status === 'completed' && (
-                <Button size="sm" variant="outline" onClick={() => onUpdateTask?.(task.id, 'active')}>
-                  Mark incomplete
-                </Button>
-              )}
-              {task.status !== 'completed' && (
-                <Button size="sm" variant="outline" onClick={() => onUpdateTask?.(task.id, 'completed')}>
-                  Mark complete
-                </Button>
-              )}
               <Button
                 size="sm"
                 variant="outline"
@@ -2340,24 +2368,50 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [openInsuranceCalcModal, setOpenInsuranceCalcModal] = useState(false);
   const [openAllDocsModal, setOpenAllDocsModal] = useState(false);
+  // Add Task dialog state
+  const [openAddTaskDialog, setOpenAddTaskDialog] = useState(false);
+  const [newTaskTitle, setNewTaskTitle] = useState('');
+  const [newTaskPhaseId, setNewTaskPhaseId] = useState<string | undefined>(() => displayedTaskPhases[0]?.id);
 
   // Aggregate contacts from all checklist tasks (unique by email|name|role)
   const checklistContacts = React.useMemo(() => {
     const seen = new Set<string>();
     const out: Array<{ name?: string; role?: string; email?: string; phone?: string; when?: string }> = [];
+    const add = (c: any) => {
+      if (!c) return;
+      const key = `${(c.email||'').toLowerCase()}|${(c.name||'').toLowerCase()}|${(c.role||'').toLowerCase()}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        out.push({ name: c.name, role: c.role, email: c.email, phone: c.phone, when: c.when });
+      }
+    };
+    // Contacts saved inside tasks
     displayedTaskPhases.forEach(phase => {
       phase.tasks.forEach(t => {
-        (t.contacts || []).forEach((c: any) => {
-          const key = `${(c.email||'').toLowerCase()}|${(c.name||'').toLowerCase()}|${(c.role||'').toLowerCase()}`;
-          if (!seen.has(key)) {
-            seen.add(key);
-            out.push({ name: c.name, role: c.role, email: c.email, phone: c.phone, when: c.when });
-          }
-        });
+        (t.contacts || []).forEach((c: any) => add(c));
       });
     });
+    // Property-level contacts (Agent/Lender) from profile
+    const pd = propertyContext?.propertyData as any;
+    if (pd) {
+      if (pd.hasRealtor || pd.realtorName || pd.realtorEmail || pd.realtorPhone) {
+        add({ name: pd.realtorName || undefined, role: 'Agent', email: pd.realtorEmail || undefined, phone: pd.realtorPhone || undefined, when: 'General representation' });
+      }
+      if (pd.lenderContactName || pd.lenderEmail || pd.lenderPhone) {
+        add({ name: pd.lenderContactName || undefined, role: 'Lender', email: pd.lenderEmail || undefined, phone: pd.lenderPhone || undefined, when: 'Financing' });
+      }
+    }
     return out;
-  }, [displayedTaskPhases]);
+  }, [
+    displayedTaskPhases,
+    propertyContext?.propertyData?.hasRealtor,
+    propertyContext?.propertyData?.realtorName,
+    propertyContext?.propertyData?.realtorEmail,
+    propertyContext?.propertyData?.realtorPhone,
+    propertyContext?.propertyData?.lenderContactName,
+    propertyContext?.propertyData?.lenderEmail,
+    propertyContext?.propertyData?.lenderPhone,
+  ]);
 
   // Aggregate documents from all tasks
   const allTaskDocuments = React.useMemo(() => {
@@ -2554,6 +2608,9 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                   <Badge className="bg-violet-100 text-violet-800 text-[12px] px-3 py-1 rounded-full">On Track</Badge>
                   <Badge className="bg-green-100 text-green-800 text-[12px] px-3 py-1 rounded-full font-semibold">{Math.round(overallProgress)}% Complete</Badge>
                 </div>
+                <Button size="sm" onClick={() => setOpenAddTaskDialog(true)}>
+                  <Plus className="w-4 h-4 mr-1" /> Add task
+                </Button>
               </div>
             </div>
             {/* To-do | Done toggle */}
@@ -2979,6 +3036,46 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                     ))}
                   </div>
                 )}
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          {/* Add Task Modal */}
+          <Dialog open={openAddTaskDialog} onOpenChange={setOpenAddTaskDialog}>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Add Task</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-3">
+                <div>
+                  <Label className="text-xs">Title</Label>
+                  <Input value={newTaskTitle} onChange={(e) => setNewTaskTitle(e.target.value)} placeholder="Task title" />
+                </div>
+                <div>
+                  <Label className="text-xs">Phase</Label>
+                  <Select value={newTaskPhaseId || ''} onValueChange={(v) => setNewTaskPhaseId(v)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select phase" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {displayedTaskPhases.map((p) => (
+                        <SelectItem key={p.id} value={p.id}>{p.title}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex justify-end gap-2 pt-1">
+                  <Button variant="outline" onClick={() => setOpenAddTaskDialog(false)}>Cancel</Button>
+                  <Button onClick={() => {
+                    const phase = displayedTaskPhases.find(p => p.id === newTaskPhaseId) || displayedTaskPhases[0];
+                    if (phase && newTaskTitle.trim()) {
+                      handleAddTaskToPhase(phase, newTaskTitle.trim());
+                      setOpenAddTaskDialog(false);
+                      setNewTaskTitle('');
+                      setNewTaskPhaseId(phase.id);
+                    }
+                  }}>Add</Button>
+                </div>
               </div>
             </DialogContent>
           </Dialog>

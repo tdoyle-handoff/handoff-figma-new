@@ -2925,8 +2925,8 @@ export function TaskProvider({ children, userProfile }: TaskProviderProps) {
   };
 
   const updateTaskStatus = (taskId: string, status: Task['status']): void => {
-    setTasks(prevTasks => 
-      prevTasks.map(task => {
+    setTasks(prevTasks => {
+      const next = prevTasks.map(task => {
         if (task.id === taskId) {
           const updatedTask = { ...task, status };
           if (status === 'completed' && !task.completedDate) {
@@ -2937,19 +2937,16 @@ export function TaskProvider({ children, userProfile }: TaskProviderProps) {
           return updatedTask;
         }
         return task;
-      })
-    );
-
-    setTimeout(() => {
-      const propertyData = getPropertyData();
-      const updatedTasks = tasks.map(task => 
-        task.id === taskId 
-          ? { ...task, status, completedDate: status === 'completed' ? new Date().toISOString().split('T')[0] : undefined }
-          : task
-      );
-      const phases = generateRealEstateTaskPhases(updatedTasks, propertyData);
-      setTaskPhases(phases);
-    }, 100);
+      });
+      try {
+        const propertyData = getPropertyData();
+        const phases = generateRealEstateTaskPhases(next, propertyData);
+        setTaskPhases(phases);
+      } catch (e) {
+        console.warn('Failed to recompute phases after updateTaskStatus:', e);
+      }
+      return next;
+    });
   };
 
   const addTask = (task: Omit<Task, 'id'>): void => {
@@ -2958,34 +2955,48 @@ export function TaskProvider({ children, userProfile }: TaskProviderProps) {
       id: `custom-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       userCustomized: true
     };
-    setTasks(prevTasks => [...prevTasks, newTask]);
+    setTasks(prevTasks => {
+      const next = [...prevTasks, newTask];
+      try {
+        const propertyData = getPropertyData();
+        const phases = generateRealEstateTaskPhases(next, propertyData);
+        setTaskPhases(phases);
+      } catch (e) {
+        console.warn('Failed to recompute phases after addTask:', e);
+      }
+      return next;
+    });
   };
 
   const updateTask = (taskId: string, updates: Partial<Task>): void => {
-    setTasks(prevTasks =>
-      prevTasks.map(task =>
+    setTasks(prevTasks => {
+      const next = prevTasks.map(task =>
         task.id === taskId ? { ...task, ...updates } : task
-      )
-    );
-
-    // Keep taskPhases in sync with field updates as well (not just status changes)
-    setTimeout(() => {
+      );
       try {
         const propertyData = getPropertyData();
-        const updatedTasks = tasks.map(task =>
-          task.id === taskId ? { ...task, ...updates } : task
-        );
-        const phases = generateRealEstateTaskPhases(updatedTasks, propertyData);
+        const phases = generateRealEstateTaskPhases(next, propertyData);
         setTaskPhases(phases);
       } catch (e) {
         // non-fatal
         console.warn('Failed to recompute phases after updateTask:', e);
       }
-    }, 100);
+      return next;
+    });
   };
 
   const deleteTask = (taskId: string): void => {
-    setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
+    setTasks(prevTasks => {
+      const next = prevTasks.filter(task => task.id !== taskId);
+      try {
+        const propertyData = getPropertyData();
+        const phases = generateRealEstateTaskPhases(next, propertyData);
+        setTaskPhases(phases);
+      } catch (e) {
+        console.warn('Failed to recompute phases after deleteTask:', e);
+      }
+      return next;
+    });
   };
 
   // Persist tasks whenever they change (debounced)
