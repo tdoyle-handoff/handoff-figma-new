@@ -2967,6 +2967,21 @@ export function TaskProvider({ children, userProfile }: TaskProviderProps) {
         task.id === taskId ? { ...task, ...updates } : task
       )
     );
+
+    // Keep taskPhases in sync with field updates as well (not just status changes)
+    setTimeout(() => {
+      try {
+        const propertyData = getPropertyData();
+        const updatedTasks = tasks.map(task =>
+          task.id === taskId ? { ...task, ...updates } : task
+        );
+        const phases = generateRealEstateTaskPhases(updatedTasks, propertyData);
+        setTaskPhases(phases);
+      } catch (e) {
+        // non-fatal
+        console.warn('Failed to recompute phases after updateTask:', e);
+      }
+    }, 100);
   };
 
   const deleteTask = (taskId: string): void => {
