@@ -1071,7 +1071,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
             {task.id === 'task-homeowners-insurance' && (
               <div className="space-y-3">
                 <div className="flex flex-wrap gap-2">
-                  <Button size="sm" onClick={() => setOpenInsuranceCalc(true)}>
+                    <Button size="sm" variant="outline" onClick={() => setOpenInsuranceCalc(true)}>
                     <Calculator className="w-4 h-4 mr-2" /> Insurance calculator
                   </Button>
                 </div>
@@ -2555,9 +2555,9 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
               </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
               {/* Left: To-do / Done content */}
-              <div className="lg:col-span-2 space-y-4">
+              <div className="lg:col-span-3 space-y-4">
                 {checklistSubtab === 'todo' && (
                   <>
                     {phasePageId && (
@@ -2634,14 +2634,14 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
               </div>
 
               {/* Right sidebar */}
-              <div className="space-y-4">
+              <div className="lg:col-span-1 space-y-4">
                 {/* Quick Links card */}
                 <Card className="shadow-sm">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-semibold tracking-[-0.01em] text-gray-900">Quick Links</CardTitle>
                   </CardHeader>
                   <CardContent className="pt-0 space-y-2">
-                    <Button size="sm" className="w-full justify-start h-9" onClick={() => setOpenInsuranceCalcModal(true)}>
+                    <Button size="sm" variant="outline" className="w-full justify-start h-9" onClick={() => setOpenInsuranceCalcModal(true)}>
                       <Calculator className="w-4 h-4 mr-2" /> Insurance Calculator
                     </Button>
                     <Button size="sm" variant="outline" className="w-full justify-start h-9" onClick={() => {
