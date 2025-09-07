@@ -2671,7 +2671,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                 </div>
                 <div className="flex items-center gap-2">
                   <Label className="text-xs">Search</Label>
-                  <Input className="h-8 w-[220px] bg-white" placeholder="Find tasks..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+                  <Input className="h-8 w-[220px] !bg-white" placeholder="Find tasks..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
                 </div>
               </div>
             </div>

@@ -289,7 +289,7 @@ title={`${t.title}${t.description ? ' — ' + t.description : ''}`}
                       {statusIcon(t.status)}
                       <span className={`inline-block w-2 h-2 rounded-full ${catStyles[getTaskCategoryKey(t)].dot}`} aria-hidden="true" />
                       <span className="sr-only">Category: {(t.tags || []).map(x => x.toLowerCase()).includes('scenario-va') ? 'VA Loan' : (t.tags || []).map(x => x.toLowerCase()).includes('scenario-fha') ? 'FHA Loan' : catStyles[getTaskCategoryKey(t)].label}</span>
-                      <span className="truncate">{t.shortTitle || t.title}</span>
+                      <span className="whitespace-normal break-words">{t.shortTitle || t.title}</span>
                     </div>
                   ))}
                 </div>
@@ -352,7 +352,7 @@ title={`${t.title}${t.description ? ' — ' + t.description : ''}`}
                       {statusIcon(t.status)}
                       <span className={`inline-block w-2 h-2 rounded-full ${catStyles[getTaskCategoryKey(t)].dot}`} aria-hidden="true" />
                       <span className="sr-only">Category: {(t.tags || []).map(x => x.toLowerCase()).includes('scenario-va') ? 'VA Loan' : (t.tags || []).map(x => x.toLowerCase()).includes('scenario-fha') ? 'FHA Loan' : catStyles[getTaskCategoryKey(t)].label}</span>
-                      <span className="truncate">{t.shortTitle || t.title}</span>
+                      <span className="whitespace-normal break-words">{t.shortTitle || t.title}</span>
                     </div>
                   ))}
 
@@ -382,7 +382,7 @@ title={`${t.title}${t.description ? ' — ' + t.description : ''}`}
                             className="cursor-move text-xs bg-amber-50 border border-amber-200 text-amber-800 rounded px-2 py-1 flex items-center justify-between gap-2 hover:bg-amber-100"
                             title={`${ev.title}${ev.provider ? ' — ' + ev.provider : ''}${ev.time ? ' at ' + ev.time : ''}`}
                           >
-                            <span className="truncate">
+                            <span className="whitespace-normal break-words flex-1 min-w-0">
                               {ev.title}{ev.time ? ` @ ${ev.time}` : ''}
                               {ev.provider ? ` • ${ev.provider}` : ''}
                             </span>
