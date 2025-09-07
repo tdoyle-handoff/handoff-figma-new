@@ -764,11 +764,20 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                   <h4 className={`font-semibold ${isCompleted ? 'text-gray-500 line-through' : 'text-gray-900'} break-words leading-snug tracking-tight flex-1 m-0 text-[15px] sm:text-base`}>
                     {task.title}
                     {/* Scenario badge(s) */}
-                    {Array.isArray(task.tags) && task.tags.filter(t => t.startsWith('scenario-')).slice(0,2).map((t) => (
-                      <span key={t} className="ml-2 inline-flex items-center rounded-full border px-1.5 py-0.5 text-[10px] bg-indigo-50 text-indigo-700 border-indigo-200 capitalize">
-                        {t.replace(/^scenario-/, '').replace(/-/g, ' ')}
-                      </span>
-                    ))}
+                    {(() => {
+                      const all = Array.isArray(task.tags) ? task.tags.filter(t => t.startsWith('scenario-')) : [];
+                      let sel: Set<string> | null = null;
+                      try {
+                        const keys = getScenarioKeys();
+                        if (keys && keys.length) sel = new Set(keys.map(k => (k || '').toLowerCase()));
+                      } catch {}
+                      const filtered = sel ? all.filter(t => sel!.has(t.replace(/^scenario-/, '').toLowerCase())) : all;
+                      return filtered.slice(0, 2).map((t) => (
+                        <span key={t} className="ml-2 inline-flex items-center rounded-full border px-1.5 py-0.5 text-[10px] bg-indigo-50 text-indigo-700 border-indigo-200 capitalize">
+                          {t.replace(/^scenario-/, '').replace(/-/g, ' ')}
+                        </span>
+                      ));
+                    })()}
                     {/* Inline education popover */}
                     {(whatInfo || whyInfo) && (
                       <Popover>
@@ -1057,6 +1066,9 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
             {task.id === 'task-buy-box-template' && (
               <div className="flex flex-wrap gap-2">
                 <Button size="sm" onClick={handleDownloadQuestionnairePDF}>Download Questionnaire PDF</Button>
+                <Button size="sm" variant="outline" onClick={() => { try { localStorage.setItem('handoff-propertysearch-selected-tab','get-started'); } catch {} onNavigate('property'); }}>
+                  Open Get Started
+                </Button>
               </div>
             )}
 
@@ -2407,8 +2419,8 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
       if (data.type === 'task-update' && data.taskId) {
         taskContext.updateTask(data.taskId, data.updates || {});
       } else if (data.type === 'navigate' && data.page) {
-        if (data.tab === 'find-home') {
-          try { localStorage.setItem('handoff-propertysearch-selected-tab','find-home'); } catch {}
+        if (data.tab) {
+          try { localStorage.setItem('handoff-propertysearch-selected-tab', String(data.tab)); } catch {}
         }
         onNavigate(data.page);
       } else if (data.type === 'download-questionnaire') {
