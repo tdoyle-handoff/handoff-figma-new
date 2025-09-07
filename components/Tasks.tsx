@@ -3125,7 +3125,22 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
           <div className="relative bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[85vh] overflow-auto p-4">
             <div className="flex items-center justify-between mb-2 px-1">
               <h3 className="text-lg font-semibold truncate pr-4">{modalTask.title}</h3>
-              <Button variant="outline" size="sm" onClick={() => setModalTask(null)}>Close</Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => {
+                    const ok = window.confirm('Delete this task? This action cannot be undone.');
+                    if (ok) {
+                      handleDeleteTask(modalTask.id);
+                      setModalTask(null);
+                    }
+                  }}
+                >
+                  Delete
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => setModalTask(null)}>Close</Button>
+              </div>
             </div>
             <ExpandableTaskCard
               task={modalTask}

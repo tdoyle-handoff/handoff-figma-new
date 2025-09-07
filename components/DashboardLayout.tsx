@@ -456,7 +456,7 @@ export default function DashboardLayout({
                     </div>
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuContent align="end" className="w-56 bg-white text-gray-900 border border-gray-200 shadow-lg backdrop-blur-0">
                   <DropdownMenuLabel>Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => onPageChange('settings')} className="cursor-pointer">
