@@ -8,6 +8,7 @@ import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 import { Label } from '../ui/label';
+import ChecklistDetail from './ChecklistDetail';
 
 interface ChecklistCalendarProps {
   tasks: Task[];
@@ -93,6 +94,10 @@ export default function ChecklistCalendar({ tasks, onUpdateTask }: ChecklistCale
   const [editTitle, setEditTitle] = useState<string>('');
   const [editAssignedTo, setEditAssignedTo] = useState<string>('');
   const [editNotes, setEditNotes] = useState<string>('');
+
+  // Inline task details modal state
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [detailTask, setDetailTask] = useState<Task | null>(null);
 
   const monthStart = useMemo(() => startOfMonth(cursor), [cursor]);
   const monthEnd = useMemo(() => endOfMonth(cursor), [cursor]);
@@ -333,6 +338,10 @@ title={`${t.title}${t.description ? ' — ' + t.description : ''}`}
                       draggable
                       onDragStart={(e) => onDragStart(e, t.id)}
                       onClick={() => {
+                        // Open inline details modal locally
+                        setDetailTask(t);
+                        setDetailOpen(true);
+                        // Also dispatch global event for listeners elsewhere
                         try {
                           window.dispatchEvent(new CustomEvent('openTaskDetails', { detail: { taskId: t.id } }));
                         } catch {}
@@ -361,6 +370,14 @@ title={`${t.title}${t.description ? ' — ' + t.description : ''}`}
                             onDragStart={(e) => {
                               e.dataTransfer.setData('text/inspection-event', ev.id);
                               e.dataTransfer.effectAllowed = 'move';
+                            }}
+                            onClick={() => {
+                              const t = tasks.find(x => x.id === ev.taskId) || null;
+                              setDetailTask(t);
+                              setDetailOpen(true);
+                              try {
+                                if (t) window.dispatchEvent(new CustomEvent('openTaskDetails', { detail: { taskId: t.id } }));
+                              } catch {}
                             }}
                             className="cursor-move text-xs bg-amber-50 border border-amber-200 text-amber-800 rounded px-2 py-1 flex items-center justify-between gap-2 hover:bg-amber-100"
                             title={`${ev.title}${ev.provider ? ' — ' + ev.provider : ''}${ev.time ? ' at ' + ev.time : ''}`}
@@ -433,6 +450,29 @@ title={`${t.title}${t.description ? ' — ' + t.description : ''}`}
             </div>
           </div>
         )}
+      </DialogContent>
+    </Dialog>
+
+    {/* Full task details modal */}
+    <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
+      <DialogContent className="w-[90vw] max-w-[1280px]">
+        <DialogHeader>
+          <DialogTitle>{detailTask?.title || 'Task Details'}</DialogTitle>
+        </DialogHeader>
+        <div className="max-h-[75vh] overflow-auto">
+          <ChecklistDetail
+            task={detailTask}
+            onAction={() => {
+              if (!detailTask?.linkedPage) return;
+              try {
+                window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: detailTask.linkedPage } }));
+              } catch {}
+            }}
+            onUpdateTask={(taskId, status) => {
+              onUpdateTask(taskId, { status });
+            }}
+          />
+        </div>
       </DialogContent>
     </Dialog>
     </>
