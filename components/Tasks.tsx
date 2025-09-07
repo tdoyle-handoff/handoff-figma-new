@@ -730,7 +730,7 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                 <h4 className={`font-medium text-[13px] ${isCompleted ? 'text-gray-500 line-through' : 'text-gray-900'} truncate m-0`} title={task.title}>{task.title}</h4>
                 {(() => {
                   const sub = (task.subcategory || '').toLowerCase();
-                  const labelMap: Record<string, string> = { legal: 'Legal', inspection: 'Inspection', inspections: 'Inspection', financing: 'Mortgage', mortgage: 'Mortgage', insurance: 'Insurance' };
+const labelMap: Record<string, string> = { legal: 'Legal', inspection: 'Inspection', inspections: 'Inspection', financing: 'Financing', mortgage: 'Financing', insurance: 'Insurance' };
                   const clsMap: Record<string, string> = {
                     legal: 'bg-red-50 text-red-700 border-red-200',
                     inspection: 'bg-blue-50 text-blue-700 border-blue-200',
@@ -2081,7 +2081,7 @@ const PhaseOverviewCard = ({ phase, ordinal, totalPhases, onAddTask, onNavigate,
           const groups: { label: string; key: string; tasks: Task[] }[] = [
             { label: 'Inspections', key: 'inspections', tasks: phase.tasks.filter(t => (t.subcategory || '').toLowerCase() === 'inspections') },
             { label: 'Legal', key: 'legal', tasks: phase.tasks.filter(t => (t.subcategory || '').toLowerCase() === 'legal') },
-            { label: 'Mortgage', key: 'financing', tasks: phase.tasks.filter(t => (t.subcategory || '').toLowerCase() === 'financing') },
+{ label: 'Financing', key: 'financing', tasks: phase.tasks.filter(t => (t.subcategory || '').toLowerCase() === 'financing') },
           ];
           const other = phase.tasks.filter(t => !['inspections','legal','financing'].includes((t.subcategory || '').toLowerCase()));
           return (
@@ -2711,7 +2711,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                                 { label: 'Legal', tasks: legal },
                                 { label: 'Inspections', tasks: inspections },
                                 { label: 'Insurance', tasks: insurance },
-                                { label: 'Mortgage', tasks: mortgage },
+{ label: 'Financing', tasks: mortgage },
                               ]}
                               onNavigate={onNavigate}
                               onUpdateTask={handleUpdateTask}
