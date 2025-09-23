@@ -208,7 +208,7 @@ export default function DashboardLayout({
   return (
     <div className="flex h-screen bg-slate-50">
       {/* Sidebar */}
-      <div className="w-64 min-w-[16rem] bg-[#0B1F44] text-white flex flex-col">
+      <div className="w-64 min-w-[16rem] bg-[#0B1F44] text-white flex flex-col rounded-3xl shadow-xl ring-1 ring-white/10 my-4 ml-4 overflow-hidden">
         {/* Header */}
         <div className="p-6 bg-white border-b border-gray-200">
           <div className="flex items-center gap-3">
@@ -270,7 +270,7 @@ export default function DashboardLayout({
                     key={tasksItem.id}
                     className={cn(
                       "w-full flex items-center gap-3 px-4 py-2.5 rounded-full transition-all duration-200 text-left",
-                      isActive ? "bg-white text-[#0B1F44] shadow-sm" : "text-blue-100 ring-1 ring-white/10 hover:bg-white/10 hover:text-white",
+                      isActive ? "bg-white text-[#0B1F44] shadow-sm ring-1 ring-blue-200" : "text-blue-100 ring-1 ring-white/10 hover:bg-white/10 hover:text-white",
                       !sidebarOpen && "justify-center px-3"
                     )}
                     onClick={() => onPageChange(tasksItem.id)}
@@ -294,7 +294,7 @@ export default function DashboardLayout({
                     className={cn(
                       "w-full flex items-center gap-3 px-4 py-2.5 rounded-full transition-all duration-200 text-left ml-6",
                       currentPage === calendarItem.id
-                        ? "bg-white text-[#0B1F44] shadow-sm"
+                        ? "bg-white text-[#0B1F44] shadow-sm ring-1 ring-blue-200"
                         : "text-blue-100 ring-1 ring-white/10 hover:bg-white/10 hover:text-white",
                       !sidebarOpen && "justify-center px-3 ml-0"
                     )}
