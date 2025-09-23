@@ -1,7 +1,6 @@
 import React, { useState, Suspense } from 'react';
 import { Folder, Users, Copy, Mail, Link, Globe, Lock, Settings, UserPlus, UserMinus, Shield, ChevronDown, AlertCircle, Share } from 'lucide-react';
 import { DownloadButton, DarkDownloadButton } from './ui/download-button';
-import ContractAnalysis from './ContractAnalysis';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
@@ -691,14 +690,8 @@ export default function Documents({ setupData }: DocumentsProps) {
   return (
     <div className="space-y-6">
 
-      <Tabs defaultValue="contract" className="w-full">
+      <Tabs defaultValue="offer" className="w-full">
         <TabsList className="w-full bg-transparent h-auto p-0 border-b border-gray-200 rounded-none flex justify-start overflow-x-auto">
-          <TabsTrigger
-            value="contract"
-            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
-          >
-            Contract Analysis
-          </TabsTrigger>
           <TabsTrigger
             value="offer"
             className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
@@ -828,18 +821,6 @@ export default function Documents({ setupData }: DocumentsProps) {
           </Card>
         </TabsContent>
 
-        <TabsContent value="contract" className="space-y-6 bg-white">
-          <Suspense fallback={
-            <Card>
-              <CardContent className="p-8 text-center">
-                <div className="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-                <p className="text-muted-foreground">Loading Contract Analysis...</p>
-              </CardContent>
-            </Card>
-          }>
-            <ContractAnalysis />
-          </Suspense>
-        </TabsContent>
 
         <TabsContent value="offer" className="space-y-6 bg-white">
           <Suspense fallback={

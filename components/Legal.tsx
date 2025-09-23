@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Search, FileText, AlertTriangle, CheckCircle, Download, Upload, Eye, Bot, ExternalLink, DollarSign, Calendar, Clock, Shield, FileX, AlertCircle, TrendingUp, Users, Scale, ChevronRight, User, HelpCircle } from 'lucide-react';
-import ContractAnalysis from './ContractAnalysis';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -816,12 +815,6 @@ export default function Legal() {
             Progress
           </TabsTrigger>
           <TabsTrigger
-            value="contract"
-            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200"
-          >
-            Contract
-          </TabsTrigger>
-          <TabsTrigger
             value="title"
             className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200"
           >
@@ -840,9 +833,6 @@ export default function Legal() {
         </TabsContent>
 
 
-        <TabsContent value="contract" className="space-y-6 bg-white">
-          <ContractAnalysis />
-        </TabsContent>
 
         <TabsContent value="title" className="space-y-6 bg-white">
           <TitleSearch />

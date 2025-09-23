@@ -129,9 +129,9 @@ export default function MobileLayout({
     },
 
     {
-      id: 'communications',
-      label: 'Communication Suite',
-      icon: MessageSquare
+      id: 'documents',
+      label: 'Contract Builder',
+      icon: FileText
     }
   ];
 

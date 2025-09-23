@@ -2,8 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/card';
 import { Progress } from '../ui/progress';
 import { LegalProgressTracker, TitleSearch, SettlementReview } from '../Legal';
-import ContractAnalysis from '../ContractAnalysis';
-import { Scale, FileText, Search, CheckCircle } from 'lucide-react';
+import { Scale, Search, CheckCircle } from 'lucide-react';
 import { useTaskContext, Task } from '../TaskContext';
 
 interface Props {
@@ -11,14 +10,14 @@ interface Props {
   selectedTask?: Task | null;
 }
 export default function ChecklistLegalTabs({ onNavigate, selectedTask }: Props) {
-  const [tab, setTab] = React.useState<'progress' | 'contract' | 'title' | 'settlement'>('progress');
+  const [tab, setTab] = React.useState<'progress' | 'title' | 'settlement'>('progress');
 
   // Auto-switch to relevant tab based on selected task
   React.useEffect(() => {
     if (selectedTask?.subcategory === 'legal') {
       // Map task titles/categories to appropriate tabs
       if (selectedTask.title.toLowerCase().includes('contract') || selectedTask.title.toLowerCase().includes('review')) {
-        setTab('contract');
+        setTab('progress');
       } else if (selectedTask.title.toLowerCase().includes('title') || selectedTask.title.toLowerCase().includes('search')) {
         setTab('title');
       } else if (selectedTask.title.toLowerCase().includes('settlement') || selectedTask.title.toLowerCase().includes('closing')) {
@@ -36,7 +35,6 @@ export default function ChecklistLegalTabs({ onNavigate, selectedTask }: Props) 
 
   const sections: { key: typeof tab; label: string; icon: any }[] = [
     { key: 'progress', label: 'Progress', icon: Scale },
-    { key: 'contract', label: 'Contract', icon: FileText },
     { key: 'title', label: 'Title', icon: Search },
     { key: 'settlement', label: 'Settlement', icon: CheckCircle },
   ];
@@ -106,7 +104,6 @@ export default function ChecklistLegalTabs({ onNavigate, selectedTask }: Props) 
         )}
 
         {tab === 'progress' && <LegalProgressTracker />}
-        {tab === 'contract' && <ContractAnalysis />}
         {tab === 'title' && <TitleSearch />}
         {tab === 'settlement' && <SettlementReview />}
       </div>
