@@ -53,6 +53,36 @@ export default function DashboardHome() {
   const [qLocation, setQLocation] = React.useState('');
   const [qPriceMax, setQPriceMax] = React.useState('');
 
+  // Inline editor for contract dates
+  const [editing, setEditing] = React.useState(false);
+  const toISO = (d: Date | null) => (d ? d.toISOString().slice(0,10) : '');
+  const [editAcceptance, setEditAcceptance] = React.useState<string>(toISO(acceptance));
+  const [editClosing, setEditClosing] = React.useState<string>(toISO(closing));
+  const [editInspectionDays, setEditInspectionDays] = React.useState<string>(String(cd?.inspectionDays || ''));
+  const [editFinancingDays, setEditFinancingDays] = React.useState<string>(String(cd?.financingDays || ''));
+  const saveDates = () => {
+    try {
+      taskCtx.setScheduleAnchors({
+        offerAcceptedDate: editAcceptance || undefined,
+        closingDate: editClosing || undefined,
+      });
+      if (contractTask) {
+        const updated = {
+          ...(contractTask as any).customFields,
+          contractDetails: {
+            ...(cd || {}),
+            acceptanceDate: editAcceptance || undefined,
+            closingDate: editClosing || undefined,
+            inspectionDays: editInspectionDays || undefined,
+            financingDays: editFinancingDays || undefined,
+          },
+        } as any;
+        taskCtx.updateTask((contractTask as any).id, { customFields: updated } as any);
+      }
+      setEditing(false);
+    } catch {}
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Current tasks */}
@@ -171,33 +201,59 @@ export default function DashboardHome() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <div className="text-muted-foreground flex items-center gap-2"><CalendarDays className="w-4 h-4" /> Offer accepted</div>
-              <div className="font-medium">{acceptance ? format(acceptance, 'EEE, MMM d') : '—'}</div>
+          {!editing ? (
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <div className="text-muted-foreground flex items-center gap-2"><CalendarDays className="w-4 h-4" /> Offer accepted</div>
+                <div className="font-medium">{acceptance ? format(acceptance, 'EEE, MMM d') : '—'}</div>
+              </div>
+              <div>
+                <div className="text-muted-foreground flex items-center gap-2"><Clock className="w-4 h-4" /> Inspection deadline</div>
+                <div className="font-medium">{inspectionDeadline ? format(inspectionDeadline, 'EEE, MMM d') : '—'}</div>
+              </div>
+              <div>
+                <div className="text-muted-foreground flex items-center gap-2"><Clock className="w-4 h-4" /> Financing deadline</div>
+                <div className="font-medium">{financingDeadline ? format(financingDeadline, 'EEE, MMM d') : '—'}</div>
+              </div>
+              <div>
+                <div className="text-muted-foreground flex items-center gap-2"><CalendarDays className="w-4 h-4" /> Closing</div>
+                <div className="font-medium">{closing ? format(closing, 'EEE, MMM d') : '—'}</div>
+              </div>
+              <div>
+                <div className="text-muted-foreground flex items-center gap-2"><DollarSign className="w-4 h-4" /> Purchase price</div>
+                <div className="font-medium">{cd?.purchasePrice ? `$${Number(cd.purchasePrice).toLocaleString()}` : '—'}</div>
+              </div>
+              <div>
+                <div className="text-muted-foreground flex items-center gap-2"><DollarSign className="w-4 h-4" /> Earnest money</div>
+                <div className="font-medium">{cd?.earnestAmount ? `$${Number(cd.earnestAmount).toLocaleString()}` : '—'}</div>
+              </div>
             </div>
-            <div>
-              <div className="text-muted-foreground flex items-center gap-2"><Clock className="w-4 h-4" /> Inspection deadline</div>
-              <div className="font-medium">{inspectionDeadline ? format(inspectionDeadline, 'EEE, MMM d') : '—'}</div>
+          ) : (
+            <div className="space-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <label className="text-sm">Offer accepted
+                  <input type="date" className="mt-1 w-full h-9 px-3 rounded-md border border-gray-300 text-sm" value={editAcceptance} onChange={(e)=>setEditAcceptance(e.target.value)} />
+                </label>
+                <label className="text-sm">Closing date
+                  <input type="date" className="mt-1 w-full h-9 px-3 rounded-md border border-gray-300 text-sm" value={editClosing} onChange={(e)=>setEditClosing(e.target.value)} />
+                </label>
+                <label className="text-sm">Inspection days
+                  <input type="number" className="mt-1 w-full h-9 px-3 rounded-md border border-gray-300 text-sm" value={editInspectionDays} onChange={(e)=>setEditInspectionDays(e.target.value)} />
+                </label>
+                <label className="text-sm">Financing days
+                  <input type="number" className="mt-1 w-full h-9 px-3 rounded-md border border-gray-300 text-sm" value={editFinancingDays} onChange={(e)=>setEditFinancingDays(e.target.value)} />
+                </label>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button size="sm" onClick={saveDates}>Save</Button>
+                <Button size="sm" variant="ghost" onClick={()=>{setEditing(false); setEditAcceptance(toISO(acceptance)); setEditClosing(toISO(closing)); setEditInspectionDays(String(cd?.inspectionDays||'')); setEditFinancingDays(String(cd?.financingDays||''));}}>Cancel</Button>
+              </div>
             </div>
-            <div>
-              <div className="text-muted-foreground flex items-center gap-2"><Clock className="w-4 h-4" /> Financing deadline</div>
-              <div className="font-medium">{financingDeadline ? format(financingDeadline, 'EEE, MMM d') : '—'}</div>
-            </div>
-            <div>
-              <div className="text-muted-foreground flex items-center gap-2"><CalendarDays className="w-4 h-4" /> Closing</div>
-              <div className="font-medium">{closing ? format(closing, 'EEE, MMM d') : '—'}</div>
-            </div>
-            <div>
-              <div className="text-muted-foreground flex items-center gap-2"><DollarSign className="w-4 h-4" /> Purchase price</div>
-              <div className="font-medium">{cd?.purchasePrice ? `$${Number(cd.purchasePrice).toLocaleString()}` : '—'}</div>
-            </div>
-            <div>
-              <div className="text-muted-foreground flex items-center gap-2"><DollarSign className="w-4 h-4" /> Earnest money</div>
-              <div className="font-medium">{cd?.earnestAmount ? `$${Number(cd.earnestAmount).toLocaleString()}` : '—'}</div>
-            </div>
-          </div>
+          )}
         </CardContent>
+        <div className="px-6 pb-4">
+          <Button size="sm" variant="ghost" className="h-8 px-2" onClick={()=>setEditing((e)=>!e)}>{editing ? 'Hide editor' : 'Edit dates'}</Button>
+        </div>
       </Card>
 
       {/* Property search (quick) */}
