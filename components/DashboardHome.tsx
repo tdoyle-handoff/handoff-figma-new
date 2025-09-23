@@ -17,7 +17,7 @@ function parseDate(d?: string): Date | null {
 
 export default function DashboardHome() {
   const taskCtx = useTaskContext();
-  const tasks = taskCtx?.flatTasks || [] as Task[];
+  const tasks: Task[] = taskCtx?.tasks || [] as Task[];
   const today = new Date();
 
   const withDue = tasks.filter(t => !!t.dueDate);
