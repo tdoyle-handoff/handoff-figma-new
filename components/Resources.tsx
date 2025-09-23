@@ -244,14 +244,8 @@ export default function Resources({ onNavigate }: ResourcesProps) {
 
   return (
     <div className="space-y-6">
-      <Tabs defaultValue="overview" className="w-full">
+      <Tabs defaultValue="guides" className="w-full">
         <TabsList className="w-full bg-transparent h-auto p-0 border-b border-gray-200 rounded-none flex justify-start overflow-x-auto">
-          <TabsTrigger
-            value="overview"
-            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
-          >
-            Overview
-          </TabsTrigger>
           {!isMobile ? (
             <Fragment>
               <TabsTrigger
@@ -259,12 +253,6 @@ export default function Resources({ onNavigate }: ResourcesProps) {
                 className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
               >
                 Guides
-              </TabsTrigger>
-              <TabsTrigger
-                value="videos"
-                className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
-              >
-                Videos
               </TabsTrigger>
               <TabsTrigger
                 value="glossary"
@@ -283,57 +271,6 @@ export default function Resources({ onNavigate }: ResourcesProps) {
           )}
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-6 bg-white">
-          {/* Featured Resources */}
-          <div>
-            <h2 className="text-lg font-semibold mb-4">Featured Resources</h2>
-            <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'} gap-4`}>
-              {resources.filter(r => r.featured).slice(0, 6).map((resource) => (
-                <Card key={resource.id} className="hover:shadow-md transition-shadow">
-                  <CardContent className="p-4">
-                    <div className="flex items-start gap-3 mb-3">
-                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${getTypeColor(resource.type)}`}>
-                        {getTypeIcon(resource.type)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-medium mb-1 line-clamp-2">{resource.title}</h3>
-                        <p className="text-sm text-muted-foreground line-clamp-2">{resource.description}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <div className="flex items-center gap-1">
-                          <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                          <span className="text-sm">{resource.rating}</span>
-                        </div>
-                        <span className="text-sm text-muted-foreground">•</span>
-                        <span className="text-sm text-muted-foreground">{resource.views.toLocaleString()} views</span>
-                      </div>
-                      {resource.duration && (
-                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <Clock className="w-4 h-4" />
-                          <span>{resource.duration}</span>
-                        </div>
-                      )}
-                    </div>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className={`w-full ${isMobile ? 'touch-target' : ''}`}
-                      onClick={() => {}}
-                    >
-                      {resource.type === 'video' && <Play className="w-4 h-4 mr-2" />}
-                      {resource.type === 'article' && <FileText className="w-4 h-4 mr-2" />}
-                      {resource.type === 'guide' && <BookOpen className="w-4 h-4 mr-2" />}
-                      {resource.type === 'video' ? 'Watch' : 'Read'}
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-
-        </TabsContent>
 
 
         {!isMobile && (
@@ -447,43 +384,6 @@ export default function Resources({ onNavigate }: ResourcesProps) {
               </div>
             </TabsContent>
 
-            <TabsContent value="videos" className="space-y-6 bg-white">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {resources.filter(r => r.type === 'video').map((resource) => (
-                  <Card key={resource.id} className="hover:shadow-md transition-shadow">
-                    <div className="aspect-video bg-muted rounded-t-lg flex items-center justify-center">
-                      <Play className="w-12 h-12 text-muted-foreground" />
-                    </div>
-                    <CardContent className="p-4">
-                      <h3 className="font-medium mb-2">{resource.title}</h3>
-                      <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{resource.description}</p>
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-2">
-                          <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                          <span className="text-sm">{resource.rating}</span>
-                        </div>
-                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <Clock className="w-4 h-4" />
-                          <span>{resource.duration}</span>
-                        </div>
-                      </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full"
-                        onClick={() => {
-                          setSelectedGuide(resource);
-                          setShowGuideModal(true);
-                        }}
-                      >
-                        <Play className="w-4 h-4 mr-2" />
-                        Watch Video
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </TabsContent>
 
           </Fragment>
         )}
