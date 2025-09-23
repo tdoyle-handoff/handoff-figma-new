@@ -1,5 +1,6 @@
 import React, { Suspense } from 'react';
 import Dashboard from './Dashboard';
+import DashboardHome from './DashboardHome';
 
 // Lazy load other components for better performance
 const Tasks = React.lazy(() => import('./Tasks'));
