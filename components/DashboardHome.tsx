@@ -58,7 +58,7 @@ export default function DashboardHome() {
                       <input
                         type="checkbox"
                         checked={t.status === 'completed'}
-                        onChange={(e) => taskCtx.updateTask && taskCtx.updateTask(t.id, e.target.checked ? 'completed' : 'active')}
+                        onChange={(e) => taskCtx.updateTaskStatus && taskCtx.updateTaskStatus(t.id, e.target.checked ? 'completed' : 'active')}
                         className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                         aria-label="Mark complete"
                       />
@@ -82,7 +82,7 @@ export default function DashboardHome() {
                       <input
                         type="checkbox"
                         checked={t.status === 'completed'}
-                        onChange={(e) => taskCtx.updateTask && taskCtx.updateTask(t.id, e.target.checked ? 'completed' : 'active')}
+                        onChange={(e) => taskCtx.updateTaskStatus && taskCtx.updateTaskStatus(t.id, e.target.checked ? 'completed' : 'active')}
                         className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                         aria-label="Mark complete"
                       />
@@ -104,8 +104,8 @@ export default function DashboardHome() {
         <CardHeader className="flex-row items-center justify-between">
           <CardTitle className="text-lg">Calendar</CardTitle>
           <div className="flex items-center gap-2 text-sm">
-            <Button variant="ghost" size="sm" className="h-8 px-2">Month</Button>
-            <Button variant="secondary" size="sm" className="h-8 px-2">Week</Button>
+            <Button variant="ghost" size="sm" className="h-8 px-2" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'calendar' } }))}>Month</Button>
+            <Button variant="secondary" size="sm" className="h-8 px-2" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'calendar' } }))}>Week</Button>
           </div>
         </CardHeader>
         <CardContent>
