@@ -208,7 +208,7 @@ export default function DashboardLayout({
   return (
     <div className="flex h-screen bg-slate-50">
       {/* Sidebar */}
-      <div className="w-64 min-w-[16rem] bg-[#0B1F44] text-white flex flex-col rounded-3xl shadow-xl ring-1 ring-white/10 my-4 ml-4 overflow-hidden">
+      <div className={cn("bg-[#0B1F44] text-white flex flex-col rounded-3xl shadow-xl ring-1 ring-white/10 my-4 ml-4 overflow-hidden transition-all duration-300", sidebarOpen ? "w-64 min-w-[16rem]" : "w-20 min-w-[5rem]")}>
         {/* Header */}
         <div className="p-6 bg-white border-b border-gray-200">
           <div className="flex items-center gap-3">
@@ -395,16 +395,23 @@ export default function DashboardLayout({
             </button>
           </div>
 
-          {sidebarOpen && (
-            <div className="mt-2 pt-2 border-t border-blue-700/30">
+          <div className="mt-2 pt-2 border-t border-blue-700/30">
+            {sidebarOpen ? (
               <button
                 onClick={() => setSidebarOpen(false)}
                 className="text-xs text-blue-300 hover:text-white transition-colors"
               >
                 Collapse
               </button>
-            </div>
-          )}
+            ) : (
+              <button
+                onClick={() => setSidebarOpen(true)}
+                className="text-xs text-blue-300 hover:text-white transition-colors w-full text-center"
+              >
+                Expand
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
