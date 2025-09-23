@@ -286,7 +286,7 @@ export default function DashboardLayout({
                   </button>
 
                   {/* Calendar child under Transaction Checklist */}
-                  {calendarItem && (() => {
+                  {calendarItem && currentPage === 'tasks' && (() => {
                     const CalIcon = calendarItem.icon;
                     return (
 <button
@@ -318,7 +318,7 @@ export default function DashboardLayout({
 
             {Object.entries(groupedNavigation).map(([category, items]) => (
               <React.Fragment key={category}>
-                {sidebarOpen && category !== 'Finding your Dream Home' && category !== 'Purchasing Your Home' && category !== 'Support' && (
+                {sidebarOpen && category !== 'Finding your Dream Home' && category !== 'Purchasing Your Home' && category !== 'Support' && category !== 'Primary' && (
                   <div className="mx-1 mb-2 inline-flex items-center px-3 py-1.5 rounded-full bg-white/10 text-white/90 text-[10px] font-semibold uppercase tracking-wide">
                     {category}
                   </div>
