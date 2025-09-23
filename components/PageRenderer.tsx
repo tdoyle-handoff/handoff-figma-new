@@ -78,13 +78,9 @@ export function PageRenderer({
   const renderPage = () => {
     switch (currentPage) {
       case 'dashboard':
-        return <Dashboard setupData={setupData} />;
+        return <DashboardHome />;
       case 'overview':
-        return (
-          <Suspense fallback={<LoadingSpinner />}>
-            <ComprehensivePropertyAnalysis onNavigate={navigateString} />
-          </Suspense>
-        );
+        return <Dashboard setupData={setupData} />;
       
       case 'property':
         return (
