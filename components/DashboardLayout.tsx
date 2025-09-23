@@ -208,7 +208,7 @@ export default function DashboardLayout({
   return (
     <div className="flex h-screen bg-slate-50">
       {/* Sidebar */}
-      <div className="hidden">
+      <div className="w-64 min-w-[16rem] bg-[#0B1F44] text-white flex flex-col">
         {/* Header */}
         <div className="p-6 bg-white border-b border-gray-200">
           <div className="flex items-center gap-3">
@@ -270,7 +270,7 @@ export default function DashboardLayout({
                     key={tasksItem.id}
                     className={cn(
                       "w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 text-left",
-                      isActive ? "bg-white text-blue-900 shadow-sm" : "text-blue-100 hover:bg-blue-800/50 hover:text-white",
+                      isActive ? "bg-white/10 text-white" : "text-blue-100 hover:bg-blue-800/50 hover:text-white",
                       !sidebarOpen && "justify-center px-3"
                     )}
                     onClick={() => onPageChange(tasksItem.id)}
@@ -294,7 +294,7 @@ export default function DashboardLayout({
                     className={cn(
                       "w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 text-left ml-6",
                       currentPage === calendarItem.id
-                        ? "bg-white text-blue-900 shadow-sm"
+                        ? "bg-white/10 text-white"
                         : "text-blue-100 hover:bg-blue-800/50 hover:text-white",
                       !sidebarOpen && "justify-center px-3 ml-0"
                     )}
@@ -334,7 +334,7 @@ export default function DashboardLayout({
                       className={cn(
                         "w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 text-left",
                         isActive
-                          ? "bg-white text-blue-900 shadow-sm"
+                          ? "bg-white/10 text-white"
                           : "text-blue-100 hover:bg-blue-800/50 hover:text-white",
                         !sidebarOpen && "justify-center px-3"
                       )}
@@ -411,7 +411,7 @@ export default function DashboardLayout({
       {/* Main Content */}
       <div className="relative z-0 flex-1 flex flex-col min-h-0 min-w-0 bg-slate-50">
         {/* Top Navigation Bar */}
-        <header className="px-6 pt-6">
+        <header className="hidden">
           <div className="bg-[#0B1F44] text-white rounded-2xl shadow-lg px-6 py-3 flex items-center justify-between">
             {/* Left: Logo */}
             <div className="flex items-center gap-3">
