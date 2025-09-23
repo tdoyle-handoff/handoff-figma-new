@@ -2638,8 +2638,8 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
               </div>
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2">
-                  <Badge className="bg-violet-100 text-violet-800 text-[12px] px-3 py-1 rounded-full">On Track</Badge>
-                  <Badge className="bg-green-100 text-green-800 text-[12px] px-3 py-1 rounded-full font-semibold">{Math.round(overallProgress)}% Complete</Badge>
+                  <Badge className="bg-accent text-accent-foreground text-[12px] px-3 py-1 rounded-full">On Track</Badge>
+                  <Badge className="bg-primary/15 text-primary text-[12px] px-3 py-1 rounded-full font-semibold">{Math.round(overallProgress)}% Complete</Badge>
                 </div>
                 <Button size="sm" onClick={() => setOpenAddTaskDialog(true)}>
                   <Plus className="w-4 h-4 mr-1" /> Add task
@@ -3122,8 +3122,8 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
       {modalTask && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center">
           <div className="absolute inset-0 bg-black/30" onClick={() => setModalTask(null)} />
-          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[85vh] overflow-auto p-4">
-            <div className="flex items-center justify-between mb-2 px-1">
+          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[85vh] overflow-auto p-4 border border-accent/30">
+            <div className="flex items-center justify-between mb-2 px-3 py-2 bg-accent/10 border-b border-accent/20 rounded-lg">
               <h3 className="text-lg font-semibold truncate pr-4">{modalTask.title}</h3>
               <div className="flex items-center gap-2">
                 <Button
