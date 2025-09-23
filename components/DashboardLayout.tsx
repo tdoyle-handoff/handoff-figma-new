@@ -270,7 +270,7 @@ export default function DashboardLayout({
                     key={tasksItem.id}
                     className={cn(
                       "w-full flex items-center gap-3 px-4 py-2.5 rounded-full transition-all duration-200 text-left",
-                      isActive ? "bg-white/15 text-white shadow-inner ring-1 ring-white/10" : "text-white/70 ring-1 ring-white/10 hover:bg-white/10 hover:text-white",
+                      isActive ? "bg-white/15 text-white shadow-inner" : "text-white/70 hover:bg-white/10 hover:text-white",
                       !sidebarOpen && "justify-center px-3"
                     )}
                     onClick={() => onPageChange(tasksItem.id)}
@@ -294,8 +294,8 @@ export default function DashboardLayout({
                     className={cn(
                       "w-full flex items-center gap-3 px-4 py-2.5 rounded-full transition-all duration-200 text-left ml-6",
                       currentPage === calendarItem.id
-                        ? "bg-white/15 text-white shadow-inner ring-1 ring-white/10"
-                        : "text-white/70 ring-1 ring-white/10 hover:bg-white/10 hover:text-white",
+                        ? "bg-white/15 text-white shadow-inner"
+                        : "text-white/70 hover:bg-white/10 hover:text-white",
                       !sidebarOpen && "justify-center px-3 ml-0"
                     )}
                     aria-current={currentPage === calendarItem.id ? 'page' : undefined}
