@@ -726,29 +726,19 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
         <CollapsibleTrigger className={`${row ? 'w-full px-3 py-3 min-h-[56px] text-left' : (minimal ? 'w-full px-4 py-3 sm:px-5 sm:py-4 min-h-[60px] text-left' : 'w-full px-6 py-5 md:px-7 md:py-6 min-h-[68px] text-left')}`} onClick={(e) => { if (openInWindow) { e.preventDefault(); e.stopPropagation(); openTaskPopup(); } else if (onOpenModal) { e.preventDefault(); e.stopPropagation(); onOpenModal(task); } }}>
           {row ? (
             <div className="grid grid-cols-12 items-center gap-2">
-              <div className="col-span-5 flex items-center gap-2 min-w-0">
+              <div className="col-span-8 flex items-center gap-3 min-w-0">
+                <input
+                  type="checkbox"
+                  checked={isCompleted}
+                  onChange={(e) => { e.stopPropagation(); onUpdateTask && onUpdateTask(task.id, e.target.checked ? 'completed' : 'active'); }}
+                  onClick={(e) => e.stopPropagation()}
+                  className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                  aria-label="Mark complete"
+                />
                 <h4 className={`font-medium text-[13px] ${isCompleted ? 'text-gray-500 line-through' : 'text-gray-900'} truncate m-0`} title={task.title}>{task.title}</h4>
-                {(() => {
-                  const sub = (task.subcategory || '').toLowerCase();
-const labelMap: Record<string, string> = { legal: 'Legal', inspection: 'Inspection', inspections: 'Inspection', financing: 'Financing', mortgage: 'Financing', insurance: 'Insurance' };
-                  const clsMap: Record<string, string> = {
-                    legal: 'bg-red-50 text-red-700 border-red-200',
-                    inspection: 'bg-blue-50 text-blue-700 border-blue-200',
-                    inspections: 'bg-blue-50 text-blue-700 border-blue-200',
-                    financing: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                    mortgage: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                    insurance: 'bg-amber-50 text-amber-700 border-amber-200'
-                  };
-                  const label = labelMap[sub];
-                  const cls = clsMap[sub];
-                  return label ? (
-                    <span className={`shrink-0 inline-flex items-center rounded-full border px-1.5 py-0.5 text-[10px] ${cls}`}>{label}</span>
-                  ) : null;
-                })()}
-              </div>
-              <div className="col-span-2 flex items-center gap-1 text-[12px] text-gray-700">
-                <StatusDot status={task.status} />
-                <span>{simpleTaskStatusLabel(task.status)}</span>
+                <div className="flex-shrink-0 text-gray-400">
+                  {isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                </div>
               </div>
               <div className="col-span-2 text-[12px] text-gray-700 truncate flex items-center gap-1">
                 <div className="flex items-center -space-x-2 mr-1">
@@ -759,21 +749,11 @@ const labelMap: Record<string, string> = { legal: 'Legal', inspection: 'Inspecti
                   ))}
                 </div>
               </div>
-              <div className="col-span-2 text-[12px] text-gray-700">
+              <div className="col-span-2 text-[12px] text-gray-700 text-right">
                 <div>{formatShortDate(task.dueDate)}</div>
                 {task.dueDate && (
                   <div className="text-[11px] text-gray-500">{daysLeft(task.dueDate)}</div>
                 )}
-              </div>
-              <div className="col-span-1 flex items-center justify-end gap-2">
-                <span className={priorityPill(task.priority)}>{priorityLabel(task.priority)}</span>
-                <div className="flex-shrink-0">
-                  {isOpen ? (
-                    <ChevronDown className="w-4 h-4 text-gray-400" />
-                  ) : (
-                    <ChevronRight className="w-4 h-4 text-gray-400" />
-                  )}
-                </div>
               </div>
             </div>
           ) : (
@@ -1851,12 +1831,10 @@ const TaskTableCard = ({ title, tasks, onNavigate, onUpdateTask, onUpdateTaskFie
         <CardTitle className="text-sm font-semibold tracking-[-0.01em] text-gray-900">{title}</CardTitle>
       </CardHeader>
       <CardContent className="pt-0">
-        <div className="grid grid-cols-12 text-[12px] font-medium text-gray-500 px-2 py-1.5">
-          <div className="col-span-5">Title</div>
-          <div className="col-span-2">Status</div>
+        <div className="grid grid-cols-12 text-[12px] font-medium text-gray-700 bg-indigo-50 rounded-md px-3 py-2">
+          <div className="col-span-8">Name</div>
           <div className="col-span-2">Assignee</div>
-          <div className="col-span-2">Due Date</div>
-          <div className="col-span-1 text-right">Priority</div>
+          <div className="col-span-2 text-right">Due Date</div>
         </div>
         <div className="divide-y">
           {sortedTasks.map((task) => (
@@ -1878,12 +1856,10 @@ const TaskTableCardGrouped = ({ title, groups, onNavigate, onUpdateTask, onUpdat
         <CardTitle className="text-[15px] font-semibold tracking-[-0.01em] text-gray-900">{title}</CardTitle>
       </CardHeader>
       <CardContent className="pt-0">
-        <div className="grid grid-cols-12 text-[12px] font-medium text-gray-500 px-2 py-1.5">
-          <div className="col-span-5">Title</div>
-          <div className="col-span-2">Status</div>
+        <div className="grid grid-cols-12 text-[12px] font-medium text-gray-700 bg-indigo-50 rounded-md px-3 py-2">
+          <div className="col-span-8">Name</div>
           <div className="col-span-2">Assignee</div>
-          <div className="col-span-2">Due Date</div>
-          <div className="col-span-1 text-right">Priority</div>
+          <div className="col-span-2 text-right">Due Date</div>
         </div>
         <div className="divide-y">
           {present.map((g) => {
