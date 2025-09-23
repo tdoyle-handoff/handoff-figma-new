@@ -33,7 +33,8 @@ export default function DashboardHome() {
       // upcoming = later in this week (after today)
       return isSameWeek(dt, today, { weekStartsOn: 1 }) && dt > today;
     })
-    .sort((a,b) => (parseDate(a.dueDate)!.getTime() - parseDate(b.dueDate)!.getTime()));
+    .sort((a,b) => (parseDate(a.dueDate)!.getTime() - parseDate(b.dueDate)!.getTime()))
+    .slice(0, 5);
 
   const weekStart = startOfWeek(today, { weekStartsOn: 1 });
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
