@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
 
 export type PageType =
+  | 'dashboard'
   | 'overview'
   | 'tasks'
   | 'property'
@@ -64,7 +65,7 @@ const getSavedPreviousPage = (): PageType | null => {
 // Helper function to validate if a string is a valid PageType
 const isValidPageType = (page: string): page is PageType => {
   const validPages: PageType[] = [
-    'overview', 'tasks', 'property', 'legal', 'financing',
+    'dashboard', 'overview', 'tasks', 'property', 'legal', 'financing',
     'inspections', 'insurance', 'documents', 'resources',
     'team', 'communications', 'mortgage-calculator',
     'closing-calculator', 'calendar', 'settings', 'dev-tools', 'dev-config'
@@ -97,14 +98,15 @@ const savePreviousPage = (page: PageType | null) => {
 export function useNavigation(): NavigationState & NavigationActions {
   // Initialize state with saved page or default to 'tasks'
   const [currentPage, setCurrentPage] = useState<PageType>(() => {
-    return getSavedPage() || 'tasks';
+    return getSavedPage() || 'dashboard';
   });
   
   const [previousPage, setPreviousPage] = useState<PageType | null>(() => {
     return getSavedPreviousPage();
   });
   const pageTitles = useMemo(() => ({
-    'overview': 'Dashboard - Handoff',
+    'dashboard': 'Dashboard - Handoff',
+    'overview': 'Analytics & Budget - Handoff',
     'tasks': 'Tasks - Handoff',
     'property': 'Property Search - Handoff',
     'legal': 'Legal - Handoff',
@@ -124,6 +126,7 @@ export function useNavigation(): NavigationState & NavigationActions {
   } as const), []);
 
   const pageDescriptions = useMemo(() => ({
+    'dashboard': 'Your current tasks and calendar at a glance',
     'overview': 'Analytics, budget tracking, and transaction progress overview',
     'tasks': 'Transaction checklist and important milestones to keep you on track',
     'property': 'Search for properties, save favorites, and analyze market data',
