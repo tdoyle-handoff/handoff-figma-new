@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { useTaskContext, Task } from './TaskContext';
 import { addDays, format, isSameDay, isSameWeek, parseISO, startOfWeek } from 'date-fns';
-import { FileText, ExternalLink, CalendarDays, DollarSign, Clock, Search as SearchIcon } from 'lucide-react';
+import { FileText, ExternalLink, CalendarDays, DollarSign, Clock, CheckSquare, TrendingUp, BookOpen, Settings as SettingsIcon, Building } from 'lucide-react';
 
 function parseDate(d?: string): Date | null {
   if (!d) return null;
@@ -256,38 +256,35 @@ export default function DashboardHome() {
         </div>
       </Card>
 
-      {/* Property search (quick) */}
+      {/* Quick links */}
       <Card className="modern-card">
         <CardHeader>
-          <CardTitle className="text-lg">Property search</CardTitle>
+          <CardTitle className="text-lg">Quick links</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <input
-              className="flex-1 h-9 px-3 rounded-md border border-gray-300 text-sm"
-              placeholder="City, ZIP, or address"
-              value={qLocation}
-              onChange={(e) => setQLocation(e.target.value)}
-            />
-            <input
-              className="w-40 h-9 px-3 rounded-md border border-gray-300 text-sm"
-              placeholder="Max price"
-              value={qPriceMax}
-              onChange={(e) => setQPriceMax(e.target.value)}
-            />
-            <Button
-              className="h-9"
-              onClick={() => {
-                try {
-                  localStorage.setItem('handoff-quick-search', JSON.stringify({ location: qLocation, priceMax: qPriceMax }));
-                } catch {}
-                window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'property' } }));
-              }}
-            >
-              <SearchIcon className="w-4 h-4 mr-2" /> Search
-            </Button>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <button className="flex items-center gap-2 h-10 px-3 rounded-md bg-muted/60 hover:bg-muted transition-colors" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'tasks' } }))}>
+              <CheckSquare className="w-4 h-4" /> <span>Transaction Checklist</span>
+            </button>
+            <button className="flex items-center gap-2 h-10 px-3 rounded-md bg-muted/60 hover:bg-muted transition-colors" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'documents' } }))}>
+              <FileText className="w-4 h-4" /> <span>Contract Builder</span>
+            </button>
+            <button className="flex items-center gap-2 h-10 px-3 rounded-md bg-muted/60 hover:bg-muted transition-colors" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'property' } }))}>
+              <Building className="w-4 h-4" /> <span>Property Search</span>
+            </button>
+            <button className="flex items-center gap-2 h-10 px-3 rounded-md bg-muted/60 hover:bg-muted transition-colors" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'overview' } }))}>
+              <TrendingUp className="w-4 h-4" /> <span>Analytics & Budget</span>
+            </button>
+            <button className="flex items-center gap-2 h-10 px-3 rounded-md bg-muted/60 hover:bg-muted transition-colors" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'resources' } }))}>
+              <BookOpen className="w-4 h-4" /> <span>Education Hub</span>
+            </button>
+            <button className="flex items-center gap-2 h-10 px-3 rounded-md bg-muted/60 hover:bg-muted transition-colors" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'calendar' } }))}>
+              <CalendarDays className="w-4 h-4" /> <span>Calendar</span>
+            </button>
+            <button className="flex items-center gap-2 h-10 px-3 rounded-md bg-muted/60 hover:bg-muted transition-colors" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'settings' } }))}>
+              <SettingsIcon className="w-4 h-4" /> <span>Settings</span>
+            </button>
           </div>
-          <div className="mt-3 text-xs text-muted-foreground">Your inputs save locally to prefill filters on the search page.</div>
         </CardContent>
       </Card>
     </div>
