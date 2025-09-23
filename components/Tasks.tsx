@@ -736,6 +736,23 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                   aria-label="Mark complete"
                 />
                 <h4 className={`font-medium text-[13px] ${isCompleted ? 'text-gray-500 line-through' : 'text-gray-900'} truncate m-0`} title={task.title}>{task.title}</h4>
+                {(() => {
+                  const sub = (task.subcategory || '').toLowerCase();
+                  const labelMap: Record<string, string> = { legal: 'Legal', inspection: 'Inspection', inspections: 'Inspection', financing: 'Financing', mortgage: 'Financing', insurance: 'Insurance' };
+                  const clsMap: Record<string, string> = {
+                    legal: 'bg-red-50 text-red-700 border-red-200',
+                    inspection: 'bg-blue-50 text-blue-700 border-blue-200',
+                    inspections: 'bg-blue-50 text-blue-700 border-blue-200',
+                    financing: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                    mortgage: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                    insurance: 'bg-amber-50 text-amber-700 border-amber-200'
+                  };
+                  const label = labelMap[sub];
+                  const cls = clsMap[sub];
+                  return label ? (
+                    <span className={`shrink-0 inline-flex items-center rounded-full border px-1.5 py-0.5 text-[10px] ${cls}`}>{label}</span>
+                  ) : null;
+                })()}
                 <div className="flex-shrink-0 text-gray-400">
                   {isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                 </div>
