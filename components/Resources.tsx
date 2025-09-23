@@ -245,18 +245,18 @@ export default function Resources({ onNavigate }: ResourcesProps) {
   return (
     <div className="space-y-6">
       <Tabs defaultValue="guides" className="w-full">
-        <TabsList className="w-full bg-transparent h-auto p-0 border-b border-gray-200 rounded-none flex justify-start overflow-x-auto">
+        <TabsList className="w-full bg-transparent h-auto p-0 rounded-none flex justify-start overflow-x-auto">
           {!isMobile ? (
             <Fragment>
               <TabsTrigger
                 value="guides"
-                className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
+                className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 rounded-none pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
               >
                 Guides
               </TabsTrigger>
               <TabsTrigger
                 value="glossary"
-                className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
+                className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 rounded-none pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
               >
                 Glossary
               </TabsTrigger>
@@ -264,7 +264,7 @@ export default function Resources({ onNavigate }: ResourcesProps) {
           ) : (
             <TabsTrigger
               value="guides"
-              className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
+              className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 rounded-none pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap"
             >
               Resources
             </TabsTrigger>
