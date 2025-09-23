@@ -233,13 +233,6 @@ export default function Settings({ onSignOut, setupData, onNavigate }: SettingsP
             <span className={isMobile ? 'hidden' : 'inline'}>Profile</span>
           </TabsTrigger>
           <TabsTrigger
-            value="setup"
-            className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap flex items-center gap-2"
-          >
-            <Home className="w-4 h-4" />
-            <span className={isMobile ? 'hidden' : 'inline'}>Setup</span>
-          </TabsTrigger>
-          <TabsTrigger
             value="notifications"
             className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap flex items-center gap-2"
           >
@@ -254,13 +247,6 @@ export default function Settings({ onSignOut, setupData, onNavigate }: SettingsP
               >
                 <Shield className="w-4 h-4" />
                 <span>Privacy</span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="team"
-                className="bg-transparent text-gray-600 hover:text-gray-900 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none border-b-2 border-transparent pb-3 px-6 font-medium transition-all duration-200 whitespace-nowrap flex items-center gap-2"
-              >
-                <Users className="w-4 h-4" />
-                <span>Team</span>
               </TabsTrigger>
               <TabsTrigger
                 value="support"
@@ -567,111 +553,6 @@ export default function Settings({ onSignOut, setupData, onNavigate }: SettingsP
           </Card>
         </TabsContent>
 
-        {/* Property Setup Tab */}
-        <TabsContent value="setup" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Property Setup</CardTitle>
-              <CardDescription>Review and edit your property setup information</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <h3 className="font-medium">Current Setup Information</h3>
-                <div className="grid gap-4">
-                  <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
-                    <div>
-                      <Label className="text-sm font-medium">Buying Stage</Label>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {formatBuyingStage(currentSetupData.buyingStage)}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
-                    <div>
-                      <Label className="text-sm font-medium">Experience Level</Label>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {formatExperienceLevel(currentSetupData.experienceLevel)}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
-                    <div>
-                      <Label className="text-sm font-medium">Property Address</Label>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {currentSetupData.propertyAddress}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
-                    <div>
-                      <Label className="text-sm font-medium">Primary Goal</Label>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {formatPrimaryGoal(currentSetupData.primaryGoal)}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
-                    <div>
-                      <Label className="text-sm font-medium">Timeframe</Label>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {formatTimeframe(currentSetupData.timeframe)}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
-                    <div>
-                      <Label className="text-sm font-medium">Pre-approval Status</Label>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {currentSetupData.hasPreApproval ? 'Yes, I have pre-approval' : 'No, not yet'}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <Separator />
-
-              <div className="space-y-4">
-                <h3 className="font-medium">Setup Actions</h3>
-                <div className="space-y-3">
-                  <Button onClick={handleEditSetup} className="w-full justify-start">
-                    <Edit3 className="w-4 h-4 mr-2" />
-                    Edit Property Setup
-                    <span className="ml-auto text-xs text-muted-foreground">
-                      Update your responses
-                    </span>
-                  </Button>
-
-                  <Button 
-                    variant="outline" 
-                    onClick={handleResetSetup} 
-                    className="w-full justify-start text-orange-600 border-orange-200 hover:bg-orange-50"
-                  >
-                    <Clock className="w-4 h-4 mr-2" />
-                    Start Over Completely
-                    <span className="ml-auto text-xs text-muted-foreground">
-                      Clear all responses
-                    </span>
-                  </Button>
-                </div>
-
-                <Alert>
-                  <SettingsIcon className="h-4 w-4" />
-                  <AlertDescription>
-                    <strong>Edit Setup:</strong> Update your existing responses while keeping your progress.
-                    <br />
-                    <strong>Start Over:</strong> Clear everything and begin the setup process from scratch.
-                  </AlertDescription>
-                </Alert>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
 
         {/* Notifications Tab */}
         <TabsContent value="notifications" className="space-y-6">
@@ -839,115 +720,6 @@ export default function Settings({ onSignOut, setupData, onNavigate }: SettingsP
           </TabsContent>
         )}
 
-        {/* Team Tab - only show on desktop */}
-        {!isMobile && (
-          <TabsContent value="team" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Team Management</CardTitle>
-                <CardDescription>Manage your real estate team members and their access</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-4">
-                  <h3 className="font-medium">Current Team Members</h3>
-                  <div className="space-y-3">
-                    {teamMembers.map((member) => (
-                      <div key={member.id} className="flex items-center justify-between p-3 border rounded-lg">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                              <User className="w-4 h-4" />
-                            </div>
-                            <div>
-                              <div className="font-medium">{member.name}</div>
-                              <div className="text-sm text-muted-foreground">{member.role}</div>
-                            </div>
-                          </div>
-                          <div className="mt-2 space-y-1">
-                            <div className="text-xs text-muted-foreground flex items-center gap-2">
-                              <Mail className="w-3 h-3" />
-                              {member.email}
-                            </div>
-                            <div className="text-xs text-muted-foreground flex items-center gap-2">
-                              <Phone className="w-3 h-3" />
-                              {member.phone}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Badge variant={member.status === 'active' ? 'default' : 'secondary'}>
-                            {member.status}
-                          </Badge>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleRemoveTeamMember(member.id)}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <Separator />
-
-                <div className="space-y-4">
-                  <h3 className="font-medium">Add Team Member</h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Name</Label>
-                      <Input
-                        value={newMember.name}
-                        onChange={(e) => setNewMember({...newMember, name: e.target.value})}
-                        placeholder="Full name"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Role</Label>
-                      <Select value={newMember.role} onValueChange={(value) => setNewMember({...newMember, role: value})}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select role" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Real Estate Agent">Real Estate Agent</SelectItem>
-                          <SelectItem value="Lender">Lender</SelectItem>
-                          <SelectItem value="Inspector">Inspector</SelectItem>
-                          <SelectItem value="Attorney">Attorney</SelectItem>
-                          <SelectItem value="Insurance Agent">Insurance Agent</SelectItem>
-                          <SelectItem value="Title Company">Title Company</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Email</Label>
-                      <Input
-                        type="email"
-                        value={newMember.email}
-                        onChange={(e) => setNewMember({...newMember, email: e.target.value})}
-                        placeholder="email@example.com"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Phone</Label>
-                      <Input
-                        type="tel"
-                        value={newMember.phone}
-                        onChange={(e) => setNewMember({...newMember, phone: e.target.value})}
-                        placeholder="(555) 123-4567"
-                      />
-                    </div>
-                  </div>
-                  <Button onClick={handleAddTeamMember}>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Team Member
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        )}
 
         {/* Support Tab - only show on desktop */}
         {!isMobile && (
@@ -965,34 +737,12 @@ export default function Settings({ onSignOut, setupData, onNavigate }: SettingsP
                       variant="outline"
                       className="justify-start"
                       onClick={() => {
-                        // Open help documentation
-                        window.open('https://www.builder.io/c/docs/projects', '_blank');
-                      }}
-                    >
-                      <HelpCircle className="w-4 h-4 mr-2" />
-                      View Help Documentation
-                    </Button>
-                    <Button
-                      variant="outline"
-                      className="justify-start"
-                      onClick={() => {
                         // Open support contact
                         window.open('mailto:support@handoff.com?subject=Support Request&body=Please describe your issue...', '_blank');
                       }}
                     >
                       <Mail className="w-4 h-4 mr-2" />
                       Contact Support
-                    </Button>
-                    <Button
-                      variant="outline"
-                      className="justify-start"
-                      onClick={() => {
-                        // Open community forum
-                        window.open('https://github.com/BuilderIO/builder/discussions', '_blank');
-                      }}
-                    >
-                      <Globe className="w-4 h-4 mr-2" />
-                      Visit Community Forum
                     </Button>
                   </div>
                 </div>

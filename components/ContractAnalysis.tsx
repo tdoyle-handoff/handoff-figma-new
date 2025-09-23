@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import { FileText, Upload, Eye, Download, Bot, AlertTriangle, CheckCircle, Clock, Calendar, DollarSign, AlertCircle, FileCheck, Search, Filter, Trash2, Share, User, MapPin, Info, Zap, Shield } from 'lucide-react';
 import { DarkDownloadButton } from './ui/download-button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
@@ -14,6 +14,8 @@ import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { useIsMobile } from './ui/use-mobile';
+import supabase, { authHelpers, hasPlaceholderCredentials } from '../utils/supabase/client';
+import { projectId } from '../utils/supabase/info';
 
 interface ContractDocument {
   id: string;
@@ -88,16 +90,103 @@ export default function ContractAnalysis({ onNavigate }: ContractAnalysisProps) 
   const [analyzing, setAnalyzing] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [showDocumentViewer, setShowDocumentViewer] = useState(false);
+  const [docType, setDocType] = useState<ContractDocument['type']>('purchase-agreement');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const isMobile = useIsMobile();
 
+  // Helpers to map DB row -> UI contract
+  const formatFileSize = (bytes: number): string => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+  };
+
+  const mapRowToContract = (row: any): ContractDocument => {
+    const analysis = row.analysis || null;
+    const keyPoints: ContractKeyPoints | undefined = analysis ? {
+      summary: analysis.summary || '',
+      purchasePrice: analysis.purchasePrice || '',
+      earnestMoney: analysis.earnestMoney || '',
+      closingDate: analysis.closingDate || '',
+      inspectionPeriod: analysis.inspectionPeriod || '',
+      financingContingency: analysis.financingContingency || '',
+      appraisalContingency: analysis.appraisalContingency || '',
+      contingencies: Array.isArray(analysis.contingencies) ? analysis.contingencies : [],
+      importantDates: Array.isArray(analysis.importantDates) ? analysis.importantDates : [],
+      risks: Array.isArray(analysis.risks) ? analysis.risks : [],
+      recommendations: Array.isArray(analysis.recommendations) ? analysis.recommendations : [],
+      keyTerms: Array.isArray(analysis.keyTerms) ? analysis.keyTerms : [],
+    } : undefined;
+
+    return {
+      id: row.id,
+      name: row.name,
+      type: (row.type || 'purchase-agreement') as ContractDocument['type'],
+      size: row.size_bytes ? formatFileSize(row.size_bytes) : '—',
+      uploadDate: row.uploaded_at || row.created_at,
+      status: row.status,
+      analysisComplete: row.status === 'analyzed',
+      keyPoints,
+      riskLevel: (row.risk_level || 'medium') as ContractDocument['riskLevel'],
+    };
+  };
+
+  const fetchContracts = async () => {
+    if (!supabase) return;
+    const user = await authHelpers.getCurrentUser();
+    if (!user) return;
+    const { data, error } = await supabase
+      .from('contracts')
+      .select('*')
+      .order('uploaded_at', { ascending: false });
+    if (error) {
+      console.error('Failed to load contracts:', error);
+      return;
+    }
+    setContracts((data || []).map(mapRowToContract));
+  };
+
+  useEffect(() => {
+    fetchContracts();
+    if (!supabase) return;
+    (async () => {
+      const user = await authHelpers.getCurrentUser();
+      if (!user) return;
+      const channel = supabase.channel('contracts-changes')
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'contracts',
+          filter: `user_id=eq.${user.id}`,
+        }, (payload) => {
+          const row = payload.new || payload.old;
+          if (!row) return;
+          setContracts((prev) => {
+            const without = prev.filter((c) => c.id !== row.id);
+            return [mapRowToContract(row), ...without];
+          });
+        })
+        .subscribe();
+      return () => { channel.unsubscribe(); };
+    })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const functionBaseUrl = useMemo(() => {
+    if (!projectId) return '';
+    return `https://${projectId}.supabase.co/functions/v1/make-server-a24396d5`;
+  }, []);
 
   const handleFileUpload = async (files: FileList | File[]) => {
     const fileArray = Array.from(files);
     
     for (const file of fileArray) {
-      if (file.type !== 'application/pdf' && !file.type.includes('document')) {
-        alert('Please upload PDF or document files only.');
+      const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+      const isDoc = file.type.includes('word') || file.name.toLowerCase().endsWith('.doc') || file.name.toLowerCase().endsWith('.docx');
+      if (!isPdf && !isDoc) {
+        alert('Please upload PDF or DOC/DOCX files only.');
         continue;
       }
 
@@ -106,42 +195,110 @@ export default function ContractAnalysis({ onNavigate }: ContractAnalysisProps) 
         continue;
       }
 
-      const newContract: ContractDocument = {
-        id: `contract-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        name: file.name,
-        type: 'purchase-agreement',
+      if (!supabase) {
+        alert('Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
+        continue;
+      }
+
+      const user = await authHelpers.getCurrentUser();
+      if (!user) {
+        alert('You must be signed in to upload.');
+        continue;
+      }
+
+      // 1) Insert row
+      const insert = await supabase
+        .from('contracts')
+        .insert({
+          user_id: user.id,
+          name: file.name,
+          mime_type: file.type || (isPdf ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'),
+          size_bytes: file.size,
+          type: docType,
+          status: 'uploaded',
+          risk_level: 'medium',
+        })
+        .select('*')
+        .single();
+      if (insert.error || !insert.data) {
+        console.error('Insert contract error:', insert.error);
+        alert('Failed to create contract record.');
+        continue;
+      }
+
+      const row = insert.data;
+      const path = `${user.id}/${row.id}/${file.name}`;
+
+      // 2) Upload to storage
+      const upload = await supabase.storage.from('contracts').upload(path, file, {
+        upsert: true,
+        contentType: file.type,
+      });
+      if (upload.error) {
+        console.error('Upload error:', upload.error);
+        alert('Failed to upload file.');
+        continue;
+      }
+
+      // 3) Patch row with storage location
+      const patch = await supabase
+        .from('contracts')
+        .update({ storage_bucket: 'contracts', storage_path: path })
+        .eq('id', row.id)
+        .select('*')
+        .single();
+      if (patch.error || !patch.data) {
+        console.error('Patch contract error:', patch.error);
+        alert('Failed to update contract record.');
+        continue;
+      }
+
+      // Add to UI list as analyzing (optimistic)
+      setContracts(prev => [{
+        id: patch.data.id,
+        name: patch.data.name,
+        type: patch.data.type || 'purchase-agreement',
         size: formatFileSize(file.size),
-        uploadDate: new Date().toISOString(),
+        uploadDate: patch.data.uploaded_at || new Date().toISOString(),
         status: 'analyzing',
-        file,
         analysisComplete: false,
         riskLevel: 'medium'
-      };
-
-      setContracts(prev => [...prev, newContract]);
+      }, ...prev]);
       setAnalyzing(true);
 
-      // Simulate analysis (placeholder for real AI analysis)
-      setTimeout(() => {
-        setContracts(prev => prev.map(contract =>
-          contract.id === newContract.id
-            ? { ...contract, status: 'analyzed', analysisComplete: true }
-            : contract
-        ));
+      // 4) Invoke Edge Function to analyze
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      if (!token) {
+        alert('No auth token available. Please sign in again.');
+        continue;
+      }
+
+      try {
+        const resp = await fetch(`${functionBaseUrl}/contracts/analyze`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ contract_id: patch.data.id }),
+        });
+        if (!resp.ok) {
+          const t = await resp.text();
+          console.error('Analyze failed:', t);
+        }
+      } catch (e) {
+        console.error('Analyze request error:', e);
+      } finally {
         setAnalyzing(false);
-      }, 3000);
+      }
     }
 
     setShowUpload(false);
   };
 
-  const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-  };
+  // Temporary helper removed (now using real analysis)
+  // const generateMockKeyPoints = ... removed
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -254,7 +411,34 @@ export default function ContractAnalysis({ onNavigate }: ContractAnalysisProps) 
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); setShowDocumentViewer(true); }}>
+                        <Button variant="outline" size="sm" onClick={async (e) => { 
+                          e.stopPropagation(); 
+                          // Generate signed URL to view document if available
+                          try {
+                            const user = await authHelpers.getCurrentUser();
+                            if (!user || !supabase) {
+                              setShowDocumentViewer(true);
+                              return;
+                            }
+                            // Find the backing row for this contract by id
+                            const { data, error } = await supabase
+                              .from('contracts')
+                              .select('storage_bucket, storage_path')
+                              .eq('id', contract.id)
+                              .single();
+                            if (!error && data?.storage_bucket && data?.storage_path) {
+                              const { data: urlData } = await supabase
+                                .storage
+                                .from(data.storage_bucket)
+                                .createSignedUrl(data.storage_path, 60 * 60);
+                              if (urlData?.signedUrl) {
+                                window.open(urlData.signedUrl, '_blank');
+                                return;
+                              }
+                            }
+                          } catch {}
+                          setShowDocumentViewer(true); 
+                        }}>
                           <Eye className="w-4 h-4" />
                         </Button>
                         <DarkDownloadButton
@@ -600,7 +784,7 @@ export default function ContractAnalysis({ onNavigate }: ContractAnalysisProps) 
           <div className="space-y-4">
             <div>
               <label className="text-sm font-medium mb-2 block">Document Type</label>
-              <Select defaultValue="purchase-agreement">
+              <Select value={docType} onValueChange={(v) => setDocType(v as ContractDocument['type'])}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -650,7 +834,7 @@ export default function ContractAnalysis({ onNavigate }: ContractAnalysisProps) 
             <Alert>
               <Shield className="h-4 w-4" />
               <AlertDescription>
-                <strong>Privacy Notice:</strong> Your contract documents are analyzed securely and are not stored permanently. Analysis is completed locally and privately.
+                <strong>Privacy Notice:</strong> Your contract documents are stored privately in Supabase and analyzed securely using OpenAI. Files are not publicly accessible and are accessed via short-lived signed URLs.
               </AlertDescription>
             </Alert>
           </div>

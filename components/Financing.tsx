@@ -609,7 +609,7 @@ export default function Financing() {
     { name: 'Employment Verification', status: 'pending', required: true },
     { name: 'Asset Verification', status: 'pending', required: true },
     { name: 'Insurance Binder', status: 'needed', required: true },
-    { name: 'HOA Documents', status: 'needed', required: false },
+    { name: 'Homeowners Association (HOA) Documents', status: 'needed', required: false },
   ];
 
   const getStatusIcon = (status: string) => {
@@ -946,7 +946,7 @@ export default function Financing() {
                   <span className="font-semibold">$125</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm">HOA Fee</span>
+                  <span className="text-sm">Homeowners Association (HOA) Fee</span>
                   <span className="font-semibold">$75</span>
                 </div>
                 <div className="border-t pt-2">

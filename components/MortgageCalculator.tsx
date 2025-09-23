@@ -204,7 +204,7 @@ export default function MortgageCalculator({ onBack }: MortgageCalculatorProps) 
                       {downPaymentPercent.toFixed(1)}% of home price
                     </span>
                     <Badge variant={downPaymentPercent < 20 ? 'destructive' : 'secondary'}>
-                      {downPaymentPercent < 20 ? 'PMI Required' : 'No PMI'}
+                      {downPaymentPercent < 20 ? 'Private Mortgage Insurance (PMI) Required' : 'No Private Mortgage Insurance (PMI)'}
                     </Badge>
                   </div>
                 </div>
@@ -259,7 +259,7 @@ export default function MortgageCalculator({ onBack }: MortgageCalculatorProps) 
                 Additional Costs
               </CardTitle>
               <CardDescription>
-                Include property taxes, insurance, and HOA fees for total monthly payment
+                Include property taxes, insurance, and Homeowners Association (HOA) fees for total monthly payment
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -299,7 +299,7 @@ export default function MortgageCalculator({ onBack }: MortgageCalculatorProps) 
               </div>
 
               <div>
-                <Label htmlFor="hoaFees">Annual HOA Fees</Label>
+                <Label htmlFor="hoaFees">Annual Homeowners Association (HOA) Fees</Label>
                 <Input
                   id="hoaFees"
                   type="text"
@@ -319,8 +319,8 @@ export default function MortgageCalculator({ onBack }: MortgageCalculatorProps) 
                 <Alert>
                   <Info className="h-4 w-4" />
                   <AlertDescription>
-                    <strong>PMI Required:</strong> Your down payment is less than 20%, so you'll need Private Mortgage Insurance.
-                    Estimated PMI: {formatCurrency(pmi)}/year ({formatCurrency(pmi / 12)}/month)
+                    <strong>Private Mortgage Insurance (PMI) Required:</strong> Your down payment is less than 20%, so you'll need Private Mortgage Insurance (PMI).
+                    Estimated Private Mortgage Insurance (PMI): {formatCurrency(pmi)}/year ({formatCurrency(pmi / 12)}/month)
                   </AlertDescription>
                 </Alert>
               )}
@@ -358,13 +358,13 @@ export default function MortgageCalculator({ onBack }: MortgageCalculatorProps) 
                   </div>
                   {results.monthlyPmi > 0 && (
                     <div className="flex justify-between">
-                      <span className="text-sm">PMI</span>
+                      <span className="text-sm">Private Mortgage Insurance (PMI)</span>
                       <span className="text-sm font-medium">{formatCurrency(results.monthlyPmi)}</span>
                     </div>
                   )}
                   {results.monthlyHoa > 0 && (
                     <div className="flex justify-between">
-                      <span className="text-sm">HOA Fees</span>
+                      <span className="text-sm">Homeowners Association (HOA) Fees</span>
                       <span className="text-sm font-medium">{formatCurrency(results.monthlyHoa)}</span>
                     </div>
                   )}

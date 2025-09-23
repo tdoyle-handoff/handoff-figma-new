@@ -14,6 +14,7 @@ import attomComprehensiveRoutes from './attom-comprehensive.ts';
 import attomOfficialPatternsRoutes from './attom-official-patterns.ts';
 import propertyFieldMappingsRoutes from './property-field-mappings.ts';
 import apiKeyManagerRoutes from './api-key-manager.ts';
+import contractsRoutes from './contracts.ts';
 
 const app = new Hono();
 
@@ -60,6 +61,7 @@ app.route('/make-server-a24396d5', attomComprehensiveRoutes);
 app.route('/make-server-a24396d5', attomOfficialPatternsRoutes);
 app.route('/make-server-a24396d5', propertyFieldMappingsRoutes);
 app.route('/make-server-a24396d5', apiKeyManagerRoutes);
+app.route('/make-server-a24396d5', contractsRoutes);
 
 // Catch-all for unmatched routes
 app.get('/make-server-a24396d5/*', (c) => {

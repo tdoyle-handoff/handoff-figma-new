@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { cn } from './ui/utils';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
 import { Badge } from './ui/badge';
 import { Separator } from './ui/separator';
 import { usePropertyContext } from './PropertyContext';
@@ -25,9 +26,11 @@ import {
   Building,
   BarChart3,
   ShoppingCart,
-  Code
+  Code,
+  Calendar
 } from 'lucide-react';
 import type { PageType } from '../hooks/useNavigation';
+import { useTaskContext, TaskPhase } from './TaskContext';
 
 interface NavigationItem {
   id: PageType;
@@ -64,12 +67,15 @@ export default function DashboardLayout({
 
   // Navigation items organized by workflow categories
   const navigationItems: NavigationItem[] = [
+    // Purchasing Your Home (prioritized)
+    { id: 'tasks', label: 'Transaction Checklist', icon: CheckSquare, category: 'Purchasing Your Home' },
+
     // Finding your Dream Home
     { id: 'property', label: 'Property Search', icon: Home, category: 'Finding your Dream Home' },
     { id: 'overview', label: 'Analytics & Budget', icon: TrendingUp, category: 'Finding your Dream Home' },
 
     // Purchasing Your Home
-    { id: 'tasks', label: 'Transaction Checklist', icon: CheckSquare, category: 'Purchasing Your Home' },
+    { id: 'calendar', label: 'Calendar', icon: Calendar, category: 'Purchasing Your Home' },
     { id: 'documents', label: 'Contract Builder', icon: FileText, category: 'Purchasing Your Home' },
 
     // Support
@@ -126,6 +132,62 @@ export default function DashboardLayout({
 
   const completionStatus = getCompletionStatus();
 
+  // Phases for header stepper (only used on Tasks page)
+  const taskCtx = useTaskContext();
+  const headerPhases = taskCtx?.taskPhases || [];
+
+  const HeaderPhaseStepper = ({ phases, currentId, onSelect }: { phases: TaskPhase[]; currentId?: string; onSelect: (id: string) => void }) => {
+    const computeCurrentIndex = () => {
+      if (currentId) {
+        const idx = phases.findIndex(p => p.id === currentId);
+        if (idx >= 0) return idx;
+      }
+      const activeIdx = phases.findIndex(p => p.status === 'active');
+      if (activeIdx >= 0) return activeIdx;
+      const firstIncomplete = phases.findIndex(p => {
+        const total = p.tasks.length || 0;
+        const done = p.tasks.filter(t => t.status === 'completed').length;
+        return done < total;
+      });
+      return firstIncomplete >= 0 ? firstIncomplete : Math.max(0, phases.length - 1);
+    };
+    const cur = computeCurrentIndex();
+
+    const stateAt = (i: number) => (i < cur ? 'completed' : i === cur ? 'current' : 'upcoming');
+
+    return (
+      <div className="hidden xl:flex items-center isolate rounded-full bg-white px-1.5 py-1 border border-gray-200 shadow-sm">
+        {phases.map((p, i) => {
+          const st = stateAt(i);
+          const isCurrent = st === 'current';
+          const base = 'relative inline-flex items-center h-11 px-5 rounded-full text-sm font-medium transition-colors';
+          const colors = isCurrent
+            ? 'bg-blue-600 text-white'
+            : 'bg-white text-gray-700';
+          const ring = isCurrent ? '' : 'ring-1 ring-gray-200';
+          const z = isCurrent ? 'z-20' : i < cur ? 'z-10' : 'z-0';
+          return (
+            <button
+              key={p.id}
+              className={`${base} ${colors} ${ring} ${z} ${i>0 ? 'ml-3' : ''}`}
+              aria-current={isCurrent ? 'step' : undefined}
+              onClick={() => onSelect(p.id)}
+              title={p.title}
+            >
+              {p.title}
+              {i < phases.length - 1 && (
+                <span
+                  aria-hidden
+                  className={`${isCurrent ? 'bg-blue-600' : 'bg-white'} absolute right-[-10px] top-0 h-full w-3 skew-x-12 ${isCurrent ? '' : 'ring-1 ring-gray-200'} rounded-r-full`}
+                />
+              )}
+            </button>
+          );
+        })}
+      </div>
+    );
+  };
+
   // Group navigation items by category
   const groupedNavigation = navigationItems.reduce((acc, item) => {
     const category = item.category || 'Other';
@@ -136,13 +198,14 @@ export default function DashboardLayout({
     return acc;
   }, {} as Record<string, NavigationItem[]>);
 
+  // Pull Transaction Checklist to the top of the list
+  const tasksItem = navigationItems.find((i) => i.id === 'tasks');
+  const calendarItem = navigationItems.find((i) => i.id === 'calendar');
+
   return (
     <div className="flex h-screen bg-slate-50">
       {/* Sidebar */}
-      <div className={cn(
-        "relative z-30 flex flex-col bg-gradient-to-b from-blue-900 to-blue-800 shadow-xl transition-all duration-300 shrink-0",
-        sidebarOpen ? "w-80" : "w-16"
-      )}>
+      <div className="hidden">
         {/* Header */}
         <div className="p-6 bg-white border-b border-gray-200">
           <div className="flex items-center gap-3">
@@ -156,9 +219,9 @@ export default function DashboardLayout({
               </div>
             ) : (
               <img
-                src="https://cdn.builder.io/api/v1/image/assets%2Fd17493787dd14ef798478b15abccc651%2Fb382513b801044b9b63fee0d35fea0d6?format=webp&width=800"
-                alt="Handoff Logo"
-                className="h-8 w-auto"
+                src="/house-logo.svg"
+                alt="Handoff Icon"
+                className="h-8 w-8 rounded-lg"
               />
             )}
           </div>
@@ -194,6 +257,62 @@ export default function DashboardLayout({
         {/* Navigation */}
         <div className="flex-1 overflow-y-auto p-4">
           <div className="space-y-1">
+            {/* Transaction Checklist pinned to top */}
+            {tasksItem && (() => {
+              const Icon = tasksItem.icon;
+              const isActive = currentPage === tasksItem.id;
+              return (
+                <>
+                  <button
+                    key={tasksItem.id}
+                    className={cn(
+                      "w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 text-left",
+                      isActive ? "bg-white text-blue-900 shadow-sm" : "text-blue-100 hover:bg-blue-800/50 hover:text-white",
+                      !sidebarOpen && "justify-center px-3"
+                    )}
+                    onClick={() => onPageChange(tasksItem.id)}
+                  >
+                    <Icon className="h-5 w-5 flex-shrink-0" />
+                    {sidebarOpen && (
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-sm">{tasksItem.label}</span>
+                        </div>
+                      </div>
+                    )}
+                  </button>
+
+                  {/* Calendar child under Transaction Checklist */}
+                  {calendarItem && (() => {
+                    const CalIcon = calendarItem.icon;
+                    return (
+<button
+                    key={calendarItem.id}
+                    className={cn(
+                      "w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 text-left ml-6",
+                      currentPage === calendarItem.id
+                        ? "bg-white text-blue-900 shadow-sm"
+                        : "text-blue-100 hover:bg-blue-800/50 hover:text-white",
+                      !sidebarOpen && "justify-center px-3 ml-0"
+                    )}
+                    aria-current={currentPage === calendarItem.id ? 'page' : undefined}
+                    onClick={() => onPageChange(calendarItem.id)}
+                  >
+                        <CalIcon className="h-5 w-5 flex-shrink-0" />
+                        {sidebarOpen && (
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium text-sm">{calendarItem.label}</span>
+                            </div>
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })()}
+                </>
+              );
+            })()}
+
             {Object.entries(groupedNavigation).map(([category, items]) => (
               <React.Fragment key={category}>
                 {sidebarOpen && category !== 'Finding your Dream Home' && category !== 'Purchasing Your Home' && category !== 'Support' && (
@@ -202,6 +321,7 @@ export default function DashboardLayout({
                   </div>
                 )}
                 {items.map((item) => {
+                  if (item.id === 'tasks' || item.id === 'calendar') return null; // already rendered at top
                   const Icon = item.icon;
                   const isActive = currentPage === item.id;
 
@@ -287,33 +407,71 @@ export default function DashboardLayout({
 
       {/* Main Content */}
       <div className="relative z-0 flex-1 flex flex-col min-h-0 min-w-0 bg-slate-50">
-        {/* Header */}
-        <div className="bg-white border-b border-slate-200 px-8 py-6">
-          <div className="flex items-center justify-between">
+        {/* Top Navigation Bar */}
+        <header className="px-6 pt-6">
+          <div className="bg-[#0B1F44] text-white rounded-2xl shadow-lg px-6 py-3 flex items-center justify-between">
+            {/* Left: Logo */}
             <div className="flex items-center gap-3">
-              <button
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors lg:hidden"
-              >
-                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </button>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">{navigation.getPageTitle(currentPage).replace(' - Handoff', '')}</h1>
-                <p className="text-sm text-gray-600 mt-1">{navigation.getPageDescription(currentPage)}</p>
-              </div>
+              <img
+                src={handoffLogo}
+                alt="Handoff Logo"
+                className="h-8 w-auto object-contain invert brightness-0"
+              />
+              <span className="sr-only">{navigation.getPageTitle(currentPage)}</span>
             </div>
-            <div className="flex items-center gap-4">
-              <Avatar className="h-10 w-10">
-                <AvatarImage src="" />
-                <AvatarFallback className="bg-blue-600 text-white">
-                  {getInitials(getUserDisplayName())}
-                </AvatarFallback>
-              </Avatar>
+
+            {/* Center: Horizontal Nav */}
+            <nav className="flex items-center gap-2">
+              {navigationItems.map((item) => {
+                const isActive = currentPage === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => onPageChange(item.id)}
+                    className={cn(
+                      "px-5 py-2 rounded-xl text-sm font-medium transition-colors",
+                      isActive ? "bg-white/15 text-white" : "text-white/80 hover:text-white"
+                    )}
+                  >
+                    {item.label}
+                  </button>
+                );
+              })}
+            </nav>
+
+            {/* Right: User */}
+            <div className="flex items-center gap-3">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center gap-3 focus:outline-none">
+                    <Avatar className="h-9 w-9 ring-2 ring-white/20">
+                      <AvatarImage src="" />
+                      <AvatarFallback className="bg-blue-600 text-white">
+                        {getInitials(getUserDisplayName())}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="hidden md:block leading-tight text-left">
+                      <div className="text-sm font-medium">{getUserDisplayName()}</div>
+                      <div className="text-xs text-white/70 truncate max-w-[220px]">{getUserDisplayEmail()}</div>
+                    </div>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 bg-white text-gray-900 border border-gray-200 shadow-lg backdrop-blur-0">
+                  <DropdownMenuLabel>Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => onPageChange('settings')} className="cursor-pointer">
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Settings</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={onSignOut} className="cursor-pointer">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Sign out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
-        </div>
+        </header>
 
         <main className="flex-1 overflow-auto p-8">
           {children}

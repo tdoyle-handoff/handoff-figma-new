@@ -19,6 +19,17 @@ interface Props {
 }
 export default function ChecklistInspectionTabs({ onNavigate, selectedTask }: Props) {
   const [tab, setTab] = useState<'scheduled' | 'results' | 'negotiations'>('scheduled');
+  const [scenarios, setScenarios] = useState<{ inspections: boolean }>(() => {
+    try { const raw = localStorage.getItem('handoff-task-scenarios-v1'); if (raw) { const p = JSON.parse(raw); return { inspections: p.inspections !== false }; } } catch {}
+    return { inspections: true };
+  });
+  useEffect(() => {
+    const onStorage = () => {
+      try { const raw = localStorage.getItem('handoff-task-scenarios-v1'); if (raw) { const p = JSON.parse(raw); setScenarios({ inspections: p.inspections !== false }); } } catch {}
+    };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, []);
 
   // Auto-switch to relevant tab based on selected task
   useEffect(() => {
@@ -128,6 +139,21 @@ export default function ChecklistInspectionTabs({ onNavigate, selectedTask }: Pr
       }
     }));
   };
+
+  if (!scenarios.inspections) {
+    return (
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        <div className="lg:col-span-12">
+          <Card className="border-amber-200 bg-amber-50">
+            <CardHeader>
+              <CardTitle className="text-base">Inspections Disabled by Scenario</CardTitle>
+              <CardDescription>Enable "Inspections in scope" in Scenarios & scope to view and manage inspection tasks.</CardDescription>
+            </CardHeader>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">

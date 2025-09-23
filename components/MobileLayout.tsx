@@ -11,20 +11,19 @@ import {
   Home, 
   FileText, 
   CheckSquare, 
-  Users, 
   BookOpen, 
   Settings, 
   LogOut,
   DollarSign,
   Scale,
   Shield,
-  MessageSquare,
   Menu,
   Calculator,
   Eye,
   Building,
   TrendingUp,
-  BarChart3
+  BarChart3,
+  Calendar
 } from 'lucide-react';
 import type { PageType } from '../hooks/useNavigation';
 
@@ -73,6 +72,12 @@ export default function MobileLayout({
       icon: CheckSquare,
       category: 'Core'
     },
+    {
+      id: 'calendar',
+      label: 'Calendar',
+      icon: Calendar,
+      category: 'Core'
+    },
 
     // Keep Analytics but not default
     {
@@ -85,20 +90,8 @@ export default function MobileLayout({
     
     // Additional Services
     {
-      id: 'communications',
-      label: 'Communication Suite',
-      icon: MessageSquare,
-      category: 'Services'
-    },
-    {
-      id: 'team',
-      label: 'Team',
-      icon: Users,
-      category: 'Services'
-    },
-    {
       id: 'documents',
-      label: 'Offer & Document Hub',
+      label: 'Contract Builder',
       icon: FileText,
       category: 'Services'
     },
@@ -113,9 +106,9 @@ export default function MobileLayout({
   // Bottom navigation items (most important)
   const bottomNavItems: { id: PageType; label: string; icon: React.ElementType }[] = [
     {
-      id: 'overview',
-      label: 'Analytics & Budget',
-      icon: BarChart3
+      id: 'tasks',
+      label: 'Transaction Checklist',
+      icon: CheckSquare
     },
     {
       id: 'property',
@@ -123,11 +116,10 @@ export default function MobileLayout({
       icon: Home
     },
     {
-      id: 'tasks',
-      label: 'Transaction Checklist',
-      icon: CheckSquare
+      id: 'overview',
+      label: 'Analytics & Budget',
+      icon: BarChart3
     },
-
     {
       id: 'documents',
       label: 'Contract Builder',
@@ -276,7 +268,8 @@ export default function MobileLayout({
                           {items.map((item) => {
                             const Icon = item.icon;
                             const isActive = currentPage === item.id;
-                            
+
+                            // Calendar shown as child item under Transaction Checklist
                             return (
                               <Button
                                 key={item.id}
@@ -284,7 +277,8 @@ export default function MobileLayout({
                                 className={cn(
                                   "w-full justify-start h-auto p-3 mobile-button",
                                   isActive && "bg-primary text-primary-foreground",
-                                  !isActive && "hover:bg-muted"
+                                  !isActive && "hover:bg-muted",
+                                  item.id === 'calendar' && 'pl-8'
                                 )}
                                 onClick={() => {
                                   onPageChange(item.id);

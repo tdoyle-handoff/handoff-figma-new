@@ -298,7 +298,7 @@ export function MLSPropertyDetails({
                 <div className="text-xs text-muted-foreground space-y-1">
                   <div>Principal & Interest: {formatCurrency(monthlyPayment.principal_interest)}</div>
                   <div>Taxes & Insurance: {formatCurrency(monthlyPayment.property_taxes + monthlyPayment.insurance)}</div>
-                  {monthlyPayment.hoa > 0 && <div>HOA: {formatCurrency(monthlyPayment.hoa)}</div>}
+{monthlyPayment.hoa > 0 && <div>Homeowners Association (HOA): {formatCurrency(monthlyPayment.hoa)}</div>}
                 </div>
               </div>
             )}
@@ -525,7 +525,7 @@ export function MLSPropertyDetails({
                       </div>
                       {monthlyPayment.hoa > 0 && (
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">HOA Fees</span>
+<span className="text-muted-foreground">Homeowners Association (HOA) Fees</span>
                           <span>{formatCurrency(monthlyPayment.hoa)}</span>
                         </div>
                       )}
@@ -550,7 +550,7 @@ export function MLSPropertyDetails({
                     )}
                     {property.financial_details?.hoa_fees && (
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">Monthly HOA Fees</span>
+<span className="text-muted-foreground">Monthly Homeowners Association (HOA) Fees</span>
                         <span>{formatCurrency(property.financial_details.hoa_fees)}</span>
                       </div>
                     )}
