@@ -270,7 +270,7 @@ export default function DashboardLayout({
                     key={tasksItem.id}
                     className={cn(
                       "w-full flex items-center gap-3 px-4 py-2.5 rounded-full transition-all duration-200 text-left",
-                      isActive ? "bg-white text-[#0B1F44] shadow-sm ring-1 ring-blue-200" : "text-blue-100 ring-1 ring-white/10 hover:bg-white/10 hover:text-white",
+                      isActive ? "bg-white/15 text-white shadow-inner ring-1 ring-white/10" : "text-white/70 ring-1 ring-white/10 hover:bg-white/10 hover:text-white",
                       !sidebarOpen && "justify-center px-3"
                     )}
                     onClick={() => onPageChange(tasksItem.id)}
@@ -279,7 +279,7 @@ export default function DashboardLayout({
                     {sidebarOpen && (
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="font-medium text-sm">{tasksItem.label}</span>
+                          <span className="text-[15px] font-medium tracking-tight">{tasksItem.label}</span>
                         </div>
                       </div>
                     )}
@@ -294,8 +294,8 @@ export default function DashboardLayout({
                     className={cn(
                       "w-full flex items-center gap-3 px-4 py-2.5 rounded-full transition-all duration-200 text-left ml-6",
                       currentPage === calendarItem.id
-                        ? "bg-white text-[#0B1F44] shadow-sm ring-1 ring-blue-200"
-                        : "text-blue-100 ring-1 ring-white/10 hover:bg-white/10 hover:text-white",
+                        ? "bg-white/15 text-white shadow-inner ring-1 ring-white/10"
+                        : "text-white/70 ring-1 ring-white/10 hover:bg-white/10 hover:text-white",
                       !sidebarOpen && "justify-center px-3 ml-0"
                     )}
                     aria-current={currentPage === calendarItem.id ? 'page' : undefined}
@@ -305,7 +305,7 @@ export default function DashboardLayout({
                         {sidebarOpen && (
                           <div className="flex-1">
                             <div className="flex items-center gap-2">
-                              <span className="font-medium text-sm">{calendarItem.label}</span>
+                              <span className="text-[15px] font-medium tracking-tight">{calendarItem.label}</span>
                             </div>
                           </div>
                         )}
@@ -334,8 +334,8 @@ export default function DashboardLayout({
                       className={cn(
                         "w-full flex items-center gap-3 px-4 py-2.5 rounded-full transition-all duration-200 text-left",
                         isActive
-                          ? "bg-white/10 text-white"
-                          : "text-blue-100 hover:bg-blue-800/50 hover:text-white",
+                          ? "bg-white/15 text-white ring-1 ring-white/10"
+                          : "text-white/70 hover:bg-white/10 hover:text-white",
                         !sidebarOpen && "justify-center px-3"
                       )}
                       onClick={() => onPageChange(item.id)}
@@ -344,7 +344,7 @@ export default function DashboardLayout({
                       {sidebarOpen && (
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
-                            <span className="font-medium text-sm">{item.label}</span>
+                            <span className="text-[15px] font-medium tracking-tight">{item.label}</span>
                             {item.badge && (
                               <Badge
                                 variant="secondary"
