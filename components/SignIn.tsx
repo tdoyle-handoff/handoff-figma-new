@@ -191,14 +191,19 @@ export function SignIn({ className, forceRegisterMode }: { className?: string; f
             <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-primary-foreground">
               <BrandMark className="h-5 w-5 text-primary" />
             </span>
-            <span className="text-lg font-semibold">HandOff</span>
+            <span className="text-lg font-semibold">HandoffIQ</span>
           </div>
           <div className="mt-auto text-white max-w-md">
-            <h2 className="text-4xl font-semibold leading-tight">Find your new home</h2>
+            <h2 className="text-4xl font-semibold leading-tight">Your all-in-one homebuying workspace.</h2>
             <div className="mt-6 flex gap-2">
               <span className="h-1.5 w-12 rounded-full bg-white" />
               <span className="h-1.5 w-3 rounded-full bg-white/60" />
               <span className="h-1.5 w-3 rounded-full bg-white/40" />
+            </div>
+            <div className="mt-6">
+              <Button size="lg" variant="default" onClick={handleGuest} className="bg-white text-slate-900 hover:bg-white/90">
+                Try HandoffIQ Free
+              </Button>
             </div>
           </div>
         </div>
