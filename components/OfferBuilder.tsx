@@ -4,7 +4,7 @@ WIREFRAME: Buyer Offer Builder (Web)
 [Header]
 ┌───────────────────────────────────────��─────────────────────────┐
 │ Offer Builder  | Step 1 of 5  | Save Draft | Help            │
-└─────���─────────────���──────────────────────────────────────────┘
+└─────���────────────────────────────────────────────────────────┘
 
 [Stepper]
 ● Property  →  ● Buyer & Financing  →  ● Offer Terms  →  ● Contingencies  →  ● Review & Submit
@@ -1136,21 +1136,32 @@ export default function OfferBuilder() {
           </div>
         </div>
 
-        {/* Stepper */}
-        <div>
-          <div className="flex items-center gap-2 text-sm mb-2">
+        {/* Stepper Tabs */}
+        <Tabs value={stepIds[step]} onValueChange={(v)=>{
+          const idx = stepIds.indexOf(v as typeof stepIds[number]);
+          if (idx === -1) return;
+          if (idx <= maxVisited + 1) {
+            setStep(idx);
+            setMaxVisited(m=>Math.max(m, idx));
+          }
+        }} className="w-full">
+          <TabsList className="w-full justify-start overflow-x-auto">
             {steps.map((label, i) => (
-              <div key={label} className="flex items-center gap-2">
-                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium ${i <= step ? 'bg-black text-white' : 'bg-muted text-foreground'}`}>{i+1}</div>
-                <span className={`hidden sm:block ${i === step ? 'font-medium' : ''}`}>{label}</span>
-                {i < steps.length - 1 && <div className="w-6 h-px bg-border" />}
-              </div>
+              <TabsTrigger
+                key={label}
+                value={stepIds[i]}
+                disabled={i > maxVisited + 1}
+                className={`data-[state=active]:bg-primary data-[state=active]:text-primary-foreground mr-2 flex items-center gap-2 border px-3 py-1 rounded ${i > step ? 'opacity-60' : ''}`}
+                >
+                <span className={`w-5 h-5 rounded-full text-[11px] flex items-center justify-center ${i<=step ? 'bg-primary-foreground/20' : 'bg-muted'}`}>{i+1}</span>
+                <span className="whitespace-nowrap text-xs sm:text-sm">{label}</span>
+              </TabsTrigger>
             ))}
+          </TabsList>
+          <div className="mt-2 h-1 bg-muted rounded-full">
+            <div className="h-1 bg-black rounded-full" style={{ width: `${progressPct}%` }} />
           </div>
-          <div className="h-2 bg-muted rounded-full">
-            <div className="h-2 bg-black rounded-full" style={{ width: `${progressPct}%` }} />
-          </div>
-        </div>
+        </Tabs>
 
         {/* Step Panels */}
         {step === 0 && (
