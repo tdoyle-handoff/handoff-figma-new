@@ -10,7 +10,7 @@ import { useIsMobile } from './ui/use-mobile';
 // import { ServerStatusBanner } from './ServerStatusBanner';
 import { authHelpers } from '../utils/supabase/client';
 import DreamHomeAddressCapture from './DreamHomeAddressCapture';
-const handoffLogo = 'https://cdn.builder.io/api/v1/image/assets%2Fd17493787dd14ef798478b15abccc651%2Fb382513b801044b9b63fee0d35fea0d6?format=webp&width=800';
+import { HANDOFF_LOGO_URL } from '../utils/branding';
 
 interface SetupData {
   buyerEmail: string;
@@ -31,7 +31,7 @@ interface SetupWizardProps {
 const HandoffLogo = ({ className = "", size = "h-20" }: { className?: string; size?: string }) => (
   <div className={`flex items-center justify-center ${className}`}>
     <img 
-      src={handoffLogo} 
+      src={HANDOFF_LOGO_URL} 
       alt="Handoff Logo" 
       className={`${size} w-auto max-w-full mx-auto block`}
     />
@@ -416,7 +416,7 @@ export function SetupWizard({
         </div>
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
-            <span className="font-medium text-green-900">✅ Supabase Connected & Active</span>
+            <span className="font-medium text-green-900">��� Supabase Connected & Active</span>
             <span className="text-xs bg-green-200 text-green-800 px-2 py-0.5 rounded-full">Server Online</span>
           </div>
           <p className="text-sm text-green-700">
