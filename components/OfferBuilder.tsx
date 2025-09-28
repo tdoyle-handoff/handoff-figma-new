@@ -154,6 +154,21 @@ export default function OfferBuilder() {
   const [dataLoaded, setDataLoaded] = useState(false);
 
   const [step, setStep] = useState(0); // 0..4
+  const [maxVisited, setMaxVisited] = useState(0);
+  const stepIds = ["property","buyer","terms","contingencies","review"] as const;
+
+  // Contextual helper dismissal persistence
+  const HELP_LS = 'offer-builder-helpers-dismissed-v1';
+  const [dismissedHelps, setDismissedHelps] = useState<Record<string, boolean>>(()=>{
+    try { const r = localStorage.getItem(HELP_LS); return r ? JSON.parse(r) : {}; } catch { return {}; }
+  });
+  const dismissHelp = (id: string) => {
+    setDismissedHelps(prev => {
+      const next = { ...prev, [id]: true };
+      try { localStorage.setItem(HELP_LS, JSON.stringify(next)); } catch {}
+      return next;
+    });
+  };
 
   // Property
   const [address, setAddress] = useState("");
