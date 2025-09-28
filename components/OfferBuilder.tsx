@@ -1423,10 +1423,23 @@ export default function OfferBuilder() {
         )}
 
         {step === 2 && (
-          <Card>
+          <Card className="relative">
             <CardHeader>
               <CardTitle className="text-lg sm:text-xl">Purchase Agreement Terms</CardTitle>
             </CardHeader>
+            {!dismissedHelps['help-terms-1'] && (
+              <aside className="hidden lg:block absolute -right-6 top-6 w-64 z-10">
+                <div className="rounded-md border bg-muted/40 text-xs p-3 shadow-sm">
+                  <div className="flex items-start gap-2">
+                    <Info className="w-3 h-3 mt-0.5 text-muted-foreground" />
+                    <div className="flex-1">
+                      Escalation clauses can help in bidding wars. Set a clear cap and increment to avoid overpaying.
+                    </div>
+                    <button aria-label="Dismiss" className="text-muted-foreground hover:text-foreground" onClick={()=>dismissHelp('help-terms-1')}>×</button>
+                  </div>
+                </div>
+              </aside>
+            )}
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Label className="text-sm sm:text-base">Purchase Price Offered</Label>
