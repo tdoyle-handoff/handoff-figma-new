@@ -1165,10 +1165,24 @@ export default function OfferBuilder() {
 
         {/* Step Panels */}
         {step === 0 && (
-          <Card>
+          <Card className="relative">
             <CardHeader>
               <CardTitle className="text-lg sm:text-xl">Property Details for Purchase Agreement</CardTitle>
             </CardHeader>
+            {/* Floating helper */}
+            {!dismissedHelps['help-property-1'] && (
+              <aside className="hidden lg:block absolute -right-6 top-6 w-64 z-10">
+                <div className="rounded-md border bg-muted/40 text-xs p-3 shadow-sm">
+                  <div className="flex items-start gap-2">
+                    <Info className="w-3 h-3 mt-0.5 text-muted-foreground" />
+                    <div className="flex-1">
+                      Enter the legal address as it should appear on the contract. Double-check HOA and tax amounts—they impact your monthly payment.
+                    </div>
+                    <button aria-label="Dismiss" className="text-muted-foreground hover:text-foreground" onClick={()=>dismissHelp('help-property-1')}>×</button>
+                  </div>
+                </div>
+              </aside>
+            )}
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="sm:col-span-2">
                 <Label className="text-sm sm:text-base">Property Address (as it will appear on purchase contract)</Label>
