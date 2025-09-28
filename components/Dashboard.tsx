@@ -138,6 +138,10 @@ export default function Dashboard({ setupData }: DashboardProps) {
   const [currentRent, setCurrentRent] = useState(defaultDashboardData.currentRent);
   const [sellerCredits, setSellerCredits] = useState(defaultDashboardData.sellerCredits);
   const [lenderCredits, setLenderCredits] = useState(defaultDashboardData.lenderCredits);
+  // Stepper for budget input flow
+  const [budgetStep, setBudgetStep] = useState<1 | 2 | 3>(1);
+  const goNextStep = () => setBudgetStep((s) => (s < 3 ? ((s + 1) as 1|2|3) : s));
+  const goPrevStep = () => setBudgetStep((s) => (s > 1 ? ((s - 1) as 1|2|3) : s));
   const [showBudgetTip, setShowBudgetTip] = useState<boolean>(() => {
     try { return localStorage.getItem('handoff-tip-budget-income-v1') !== 'dismissed'; } catch { return true; }
   });
@@ -291,8 +295,8 @@ export default function Dashboard({ setupData }: DashboardProps) {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Property Information</CardTitle>
-              <CardDescription>Enter your property details to calculate costs and payments.</CardDescription>
+              <CardTitle>Budget Setup</CardTitle>
+              <CardDescription>Step {budgetStep} of 3 • Income → Loan Details → Closing Costs</CardDescription>
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               {isAutoSaving ? (
@@ -315,8 +319,14 @@ export default function Dashboard({ setupData }: DashboardProps) {
           </div>
         </CardHeader>
         <CardContent className="p-8">
+          {/* Progress dots */}
+          <div className="flex items-center justify-center mb-6 gap-2">
+            {[1,2,3].map((i) => (
+              <button key={i} onClick={() => setBudgetStep(i as 1|2|3)} aria-label={`Go to step ${i}`} className={`h-3 w-3 rounded-full ${budgetStep>=i? 'bg-blue-600' : 'bg-gray-300'} transition-colors`} />
+            ))}
+          </div>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-            <div>
+            <div className={budgetStep===2 ? '' : 'hidden'}>
               <LabelWithTooltip
                 text="Home Price"
                 tooltip="The total purchase price of the property. This is the amount you'll pay the seller, not including closing costs or down payment."
@@ -332,7 +342,7 @@ export default function Dashboard({ setupData }: DashboardProps) {
                 />
               </div>
             </div>
-            <div>
+            <div className={budgetStep===2 ? '' : 'hidden'}>
               <LabelWithTooltip
                 text="Down Payment %"
                 tooltip="Percentage of home price paid upfront. Higher down payments mean lower monthly payments and may eliminate PMI. Conventional loans typically require 5-20%."
@@ -350,7 +360,7 @@ export default function Dashboard({ setupData }: DashboardProps) {
                 <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">%</span>
               </div>
             </div>
-            <div>
+            <div className={budgetStep===2 ? '' : 'hidden'}>
               <LabelWithTooltip
                 text="Interest Rate %"
                 tooltip="Annual percentage rate for your mortgage loan. This is determined by current market rates, your credit score, down payment, and loan type."
@@ -367,7 +377,7 @@ export default function Dashboard({ setupData }: DashboardProps) {
                 <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">%</span>
               </div>
             </div>
-            <div>
+            <div className={budgetStep===2 ? '' : 'hidden'}>
               <LabelWithTooltip
                 text="Loan Term (Years)"
                 tooltip="Length of your mortgage in years. 30-year loans have lower monthly payments but higher total interest. 15-year loans have higher payments but less total interest."
@@ -380,7 +390,7 @@ export default function Dashboard({ setupData }: DashboardProps) {
                 className="mt-1 text-lg"
               />
             </div>
-            <div>
+            <div className={budgetStep===3 ? '' : 'hidden'}>
               <LabelWithTooltip
                 text="Property Taxes (Annual)"
                 tooltip="Annual property taxes based on your local tax rate and assessed property value. Typically 0.5-2.5% of home value depending on location."
@@ -396,7 +406,7 @@ export default function Dashboard({ setupData }: DashboardProps) {
                 />
               </div>
             </div>
-            <div>
+            <div className={budgetStep===3 ? '' : 'hidden'}>
               <LabelWithTooltip
                 text="Home Insurance (Annual)"
                 tooltip="Annual homeowner's insurance premium. Protects against fire, theft, and other damages. Usually required by your lender and typically costs 0.2-0.5% of home value."
@@ -412,7 +422,7 @@ export default function Dashboard({ setupData }: DashboardProps) {
                 />
               </div>
             </div>
-            <div>
+            <div className={budgetStep===3 ? '' : 'hidden'}>
               <LabelWithTooltip
                 text="Homeowners Association (HOA) (Monthly)"
                 tooltip="Monthly Homeowners Association (HOA) fees for shared amenities and maintenance. Common in condominiums, townhomes, and planned communities. Enter 0 if no Homeowners Association (HOA)."
@@ -428,7 +438,7 @@ export default function Dashboard({ setupData }: DashboardProps) {
                 />
               </div>
             </div>
-            <div>
+            <div className={budgetStep===3 ? '' : 'hidden'}>
               <LabelWithTooltip
                 text="Monthly Upkeep"
                 tooltip="Estimated monthly maintenance and repair costs. Rule of thumb is 1-3% of home value annually, or about $1 per square foot per year."
@@ -445,7 +455,7 @@ export default function Dashboard({ setupData }: DashboardProps) {
               </div>
             </div>
           </div>
-          <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className={`mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 ${budgetStep===1 ? '' : 'hidden'}`}>
             <div>
               <LabelWithTooltip
                 text="Monthly Income"
@@ -479,6 +489,18 @@ export default function Dashboard({ setupData }: DashboardProps) {
               </div>
             </div>
           </div>
+
+          {/* Step navigation */}
+          <div className="mt-8 flex items-center justify-between">
+            <button className="text-sm text-muted-foreground hover:text-foreground" onClick={goPrevStep} disabled={budgetStep===1}>Back</button>
+            <div className="flex items-center gap-3">
+              {budgetStep<3 ? (
+                <button className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700" onClick={goNextStep}>Next</button>
+              ) : (
+                <span className="text-sm text-muted-foreground">You're set! Review results below.</span>
+              )}
+            </div>
+          </div>
         </CardContent>
       </Card>
 
@@ -490,6 +512,22 @@ export default function Dashboard({ setupData }: DashboardProps) {
             <DollarSign className="h-6 w-6" />
             Budget & Closing Costs
           </h2>
+          {/* Summary affordability card */}
+          <Card className="shadow-sm w-full max-w-4xl mx-auto mb-8">
+            <CardContent className="p-6">
+              {(() => {
+                const comfortable = Math.round((monthlyIncome * 0.33) || 0);
+                const status = totalMonthly <= comfortable ? 'within' : 'above';
+                return (
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="text-lg font-semibold">You can afford {shortCurrency(comfortable)}/month comfortably</div>
+                    <div className={`text-sm ${status==='within' ? 'text-green-700' : 'text-orange-700'}`}>Your current estimate is {shortCurrency(totalMonthly)} ({status} comfort)</div>
+                  </div>
+                );
+              })()}
+            </CardContent>
+          </Card>
+
           {/* One-time Costs at Closing */}
           <Card className="shadow-sm mb-10">
             <CardHeader className="pb-6">
@@ -789,8 +827,8 @@ export default function Dashboard({ setupData }: DashboardProps) {
           <div className="grid grid-cols-1 gap-10 md:grid-cols-2 my-12">
             <Card className="shadow-sm">
               <CardHeader className="pb-6">
-                <CardTitle className="text-lg">What if I change it?</CardTitle>
-                <CardDescription>See how choices change your monthly.</CardDescription>
+                <CardTitle className="text-lg">What‑If: Change Down Payment / Adjust Rate</CardTitle>
+                <CardDescription>Tweak inputs and see charts & closing costs update instantly.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6 p-6">
                 <div>
