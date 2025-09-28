@@ -138,6 +138,10 @@ export default function Dashboard({ setupData }: DashboardProps) {
   const [currentRent, setCurrentRent] = useState(defaultDashboardData.currentRent);
   const [sellerCredits, setSellerCredits] = useState(defaultDashboardData.sellerCredits);
   const [lenderCredits, setLenderCredits] = useState(defaultDashboardData.lenderCredits);
+  const [showBudgetTip, setShowBudgetTip] = useState<boolean>(() => {
+    try { return localStorage.getItem('handoff-tip-budget-income-v1') !== 'dismissed'; } catch { return true; }
+  });
+  const dismissBudgetTip = () => { try { localStorage.setItem('handoff-tip-budget-income-v1','dismissed'); } catch {} setShowBudgetTip(false); };
 
   // Load saved dashboard data when user profile is available (non-blocking)
   useEffect(() => {
@@ -753,7 +757,18 @@ export default function Dashboard({ setupData }: DashboardProps) {
                     />
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
-                      <Input type="number" value={monthlyIncome} onChange={(e)=>setMonthlyIncome(Number(e.target.value||0))} className="pl-8" />
+                      <Tooltip open={showBudgetTip}>
+                        <TooltipTrigger asChild>
+                          <Input
+                            type="number"
+                            value={monthlyIncome}
+                            onFocus={dismissBudgetTip}
+                            onChange={(e)=>{ setMonthlyIncome(Number(e.target.value||0)); if (showBudgetTip) dismissBudgetTip(); }}
+                            className="pl-8"
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent sideOffset={8}>Adjust your monthly income here</TooltipContent>
+                      </Tooltip>
                     </div>
                   </div>
                   <div>
