@@ -103,55 +103,57 @@ export default function DashboardHome() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="space-y-6">
-            <div>
-              <h4 className="text-sm font-semibold mb-2">Today</h4>
-              {dueToday.length === 0 ? (
-                <div className="text-sm text-muted-foreground bg-[#F9FAFB] border border-gray-200 rounded-md p-4">No tasks due today.</div>
-              ) : (
-                <ul className="space-y-2">
-                  {dueToday.map(t => (
-                    <li key={t.id} className="flex items-center gap-3">
-                      <input
-                        type="checkbox"
-                        checked={t.status === 'completed'}
-                        onChange={(e) => taskCtx.updateTaskStatus && taskCtx.updateTaskStatus(t.id, e.target.checked ? 'completed' : 'active')}
-                        className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                        aria-label="Mark complete"
-                      />
-                      <button className="text-sm text-left text-gray-900 hover:underline truncate" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: t.linkedPage || 'tasks' } }))}>
-                        {t.title}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
+          <div className="space-y-4">
+            <Accordion type="multiple" defaultValue={['today','week']} className="w-full">
+              <AccordionItem value="today">
+                <AccordionTrigger className="text-sm font-semibold">Today ({dueToday.length})</AccordionTrigger>
+                <AccordionContent>
+                  {dueToday.length === 0 ? (
+                    <div className="text-sm text-muted-foreground bg-[#F9FAFB] border border-gray-200 rounded-md p-4 flex items-center justify-between">
+                      <span>No tasks today 🎉. Add your next step.</span>
+                      <Button size="sm" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'tasks' } }))}>Add Task</Button>
+                    </div>
+                  ) : (
+                    <ul className="space-y-2">
+                      {dueToday.map(t => (
+                        <li key={t.id} className="flex items-center gap-3">
+                          <input type="checkbox" checked={t.status === 'completed'} onChange={(e) => taskCtx.updateTaskStatus && taskCtx.updateTaskStatus(t.id, e.target.checked ? 'completed' : 'active')} className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" aria-label="Mark complete" />
+                          <button className="text-sm text-left text-gray-900 hover:underline truncate" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: t.linkedPage || 'tasks' } }))}>{t.title}</button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </AccordionContent>
+              </AccordionItem>
 
-            <div>
-              <h4 className="text-sm font-semibold mb-2">Upcoming</h4>
-              {upcoming.length === 0 ? (
-                <div className="text-sm text-muted-foreground bg-[#F9FAFB] border border-gray-200 rounded-md p-4">No upcoming tasks this week.</div>
-              ) : (
-                <ul className="space-y-2">
-                  {upcoming.map(t => (
-                    <li key={t.id} className="flex items-center gap-3">
-                      <input
-                        type="checkbox"
-                        checked={t.status === 'completed'}
-                        onChange={(e) => taskCtx.updateTaskStatus && taskCtx.updateTaskStatus(t.id, e.target.checked ? 'completed' : 'active')}
-                        className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                        aria-label="Mark complete"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm text-gray-900 truncate">{t.title}</div>
-                        <div className="text-xs text-muted-foreground">Due {format(parseDate(t.dueDate)!, 'EEE, MMM d')}</div>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
+              <AccordionItem value="week">
+                <AccordionTrigger className="text-sm font-semibold">This Week ({upcoming.length})</AccordionTrigger>
+                <AccordionContent>
+                  {upcoming.length === 0 ? (
+                    <div className="text-sm text-muted-foreground bg-[#F9FAFB] border border-gray-200 rounded-md p-4">No upcoming tasks this week.</div>
+                  ) : (
+                    <ul className="space-y-2">
+                      {upcoming.map(t => (
+                        <li key={t.id} className="flex items-center gap-3">
+                          <input type="checkbox" checked={t.status === 'completed'} onChange={(e) => taskCtx.updateTaskStatus && taskCtx.updateTaskStatus(t.id, e.target.checked ? 'completed' : 'active')} className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" aria-label="Mark complete" />
+                          <div className="flex-1 min-w-0">
+                            <div className="text-sm text-gray-900 truncate">{t.title}</div>
+                            <div className="text-xs text-muted-foreground">Due {format(parseDate(t.dueDate)!, 'EEE, MMM d')}</div>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="upcoming">
+                <AccordionTrigger className="text-sm font-semibold">Upcoming</AccordionTrigger>
+                <AccordionContent>
+                  <div className="text-sm text-muted-foreground">View more in the checklist for later dates.</div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           </div>
         </CardContent>
       </Card>
