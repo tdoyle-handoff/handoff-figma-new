@@ -4,8 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import type { Task } from '../TaskContext';
-import { ExternalLink, Calendar, AlertTriangle, Target } from 'lucide-react';
+import { ExternalLink, Calendar, AlertTriangle, Target, BookOpen } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 
 interface DetailProps {
   task: Task | null;
@@ -125,6 +126,32 @@ export default function ChecklistDetail({ task, onAction, onUpdateTask }: Detail
     (hasStepsHeader || hasHowTextHeader) ? 'how' : null,
     hasTipsHeader ? 'tips' : null,
   ].filter(Boolean) as string[];
+
+  // Map task to a related Education Hub resource
+  const relatedResource = (() => {
+    const sub = (task.subcategory || '').toLowerCase();
+    const cat = (task.category || '').toLowerCase();
+    const tags = (task.tags || []).map(t => (t||'').toLowerCase());
+    if (sub === 'inspections' || tags.includes('inspection')) return { id: '4', title: 'The Complete Home Inspection Checklist', desc: 'A comprehensive checklist of items to review during your home inspection walkthrough.' };
+    if (sub === 'financing' || cat === 'pre-closing' || tags.includes('mortgage')) return { id: '5', title: 'How to Get the Best Mortgage Rate', desc: 'Tips and strategies for securing the lowest possible interest rate on your home loan.' };
+    if (sub === 'insurance' || tags.includes('insurance')) return { id: '8', title: 'Understanding Property Insurance', desc: 'Complete guide to homeowners, flood, and other property insurance types.' };
+    if (cat === 'closing' || tags.includes('closing')) return { id: '10', title: 'Your Closing Day Checklist', desc: 'What to expect and what to bring on your closing day for a smooth transaction.' };
+    if (cat === 'offer' || tags.includes('negotiation') || tags.includes('offer')) return { id: '7', title: 'Negotiating Your Offer', desc: 'Strategies for making competitive offers and negotiating favorable terms.' };
+    if (sub === 'legal' || tags.includes('hoa') || tags.includes('legal')) return { id: '15', title: 'Understanding HOAs and Community Rules', desc: 'What to know about homeowner associations, fees, and community regulations.' };
+    // default getting started
+    return { id: '1', title: "First-Time Home Buyer's Complete Guide", desc: "Everything you need to know about buying your first home, from pre-approval to closing." };
+  })();
+
+  const openEducationGuide = () => {
+    try {
+      // Navigate to Education Hub page
+      window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'resources' } }));
+      // Slight delay to allow page render, then open specific guide
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('openResourceGuide', { detail: { id: relatedResource.id } }));
+      }, 50);
+    } catch {}
+  };
 
   return (
     <div className="space-y-4 h-full overflow-y-auto">
@@ -267,6 +294,27 @@ export default function ChecklistDetail({ task, onAction, onUpdateTask }: Detail
               <ExternalLink className="w-4 h-4 mr-2" />
               {task.actionLabel || 'Take Action'}
             </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Learn More - Education Hub */}
+      {relatedResource && (
+        <Card className="shadow-sm">
+          <CardContent className="p-4 flex items-center justify-between gap-3">
+            <div className="text-sm text-gray-700">Want a deeper dive?</div>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" onClick={openEducationGuide} className="whitespace-nowrap">
+                  <BookOpen className="w-4 h-4 mr-2" />
+                  Learn More
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent sideOffset={6} className="max-w-xs text-left">
+                <div className="font-medium mb-1">{relatedResource.title}</div>
+                <div>{relatedResource.desc}</div>
+              </TooltipContent>
+            </Tooltip>
           </CardContent>
         </Card>
       )}
