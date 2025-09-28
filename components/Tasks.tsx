@@ -24,6 +24,7 @@ import { useTaskContext, Task, TaskPhase } from './TaskContext';
 import { usePropertyContext } from './PropertyContext';
 import InsuranceCalculator from './InsuranceCalculator';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
+import { Tooltip, TooltipTrigger, TooltipContent } from './ui/tooltip';
 import { scenarioSchema } from '../utils/scenarioSchema';
 import { getSelectedScenarios as getScenarioKeys, setSelectedScenarios as saveScenarioSelection } from '../utils/scenarioEngine';
 
