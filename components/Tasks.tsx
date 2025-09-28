@@ -2962,12 +2962,12 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
             if (overdueCount === 0) return null;
             const overdueVisible = (checklistSubtab === 'todo') ? visibleTodoTasks.filter(t => t.status === 'overdue') : [];
             return (
-              <Alert className="border-2 border-red-500 bg-red-50 text-red-800">
-                <div className="flex items-start justify-between gap-3">
+              <Alert className="bg-[#FFE5E5] border-l-4 border-[#D32F2F] rounded-md p-3 sm:p-4">
+                <div className="flex items-center justify-between gap-3">
                   <div className="min-w-0">
-                    <div className="font-medium">You have {overdueCount} overdue {overdueCount === 1 ? 'task' : 'tasks'}</div>
+                    <div className="font-semibold text-[16px] leading-tight">{overdueCount} Overdue {overdueCount === 1 ? 'Task' : 'Tasks'}</div>
                     <AlertDescription>
-                      <div className="text-sm">Resolve overdue items to keep your transaction on track.</div>
+                      <div className="text-sm leading-snug text-red-800">Resolve overdue items to keep your transaction on track.</div>
                       {(() => {
                         const overdue = taskContext.getOverdueTasks();
                         const toLower = (arr: string[]) => arr.map(s => s.toLowerCase());
@@ -2982,7 +2982,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                         ].filter(c => c.value > 0);
                         if (chips.length === 0) return null;
                         return (
-                          <div className="mt-2 flex items-center gap-2 flex-wrap">
+                          <div className="mt-1 flex items-center gap-2 flex-wrap">
                             {chips.map(c => (
                               <Badge key={c.label} variant="outline" className="bg-white/70 text-red-700 border-red-300 rounded-full text-xs">
                                 {c.label}: {c.value}
@@ -2994,15 +2994,14 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                     </AlertDescription>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
-                    <Button size="sm" variant="outline" className="border-red-300 text-red-700 hover:bg-red-100" onClick={() => selectMany(overdueVisible.map(t=>t.id), true)}>Select overdue</Button>
-                    <Button size="sm" onClick={() => {
+                    <Button size="sm" className="h-9 bg-[#D32F2F] hover:bg-[#c62828] text-white px-4" onClick={() => {
                       setActiveTab('checklist');
                       setChecklistSubtab('todo');
                       setPhasePageId(null);
                       setTagFilter('overdue');
                       setSearchQuery('');
                       setTimeout(() => { try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch {} }, 0);
-                    }}>See Overdue Tasks</Button>
+                    }}>Review Tasks</Button>
                   </div>
                 </div>
               </Alert>
