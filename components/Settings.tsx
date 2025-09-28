@@ -656,7 +656,40 @@ export default function Settings({ onSignOut, setupData, onNavigate }: SettingsP
                       onCheckedChange={(checked) => setNotifications({...notifications, teamUpdates: checked})}
                     />
                   </div>
-                  
+
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label>Overdue Tasks</Label>
+                      <p className="text-sm text-muted-foreground">Alerts when tasks pass their due date</p>
+                    </div>
+                    <Switch
+                      checked={notifications.overdueTasks}
+                      onCheckedChange={(checked) => setNotifications({...notifications, overdueTasks: checked})}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label>Financing Deadlines</Label>
+                      <p className="text-sm text-muted-foreground">Reminders for lender and financing dates</p>
+                    </div>
+                    <Switch
+                      checked={notifications.financingDeadlines}
+                      onCheckedChange={(checked) => setNotifications({...notifications, financingDeadlines: checked})}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label>Contract Milestones</Label>
+                      <p className="text-sm text-muted-foreground">Key dates like review periods and closing</p>
+                    </div>
+                    <Switch
+                      checked={notifications.contractMilestones}
+                      onCheckedChange={(checked) => setNotifications({...notifications, contractMilestones: checked})}
+                    />
+                  </div>
+
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
                       <Label>Marketing Emails</Label>
