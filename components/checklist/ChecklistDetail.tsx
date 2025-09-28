@@ -86,6 +86,16 @@ function renderBulletedText(text?: string) {
   return <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-line">{text}</p>;
 }
 
+function getOneSentenceSummary(task: Task): string {
+  const parts = parseDescriptionParts(task.description);
+  const src = (task.instructions?.overview || task.instructions?.what || parts.what || task.description || '').toString();
+  const s = src.replace(/\s+/g, ' ').trim();
+  if (!s) return `${task.title}.`;
+  const m = s.match(/(.+?[.!?])(?:\s|$)/);
+  const sentence = m ? m[1] : s;
+  return sentence.endsWith('.') || sentence.endsWith('!') || sentence.endsWith('?') ? sentence : sentence + '.';
+}
+
 export default function ChecklistDetail({ task, onAction, onUpdateTask }: DetailProps) {
   if (!task) {
     return (
