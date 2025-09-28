@@ -85,10 +85,10 @@ export default function DashboardHome() {
 
   return (
     <div className="grid grid-cols-12 gap-6 items-stretch">
-      {/* Current tasks */}
-      <Card className="modern-card h-full">
+      {/* Current Tasks - prominent top-left */}
+      <Card className="modern-card h-full col-span-12 lg:col-span-8 order-1">
         <CardHeader>
-          <CardTitle className="text-lg">Current tasks</CardTitle>
+          <CardTitle className="text-2xl md:text-3xl font-bold tracking-tight">Current Tasks</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
@@ -144,8 +144,8 @@ export default function DashboardHome() {
         </CardContent>
       </Card>
 
-      {/* Calendar */}
-      <Card className="modern-card h-full">
+      {/* Calendar - compact when empty */}
+      <Card className={`modern-card col-span-12 lg:col-span-4 order-2 ${dueToday.length === 0 ? '' : 'h-full'}`}>
         <CardHeader className="flex-row items-center justify-between">
           <CardTitle className="text-lg">Calendar</CardTitle>
           <div className="flex items-center gap-2 text-sm">
@@ -184,10 +184,10 @@ export default function DashboardHome() {
         </CardContent>
       </Card>
 
-      {/* Contract & Quick Insights */}
-      <Card className="modern-card h-full">
+      {/* Contract Timeline */}
+      <Card className="modern-card col-span-12 order-3 h-full">
         <CardHeader className="flex-row items-center justify-between">
-          <CardTitle className="text-lg">Contract & insights</CardTitle>
+          <CardTitle className="text-lg font-semibold">Contract Timeline</CardTitle>
           <div className="flex items-center gap-2">
             {contractUrl ? (
               <Button size="sm" variant="secondary" className="h-8 px-3" onClick={() => window.open(contractUrl, '_blank')}>
@@ -256,10 +256,10 @@ export default function DashboardHome() {
         </div>
       </Card>
 
-      {/* Quick links */}
-      <Card className="modern-card h-full">
+      {/* Quick Links - personalized shortcuts */}
+      <Card className="modern-card col-span-12 order-4 h-full">
         <CardHeader>
-          <CardTitle className="text-lg">Quick links</CardTitle>
+          <CardTitle className="text-lg font-semibold">Quick Links</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
