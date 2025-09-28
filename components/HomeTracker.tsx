@@ -55,15 +55,40 @@ export default function HomeTracker() {
 
   // Load saved homes on mount
   useEffect(() => {
+    let loaded: TrackedHome[] | null = null;
     try {
       const raw = localStorage.getItem('handoff-home-tracker');
       if (raw) {
         const parsed = JSON.parse(raw) as TrackedHome[];
-        if (Array.isArray(parsed)) setHomes(parsed);
+        if (Array.isArray(parsed)) loaded = parsed;
       }
     } catch (e) {
       console.warn('Failed to load saved homes:', e);
     }
+    // Inject sample if empty and not dismissed
+    try {
+      const dismissed = localStorage.getItem('handoff-home-tracker-sample-dismissed') === 'true';
+      if (!loaded || loaded.length === 0) {
+        if (!dismissed) {
+          loaded = [{
+            id: 'sample-home-123',
+            address: '123 Main St, Demo City',
+            price: '$650,000',
+            bedrooms: '3',
+            bathrooms: '2',
+            notes: 'This is sample data. Add your first home to replace it, or remove this sample.',
+            ranking: 1,
+            dateAdded: new Date().toLocaleDateString(),
+            label: 'very-interested',
+            isSample: true,
+          }];
+        } else {
+          loaded = [];
+        }
+      }
+    } catch {}
+    if (loaded) setHomes(loaded);
+
     // Load simple UI state (filter)
     try {
       const uiRaw = localStorage.getItem('handoff-home-tracker-ui');
