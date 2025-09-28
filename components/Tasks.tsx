@@ -2703,6 +2703,43 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
               <div className="lg:col-span-3 space-y-4">
                 {checklistSubtab === 'todo' && (
                   <>
+                    {/* Onboarding sample checkmarks */}
+                    {!allSamplesResolved && (
+                      <Card className="shadow-sm border-dashed">
+                        <CardHeader className="pb-2 flex items-center justify-between">
+                          <CardTitle className="text-sm font-semibold tracking-[-0.01em] text-gray-900 flex items-center gap-2">
+                            <CheckSquare className="w-4 h-4 text-primary" />
+                            Get started
+                            <Badge variant="secondary" className="ml-2">Sample</Badge>
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="pt-0">
+                          <div className="space-y-2">
+                            {sampleItems.map((it) => {
+                              const st = sampleStatus[it.id] || 'pending';
+                              const checked = st === 'completed';
+                              const skipped = st === 'skipped';
+                              return (
+                                <div key={it.id} className={`flex items-center justify-between p-2 rounded-lg border ${checked ? 'bg-green-50 border-green-200' : skipped ? 'bg-gray-50 border-gray-200' : 'bg-white'}`}>
+                                  <label className="flex items-center gap-3 min-w-0">
+                                    <Checkbox id={`smpl-${it.id}`} checked={checked} onCheckedChange={(v) => setSample(it.id, v ? 'completed' : 'pending')} />
+                                    <span className={`text-sm truncate ${skipped ? 'line-through text-gray-500' : ''}`}>{it.label}</span>
+                                  </label>
+                                  <div className="flex items-center gap-2 flex-shrink-0">
+                                    {skipped ? (
+                                      <Button size="sm" variant="ghost" className="h-8 px-2 text-xs" onClick={() => setSample(it.id, 'pending')}>Undo</Button>
+                                    ) : (
+                                      <Button size="sm" variant="ghost" className="h-8 px-2 text-xs" onClick={() => setSample(it.id, 'skipped')}>Skip</Button>
+                                    )}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
+
                     {phasePageId && (
                       <div className="flex items-center justify-between">
                         <Button variant="ghost" size="sm" className="h-8 px-2" onClick={() => setPhasePageId(null)}>
@@ -2733,7 +2770,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                                 { label: 'Legal', tasks: legal },
                                 { label: 'Inspections', tasks: inspections },
                                 { label: 'Insurance', tasks: insurance },
-{ label: 'Financing', tasks: mortgage },
+                                { label: 'Financing', tasks: mortgage },
                               ]}
                               onNavigate={onNavigate}
                               onUpdateTask={handleUpdateTask}
