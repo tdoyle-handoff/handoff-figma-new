@@ -3197,8 +3197,8 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                   <>
                     {/* Onboarding sample checkmarks */}
                     {!allSamplesResolved && (
-                      <Card className="shadow-sm border-dashed">
-                        <CardHeader className="pb-2 flex items-center justify-between bg-gray-100 rounded-md px-4 py-2 mb-2">
+                      <Card className="shadow-sm border-green-200 bg-green-50">
+                        <CardHeader className="pb-2 flex items-center justify-between bg-green-100 text-green-900 rounded-md px-4 py-2 mb-2 border-b border-green-200">
                           <CardTitle className="text-lg font-bold tracking-[-0.01em] text-gray-900 flex items-center gap-2">
                             <CheckSquare className="w-4 h-4 text-primary" />
                             Get started
@@ -3242,7 +3242,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                         </div>
                       </div>
                     )}
-                    {(phasePageId ? displayedTaskPhases.filter(p => p.id === phasePageId) : displayedTaskPhases).map((phase) => {
+                    {(phasePageId ? displayedTaskPhases.filter(p => p.id === phasePageId) : displayedTaskPhases).map((phase, idx) => {
                       let tasks = phase.tasks.filter(t => t.status !== 'completed');
                       if (tagFilter !== 'all') tasks = tasks.filter(matchesTag);
                       if (searchQuery) tasks = tasks.filter(matchesSearch);
@@ -3255,8 +3255,13 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                         const insurance = tasks.filter(t => ((t.subcategory || '') as string).toLowerCase() === 'insurance' || (t.tags || []).includes('insurance'));
                         const mortgage = tasks.filter(t => ['financing','mortgage'].includes(((t.subcategory || '') as string).toLowerCase()) || (t.tags || []).includes('financing'));
                         return (
-                          <div key={phase.id} id={`phase-card-${phase.id}`}>
-                            <TaskTableCardGrouped
+                          <>
+                            {idx > 0 && (<div className="my-6 h-px bg-gray-200/60" />)}
+                            <div id={`phase-card-${phase.id}`}>
+                              <div className="sticky top-16 z-10">
+                                <div className="bg-white/80 backdrop-blur px-3 py-1 text-xs font-semibold text-gray-700 border-b border-gray-200">{phase.title}</div>
+                              </div>
+                              <TaskTableCardGrouped
                               title={phase.title}
                               groups={[
                                 { label: 'Legal', tasks: legal },
@@ -3274,12 +3279,18 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                               onSelectAllInList={(checked)=>selectMany([...legal, ...inspections, ...insurance, ...mortgage].map(t=>t.id), checked)}
                             />
                           </div>
+                          </>
                         );
                       }
 
                       return (
-                        <div key={phase.id} id={`phase-card-${phase.id}`}>
-                          <TaskTableCard
+                        <>
+                          {idx > 0 && (<div className="my-6 h-px bg-gray-200/60" />)}
+                          <div id={`phase-card-${phase.id}`}>
+                            <div className="sticky top-16 z-10">
+                              <div className="bg-white/80 backdrop-blur px-3 py-1 text-xs font-semibold text-gray-700 border-b border-gray-200">{phase.title}</div>
+                            </div>
+                            <TaskTableCard
                             title={phase.title}
                             tasks={tasks}
                             onNavigate={onNavigate}
@@ -3290,7 +3301,8 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                             onToggleSelect={toggleSelect}
                             onSelectAllInList={(checked)=>selectMany(tasks.map(t=>t.id), checked)}
                           />
-                        </div>
+                          </div>
+                        </>
                       );
                     })}
                   </>
