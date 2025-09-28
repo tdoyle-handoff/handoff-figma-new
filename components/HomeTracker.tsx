@@ -425,10 +425,20 @@ export default function HomeTracker() {
         </Card>
       ) : (
         <div className="space-y-4">
+          {homes.some(h => (h as any).isSample) && (
+            <Card className="border-dashed">
+              <CardContent className="p-4 text-sm text-slate-700 flex items-start justify-between gap-3">
+                <div>
+                  <span className="font-medium">Sample property shown.</span> Add a real home to replace it, or remove it now.
+                </div>
+                <Button size="sm" variant="outline" onClick={() => removeHome('sample-home-123')}>Remove sample</Button>
+              </CardContent>
+            </Card>
+          )}
           {homes
             .filter(home => labelFilter === 'all' || home.label === labelFilter)
             .map((home, index) => (
-            <Card key={home.id} className="relative">
+            <Card key={home.id} className={`relative ${(home as any).isSample ? 'border-dashed' : ''}`}>
               <CardContent className="p-6">
                 <div className="flex items-start gap-4">
                   {/* Ranking Badge */}
