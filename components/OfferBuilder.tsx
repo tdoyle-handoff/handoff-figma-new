@@ -515,7 +515,11 @@ export default function OfferBuilder() {
   const steps = ["Property", "Buyer & Financing", "Offer Terms", "Contingencies", "Review & Submit"];
   const progressPct = (step / (steps.length - 1)) * 100;
 
-  const next = () => setStep(s => clamp(s + 1, 0, steps.length - 1));
+  const next = () => setStep(s => {
+    const n = clamp(s + 1, 0, steps.length - 1);
+    setMaxVisited(m => Math.max(m, n));
+    return n;
+  });
   const back = () => setStep(s => clamp(s - 1, 0, steps.length - 1));
 
   // Build draft object
