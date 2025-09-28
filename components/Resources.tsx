@@ -32,6 +32,25 @@ export default function Resources({ onNavigate }: ResourcesProps) {
   const [selectedGuide, setSelectedGuide] = useState<Resource | null>(null);
   const [showGuideModal, setShowGuideModal] = useState(false);
 
+  React.useEffect(() => {
+    const handler = (e: any) => {
+      try {
+        const id = e?.detail?.id as string | undefined;
+        if (!id) return;
+        const all = resourcesRef.current as Resource[];
+        const found = all.find(r => r.id === id) || null;
+        if (found) {
+          setSelectedGuide(found);
+          setShowGuideModal(true);
+          // scroll to modal context
+          document.getElementById('guides')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      } catch {}
+    };
+    window.addEventListener('openResourceGuide', handler as any);
+    return () => window.removeEventListener('openResourceGuide', handler as any);
+  }, []);
+
   const resources: Resource[] = [
     {
       id: '1',
