@@ -2664,9 +2664,14 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                   <Badge className="bg-accent text-accent-foreground text-[12px] px-3 py-1 rounded-full">On Track</Badge>
                   <Badge className="bg-primary/15 text-primary text-[12px] px-3 py-1 rounded-full font-semibold">{Math.round(overallProgress)}% Complete</Badge>
                 </div>
-                <Button size="sm" onClick={() => setOpenAddTaskDialog(true)}>
-                  <Plus className="w-4 h-4 mr-1" /> Add task
-                </Button>
+                <Tooltip open={(() => { try { return localStorage.getItem('handoff-tip-checklist-addtask-v1') !== 'dismissed'; } catch { return true; } })()}>
+                  <TooltipTrigger asChild>
+                    <Button size="sm" onClick={() => { try { localStorage.setItem('handoff-tip-checklist-addtask-v1','dismissed'); } catch {} setOpenAddTaskDialog(true); }}>
+                      <Plus className="w-4 h-4 mr-1" /> Add task
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent sideOffset={8}>Click here to add your first custom task</TooltipContent>
+                </Tooltip>
               </div>
             </div>
             {/* To-do | Done toggle */}
