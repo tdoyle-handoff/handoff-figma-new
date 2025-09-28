@@ -2542,6 +2542,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
   });
   const [tagFilter, setTagFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [viewMode, setViewMode] = useState<'list' | 'kanban'>('list');
   // When set, show only this phase as its own page
   const [phasePageId, setPhasePageId] = useState<string | null>(null);
 
@@ -3108,47 +3109,73 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                 </Collapsible>
               )}
 
-              <div className="flex items-center gap-2 mt-2 flex-wrap">
+              <div className="flex items-center justify-between mt-3 flex-wrap gap-3">
+                {/* Left: Quick tag pills */}
                 <div className="flex items-center gap-2">
-                  <Label className="text-xs">Tag</Label>
-                  <Select value={tagFilter} onValueChange={(v) => setTagFilter(v)}>
-                    <SelectTrigger className="h-8 w-[200px]">
-                      <SelectValue placeholder="All" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All</SelectItem>
-                      {availableTags.map((tag) => (
-                        <SelectItem key={tag} value={tag}>{tag.charAt(0).toUpperCase() + tag.slice(1)}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  {[
+                    { key: 'all', label: 'All' },
+                    { key: 'financing', label: 'Financing' },
+                    { key: 'legal', label: 'Legal' },
+                    { key: 'inspections', label: 'Inspection' },
+                  ].map(t => (
+                    <button
+                      key={t.key}
+                      onClick={() => setTagFilter(t.key)}
+                      className={`px-3 h-8 inline-flex items-center rounded-full text-xs border transition-colors ${tagFilter === t.key ? 'bg-primary text-primary-foreground border-primary' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}`}
+                      aria-pressed={tagFilter === t.key}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
                 </div>
-                <div className="flex items-center gap-2">
-                  <Label className="text-xs">Search</Label>
-                  <Input className="h-8 w-[220px] !bg-white" placeholder="Find tasks..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+
+                {/* Right: Search + view toggle */}
+                <div className="flex items-center gap-3">
+                  <div className="relative">
+                    <SearchIcon className="w-4 h-4 absolute left-2 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <Input className="h-8 w-[220px] pl-8 !bg-white" placeholder="Search tasks..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-600">List</span>
+                    <Switch checked={viewMode === 'kanban'} onCheckedChange={(v) => setViewMode(v ? 'kanban' : 'list')} />
+                    <span className="text-xs text-gray-600">Kanban</span>
+                  </div>
                 </div>
-                <Button size="sm" variant="outline" onClick={() => selectAllVisible(true)}>Select all visible</Button>
-                {selectedTaskIds.size > 0 && (
-                  <>
-                    <span className="text-xs text-gray-600">{selectedTaskIds.size} selected</span>
-                    <div className="inline-flex items-center gap-2">
-                      <Button size="sm" onClick={handleBatchComplete}>Mark complete</Button>
-                      <div className="flex items-center gap-2">
-                        <Label className="text-xs">Due date</Label>
-                        <Input type="date" className="h-8 w-[160px] !bg-white" value={batchDueDate} onChange={(e)=>setBatchDueDate(e.target.value)} />
-                        <Button size="sm" variant="outline" onClick={handleBatchSetDueDate}>Set due date</Button>
+
+                {/* Batch actions */}
+                <div className="w-full flex items-center gap-2 flex-wrap">
+                  <Button size="sm" variant="outline" onClick={() => selectAllVisible(true)}>Select all visible</Button>
+                  {selectedTaskIds.size > 0 && (
+                    <>
+                      <span className="text-xs text-gray-600">{selectedTaskIds.size} selected</span>
+                      <div className="inline-flex items-center gap-2">
+                        <Button size="sm" onClick={handleBatchComplete}>Mark complete</Button>
+                        <div className="flex items-center gap-2">
+                          <Label className="text-xs">Due date</Label>
+                          <Input type="date" className="h-8 w-[160px] !bg-white" value={batchDueDate} onChange={(e)=>setBatchDueDate(e.target.value)} />
+                          <Button size="sm" variant="outline" onClick={handleBatchSetDueDate}>Set due date</Button>
+                        </div>
+                        <Button size="sm" variant="outline" onClick={handleBatchAddToCalendar}>Add to calendar (ICS)</Button>
+                        <Button size="sm" variant="ghost" onClick={clearSelection}>Clear</Button>
                       </div>
-                      <Button size="sm" variant="outline" onClick={handleBatchAddToCalendar}>Add to calendar (ICS)</Button>
-                      <Button size="sm" variant="ghost" onClick={clearSelection}>Clear</Button>
-                    </div>
-                  </>
-                )}
+                    </>
+                  )}
+                </div>
               </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
               {/* Left: To-do / Done content */}
-              <div className="lg:col-span-3 space-y-4">
+              {checklistSubtab === 'todo' && viewMode === 'kanban' && (
+                <div className="lg:col-span-3 space-y-4">
+                  <ChecklistKanban
+                    tasks={visibleTodoTasks}
+                    onUpdateTask={(id, status) => handleUpdateTask(id, status)}
+                    onNavigate={onNavigate}
+                  />
+                </div>
+              )}
+              <div className={`lg:col-span-3 space-y-4 ${viewMode === 'kanban' ? 'hidden' : ''}`}>
                 {checklistSubtab === 'todo' && (
                   <>
                     {/* Onboarding sample checkmarks */}
