@@ -5,46 +5,18 @@ import DashboardHome from './DashboardHome';
 // Lazy load other components for better performance
 const Tasks = React.lazy(() => import('./Tasks'));
 const Documents = React.lazy(() => import('./Documents'));
-const OfferBuilder = React.lazy(() => import('./OfferBuilder'));
 const Resources = React.lazy(() => import('./Resources'));
-const MyTeam = React.lazy(() => import('./MyTeam'));
-
-const Legal = React.lazy(() => import('./Legal'));
-const Inspections = React.lazy(() => import('./Inspections'));
-const Insurance = React.lazy(() => import('./Insurance'));
-const Communications = React.lazy(() => import('./Communications'));
 const Settings = React.lazy(() => import('./Settings'));
 const ChecklistCalendarPage = React.lazy(() => import('./checklist/ChecklistCalendarPage').then(m => ({ default: m.default })));
 
 // Property Search page with tabs (Home Search, ATTOM Summary, Onboarding)
 const PropertySearchTabs = React.lazy(() => import('./PropertySearchTabs'));
 
-// MLS Demo components - these are named exports, so we need to import them correctly
-const AddressValidationDemo = React.lazy(async () => {
-  const module = await import('./AddressValidationDemo');
-  return { default: module.AddressValidationDemo };
-});
-const MLSIntegrationDemo = React.lazy(async () => {
-  const module = await import('./MLSIntegrationDemo');
-  return { default: module.MLSIntegrationDemo };
-});
-const DevTools = React.lazy(async () => {
-  const module = await import('./DevTools');
-  return { default: module.DevTools };
-});
-const PropertyAnalysisReport = React.lazy(async () => {
-  const module = await import('./PropertyAnalysisReport');
-  return { default: module.PropertyAnalysisReport };
-});
-const ComprehensivePropertyAnalysis = React.lazy(async () => {
-  const module = await import('./ComprehensivePropertyAnalysis');
-  return { default: module.ComprehensivePropertyAnalysis };
-});
+// Keep ATTOM API Config tool
 const AttomApiConfigurationTool = React.lazy(async () => {
   const module = await import('./AttomApiConfigurationTool');
   return { default: module.AttomApiConfigurationTool };
 });
-const DeveloperConfig = React.lazy(() => import('./DeveloperConfig'));
 
 // Loading component
 const LoadingSpinner = () => (
@@ -117,102 +89,21 @@ export function PageRenderer({
           </Suspense>
         );
       
-      case 'team':
-        return (
-          <Suspense fallback={<LoadingSpinner />}>
-            <MyTeam />
-          </Suspense>
-        );
-      
-
-      
-      case 'legal':
-        return (
-          <Suspense fallback={<LoadingSpinner />}>
-            <Legal />
-          </Suspense>
-        );
-      
-      case 'inspections':
-        return (
-          <Suspense fallback={<LoadingSpinner />}>
-            <Inspections />
-          </Suspense>
-        );
-      
-      case 'insurance':
-        return (
-          <Suspense fallback={<LoadingSpinner />}>
-            <Insurance />
-          </Suspense>
-        );
-      
-      
-      case 'communications':
-        return (
-          <Suspense fallback={<LoadingSpinner />}>
-            <Communications />
-          </Suspense>
-        );
-      
       case 'settings':
         return (
           <Suspense fallback={<LoadingSpinner />}>
-            <Settings 
+            <Settings
               userProfile={userProfile}
               setupData={setupData}
               onSignOut={onSignOut}
             />
           </Suspense>
         );
-      
-      // Demo pages for development and testing
-      case 'address-demo':
-        return (
-          <Suspense fallback={<LoadingSpinner />}>
-            <AddressValidationDemo />
-          </Suspense>
-        );
-      
-      case 'mls-demo':
-        return (
-          <Suspense fallback={<LoadingSpinner />}>
-            <MLSIntegrationDemo />
-          </Suspense>
-        );
-      
-      case 'dev-tools':
-        return (
-          <Suspense fallback={<LoadingSpinner />}>
-            <DevTools onNavigate={navigateString} />
-          </Suspense>
-        );
-      
-      case 'property-report':
-        return (
-          <Suspense fallback={<LoadingSpinner />}>
-            <PropertyAnalysisReport onClose={() => onNavigate('property')} />
-          </Suspense>
-        );
-      
-      case 'comprehensive-analysis':
-        return (
-          <Suspense fallback={<LoadingSpinner />}>
-            <ComprehensivePropertyAnalysis onNavigate={navigateString} />
-          </Suspense>
-        );
-      
+
       case 'attom-api-config':
         return (
           <Suspense fallback={<LoadingSpinner />}>
             <AttomApiConfigurationTool />
-          </Suspense>
-        );
-
-      case 'dev-config':
-        return (
-          <Suspense fallback={<LoadingSpinner />}>
-            <DeveloperConfig />
           </Suspense>
         );
 
