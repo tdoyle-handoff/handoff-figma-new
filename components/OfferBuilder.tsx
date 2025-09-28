@@ -2,7 +2,7 @@
 WIREFRAME: Buyer Offer Builder (Web)
 
 [Header]
-┌───────────────────────────────────────��─────────────────────────┐
+┌────���──────────────────────────────────��─────────────────────────┐
 │ Offer Builder  | Step 1 of 5  | Save Draft | Help            │
 └─────���────────────────────────────────────────────────────────┘
 
@@ -1134,6 +1134,54 @@ export default function OfferBuilder() {
               )}
             </div>
             <Button variant="secondary" size="sm" onClick={handleSaveDraft} className="text-xs sm:text-sm">Save draft</Button>
+          </div>
+        </div>
+
+        {/* Quick Actions row */}
+        <div className="mb-3 -mx-1 overflow-x-auto">
+          <div className="flex gap-2 px-1 min-w-max">
+            <button className="px-3 py-2 rounded-lg border bg-white hover:bg-slate-50 text-sm shadow-sm" onClick={()=>{ setOfferPrice(listPrice); }}>
+              <div className="font-medium">Match List Price</div>
+              <div className="text-xs text-muted-foreground">Set offer = current list</div>
+            </button>
+            <button className="px-3 py-2 rounded-lg border bg-white hover:bg-slate-50 text-sm shadow-sm" onClick={()=>{ setDpMode('percent'); setDownPayment(20); }}>
+              <div className="font-medium">20% Down</div>
+              <div className="text-xs text-muted-foreground">Often removes PMI</div>
+            </button>
+            <button className="px-3 py-2 rounded-lg border bg-white hover:bg-slate-50 text-sm shadow-sm" onClick={()=>{ setEarnestMode('percent'); setEarnest(3); }}>
+              <div className="font-medium">3% Earnest</div>
+              <div className="text-xs text-muted-foreground">Competitive EMD</div>
+            </button>
+            <button className="px-3 py-2 rounded-lg border bg-white hover:bg-slate-50 text-sm shadow-sm" onClick={()=>{ setDpMode('percent'); setDownPayment(10); setEarnestMode('percent'); setEarnest(5); }}>
+              <div className="font-medium">10% Down + 5% EMD</div>
+              <div className="text-xs text-muted-foreground">Balanced terms</div>
+            </button>
+            <button className="px-3 py-2 rounded-lg border bg-white hover:bg-slate-50 text-sm shadow-sm" onClick={()=>{
+              const presets = JSON.parse(localStorage.getItem('offer-presets')||'[]');
+              const preset = { offerPrice, dpMode, downPayment, earnestMode, earnest };
+              localStorage.setItem('offer-presets', JSON.stringify([preset, ...presets].slice(0,10)));
+              alert('Preset saved');
+            }}>
+              <div className="font-medium flex items-center gap-1"><PlusCircle className="w-4 h-4"/> Save current as preset</div>
+              <div className="text-xs text-muted-foreground">Reuse later</div>
+            </button>
+            {(() => {
+              try {
+                const presets = JSON.parse(localStorage.getItem('offer-presets')||'[]');
+                return presets.slice(0,3).map((p: any, i: number) => (
+                  <button key={i} className="px-3 py-2 rounded-lg border bg-white hover:bg-slate-50 text-sm shadow-sm" onClick={()=>{
+                    setOfferPrice(p.offerPrice||offerPrice);
+                    setDpMode(p.dpMode||dpMode);
+                    setDownPayment(p.downPayment||downPayment);
+                    setEarnestMode(p.earnestMode||earnestMode);
+                    setEarnest(p.earnest||earnest);
+                  }}>
+                    <div className="font-medium">Preset {i+1}</div>
+                    <div className="text-xs text-muted-foreground">Apply saved terms</div>
+                  </button>
+                ));
+              } catch { return null; }
+            })()}
           </div>
         </div>
 
