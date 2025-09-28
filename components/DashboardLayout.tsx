@@ -393,6 +393,8 @@ export default function DashboardLayout({
                         !sidebarOpen && "justify-center px-3"
                       )}
                       onClick={() => onPageChange(item.id)}
+                      title={item.label}
+                      aria-label={item.label}
                     >
                       <Icon className="h-5 w-5 flex-shrink-0" />
                       {sidebarOpen && (
