@@ -152,6 +152,10 @@ export default function HomeTracker() {
 
   const removeHome = (id: string) => {
     const updatedHomes = homes.filter(h => h.id !== id);
+    const removed = homes.find(h => h.id === id);
+    if (removed?.isSample) {
+      try { localStorage.setItem('handoff-home-tracker-sample-dismissed','true'); } catch {}
+    }
     // Reorder rankings
     const reorderedHomes = updatedHomes.map((home, index) => ({
       ...home,
