@@ -3154,7 +3154,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                     {/* Onboarding sample checkmarks */}
                     {!allSamplesResolved && (
                       <Card className="shadow-sm border-dashed">
-                        <CardHeader className="pb-2 flex items-center justify-between">
+                        <CardHeader className="pb-2 flex items-center justify-between bg-gray-100 rounded-md px-4 py-2 mb-2">
                           <CardTitle className="text-sm font-semibold tracking-[-0.01em] text-gray-900 flex items-center gap-2">
                             <CheckSquare className="w-4 h-4 text-primary" />
                             Get started
