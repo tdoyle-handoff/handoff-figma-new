@@ -2397,6 +2397,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [openInsuranceCalcModal, setOpenInsuranceCalcModal] = useState(false);
   const [openAllDocsModal, setOpenAllDocsModal] = useState(false);
+  const [openExportDialog, setOpenExportDialog] = useState(false);
   // Add Task dialog state
   const [openAddTaskDialog, setOpenAddTaskDialog] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState('');
