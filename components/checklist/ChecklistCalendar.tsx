@@ -382,13 +382,9 @@ title={`${t.title}${t.description ? ' — ' + t.description : ''}`}
                       draggable
                       onDragStart={(e) => onDragStart(e, t.id)}
                       onClick={() => {
-                        // Open inline details modal locally
-                        setDetailTask(t);
-                        setDetailOpen(true);
-                        // Also dispatch global event for listeners elsewhere
-                        try {
-                          window.dispatchEvent(new CustomEvent('openTaskDetails', { detail: { taskId: t.id } }));
-                        } catch {}
+                        setSheetDate(key);
+                        setSheetSelectedTask(t);
+                        setSheetOpen(true);
                       }}
                       className="group cursor-move text-xs border rounded px-2 py-1 flex items-center gap-2 hover:bg-gray-50"
 title={`${t.title}${t.description ? ' — ' + t.description : ''}`}
