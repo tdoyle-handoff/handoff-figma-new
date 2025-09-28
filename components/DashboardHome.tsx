@@ -336,7 +336,7 @@ export default function DashboardHome() {
             const lastTask = tasks.find(t => ['active','in-progress','overdue'].includes((t.status as any))) || tasks[0];
             return (
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <button className="flex items-center justify-between h-11 px-3 rounded-md bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200" onClick={() => {
+                <button className="flex items-center justify-between h-11 px-4 rounded-full bg-blue-600 hover:bg-blue-700 text-white" onClick={() => {
                   window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'tasks' } }));
                   setTimeout(() => {
                     if (lastTask) {
@@ -350,13 +350,13 @@ export default function DashboardHome() {
                   <span className="flex items-center gap-2"><CheckSquare className="w-4 h-4" /> Resume last task</span>
                   <span className="text-xs text-blue-700">Go</span>
                 </button>
-                <button className="flex items-center justify-between h-11 px-3 rounded-md bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'overview' } }))}>
-                  <span className="flex items-center gap-2"><TrendingUp className="w-4 h-4" /> View Budget</span>
-                  <span className="text-xs text-emerald-700">Open</span>
+                <button className="flex items-center justify-between h-11 px-4 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'overview' } }))}>
+                  <span className="flex items-center gap-2"><TrendingUp className="w-4 h-4" /> Recalculate Budget</span>
+                  <span className="text-xs text-white/90">Open</span>
                 </button>
-                <button className="flex items-center justify-between h-11 px-3 rounded-md bg-violet-50 hover:bg-violet-100 text-violet-800 border border-violet-200" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'documents' } }))}>
-                  <span className="flex items-center gap-2"><FileText className="w-4 h-4" /> Open Contract Draft</span>
-                  <span className="text-xs text-violet-700">Open</span>
+                <button className="flex items-center justify-between h-11 px-4 rounded-full bg-violet-600 hover:bg-violet-700 text-white" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'property' } }))}>
+                  <span className="flex items-center gap-2"><Building className="w-4 h-4" /> Saved Properties</span>
+                  <span className="text-xs text-white/90">Open</span>
                 </button>
               </div>
             );
