@@ -2300,6 +2300,127 @@ export default function Tasks({ onNavigate }: TasksProps) {
 
   const displayedTaskPhases = React.useMemo(() => taskPhases, [taskPhases]);
 
+  function getDashboardData(): any {
+    try {
+      const prefs = (userProfile as any)?.preferences;
+      if (prefs && prefs.dashboardData) return prefs.dashboardData;
+    } catch {}
+    try {
+      const raw = localStorage.getItem('handoff-user-profile');
+      if (raw) {
+        const obj = JSON.parse(raw);
+        return (obj.preferences && obj.preferences.dashboardData) || null;
+      }
+    } catch {}
+    return null;
+  }
+
+  function mortgagePmt(principal: number, annualRatePct: number, termYears: number) {
+    const r = annualRatePct / 100 / 12;
+    const n = termYears * 12;
+    if (!principal || principal <= 0) return 0;
+    if (r === 0) return principal / n;
+    return (principal * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+  }
+
+  function computeBudgetSummary() {
+    const dd = getDashboardData() || {};
+    const homePrice = Number(dd.homePrice || 0);
+    const downPercent = Number(dd.downPercent || 20);
+    const downModeDollar = !!dd.downModeDollar;
+    const downDollar = Number(dd.downDollar || 0);
+    const rate = Number(dd.rate || 6.5);
+    const term = Number(dd.term || 30);
+    const taxesAnnual = Number(dd.taxesAnnual || 0);
+    const insuranceAnnual = Number(dd.insuranceAnnual || 0);
+    const hoaMonthly = Number(dd.hoaMonthly || 0);
+    const maintenanceMonthly = Number(dd.maintenanceMonthly || 0);
+    const monthlyIncome = Number(dd.monthlyIncome || 0);
+
+    const downPayment = downModeDollar ? downDollar : (homePrice * (downPercent / 100));
+    const loanAmount = Math.max(0, homePrice - downPayment);
+    const pAndI = mortgagePmt(loanAmount, rate, term);
+    const taxesMonthly = taxesAnnual / 12;
+    const insuranceMonthly = insuranceAnnual / 12;
+    const totalMonthly = pAndI + taxesMonthly + insuranceMonthly + hoaMonthly + maintenanceMonthly;
+    const budgetShare = monthlyIncome ? ((totalMonthly / monthlyIncome) * 100) : 0;
+
+    return { homePrice, downPayment, loanAmount, rate, term, taxesMonthly, insuranceMonthly, hoaMonthly, maintenanceMonthly, pAndI, totalMonthly, monthlyIncome, budgetShare };
+  }
+
+  function buildAndDownloadCsv(): string {
+    const rows: string[][] = [];
+    const b = computeBudgetSummary();
+    rows.push(['Budget Summary']);
+    rows.push(['Home Price', String(b.homePrice)]);
+    rows.push(['Down Payment', String(Math.round(b.downPayment))]);
+    rows.push(['Loan Amount', String(Math.round(b.loanAmount))]);
+    rows.push(['Rate (%)', String(b.rate)]);
+    rows.push(['Term (years)', String(b.term)]);
+    rows.push(['Mortgage (P&I)', String(Math.round(b.pAndI))]);
+    rows.push(['Taxes (mo)', String(Math.round(b.taxesMonthly))]);
+    rows.push(['Insurance (mo)', String(Math.round(b.insuranceMonthly))]);
+    rows.push(['HOA (mo)', String(Math.round(b.hoaMonthly))]);
+    rows.push(['Upkeep (mo)', String(Math.round(b.maintenanceMonthly))]);
+    rows.push(['Total Monthly', String(Math.round(b.totalMonthly))]);
+    rows.push(['Budget Share (%)', b.budgetShare.toFixed(1)]);
+    rows.push([]);
+    rows.push(['Tasks']);
+    rows.push(['Title','Status','Due Date','Category','Subcategory','Priority']);
+    taskContext.tasks.forEach(t => {
+      rows.push([
+        t.title,
+        t.status,
+        t.dueDate ? new Date(t.dueDate).toLocaleDateString() : '',
+        t.category,
+        t.subcategory || '',
+        t.priority
+      ]);
+    });
+    const csv = rows.map(r => r.map(v => '"' + String(v).replace(/"/g,'""') + '"').join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'handoff-progress.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+    return url;
+  }
+
+  function openPrintableReport() {
+    const b = computeBudgetSummary();
+    const tasks = taskContext.tasks;
+    const html = `<!doctype html><html><head><meta charset="utf-8"/><title>Progress Report</title>
+      <style>
+        body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;padding:24px;color:#0f172a}
+        h1{font-size:20px;margin:0 0 12px}
+        h2{font-size:16px;margin:20px 0 8px}
+        table{width:100%;border-collapse:collapse}
+        th,td{font-size:12px;border:1px solid #e5e7eb;padding:6px 8px;text-align:left}
+        th{background:#f8fafc}
+      </style></head><body>
+      <h1>Transaction Progress Summary</h1>
+      <h2>Budget</h2>
+      <table><tbody>
+        <tr><td>Home Price</td><td>${b.homePrice.toLocaleString()}</td></tr>
+        <tr><td>Down Payment</td><td>${Math.round(b.downPayment).toLocaleString()}</td></tr>
+        <tr><td>Loan Amount</td><td>${Math.round(b.loanAmount).toLocaleString()}</td></tr>
+        <tr><td>Rate / Term</td><td>${b.rate}% / ${b.term} yrs</td></tr>
+        <tr><td>Monthly (P&I)</td><td>${Math.round(b.pAndI).toLocaleString()}</td></tr>
+        <tr><td>Taxes / Insurance (mo)</td><td>${Math.round(b.taxesMonthly).toLocaleString()} / ${Math.round(b.insuranceMonthly).toLocaleString()}</td></tr>
+        <tr><td>HOA / Upkeep (mo)</td><td>${Math.round(b.hoaMonthly).toLocaleString()} / ${Math.round(b.maintenanceMonthly).toLocaleString()}</td></tr>
+        <tr><td>Total Monthly</td><td>${Math.round(b.totalMonthly).toLocaleString()}</td></tr>
+      </tbody></table>
+      <h2>Tasks</h2>
+      <table><thead><tr><th>Title</th><th>Status</th><th>Due</th><th>Category</th><th>Priority</th></tr></thead><tbody>
+      ${tasks.map(t => `<tr><td>${t.title}</td><td>${t.status}</td><td>${t.dueDate?new Date(t.dueDate).toLocaleDateString():''}</td><td>${t.category}</td><td>${t.priority}</td></tr>`).join('')}
+      </tbody></table>
+      </body></html>`;
+    const w = window.open('', '_blank');
+    if (!w) return;
+    w.document.open(); w.document.write(html); w.document.close();
+    setTimeout(() => { try { w.focus(); w.print(); } catch {} }, 400);
+  }
+
   const phaseIdToCategory = (phaseId: string): Task['category'] => {
     if (phaseId.includes('search')) return 'search';
     if (phaseId.includes('offer')) return 'offer';
