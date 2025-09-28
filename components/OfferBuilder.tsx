@@ -1590,10 +1590,23 @@ export default function OfferBuilder() {
         )}
 
         {step === 4 && (
-          <Card>
+          <Card className="relative">
             <CardHeader>
               <CardTitle className="text-lg sm:text-xl">Review Purchase Agreement & Submit</CardTitle>
             </CardHeader>
+            {!dismissedHelps['help-review-1'] && (
+              <aside className="hidden lg:block absolute -right-6 top-6 w-64 z-10">
+                <div className="rounded-md border bg-muted/40 text-xs p-3 shadow-sm">
+                  <div className="flex items-start gap-2">
+                    <Info className="w-3 h-3 mt-0.5 text-muted-foreground" />
+                    <div className="flex-1">
+                      Look for red flags before submitting. You can save and come back later—your progress is auto‑saved.
+                    </div>
+                    <button aria-label="Dismiss" className="text-muted-foreground hover:text-foreground" onClick={()=>dismissHelp('help-review-1')}>×</button>
+                  </div>
+                </div>
+              </aside>
+            )}
             <CardContent>
               {/* Summary */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
