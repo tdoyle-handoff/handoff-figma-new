@@ -3051,6 +3051,9 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                   <Badge className="bg-accent text-accent-foreground text-[12px] px-3 py-1 rounded-full">On Track</Badge>
                   <Badge className="bg-primary/15 text-primary text-[12px] px-3 py-1 rounded-full font-semibold">{Math.round(overallProgress)}% Complete</Badge>
                 </div>
+                <Button variant={quickToolsOpen ? 'secondary' : 'outline'} size="sm" className="h-9 px-3" onClick={() => setQuickToolsOpen(v => !v)}>
+                  <Wrench className="w-4 h-4 mr-1" /> Quick Tools
+                </Button>
                 <Tooltip open={(() => { try { return localStorage.getItem('handoff-tip-checklist-addtask-v1') !== 'dismissed'; } catch { return true; } })()}>
                   <TooltipTrigger asChild>
                     <Button size="sm" onClick={() => { try { localStorage.setItem('handoff-tip-checklist-addtask-v1','dismissed'); } catch {} setOpenAddTaskDialog(true); }}>
