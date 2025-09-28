@@ -2273,6 +2273,7 @@ export default function Tasks({ onNavigate }: TasksProps) {
   const isMobile = useIsMobile();
   const taskContext = useTaskContext();
   const propertyContext = usePropertyContext();
+  const { userProfile } = useAuth();
 
   // Feature flags for visibility
   const SHOW_TASK_CATEGORIES = false;
