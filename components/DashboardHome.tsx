@@ -84,9 +84,9 @@ export default function DashboardHome() {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
       {/* Current tasks */}
-      <Card className="modern-card">
+      <Card className="modern-card h-full">
         <CardHeader>
           <CardTitle className="text-lg">Current tasks</CardTitle>
         </CardHeader>
@@ -95,7 +95,7 @@ export default function DashboardHome() {
             <div>
               <h4 className="text-sm font-semibold mb-2">Today</h4>
               {dueToday.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No tasks due today.</p>
+                <div className="text-sm text-muted-foreground bg-[#F9FAFB] border border-gray-200 rounded-md p-4">No tasks due today.</div>
               ) : (
                 <ul className="space-y-2">
                   {dueToday.map(t => (
@@ -119,7 +119,7 @@ export default function DashboardHome() {
             <div>
               <h4 className="text-sm font-semibold mb-2">Upcoming</h4>
               {upcoming.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No upcoming tasks this week.</p>
+                <div className="text-sm text-muted-foreground bg-[#F9FAFB] border border-gray-200 rounded-md p-4">No upcoming tasks this week.</div>
               ) : (
                 <ul className="space-y-2">
                   {upcoming.map(t => (
@@ -145,7 +145,7 @@ export default function DashboardHome() {
       </Card>
 
       {/* Calendar */}
-      <Card className="modern-card">
+      <Card className="modern-card h-full">
         <CardHeader className="flex-row items-center justify-between">
           <CardTitle className="text-lg">Calendar</CardTitle>
           <div className="flex items-center gap-2 text-sm">
@@ -167,7 +167,7 @@ export default function DashboardHome() {
           <div className="space-y-3">
             <div className="text-xs font-semibold text-muted-foreground">{format(today, 'd LLLL')}</div>
             {dueToday.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No events for today.</p>
+              <div className="text-sm text-muted-foreground bg-[#F9FAFB] border border-gray-200 rounded-md p-4">No events for today.</div>
             ) : (
               <div className="space-y-3">
                 {dueToday.map((t, idx) => (
@@ -185,7 +185,7 @@ export default function DashboardHome() {
       </Card>
 
       {/* Contract & Quick Insights */}
-      <Card className="modern-card">
+      <Card className="modern-card h-full">
         <CardHeader className="flex-row items-center justify-between">
           <CardTitle className="text-lg">Contract & insights</CardTitle>
           <div className="flex items-center gap-2">
@@ -257,7 +257,7 @@ export default function DashboardHome() {
       </Card>
 
       {/* Quick links */}
-      <Card className="modern-card">
+      <Card className="modern-card h-full">
         <CardHeader>
           <CardTitle className="text-lg">Quick links</CardTitle>
         </CardHeader>
