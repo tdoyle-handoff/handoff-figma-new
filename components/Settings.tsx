@@ -27,6 +27,7 @@ interface SettingsProps {
 
 export default function Settings({ onSignOut, setupData, onNavigate }: SettingsProps) {
   const isMobile = useIsMobile();
+  const { userProfile, isGuestMode, updateUserProfile } = useAuth();
   const [activeTab, setActiveTab] = useState('profile');
   const [showPassword, setShowPassword] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
