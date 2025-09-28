@@ -1,9 +1,12 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
+import { useAuth } from '../hooks/useAuth';
 import { useTaskContext, Task } from './TaskContext';
-import { addDays, format, isSameDay, isSameWeek, parseISO, startOfWeek } from 'date-fns';
-import { FileText, ExternalLink, CalendarDays, DollarSign, Clock, CheckSquare, TrendingUp, BookOpen, Settings as SettingsIcon, Building } from 'lucide-react';
+import { addDays, format, isSameDay, isSameWeek, parseISO, startOfWeek, endOfWeek } from 'date-fns';
+import { FileText, ExternalLink, CalendarDays, DollarSign, Clock, CheckSquare, TrendingUp, BookOpen, Settings as SettingsIcon, Building, Upload, Plus, StickyNote } from 'lucide-react';
 
 function parseDate(d?: string): Date | null {
   if (!d) return null;
