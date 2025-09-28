@@ -3085,6 +3085,29 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                   <TabsTrigger value="done" className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 pb-2 px-4 text-gray-600 data-[state=active]:text-gray-900">Done</TabsTrigger>
                 </TabsList>
               </Tabs>
+
+              {showChecklistHelp && (
+                <Collapsible defaultOpen onOpenChange={(open)=>{ if (!open) { try { localStorage.setItem('handoff-dismiss-alert-tasks-v1','true'); } catch {}; setShowChecklistHelp(false); } }}>
+                  <div className="mt-2 rounded-md border border-blue-200 bg-blue-50 text-blue-900">
+                    <CollapsibleTrigger className="w-full text-left flex items-center justify-between gap-2 px-3 py-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <Info className="w-4 h-4 text-blue-700 flex-shrink-0" />
+                        <span className="text-xs sm:text-sm font-medium truncate">Using the Transaction Checklist and Calendar</span>
+                      </div>
+                      <ChevronDown className="w-4 h-4 text-blue-700" />
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <div className="px-3 pb-3 pt-0">
+                        <p className="text-xs sm:text-sm leading-relaxed">
+                          Track tasks by phase in the checklist. Select a task to see “What it is”, “Why it matters”, and “How to complete it.” Use the Calendar to drag-and-drop due dates and open task details by clicking a task.
+                        </p>
+                        <p className="text-xs sm:text-sm mt-1">Before using the checklist, click \"Select scenarios\" above to set your Scope and Scenarios.</p>
+                      </div>
+                    </CollapsibleContent>
+                  </div>
+                </Collapsible>
+              )}
+
               <div className="flex items-center gap-2 mt-2 flex-wrap">
                 <div className="flex items-center gap-2">
                   <Label className="text-xs">Tag</Label>
