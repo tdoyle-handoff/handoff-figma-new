@@ -4,7 +4,7 @@ WIREFRAME: Buyer Offer Builder (Web)
 [Header]
 ┌───────────────────────────────────────��─────────────────────────┐
 │ Offer Builder  | Step 1 of 5  | Save Draft | Help            │
-└─────���────────────────────────────────────────────────────────┘
+└─────���─────────────���──────────────────────────────────────────┘
 
 [Stepper]
 ● Property  →  ● Buyer & Financing  →  ● Offer Terms  →  ● Contingencies  →  ● Review & Submit
@@ -539,7 +539,7 @@ export default function OfferBuilder() {
 
   // Apply draft
   const applyDraft = (d: Partial<OfferDraft>) => {
-    if (typeof d.step === 'number') setStep(clamp(d.step, 0, steps.length - 1));
+    if (typeof d.step === 'number') { const v = clamp(d.step, 0, steps.length - 1); setStep(v); setMaxVisited(m=>Math.max(m, v)); }
     if (d.address !== undefined) setAddress(d.address);
     if (d.city !== undefined) setCity(d.city);
     if (d.stateUS !== undefined) setStateUS(d.stateUS);
