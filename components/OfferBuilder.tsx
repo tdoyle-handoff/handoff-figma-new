@@ -743,6 +743,7 @@ export default function OfferBuilder() {
       if (!raw) return;
       const parsed = JSON.parse(raw) as OfferDraft;
       applyDraft(parsed);
+      if (typeof parsed.step === 'number') setMaxVisited(m=>Math.max(m, clamp(parsed.step,0,steps.length-1)));
       setCurrentDraftId(parsed.id || id);
       setCurrentDraftName(parsed.name || null);
     } catch {}
