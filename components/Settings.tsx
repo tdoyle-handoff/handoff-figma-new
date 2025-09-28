@@ -52,7 +52,10 @@ export default function Settings({ onSignOut, setupData, onNavigate }: SettingsP
     taskReminders: true,
     deadlineAlerts: true,
     teamUpdates: true,
-    marketingEmails: false
+    marketingEmails: false,
+    overdueTasks: true,
+    financingDeadlines: true,
+    contractMilestones: true,
   });
 
   // Privacy settings
