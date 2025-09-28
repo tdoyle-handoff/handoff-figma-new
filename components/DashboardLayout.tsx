@@ -27,10 +27,20 @@ import {
   BarChart3,
   ShoppingCart,
   Code,
-  Calendar
+  Calendar,
+  Bell,
+  CreditCard,
+  ExternalLink,
+  Calendar as CalendarIcon,
+  Plus
 } from 'lucide-react';
 import type { PageType } from '../hooks/useNavigation';
 import { useTaskContext, TaskPhase } from './TaskContext';
+import { useAuth } from '../hooks/useAuth';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from './ui/sheet';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 
 interface NavigationItem {
   id: PageType;
@@ -50,6 +60,14 @@ interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
+function daysUntil(dateStr?: string) {
+  if (!dateStr) return Infinity;
+  const d = new Date(dateStr);
+  const today = new Date();
+  d.setHours(0,0,0,0); today.setHours(0,0,0,0);
+  return Math.ceil((d.getTime() - today.getTime()) / (1000*60*60*24));
+}
+
 export default function DashboardLayout({
   currentPage,
   onPageChange,
@@ -60,7 +78,40 @@ export default function DashboardLayout({
 }: DashboardLayoutProps) {
   const propertyContext = usePropertyContext();
   const navigation = useNavigation();
+  const { userProfile } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const taskCtx = useTaskContext();
+
+  // Notifications
+  const tasks = taskCtx.tasks;
+  const prefs = ((userProfile as any)?.preferences?.notifications || {}) as Partial<{ overdueTasks:boolean; financingDeadlines:boolean; contractMilestones:boolean }>;
+  const showOverdue = prefs.overdueTasks !== false;
+  const showFinancing = prefs.financingDeadlines !== false;
+  const showContract = prefs.contractMilestones !== false;
+  const today = new Date();
+  const overdue = showOverdue ? tasks.filter(t => (t.status === 'overdue') || (t.dueDate && new Date(t.dueDate) < today && t.status !== 'completed')).slice(0,5) : [];
+  const financing = showFinancing ? tasks.filter(t => ((t.subcategory||'').toLowerCase()==='financing' || (t.tags||[]).includes('financing')) && t.dueDate && daysUntil(t.dueDate) <= 7 && t.status !== 'completed').slice(0,5) : [];
+  const contractTasks = tasks.filter(t => (t.category==='contract' || t.category==='diligence'));
+  const contractDue = showContract ? contractTasks.filter(t => t.dueDate && daysUntil(t.dueDate) <= 7 && t.status !== 'completed').slice(0,5) : [];
+  const closingSoon = showContract && taskCtx.scheduleAnchors.closingDate && daysUntil(taskCtx.scheduleAnchors.closingDate) <= 14 ? [{ id: 'closing-anchor', title: 'Closing approaching', dueDate: taskCtx.scheduleAnchors.closingDate }] : [];
+  const totalNotifications = overdue.length + financing.length + contractDue.length + closingSoon.length;
+
+  const openTask = (id?: string) => {
+    if (!id) return;
+    try { window.dispatchEvent(new CustomEvent('openTaskDetails', { detail: { taskId: id } })); } catch {}
+    onPageChange('tasks');
+  };
+
+  // Quick Add state
+  const [quickOpen, setQuickOpen] = useState(false);
+  const [taskTitle, setTaskTitle] = useState('');
+  const [taskCategory, setTaskCategory] = useState<'search'|'offer'|'contract'|'diligence'|'pre-closing'|'closing'|'post-closing'>('search');
+  const [taskPriority, setTaskPriority] = useState<'high'|'medium'|'low'>('medium');
+  const [taskDue, setTaskDue] = useState('');
+  const [propAddress, setPropAddress] = useState('');
+  const [propCity, setPropCity] = useState('');
+  const [propState, setPropState] = useState('');
+  const [propZip, setPropZip] = useState('');
 
   // Check if user is a developer (in production, this would check actual permissions)
   const isDeveloper = process.env.NODE_ENV === 'development' || setupData?.buyerEmail?.includes('dev') || setupData?.buyerEmail?.includes('admin');
@@ -136,7 +187,6 @@ export default function DashboardLayout({
   const completionStatus = getCompletionStatus();
 
   // Phases for header stepper (only used on Tasks page)
-  const taskCtx = useTaskContext();
   const headerPhases = taskCtx?.taskPhases || [];
 
   const HeaderPhaseStepper = ({ phases, currentId, onSelect }: { phases: TaskPhase[]; currentId?: string; onSelect: (id: string) => void }) => {
@@ -465,8 +515,82 @@ export default function DashboardLayout({
               </DropdownMenu>
             </nav>
 
-            {/* Right: User */}
+            {/* Right: Notifications + User */}
             <div className="flex items-center gap-3">
+              <DropdownMenu>
+                <DropdownMenuTrigger className="relative inline-flex items-center justify-center rounded-full h-9 w-9 hover:bg-muted">
+                  <Bell className="h-5 w-5" />
+                  {totalNotifications > 0 && (
+                    <Badge className="absolute -top-1 -right-1 h-5 min-w-5 px-1 py-0 text-[11px] leading-5 rounded-full">{totalNotifications}</Badge>
+                  )}
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-96">
+                  <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {totalNotifications === 0 && (
+                    <DropdownMenuItem className="text-sm text-muted-foreground">No new notifications</DropdownMenuItem>
+                  )}
+                  {overdue.length > 0 && (
+                    <>
+                      <DropdownMenuLabel className="text-xs text-red-600">Overdue Tasks</DropdownMenuLabel>
+                      {overdue.map(t => (
+                        <DropdownMenuItem key={`ov-${t.id}`} onSelect={() => openTask(t.id)} className="flex items-center gap-2">
+                          <FileText className="h-4 w-4 text-red-600" />
+                          <div className="min-w-0">
+                            <div className="text-sm font-medium truncate">{t.title}</div>
+                            {t.dueDate && <div className="text-xs text-muted-foreground">Due {new Date(t.dueDate).toLocaleDateString()}</div>}
+                          </div>
+                        </DropdownMenuItem>
+                      ))}
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
+                  {financing.length > 0 && (
+                    <>
+                      <DropdownMenuLabel className="text-xs text-blue-600">Financing Deadlines</DropdownMenuLabel>
+                      {financing.map(t => (
+                        <DropdownMenuItem key={`fin-${t.id}`} onSelect={() => openTask(t.id)} className="flex items-center gap-2">
+                          <CreditCard className="h-4 w-4 text-blue-600" />
+                          <div className="min-w-0">
+                            <div className="text-sm font-medium truncate">{t.title}</div>
+                            {t.dueDate && <div className="text-xs text-muted-foreground">Due {new Date(t.dueDate).toLocaleDateString()}</div>}
+                          </div>
+                        </DropdownMenuItem>
+                      ))}
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
+                  {(contractDue.length > 0 || closingSoon.length > 0) && (
+                    <>
+                      <DropdownMenuLabel className="text-xs text-emerald-700">Contract Milestones</DropdownMenuLabel>
+                      {closingSoon.map((c, i) => (
+                        <DropdownMenuItem key={`close-${i}`} className="flex items-center gap-2">
+                          <CalendarIcon className="h-4 w-4 text-emerald-700" />
+                          <div className="min-w-0">
+                            <div className="text-sm font-medium truncate">{c.title}</div>
+                            <div className="text-xs text-muted-foreground">{new Date(c.dueDate!).toLocaleDateString()}</div>
+                          </div>
+                        </DropdownMenuItem>
+                      ))}
+                      {contractDue.map(t => (
+                        <DropdownMenuItem key={`con-${t.id}`} onSelect={() => openTask(t.id)} className="flex items-center gap-2">
+                          <FileText className="h-4 w-4 text-emerald-700" />
+                          <div className="min-w-0">
+                            <div className="text-sm font-medium truncate">{t.title}</div>
+                            {t.dueDate && <div className="text-xs text-muted-foreground">Due {new Date(t.dueDate).toLocaleDateString()}</div>}
+                          </div>
+                        </DropdownMenuItem>
+                      ))}
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
+                  <DropdownMenuItem onSelect={() => onPageChange('settings')} className="flex items-center gap-2">
+                    <ExternalLink className="h-4 w-4" />
+                    Notification settings
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="flex items-center gap-3 focus:outline-none">
@@ -501,6 +625,114 @@ export default function DashboardLayout({
 
         <main className="flex-1 overflow-auto p-8">
           {children}
+
+          {/* Floating Quick Add Button */}
+          <Button
+            onClick={() => setQuickOpen(true)}
+            className="fixed bottom-6 right-6 h-12 px-5 rounded-full shadow-lg"
+          >
+            <Plus className="mr-2 h-5 w-5" />
+            {currentPage === 'property' ? 'Add Property' : currentPage === 'tasks' || currentPage === 'calendar' ? 'Add Task' : 'Quick Add'}
+          </Button>
+
+          {/* Quick Add Sheet */}
+          <Sheet open={quickOpen} onOpenChange={setQuickOpen}>
+            <SheetContent side="right" className="sm:max-w-md">
+              <SheetHeader>
+                <SheetTitle>{currentPage === 'property' ? 'Add Property' : 'Add Task'}</SheetTitle>
+              </SheetHeader>
+              {currentPage === 'property' ? (
+                <div className="p-4 space-y-3">
+                  <div className="space-y-1">
+                    <Label>Address</Label>
+                    <Input value={propAddress} onChange={e=>setPropAddress(e.target.value)} placeholder="123 Main St" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <Label>City</Label>
+                      <Input value={propCity} onChange={e=>setPropCity(e.target.value)} placeholder="City" />
+                    </div>
+                    <div className="space-y-1">
+                      <Label>State</Label>
+                      <Input value={propState} onChange={e=>setPropState(e.target.value)} placeholder="NY" />
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <Label>ZIP</Label>
+                    <Input value={propZip} onChange={e=>setPropZip(e.target.value)} placeholder="10001" />
+                  </div>
+                </div>
+              ) : (
+                <div className="p-4 space-y-3">
+                  <div className="space-y-1">
+                    <Label>Title</Label>
+                    <Input value={taskTitle} onChange={e=>setTaskTitle(e.target.value)} placeholder="Task title" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <Label>Category</Label>
+                      <Select value={taskCategory} onValueChange={(v:any)=>setTaskCategory(v)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="search">Search</SelectItem>
+                          <SelectItem value="offer">Offer</SelectItem>
+                          <SelectItem value="contract">Contract</SelectItem>
+                          <SelectItem value="diligence">Diligence</SelectItem>
+                          <SelectItem value="pre-closing">Pre-closing</SelectItem>
+                          <SelectItem value="closing">Closing</SelectItem>
+                          <SelectItem value="post-closing">Post-closing</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1">
+                      <Label>Priority</Label>
+                      <Select value={taskPriority} onValueChange={(v:any)=>setTaskPriority(v)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select priority" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="high">High</SelectItem>
+                          <SelectItem value="medium">Medium</SelectItem>
+                          <SelectItem value="low">Low</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <Label>Due date</Label>
+                    <Input type="date" value={taskDue} onChange={e=>setTaskDue(e.target.value)} />
+                  </div>
+                </div>
+              )}
+              <SheetFooter>
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={()=>setQuickOpen(false)}>Cancel</Button>
+                  <Button onClick={() => {
+                    if (currentPage === 'property') {
+                      propertyContext.updatePropertyData({ address: propAddress, city: propCity, state: propState, zipCode: propZip });
+                      onPageChange('property');
+                      setQuickOpen(false);
+                    } else {
+                      if (!taskTitle.trim()) return;
+                      taskCtx.addTask({
+                        title: taskTitle.trim(),
+                        description: '',
+                        category: taskCategory,
+                        priority: taskPriority,
+                        status: 'active',
+                        dueDate: taskDue || undefined,
+                      });
+                      onPageChange('tasks');
+                      setQuickOpen(false);
+                      setTaskTitle(''); setTaskDue('');
+                    }
+                  }}>Save</Button>
+                </div>
+              </SheetFooter>
+            </SheetContent>
+          </Sheet>
         </main>
       </div>
     </div>
