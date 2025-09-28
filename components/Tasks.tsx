@@ -1857,7 +1857,7 @@ const TaskTableCard = ({ title, tasks, onNavigate, onUpdateTask, onUpdateTaskFie
         </div>
         <div className="divide-y">
           {sortedTasks.map((task) => (
-            <div key={task.id} className="px-1">
+            <div key={task.id} id={`task-row-${task.id}`} className="px-1">
               <ExpandableTaskCard task={task} onNavigate={onNavigate} onUpdateTask={onUpdateTask} onUpdateTaskFields={onUpdateTaskFields} onDeleteTask={onDeleteTask} tasksById={tasksById} minimal row />
             </div>
           ))}
@@ -1887,7 +1887,7 @@ const TaskTableCardGrouped = ({ title, groups, onNavigate, onUpdateTask, onUpdat
               <div key={g.label}>
                 <div className="bg-gray-50 px-2 py-1 text-[11px] font-medium text-gray-600">{g.label}</div>
                 {sorted.map((task) => (
-                  <div key={task.id} className="px-1">
+                  <div key={task.id} id={`task-row-${task.id}`} className="px-1">
                     <ExpandableTaskCard task={task} onNavigate={onNavigate} onUpdateTask={onUpdateTask} onUpdateTaskFields={onUpdateTaskFields} onDeleteTask={onDeleteTask} tasksById={tasksById} minimal row />
                   </div>
                 ))}
@@ -2282,6 +2282,8 @@ export default function Tasks({ onNavigate }: TasksProps) {
   const { taskPhases } = taskContext;
 
   const [modalTask, setModalTask] = useState<Task | null>(null);
+  const backContextRef = React.useRef<{ phaseId: string | null; checklistSubtab: 'todo'|'done'; tag: string; q: string; scrollY: number; taskId?: string } | null>(null);
+  const applyingHashRef = React.useRef(false);
 
   // Scenario toggles (v2): selected scenario keys from schema/engine
   const [selectedScenarioKeys, setSelectedScenarioKeys] = useState<string[]>(() => {
@@ -2628,6 +2630,147 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
     return docs;
   }, [displayedTaskPhases]);
 
+  // Helpers for contextual navigation
+  const getPhaseIdForTask = React.useCallback((id: string | undefined | null): string | null => {
+    if (!id) return null;
+    for (const p of displayedTaskPhases) {
+      if (p.tasks.some(t => t.id === id)) return p.id;
+    }
+    return null;
+  }, [displayedTaskPhases]);
+
+  const getHashParams = () => {
+    const raw = (window.location.hash || '').replace(/^#/, '');
+    return new URLSearchParams(raw);
+  };
+  const replaceHash = (params: URLSearchParams) => {
+    const str = params.toString();
+    const url = str ? (`#${str}`) : '#';
+    try { history.replaceState(null, '', url); } catch {}
+  };
+  const pushHash = (params: URLSearchParams) => {
+    const str = params.toString();
+    const url = str ? (`#${str}`) : '#';
+    try { history.pushState(null, '', url); } catch {}
+  };
+  const syncListStateToHash = React.useCallback(() => {
+    if (applyingHashRef.current) return;
+    const params = getHashParams();
+    if (activeTab !== 'checklist') params.set('tabRoot', activeTab);
+    else params.delete('tabRoot');
+    if (phasePageId) params.set('phase', phasePageId); else params.delete('phase');
+    params.set('sub', checklistSubtab);
+    if (tagFilter && tagFilter !== 'all') params.set('tag', tagFilter); else params.delete('tag');
+    if (searchQuery) params.set('q', searchQuery); else params.delete('q');
+    params.delete('task');
+    replaceHash(params);
+  }, [activeTab, phasePageId, checklistSubtab, tagFilter, searchQuery]);
+
+  const openTaskModal = React.useCallback((task: Task) => {
+    setActiveTab('checklist');
+    // capture current view context
+    backContextRef.current = {
+      phaseId: phasePageId || getPhaseIdForTask(task.id),
+      checklistSubtab,
+      tag: tagFilter,
+      q: searchQuery,
+      scrollY: window.scrollY,
+      taskId: task.id,
+    };
+    setModalTask(task);
+    // push task onto URL hash so browser back works as "Close"
+    const params = getHashParams();
+    const inferredPhase = phasePageId || getPhaseIdForTask(task.id);
+    if (inferredPhase) params.set('phase', inferredPhase);
+    params.set('sub', checklistSubtab);
+    if (tagFilter && tagFilter !== 'all') params.set('tag', tagFilter); else params.delete('tag');
+    if (searchQuery) params.set('q', searchQuery); else params.delete('q');
+    params.set('task', task.id);
+    pushHash(params);
+    // scroll underlying list to phase anchor for context
+    setTimeout(() => {
+      const el = document.getElementById(`phase-card-${inferredPhase}`);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const row = document.getElementById(`task-row-${task.id}`);
+      if (row) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 0);
+  }, [phasePageId, checklistSubtab, tagFilter, searchQuery, getPhaseIdForTask]);
+
+  const closeTaskModal = React.useCallback(() => {
+    const params = getHashParams();
+    if (params.get('task')) {
+      // Use browser back to pop the task state
+      try { history.back(); return; } catch {}
+    }
+    setModalTask(null);
+    const ctx = backContextRef.current;
+    if (ctx) {
+      setPhasePageId(ctx.phaseId);
+      setChecklistSubtab(ctx.checklistSubtab);
+      setTagFilter(ctx.tag);
+      setSearchQuery(ctx.q);
+      setTimeout(() => {
+        if (ctx.phaseId) {
+          const el = document.getElementById(`phase-card-${ctx.phaseId}`);
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        if (ctx.taskId) {
+          const row = document.getElementById(`task-row-${ctx.taskId}`);
+          if (row) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          window.scrollTo({ top: ctx.scrollY, behavior: 'smooth' });
+        }
+      }, 0);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    // On mount or when tasks change, apply hash if present
+    const applyFromHash = () => {
+      applyingHashRef.current = true;
+      try {
+        const params = getHashParams();
+        const root = params.get('tabRoot');
+        const p = params.get('phase');
+        const sub = params.get('sub') as 'todo'|'done' | null;
+        const tag = params.get('tag');
+        const q = params.get('q');
+        const taskId = params.get('task');
+        if (root) setActiveTab(root);
+        else setActiveTab('checklist');
+        setPhasePageId(p);
+        if (sub === 'todo' || sub === 'done') setChecklistSubtab(sub);
+        if (tag) setTagFilter(tag); else setTagFilter('all');
+        if (typeof q === 'string') setSearchQuery(q);
+        if (taskId && tasksById[taskId]) {
+          setModalTask(tasksById[taskId]);
+          setTimeout(() => {
+            const el = document.getElementById(`phase-card-${getPhaseIdForTask(taskId)}`);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            const row = document.getElementById(`task-row-${taskId}`);
+            if (row) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 0);
+        } else {
+          setModalTask(null);
+        }
+      } finally {
+        applyingHashRef.current = false;
+      }
+    };
+
+    // initial apply
+    applyFromHash();
+
+    const onPop = () => applyFromHash();
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, [tasksById, getPhaseIdForTask]);
+
+  // Keep hash in sync when list-view state changes and no task is open
+  React.useEffect(() => {
+    if (!modalTask) syncListStateToHash();
+  }, [phasePageId, checklistSubtab, tagFilter, searchQuery, activeTab, modalTask, syncListStateToHash]);
+
   // Handle task selection and tab synchronization
   const handleSelectTask = (taskId: string) => {
     setSelectedTaskId(taskId);
@@ -2700,8 +2843,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
         if (!id) return;
         const task = tasksById[id];
         if (task) {
-          setActiveTab('checklist');
-          setModalTask(task);
+          openTaskModal(task);
         }
       } catch {}
     };
@@ -2709,7 +2851,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
     return () => {
       window.removeEventListener('openTaskDetails', onOpenTask as any);
     };
-  }, [tasksById]);
+  }, [tasksById, openTaskModal]);
   
   return (
     <div className="space-y-8 max-w-none bg-[#F6F7FB] p-4 sm:p-6 [&_button]:shadow-none [&_button:focus]:outline-none [&_button:focus]:ring-0 [&_button:focus-visible]:outline-none [&_button:focus-visible]:ring-0 [&_button:active]:font-semibold">
@@ -3340,7 +3482,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
 
       {modalTask && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/30" onClick={() => setModalTask(null)} />
+          <div className="absolute inset-0 bg-black/30" onClick={closeTaskModal} />
           <div className="relative bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[85vh] overflow-auto p-4 border border-accent/30">
             <div className="flex items-center justify-between mb-2 px-3 py-2 bg-accent/10 border-b border-accent/20 rounded-lg">
               <h3 className="text-lg font-semibold truncate pr-4">{modalTask.title}</h3>
@@ -3358,7 +3500,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                 >
                   Delete
                 </Button>
-                <Button variant="outline" size="sm" onClick={() => setModalTask(null)}>Close</Button>
+                <Button variant="outline" size="sm" onClick={closeTaskModal}>Back</Button>
               </div>
             </div>
             <ExpandableTaskCard
