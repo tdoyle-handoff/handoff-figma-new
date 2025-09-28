@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from './ui/card';
 import { Loader2, Shield, Database, User, CheckCircle } from 'lucide-react';
-const handoffLogo = 'https://cdn.builder.io/api/v1/image/assets%2Fd17493787dd14ef798478b15abccc651%2Fb382513b801044b9b63fee0d35fea0d6?format=webp&width=800';
+import { HANDOFF_LOGO_URL } from '../utils/branding';
 
 // Enhanced loading component with progress indication
 export function AuthLoader() {
@@ -50,7 +50,7 @@ export function AuthLoader() {
           {/* Logo */}
           <div className="flex justify-center mb-6">
             <img
-              src={handoffLogo}
+              src={HANDOFF_LOGO_URL}
               alt="Handoff"
               className="h-32 w-auto animate-pulse"
             />
@@ -110,7 +110,7 @@ export function QuickLoader() {
     <div className="flex items-center justify-center min-h-screen bg-background">
       <div className="text-center space-y-4">
         <img
-          src={handoffLogo}
+          src={HANDOFF_LOGO_URL}
           alt="Handoff"
           className="h-36 w-auto mx-auto animate-pulse"
         />
@@ -196,7 +196,7 @@ export function ProgressLoader({ progress, message }: { progress: number; messag
         <CardContent className="p-6 text-center space-y-4">
           <div className="flex justify-center mb-4">
             <img
-              src={handoffLogo}
+              src={HANDOFF_LOGO_URL}
               alt="Handoff"
               className="h-28 w-auto"
             />
