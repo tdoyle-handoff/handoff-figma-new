@@ -266,7 +266,7 @@ export default function DashboardHome() {
         </CardHeader>
         <CardContent>
           {!editing ? (
-            <div>
+            <div className="relative pl-6">
               {(() => {
                 const items = [
                   { id: 'offer', label: 'Offer', date: acceptance },
@@ -277,20 +277,24 @@ export default function DashboardHome() {
                   ...it,
                   status: !it.date ? 'Not Set' : (it.date < today ? 'Completed' : 'Due')
                 }));
+                const currentIdx = Math.max(0, items.findIndex(it => it.status !== 'Completed'));
                 return (
-                  <div className="relative">
-                    <div className="absolute left-0 right-0 top-5 h-0.5 bg-gray-200" />
-                    <div className="relative grid grid-cols-4 gap-4">
+                  <>
+                    <div className="absolute left-2 top-6 bottom-6 w-1 bg-gray-200 rounded"></div>
+                    <div className="absolute left-2 top-6 w-1 bg-blue-500 rounded" style={{ height: `${(Math.max(currentIdx,0) / (items.length-1)) * 100}%` }}></div>
+                    <div className="space-y-4">
                       {items.map((it, idx) => (
-                        <div key={it.id} className="flex flex-col items-center">
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${it.status==='Completed' ? 'bg-green-600 text-white' : it.status==='Due' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}>{idx+1}</div>
-                          <div className="mt-2 text-sm font-medium">{it.label}</div>
-                          <div className="text-xs text-muted-foreground">{it.date ? format(it.date, 'MMM d') : '—'}</div>
-                          <div className={`mt-1 text-[10px] px-2 py-0.5 rounded-full border ${it.status==='Completed' ? 'bg-green-50 text-green-700 border-green-200' : it.status==='Due' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-gray-50 text-gray-600 border-gray-200'}`}>{it.status}</div>
+                        <div key={it.id} className="relative flex items-start gap-3">
+                          <div className={`mt-1 w-3 h-3 rounded-full ${it.status==='Completed' ? 'bg-green-600' : it.status==='Due' ? 'bg-blue-600' : 'bg-gray-400'}`}></div>
+                          <div>
+                            <div className="text-sm font-medium">{it.label}</div>
+                            <div className="text-xs text-muted-foreground">{it.date ? format(it.date, 'EEE, MMM d') : 'Not Set'}</div>
+                            <span className={`inline-block mt-1 text-[10px] px-2 py-0.5 rounded-full border ${it.status==='Completed' ? 'bg-green-50 text-green-700 border-green-200' : it.status==='Due' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-gray-50 text-gray-600 border-gray-200'}`}>{it.status}</span>
+                          </div>
                         </div>
                       ))}
                     </div>
-                  </div>
+                  </>
                 );
               })()}
             </div>
