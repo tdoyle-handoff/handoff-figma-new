@@ -3418,6 +3418,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                 </Card>
 
               </div>
+              )
             </div>
           </div>
 
