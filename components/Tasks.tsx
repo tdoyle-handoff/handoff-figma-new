@@ -2965,24 +2965,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
 
 
         <TabsContent value="checklist" className="space-y-6 mt-4 md:mt-6 bg-[#F6F7FB]">
-          {showChecklistHelp && (
-            <div className="rounded-md border border-amber-200 bg-amber-50 text-amber-900 p-3 flex items-start justify-between gap-3">
-              <div className="text-sm">
-                <div className="font-medium">Using the Transaction Checklist and Calendar</div>
-                <p className="mt-1">
-                  Track tasks by phase in the checklist. Select a task to see “What it is”, “Why it matters”, and “How to complete it.” Use the Calendar to drag-and-drop due dates and open task details by clicking a task.
-                </p>
-                <p className="mt-1">Before using the checklist, click "Select scenarios" above to set your Scope and Scenarios.</p>
-              </div>
-              <button
-                aria-label="Dismiss"
-                className="p-1 text-amber-900/70 hover:text-amber-900"
-                onClick={() => { setShowChecklistHelp(false); try { localStorage.setItem('handoff-dismiss-alert-tasks-v1','true'); } catch {} }}
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-          )}
+          {/* Guidance banner moved below sub-tab row (collapsible) */}
 
           {(() => {
             const overdueCount = taskContext.getOverdueTasks().length;
