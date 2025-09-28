@@ -51,6 +51,7 @@ export default function Resources({ onNavigate }: ResourcesProps) {
     return () => window.removeEventListener('openResourceGuide', handler as any);
   }, []);
 
+  const resourcesRef = React.useRef<Resource[]>([]);
   const resources: Resource[] = [
     {
       id: '1',
