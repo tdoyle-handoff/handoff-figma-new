@@ -79,6 +79,15 @@ export default function Settings({ onSignOut, setupData, onNavigate }: SettingsP
     phone: ''
   });
 
+  React.useEffect(() => {
+    try {
+      const fromProfile = (userProfile as any)?.preferences?.notifications;
+      if (fromProfile && typeof fromProfile === 'object') {
+        setNotifications(prev => ({ ...prev, ...fromProfile }));
+      }
+    } catch {}
+  }, [userProfile]);
+
   // Get current setup data for display
   const getCurrentSetupData = () => {
     try {
