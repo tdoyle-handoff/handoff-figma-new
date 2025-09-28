@@ -2399,6 +2399,35 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [newTaskPhaseId, setNewTaskPhaseId] = useState<string | undefined>(() => displayedTaskPhases[0]?.id);
 
+  // Onboarding sample checkmarks (local-only)
+  type SampleStatus = 'pending' | 'completed' | 'skipped';
+  const SAMPLE_KEY = 'handoff-onboarding-sample-items-v1';
+  const sampleItems = React.useMemo(() => (
+    [
+      { id: 'sample-add-property', label: 'Add your first property' },
+      { id: 'sample-estimate-budget', label: 'Estimate your budget' },
+      { id: 'sample-invite-cobuyer', label: 'Invite a co-buyer' },
+    ] as Array<{ id: string; label: string }>
+  ), []);
+  const [sampleStatus, setSampleStatus] = useState<Record<string, SampleStatus>>(() => {
+    try {
+      const raw = localStorage.getItem(SAMPLE_KEY);
+      const parsed = raw ? (JSON.parse(raw) as Record<string, SampleStatus>) : undefined;
+      const base: Record<string, SampleStatus> = {};
+      for (const it of sampleItems) base[it.id] = 'pending';
+      return { ...base, ...(parsed || {}) };
+    } catch {
+      const base: Record<string, SampleStatus> = {};
+      for (const it of sampleItems) base[it.id] = 'pending';
+      return base;
+    }
+  });
+  React.useEffect(() => {
+    try { localStorage.setItem(SAMPLE_KEY, JSON.stringify(sampleStatus)); } catch {}
+  }, [sampleStatus]);
+  const allSamplesResolved = sampleItems.every(it => (sampleStatus[it.id] || 'pending') !== 'pending');
+  const setSample = (id: string, status: SampleStatus) => setSampleStatus(prev => ({ ...prev, [id]: status }));
+
   // Aggregate contacts from all checklist tasks (unique by email|name|role)
   const checklistContacts = React.useMemo(() => {
     const seen = new Set<string>();
