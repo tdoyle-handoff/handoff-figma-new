@@ -220,6 +220,9 @@ export default function Resources({ onNavigate }: ResourcesProps) {
     }
   ];
 
+  // Keep a ref copy for event-driven lookups
+  resourcesRef.current = resources;
+
   const categories = [
     { value: 'all', label: 'All Resources', count: resources.length },
     { value: 'getting-started', label: 'Getting Started', count: resources.filter(r => r.category === 'getting-started').length },
