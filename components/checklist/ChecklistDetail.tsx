@@ -134,23 +134,21 @@ export default function ChecklistDetail({ task, onAction, onUpdateTask }: Detail
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
               <CardTitle className="text-xl leading-tight break-words">{task.longTitle || task.title}</CardTitle>
-              {/* One-line summary for Proof of Funds task */}
-              {task.id === 'task-proof-of-funds' && (
-                <div className="mt-1 text-sm text-gray-700 flex items-center gap-2">
-                  <span>Show official funds (for cash) or a lender pre-approval letter to prove you can afford the purchase.</span>
-                  {availableKeys.length > 0 && (
-                    <Button
-                      variant="link"
-                      size="sm"
-                      className="px-0 h-auto"
-                      onClick={() => setOpenKeys(Array.from(new Set([...(openKeys||[]), ...availableKeys])))}
-                    >
-                      Read more
-                    </Button>
-                  )}
-                </div>
-              )}
-              <div className="flex items-center gap-2 mt-2">
+              {/* One-line summary for all tasks with Read more */}
+              <div className="mt-1 text-sm text-gray-700 flex items-center gap-2">
+                <span>{getOneSentenceSummary(task)}</span>
+                {availableKeys.length > 0 && (
+                  <Button
+                    variant="link"
+                    size="sm"
+                    className="px-0 h-auto"
+                    onClick={() => setOpenKeys(Array.from(new Set([...(openKeys||[]), ...availableKeys])))}
+                  >
+                    Read more
+                  </Button>
+                )}
+              </div>
+              <div className="flex items-center gap-2 mt-2 flex-wrap">
                 <Badge className={`text-xs font-medium ${getStatusBadgeColor(task.status)}`}>{task.status.replace('-', ' ').toUpperCase()}</Badge>
                 {task.dueDate && (
                   <Badge variant="outline" className="text-xs">
@@ -158,6 +156,18 @@ export default function ChecklistDetail({ task, onAction, onUpdateTask }: Detail
                     Due {new Date(task.dueDate).toLocaleDateString()}
                   </Badge>
                 )}
+                {/* Assignee, Priority, Time */}
+                {task.assignedTo && (
+                  <Badge variant="outline" className="text-xs">
+                    <svg className="w-3.5 h-3.5 mr-1 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-3-3.87"/><path d="M4 21v-2a4 4 0 0 1 3-3.87"/><circle cx="12" cy="7" r="4"/></svg>
+                    {task.assignedTo}
+                  </Badge>
+                )}
+                <Badge className={`text-xs font-medium ${getPriorityBadgeColor(task.priority)}`}>{task.priority.toUpperCase()}</Badge>
+                <Badge variant="outline" className="text-xs">
+                  <svg className="w-3.5 h-3.5 mr-1 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  {task.estimatedTime || 'Time varies'}
+                </Badge>
               </div>
             </div>
             <div className="flex items-center gap-2 shrink-0">
