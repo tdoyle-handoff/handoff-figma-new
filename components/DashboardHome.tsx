@@ -91,7 +91,16 @@ export default function DashboardHome() {
       {/* Current Tasks - prominent top-left */}
       <Card className="modern-card h-full col-span-12 lg:col-span-8 order-1">
         <CardHeader>
-          <CardTitle className="text-2xl md:text-3xl font-bold tracking-tight">Current Tasks</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-2xl md:text-3xl font-bold tracking-tight">Current Tasks</CardTitle>
+            <div className="w-16 h-16 relative">
+              <svg className="w-16 h-16 transform -rotate-90" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="40" strokeWidth="8" fill="transparent" className="text-slate-200" stroke="currentColor" />
+                <circle cx="50" cy="50" r="40" strokeWidth="8" fill="transparent" strokeDasharray={`${2 * Math.PI * 40}`} strokeDashoffset={`${2 * Math.PI * 40 * (1 - (dueToday.length>0 ? (dueToday.filter(t=>t.status==='completed').length/dueToday.length) : 0))}`} className="text-blue-600" stroke="currentColor" strokeLinecap="round" />
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center text-sm font-semibold">{dueToday.length>0 ? Math.round((dueToday.filter(t=>t.status==='completed').length/dueToday.length)*100) : 0}%</div>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
