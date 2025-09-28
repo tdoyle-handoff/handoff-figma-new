@@ -344,7 +344,7 @@ title={`${t.title}${t.description ? ' — ' + t.description : ''}`}
           {/* Calendar area */}
           <div className="lg:col-span-9">
             {/* Weekday headers */}
-            <div className="grid grid-cols-7 text-xs text-gray-500 mb-2">
+            <div className={`grid grid-cols-7 text-xs text-gray-500 mb-2 ${viewMode==='timeline' ? 'hidden' : ''}`}>
               {weekdayLabels.map((lbl) => (
                 <div key={lbl} className="px-2 py-1 text-center">{lbl}</div>
               ))}
