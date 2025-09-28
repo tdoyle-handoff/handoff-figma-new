@@ -163,8 +163,8 @@ export default function DashboardHome() {
         <CardHeader className="flex-row items-center justify-between">
           <CardTitle className="text-lg">Calendar</CardTitle>
           <div className="flex items-center gap-2 text-sm">
-            <Button variant="ghost" size="sm" className="h-8 px-2" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'calendar' } }))}>Month</Button>
-            <Button variant="secondary" size="sm" className="h-8 px-2" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'calendar' } }))}>Week</Button>
+            <button className={`h-8 px-3 rounded-full border bg-[#007EA7] text-white border-[#007EA7]`}>Month</button>
+            <button className={`h-8 px-3 rounded-full border text-[#007EA7] border-[#007EA7] hover:bg-[#007EA7]/10`}>Week</button>
           </div>
         </CardHeader>
         <CardContent>
