@@ -139,11 +139,13 @@ export default function HomeTracker() {
     const home: TrackedHome = {
       id: Date.now().toString(),
       ...newHome,
-      ranking: homes.length + 1,
+      ranking: (homes.filter(h => !h.isSample).length) + 1,
       dateAdded: new Date().toLocaleDateString()
     };
 
-    setHomes([...homes, home]);
+    const withoutSample = homes.filter(h => !h.isSample);
+    setHomes([...withoutSample, home].map((h, i) => ({ ...h, ranking: i + 1 })));
+    try { localStorage.setItem('handoff-home-tracker-sample-dismissed','true'); } catch {}
     setNewHome({ address: '', price: '', bedrooms: '', bathrooms: '', notes: '', label: 'very-interested' as InterestLabel });
     setIsAddingHome(false);
   };
