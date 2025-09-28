@@ -181,6 +181,29 @@ export default function DashboardHome() {
               </div>
             )}
           </div>
+          {/* Next 3 deadlines (compact list) */}
+          <div className="mt-4">
+            {(() => {
+              const upcomingAll = withDue
+                .filter(t => { const dt = parseDate(t.dueDate); return dt ? dt > today : false; })
+                .sort((a,b) => (parseDate(a.dueDate)!.getTime() - parseDate(b.dueDate)!.getTime()))
+                .slice(0, 3);
+              if (upcomingAll.length === 0) return null;
+              return (
+                <div>
+                  <div className="text-xs font-semibold text-muted-foreground mb-2">Next 3 deadlines</div>
+                  <ul className="space-y-2">
+                    {upcomingAll.map(t => (
+                      <li key={t.id} className="flex items-center justify-between text-sm">
+                        <span className="truncate pr-3">{t.title}</span>
+                        <span className="text-muted-foreground">{format(parseDate(t.dueDate)!, 'EEE, MMM d')}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })()}
+          </div>
         </CardContent>
       </Card>
 
