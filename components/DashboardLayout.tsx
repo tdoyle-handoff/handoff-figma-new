@@ -324,6 +324,8 @@ export default function DashboardLayout({
                       !sidebarOpen && "justify-center px-3"
                     )}
                     onClick={() => onPageChange(tasksItem.id)}
+                    title={tasksItem.label}
+                    aria-label={tasksItem.label}
                   >
                     <Icon className="h-5 w-5 flex-shrink-0" />
                     {sidebarOpen && (
