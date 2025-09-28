@@ -1945,38 +1945,25 @@ const InlinePhaseStepper = ({ phases, currentId, onSelect }: { phases: TaskPhase
   };
   const cur = computeCurrentIndex();
   return (
-    <div className="isolate inline-flex items-center rounded-full ring-1 ring-gray-300 bg-white shadow-sm overflow-hidden">
+    <div className="inline-flex items-center gap-2">
       {phases.map((p, i) => {
-        const isFilled = i <= cur; // completed + current
         const isCurrent = i === cur;
-        const isFirst = i === 0;
-        const base = 'relative flex-1 inline-flex items-center justify-center h-11 px-5 text-[13px] font-medium transition-colors select-none';
-        const colors = isFilled ? 'bg-blue-600 text-white' : 'bg-transparent text-gray-600';
-        const rounding = [
-          isFilled && isFirst ? 'rounded-l-full' : '',
-          isFilled && isCurrent ? 'rounded-r-full' : '',
-        ].join(' ').trim();
-        const showFilledDivider = i < cur; // divider between filled steps only (before current)
+        const total = p.tasks.length || 0;
+        const done = p.tasks.filter(t => t.status === 'completed').length;
+        const remaining = Math.max(total - done, 0);
+        const base = 'inline-flex items-center h-9 px-4 rounded-full text-[13px] font-medium transition-colors ring-1';
+        const cls = isCurrent
+          ? 'bg-primary text-primary-foreground ring-primary'
+          : 'bg-white text-gray-700 ring-gray-200 hover:bg-gray-50';
         return (
-            <button
+          <button
             key={p.id}
-            className={`${base} ${colors} ${rounding}`}
+            className={`${base} ${cls}`}
             aria-current={isCurrent ? 'step' : undefined}
             onClick={() => onSelect(p.id)}
             title={p.title}
           >
-            <span className="truncate max-w-[180px]">{p.title}</span>
-            {(() => {
-              const total = p.tasks.length || 0;
-              const done = p.tasks.filter(t => t.status === 'completed').length;
-              const pct = total > 0 ? Math.round((done/total)*100) : 0;
-              return pct === 100 ? (
-                <span className={`ml-2 text-[11px] ${isCurrent ? 'text-white/90' : 'text-gray-600'}`}>✔</span>
-              ) : null;
-            })()}
-            {showFilledDivider && (
-              <span aria-hidden className="absolute right-0 top-0 h-full w-px bg-blue-500/70" />
-            )}
+            <span className="truncate max-w-[180px]">{p.title} ({remaining})</span>
           </button>
         );
       })}
