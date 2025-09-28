@@ -31,7 +31,7 @@ import { Badge } from './ui/badge';
 import { useIsMobile } from './ui/use-mobile';
 import { AddressAutocompleteInput } from './AddressAutocompleteInput';
 import type { AttomAddressComponents } from './AddressInputEnhanced';
-const handoffLogo = 'https://cdn.builder.io/api/v1/image/assets%2Fd17493787dd14ef798478b15abccc651%2Fb382513b801044b9b63fee0d35fea0d6?format=webp&width=800';
+import { HANDOFF_LOGO_URL } from '../utils/branding';
 
 // Property types with icons
 const PROPERTY_TYPES = [
@@ -175,7 +175,7 @@ interface OnboardingWizardProps {
 const HandoffLogo = ({ className = "", size = "h-20" }: { className?: string; size?: string }) => (
   <div className={`flex items-center justify-center ${className}`}>
     <img 
-      src={handoffLogo} 
+      src={HANDOFF_LOGO_URL} 
       alt="Handoff Logo" 
       className={`${size} w-auto max-w-full mx-auto block`}
     />
