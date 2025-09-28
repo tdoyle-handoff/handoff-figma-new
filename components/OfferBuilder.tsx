@@ -2,7 +2,7 @@
 WIREFRAME: Buyer Offer Builder (Web)
 
 [Header]
-┌────���──────────────────────────────────��─────────────────────────┐
+┌───────────────────────────────────────��─────────────────────────┐
 │ Offer Builder  | Step 1 of 5  | Save Draft | Help            │
 └─────���────────────────────────────────────────────────────────┘
 
@@ -1216,7 +1216,10 @@ export default function OfferBuilder() {
         {step === 0 && (
           <Card className="relative">
             <CardHeader>
-              <CardTitle className="text-lg sm:text-xl">Property Details for Purchase Agreement</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg sm:text-xl">Property Details for Purchase Agreement</CardTitle>
+                <Button size="sm" onClick={()=>{ setOfferPrice(listPrice); next(); }} className="hidden sm:inline-flex">Next<ArrowRight className="w-4 h-4 ml-2"/></Button>
+              </div>
             </CardHeader>
             {/* Floating helper */}
             {!dismissedHelps['help-property-1'] && (
