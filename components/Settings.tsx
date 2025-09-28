@@ -13,6 +13,7 @@ import { Badge } from './ui/badge';
 import { Separator } from './ui/separator';
 import { useIsMobile } from './ui/use-mobile';
 import { Alert, AlertDescription } from './ui/alert';
+import { useAuth } from '../hooks/useAuth';
 
 interface SettingsProps {
   onSignOut?: () => void;
