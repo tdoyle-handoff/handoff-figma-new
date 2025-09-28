@@ -3060,6 +3060,23 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                 </Tooltip>
               </div>
             </div>
+            {/* Checklist progress bar under header */}
+            {(() => {
+              const pct = Math.round(overallProgress);
+              const color = pct >= 67 ? 'bg-green-500' : pct >= 34 ? 'bg-amber-500' : 'bg-red-500';
+              return (
+                <div className="mt-2">
+                  <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
+                    <div className={`h-full ${color}`} style={{ width: `${pct}%` }} />
+                  </div>
+                  <div className="mt-1 text-xs text-gray-600 flex items-center justify-between">
+                    <span>{pct}% Complete</span>
+                    <span>On Track</span>
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* To-do | Done toggle */}
             <div>
               <Tabs value={checklistSubtab} onValueChange={(v)=>setChecklistSubtab(v as 'todo'|'done')}>
