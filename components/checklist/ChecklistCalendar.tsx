@@ -435,6 +435,31 @@ title={`${t.title}${t.description ? ' — ' + t.description : ''}`}
             );
           })}
         </div>
+
+        {viewMode === 'timeline' && (
+          <div className="mt-4 relative border rounded p-3 overflow-x-auto">
+            <div className="min-w-[640px] flex items-stretch gap-4">
+              {weeks.map((w, idx) => (
+                <div key={idx} className="w-40 flex-shrink-0">
+                  <div className="text-xs text-muted-foreground mb-1">Week of {w.label}</div>
+                  <div className="h-16 bg-muted rounded relative">
+                    {timeline.milestones.map((m, i) => {
+                      const d = new Date(m.date);
+                      const offsetDays = Math.floor((d.getTime() - w.start.getTime()) / (1000*60*60*24));
+                      if (offsetDays < 0 || offsetDays > 6) return null;
+                      const left = (offsetDays/6) * 100;
+                      return (
+                        <div key={i} className="absolute top-1/2 -translate-y-1/2" style={{ left: `${left}%` }} title={`${m.title} • ${new Date(m.date).toLocaleDateString()}`}>
+                          <Flag className="w-3.5 h-3.5 text-emerald-600" />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         </div>
         </div>
 
