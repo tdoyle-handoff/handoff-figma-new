@@ -1842,23 +1842,32 @@ const PhaseCard = ({ phase, onNavigate, onUpdateTask, onUpdateTaskFields, onDele
 };
 
 // Table-style phase card matching the provided design
-const TaskTableCard = ({ title, tasks, onNavigate, onUpdateTask, onUpdateTaskFields, onDeleteTask, tasksById }: { title: string; tasks: Task[]; onNavigate: (page: string) => void; onUpdateTask?: (taskId: string, status: Task['status']) => void; onUpdateTaskFields?: (taskId: string, updates: Partial<Task>) => void; onDeleteTask?: (taskId: string) => void; tasksById?: Record<string, Task>; }) => {
+const TaskTableCard = ({ title, tasks, onNavigate, onUpdateTask, onUpdateTaskFields, onDeleteTask, tasksById, selectedIds, onToggleSelect, onSelectAllInList }: { title: string; tasks: Task[]; onNavigate: (page: string) => void; onUpdateTask?: (taskId: string, status: Task['status']) => void; onUpdateTaskFields?: (taskId: string, updates: Partial<Task>) => void; onDeleteTask?: (taskId: string) => void; tasksById?: Record<string, Task>; selectedIds: Set<string>; onToggleSelect: (id: string, checked: boolean) => void; onSelectAllInList: (checked: boolean) => void; }) => {
   const sortedTasks = sortTasksByDependencies(tasks, tasksById || {});
+  const allSelected = sortedTasks.length > 0 && sortedTasks.every(t => selectedIds.has(t.id));
   return (
     <Card className="shadow-sm bg-white">
       <CardHeader className="pb-2">
         <CardTitle className="text-sm font-semibold tracking-[-0.01em] text-gray-900">{title}</CardTitle>
       </CardHeader>
       <CardContent className="pt-0">
-        <div className="grid grid-cols-12 text-[12px] font-medium text-gray-700 bg-indigo-50 rounded-md px-3 py-2">
-          <div className="col-span-8">Name</div>
+        <div className="grid grid-cols-12 text-[12px] font-medium text-gray-700 bg-indigo-50 rounded-md px-3 py-2 items-center">
+          <div className="col-span-1 flex justify-center"><Checkbox checked={allSelected} onCheckedChange={(v)=>onSelectAllInList(!!v)} /></div>
+          <div className="col-span-7">Name</div>
           <div className="col-span-2">Assignee</div>
           <div className="col-span-2 text-right">Due Date</div>
         </div>
         <div className="divide-y">
           {sortedTasks.map((task) => (
             <div key={task.id} id={`task-row-${task.id}`} className="px-1">
-              <ExpandableTaskCard task={task} onNavigate={onNavigate} onUpdateTask={onUpdateTask} onUpdateTaskFields={onUpdateTaskFields} onDeleteTask={onDeleteTask} tasksById={tasksById} minimal row />
+              <div className="grid grid-cols-12 items-center">
+                <div className="col-span-1 flex justify-center">
+                  <Checkbox checked={selectedIds.has(task.id)} onCheckedChange={(v)=>onToggleSelect(task.id, !!v)} />
+                </div>
+                <div className="col-span-11">
+                  <ExpandableTaskCard task={task} onNavigate={onNavigate} onUpdateTask={onUpdateTask} onUpdateTaskFields={onUpdateTaskFields} onDeleteTask={onDeleteTask} tasksById={tasksById} minimal row />
+                </div>
+              </div>
             </div>
           ))}
         </div>
@@ -1867,16 +1876,20 @@ const TaskTableCard = ({ title, tasks, onNavigate, onUpdateTask, onUpdateTaskFie
   );
 };
 
-const TaskTableCardGrouped = ({ title, groups, onNavigate, onUpdateTask, onUpdateTaskFields, onDeleteTask, tasksById }: { title: string; groups: { label: string; tasks: Task[] }[]; onNavigate: (page: string) => void; onUpdateTask?: (taskId: string, status: Task['status']) => void; onUpdateTaskFields?: (taskId: string, updates: Partial<Task>) => void; onDeleteTask?: (taskId: string) => void; tasksById?: Record<string, Task>; }) => {
+const TaskTableCardGrouped = ({ title, groups, onNavigate, onUpdateTask, onUpdateTaskFields, onDeleteTask, tasksById, selectedIds, onToggleSelect, onSelectAllInList }: { title: string; groups: { label: string; tasks: Task[] }[]; onNavigate: (page: string) => void; onUpdateTask?: (taskId: string, status: Task['status']) => void; onUpdateTaskFields?: (taskId: string, updates: Partial<Task>) => void; onDeleteTask?: (taskId: string) => void; tasksById?: Record<string, Task>; selectedIds: Set<string>; onToggleSelect: (id: string, checked: boolean) => void; onSelectAllInList: (checked: boolean) => void; }) => {
   const present = groups.filter(g => g.tasks && g.tasks.length > 0);
+  const allTasks = present.flatMap(g => g.tasks);
+  const sortedAll = sortTasksByDependencies(allTasks, tasksById || {});
+  const allSelected = sortedAll.length > 0 && sortedAll.every(t => selectedIds.has(t.id));
   return (
     <Card className="shadow-sm bg-white">
       <CardHeader className="pb-2">
         <CardTitle className="text-[15px] font-semibold tracking-[-0.01em] text-gray-900">{title}</CardTitle>
       </CardHeader>
       <CardContent className="pt-0">
-        <div className="grid grid-cols-12 text-[12px] font-medium text-gray-700 bg-indigo-50 rounded-md px-3 py-2">
-          <div className="col-span-8">Name</div>
+        <div className="grid grid-cols-12 text-[12px] font-medium text-gray-700 bg-indigo-50 rounded-md px-3 py-2 items-center">
+          <div className="col-span-1 flex justify-center"><Checkbox checked={allSelected} onCheckedChange={(v)=>onSelectAllInList(!!v)} /></div>
+          <div className="col-span-7">Name</div>
           <div className="col-span-2">Assignee</div>
           <div className="col-span-2 text-right">Due Date</div>
         </div>
@@ -1888,7 +1901,14 @@ const TaskTableCardGrouped = ({ title, groups, onNavigate, onUpdateTask, onUpdat
                 <div className="bg-gray-50 px-2 py-1 text-[11px] font-medium text-gray-600">{g.label}</div>
                 {sorted.map((task) => (
                   <div key={task.id} id={`task-row-${task.id}`} className="px-1">
-                    <ExpandableTaskCard task={task} onNavigate={onNavigate} onUpdateTask={onUpdateTask} onUpdateTaskFields={onUpdateTaskFields} onDeleteTask={onDeleteTask} tasksById={tasksById} minimal row />
+                    <div className="grid grid-cols-12 items-center">
+                      <div className="col-span-1 flex justify-center">
+                        <Checkbox checked={selectedIds.has(task.id)} onCheckedChange={(v)=>onToggleSelect(task.id, !!v)} />
+                      </div>
+                      <div className="col-span-11">
+                        <ExpandableTaskCard task={task} onNavigate={onNavigate} onUpdateTask={onUpdateTask} onUpdateTaskFields={onUpdateTaskFields} onDeleteTask={onDeleteTask} tasksById={tasksById} minimal row />
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -2453,6 +2473,52 @@ export default function Tasks({ onNavigate }: TasksProps) {
     taskContext.updateTaskStatus(taskId, status);
   };
 
+  // Batch actions
+  const handleBatchComplete = () => {
+    selectedTaskIds.forEach((id) => taskContext.updateTaskStatus(id, 'completed'));
+    clearSelection();
+  };
+  const handleBatchSetDueDate = () => {
+    if (!batchDueDate) return;
+    selectedTaskIds.forEach((id) => taskContext.updateTask(id, { dueDate: batchDueDate, dueDateLocked: true }));
+  };
+  const ymd = (iso: string) => iso.replace(/-/g, '');
+  const downloadICS = (ics: string, name = 'handoff-tasks.ics') => {
+    const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  };
+  const handleBatchAddToCalendar = () => {
+    const tasks = Array.from(selectedTaskIds).map(id => tasksById[id]).filter(Boolean);
+    const withDates = tasks.filter(t => t.dueDate);
+    if (withDates.length === 0) return;
+    const now = new Date();
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const dtstamp = `${now.getUTCFullYear()}${pad(now.getUTCMonth()+1)}${pad(now.getUTCDate())}T${pad(now.getUTCHours())}${pad(now.getUTCMinutes())}${pad(now.getUTCSeconds())}Z`;
+    const lines: string[] = [];
+    lines.push('BEGIN:VCALENDAR');
+    lines.push('VERSION:2.0');
+    lines.push('PRODID:-//Handoff//Checklist//EN');
+    withDates.forEach(t => {
+      const uid = `${t.id}@handoff.app`;
+      const dt = ymd(t.dueDate!);
+      const title = (t.longTitle || t.title || 'Checklist Task').replace(/[\n\r]/g,' ');
+      const desc = (t.description || '').replace(/[\n\r]/g,' ').slice(0, 800);
+      lines.push('BEGIN:VEVENT');
+      lines.push(`UID:${uid}`);
+      lines.push(`DTSTAMP:${dtstamp}`);
+      lines.push(`DTSTART;VALUE=DATE:${dt}`);
+      lines.push(`SUMMARY:${title}`);
+      if (desc) lines.push(`DESCRIPTION:${desc}`);
+      lines.push('END:VEVENT');
+    });
+    lines.push('END:VCALENDAR');
+    downloadICS(lines.join('\r\n'));
+  };
+
   const handleDeleteTask = (taskId: string) => {
     taskContext.deleteTask(taskId);
   };
@@ -2525,6 +2591,39 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
   const [openAddTaskDialog, setOpenAddTaskDialog] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [newTaskPhaseId, setNewTaskPhaseId] = useState<string | undefined>(() => displayedTaskPhases[0]?.id);
+
+  // Batch selection state
+  const [selectedTaskIds, setSelectedTaskIds] = useState<Set<string>>(new Set());
+  const [batchDueDate, setBatchDueDate] = useState<string>('');
+  const isSelected = React.useCallback((id: string) => selectedTaskIds.has(id), [selectedTaskIds]);
+  const toggleSelect = React.useCallback((id: string, checked: boolean) => {
+    setSelectedTaskIds(prev => {
+      const next = new Set(prev);
+      if (checked) next.add(id); else next.delete(id);
+      return next;
+    });
+  }, []);
+  const clearSelection = React.useCallback(() => setSelectedTaskIds(new Set()), []);
+  const selectMany = React.useCallback((ids: string[], checked: boolean) => {
+    setSelectedTaskIds(prev => {
+      const next = new Set(prev);
+      ids.forEach(id => { if (checked) next.add(id); else next.delete(id); });
+      return next;
+    });
+  }, []);
+
+  const visibleTodoTasks = React.useMemo(() => {
+    if (checklistSubtab !== 'todo') return [] as Task[];
+    const phases = phasePageId ? displayedTaskPhases.filter(p => p.id === phasePageId) : displayedTaskPhases;
+    let tasks = phases.flatMap(p => p.tasks.filter(t => t.status !== 'completed'));
+    if (tagFilter !== 'all') tasks = tasks.filter(matchesTag);
+    if (searchQuery) tasks = tasks.filter(matchesSearch);
+    return tasks;
+  }, [displayedTaskPhases, phasePageId, checklistSubtab, tagFilter, searchQuery, matchesTag, matchesSearch]);
+
+  const selectAllVisible = React.useCallback((checked: boolean) => {
+    selectMany(visibleTodoTasks.map(t => t.id), checked);
+  }, [visibleTodoTasks, selectMany]);
 
   // Onboarding sample checkmarks (local-only)
   type SampleStatus = 'pending' | 'completed' | 'skipped';
@@ -2967,6 +3066,22 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                   <Label className="text-xs">Search</Label>
                   <Input className="h-8 w-[220px] !bg-white" placeholder="Find tasks..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
                 </div>
+                <Button size="sm" variant="outline" onClick={() => selectAllVisible(true)}>Select all visible</Button>
+                {selectedTaskIds.size > 0 && (
+                  <>
+                    <span className="text-xs text-gray-600">{selectedTaskIds.size} selected</span>
+                    <div className="inline-flex items-center gap-2">
+                      <Button size="sm" onClick={handleBatchComplete}>Mark complete</Button>
+                      <div className="flex items-center gap-2">
+                        <Label className="text-xs">Due date</Label>
+                        <Input type="date" className="h-8 w-[160px] !bg-white" value={batchDueDate} onChange={(e)=>setBatchDueDate(e.target.value)} />
+                        <Button size="sm" variant="outline" onClick={handleBatchSetDueDate}>Set due date</Button>
+                      </div>
+                      <Button size="sm" variant="outline" onClick={handleBatchAddToCalendar}>Add to calendar (ICS)</Button>
+                      <Button size="sm" variant="ghost" onClick={clearSelection}>Clear</Button>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
@@ -3049,6 +3164,9 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                               onUpdateTaskFields={handleUpdateTaskFields}
                               onDeleteTask={handleDeleteTask}
                               tasksById={tasksById}
+                              selectedIds={selectedTaskIds}
+                              onToggleSelect={toggleSelect}
+                              onSelectAllInList={(checked)=>selectMany([...legal, ...inspections, ...insurance, ...mortgage].map(t=>t.id), checked)}
                             />
                           </div>
                         );
@@ -3063,6 +3181,9 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                             onUpdateTask={handleUpdateTask}
                             onUpdateTaskFields={handleUpdateTaskFields}
                             tasksById={tasksById}
+                            selectedIds={selectedTaskIds}
+                            onToggleSelect={toggleSelect}
+                            onSelectAllInList={(checked)=>selectMany(tasks.map(t=>t.id), checked)}
                           />
                         </div>
                       );
@@ -3082,6 +3203,9 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                       onUpdateTaskFields={handleUpdateTaskFields}
                       onDeleteTask={handleDeleteTask}
                       tasksById={tasksById}
+                      selectedIds={selectedTaskIds}
+                      onToggleSelect={toggleSelect}
+                      onSelectAllInList={(checked)=>selectMany(filtered.map(t=>t.id), checked)}
                     />
                   );
                 })()}
