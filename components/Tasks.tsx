@@ -3056,8 +3056,8 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                 </Button>
                 <Tooltip open={(() => { try { return localStorage.getItem('handoff-tip-checklist-addtask-v1') !== 'dismissed'; } catch { return true; } })()}>
                   <TooltipTrigger asChild>
-                    <Button size="sm" onClick={() => { try { localStorage.setItem('handoff-tip-checklist-addtask-v1','dismissed'); } catch {} setOpenAddTaskDialog(true); }}>
-                      <Plus className="w-4 h-4 mr-1" /> Add task
+                    <Button variant="default" className="h-9 px-4" onClick={() => { try { localStorage.setItem('handoff-tip-checklist-addtask-v1','dismissed'); } catch {} setOpenAddTaskDialog(true); }}>
+                      <Plus className="w-4 h-4 mr-2" /> Add Task
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent sideOffset={8}>Click here to add your first custom task</TooltipContent>
