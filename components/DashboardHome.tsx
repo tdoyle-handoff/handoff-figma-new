@@ -363,6 +363,18 @@ export default function DashboardHome() {
           })()}
         </CardContent>
       </Card>
+      {/* Speed dial */}
+      <div className="fixed bottom-6 right-6 z-40">
+        <div className="flex flex-col items-end gap-2">
+          <Button size="sm" className="h-9 px-3 bg-slate-900 text-white" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'tasks' } }))}><CheckSquare className="w-4 h-4 mr-2" /> Task</Button>
+          <Button size="sm" className="h-9 px-3 bg-slate-900 text-white" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'property' } }))}><Building className="w-4 h-4 mr-2" /> Property</Button>
+          <Button size="sm" className="h-9 px-3 bg-slate-900 text-white" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'documents' } }))}><FileText className="w-4 h-4 mr-2" /> Document</Button>
+          <Button size="sm" className="h-9 px-3 bg-slate-900 text-white" onClick={() => alert('Create a note')}><StickyNote className="w-4 h-4 mr-2" /> Note</Button>
+        </div>
+        <button className="w-12 h-12 rounded-full shadow-md flex items-center justify-center bg-primary hover:bg-primary/90 text-white">
+          <Plus className="w-6 h-6" />
+        </button>
+      </div>
     </div>
   );
 }
