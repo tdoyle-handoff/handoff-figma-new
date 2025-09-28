@@ -2722,7 +2722,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                               return (
                                 <div key={it.id} className={`flex items-center justify-between p-2 rounded-lg border ${checked ? 'bg-green-50 border-green-200' : skipped ? 'bg-gray-50 border-gray-200' : 'bg-white'}`}>
                                   <label className="flex items-center gap-3 min-w-0">
-                                    <Checkbox id={`smpl-${it.id}`} checked={checked} onCheckedChange={(v) => setSample(it.id, v ? 'completed' : 'pending')} />
+                                    <Checkbox id={`smpl-${it.id}`} checked={checked} onCheckedChange={(v) => setSample(it.id, !!v ? 'completed' : 'pending')} />
                                     <span className={`text-sm truncate ${skipped ? 'line-through text-gray-500' : ''}`}>{it.label}</span>
                                   </label>
                                   <div className="flex items-center gap-2 flex-shrink-0">
