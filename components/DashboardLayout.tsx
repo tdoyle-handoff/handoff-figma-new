@@ -350,6 +350,8 @@ export default function DashboardLayout({
                     )}
                     aria-current={currentPage === calendarItem.id ? 'page' : undefined}
                     onClick={() => onPageChange(calendarItem.id)}
+                    title={calendarItem.label}
+                    aria-label={calendarItem.label}
                   >
                         <CalIcon className="h-5 w-5 flex-shrink-0" />
                         {sidebarOpen && (
