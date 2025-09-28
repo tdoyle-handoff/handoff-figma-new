@@ -538,6 +538,54 @@ title={`${t.title}${t.description ? ' — ' + t.description : ''}`}
         </div>
       </DialogContent>
     </Dialog>
+
+    {/* Bottom sheet: tasks for selected date */}
+    <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+      <SheetContent side="bottom" className="max-h-[70vh] rounded-t-xl">
+        <SheetHeader>
+          <SheetTitle>Tasks for {sheetDate || ''}</SheetTitle>
+          <SheetDescription>Tap a task to view details or update.</SheetDescription>
+        </SheetHeader>
+        <div className="space-y-3 overflow-auto">
+          {sheetTasks.length === 0 ? (
+            <div className="text-sm text-muted-foreground">No tasks scheduled.</div>
+          ) : (
+            sheetTasks.map((t) => (
+              <div key={t.id} className="border rounded p-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    {statusIcon(t.status)}
+                    <span className="text-sm font-medium">{t.shortTitle || t.title}</span>
+                  </div>
+                  <Badge variant="outline" className="text-[10px]">{t.priority}</Badge>
+                </div>
+                <div className="mt-2">
+                  <ChecklistDetail
+                    task={sheetSelectedTask?.id === t.id ? t : undefined as any}
+                    onAction={() => {
+                      if (!t.linkedPage) return;
+                      try {
+                        window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: t.linkedPage } }));
+                      } catch {}
+                    }}
+                    onUpdateTask={(taskId, status) => onUpdateTask(taskId, { status })}
+                  />
+                  {!sheetSelectedTask || sheetSelectedTask.id !== t.id ? (
+                    <div className="flex justify-end mt-2">
+                      <Button size="sm" variant="outline" onClick={()=> setSheetSelectedTask(t)}>Open Details</Button>
+                    </div>
+                  ) : (
+                    <div className="flex justify-end mt-2">
+                      <Button size="sm" variant="outline" onClick={()=> setSheetSelectedTask(null)}>Hide Details</Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </SheetContent>
+    </Sheet>
     </>
   );
 }
