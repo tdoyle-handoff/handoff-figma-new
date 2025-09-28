@@ -170,11 +170,38 @@ export default function DashboardHome() {
         <CardContent>
           {/* Week strip */}
           <div className="flex items-center justify-between text-sm mb-4">
-            {weekDays.map((d, i) => (
-              <div key={i} className={`w-8 h-8 rounded-full flex items-center justify-center ${isSameDay(d, today) ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'}`}>
-                {format(d, 'd')}
-              </div>
-            ))}
+            {weekDays.map((d, i) => {
+              const dayStr = format(d, 'yyyy-MM-dd');
+              const dueForDay = withDue.filter(t => format(parseDate(t.dueDate)!, 'yyyy-MM-dd') === dayStr);
+              const has = (cat: string) => dueForDay.some(t => ((t.subcategory||'').toLowerCase()===cat) || (t.tags||[]).map(String).map(s=>s.toLowerCase()).includes(cat));
+              const dots = [
+                { c:'financing', cls:'bg-green-500' },
+                { c:'legal', cls:'bg-purple-500' },
+                { c:'inspections', cls:'bg-orange-500' },
+              ].filter(x => has(x.c));
+              return (
+                <TooltipProvider key={i}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="flex flex-col items-center">
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isSameDay(d, today) ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'}`}>{format(d, 'd')}</div>
+                        <div className="mt-1 h-1.5 flex items-center gap-0.5">
+                          {dots.map((x, idx2) => <span key={idx2} className={`w-1.5 h-1.5 rounded-full ${x.cls}`}></span>)}
+                        </div>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent side="top">
+                      {dueForDay.length === 0 ? 'No tasks' : (
+                        <div className="text-xs">
+                          {dueForDay.slice(0,4).map(t => (<div key={t.id} className="truncate max-w-[200px]">• {t.title}</div>))}
+                          {dueForDay.length > 4 && (<div className="text-muted-foreground">+{dueForDay.length-4} more</div>)}
+                        </div>
+                      )}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              );
+            })}
           </div>
 
           {/* Day list for today */}
