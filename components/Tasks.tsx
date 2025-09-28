@@ -3308,7 +3308,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
                 {/* Quick Links card */}
                 <Card className="shadow-sm">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-semibold tracking-[-0.01em] text-gray-900">Quick Links</CardTitle>
+                    <CardTitle className="text-sm font-semibold tracking-[-0.01em] text-gray-900">Quick Tools</CardTitle>
                   </CardHeader>
                   <CardContent className="pt-0 space-y-2">
                     <Button size="sm" variant="outline" className="w-full justify-start h-9" onClick={() => setOpenInsuranceCalcModal(true)}>
