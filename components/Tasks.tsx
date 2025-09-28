@@ -3096,6 +3096,36 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
             </CardContent>
           </Card>
 
+          {/* Export Progress footer */}
+          <div className="flex justify-end pt-2">
+            <Button onClick={() => setOpenExportDialog(true)} className="bg-slate-800 hover:bg-slate-900">
+              Export Progress
+            </Button>
+          </div>
+
+          {/* Export Dialog */}
+          <Dialog open={openExportDialog} onOpenChange={setOpenExportDialog}>
+            <DialogContent className="max-w-lg">
+              <DialogHeader>
+                <DialogTitle>Export Progress</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-3 text-sm">
+                <p>Generate a shareable summary of your tasks, deadlines, and budget.</p>
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={() => {
+                    try {
+                      const url = buildAndDownloadCsv();
+                      console.log('CSV download started:', url);
+                    } catch (e) { console.warn('CSV export failed', e); }
+                  }}>Download CSV</Button>
+                  <Button onClick={() => {
+                    try { openPrintableReport(); } catch (e) { console.warn('Print export failed', e); }
+                  }}>Print / Save as PDF</Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+
           {/* Insurance Calculator Modal */}
           <Dialog open={openInsuranceCalcModal} onOpenChange={setOpenInsuranceCalcModal}>
             <DialogContent className="w-[96vw] max-w-[1600px]">
