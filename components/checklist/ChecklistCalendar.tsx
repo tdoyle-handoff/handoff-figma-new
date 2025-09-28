@@ -351,7 +351,7 @@ title={`${t.title}${t.description ? ' — ' + t.description : ''}`}
             </div>
 
             {/* Calendar grid */}
-            <div className="grid grid-cols-7 gap-px bg-gray-200 rounded overflow-hidden">
+            <div className={`grid grid-cols-7 gap-px bg-gray-200 rounded overflow-hidden ${viewMode==='timeline' ? 'hidden' : ''}`}>
               {days.map((day) => {
             const inMonth = day.getMonth() === monthStart.getMonth();
             const isToday = isSameDay(day, today);
