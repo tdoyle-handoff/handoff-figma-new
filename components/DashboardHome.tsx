@@ -264,29 +264,35 @@ export default function DashboardHome() {
           <CardTitle className="text-lg font-semibold">Quick Links</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            <button className="flex items-center gap-2 h-10 px-3 rounded-md bg-muted/60 hover:bg-muted transition-colors" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'tasks' } }))}>
-              <CheckSquare className="w-4 h-4" /> <span>Transaction Checklist</span>
-            </button>
-            <button className="flex items-center gap-2 h-10 px-3 rounded-md bg-muted/60 hover:bg-muted transition-colors" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'documents' } }))}>
-              <FileText className="w-4 h-4" /> <span>Contract Builder</span>
-            </button>
-            <button className="flex items-center gap-2 h-10 px-3 rounded-md bg-muted/60 hover:bg-muted transition-colors" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'property' } }))}>
-              <Building className="w-4 h-4" /> <span>Property Search</span>
-            </button>
-            <button className="flex items-center gap-2 h-10 px-3 rounded-md bg-muted/60 hover:bg-muted transition-colors" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'overview' } }))}>
-              <TrendingUp className="w-4 h-4" /> <span>Analytics & Budget</span>
-            </button>
-            <button className="flex items-center gap-2 h-10 px-3 rounded-md bg-muted/60 hover:bg-muted transition-colors" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'resources' } }))}>
-              <BookOpen className="w-4 h-4" /> <span>Education Hub</span>
-            </button>
-            <button className="flex items-center gap-2 h-10 px-3 rounded-md bg-muted/60 hover:bg-muted transition-colors" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'calendar' } }))}>
-              <CalendarDays className="w-4 h-4" /> <span>Calendar</span>
-            </button>
-            <button className="flex items-center gap-2 h-10 px-3 rounded-md bg-muted/60 hover:bg-muted transition-colors" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'settings' } }))}>
-              <SettingsIcon className="w-4 h-4" /> <span>Settings</span>
-            </button>
-          </div>
+          {(() => {
+            const lastTask = tasks.find(t => ['active','in-progress','overdue'].includes((t.status as any))) || tasks[0];
+            return (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <button className="flex items-center justify-between h-11 px-3 rounded-md bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200" onClick={() => {
+                  window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'tasks' } }));
+                  setTimeout(() => {
+                    if (lastTask) {
+                      try {
+                        const el = document.getElementById(`task-row-${lastTask.id}`);
+                        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                      } catch {}
+                    }
+                  }, 300);
+                }}>
+                  <span className="flex items-center gap-2"><CheckSquare className="w-4 h-4" /> Resume last task</span>
+                  <span className="text-xs text-blue-700">Go</span>
+                </button>
+                <button className="flex items-center justify-between h-11 px-3 rounded-md bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'overview' } }))}>
+                  <span className="flex items-center gap-2"><TrendingUp className="w-4 h-4" /> View Budget</span>
+                  <span className="text-xs text-emerald-700">Open</span>
+                </button>
+                <button className="flex items-center justify-between h-11 px-3 rounded-md bg-violet-50 hover:bg-violet-100 text-violet-800 border border-violet-200" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'documents' } }))}>
+                  <span className="flex items-center gap-2"><FileText className="w-4 h-4" /> Open Contract Draft</span>
+                  <span className="text-xs text-violet-700">Open</span>
+                </button>
+              </div>
+            );
+          })()}
         </CardContent>
       </Card>
     </div>
