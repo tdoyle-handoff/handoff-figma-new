@@ -33,6 +33,7 @@ interface TrackedHome {
   ranking: number;
   dateAdded: string;
   label: InterestLabel;
+  isSample?: boolean;
 }
 
 export default function HomeTracker() {
