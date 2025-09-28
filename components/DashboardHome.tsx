@@ -254,12 +254,12 @@ export default function DashboardHome() {
           <CardTitle className="text-lg font-semibold">Contract Timeline</CardTitle>
           <div className="flex items-center gap-2">
             {contractUrl ? (
-              <Button size="sm" variant="secondary" className="h-8 px-3" onClick={() => window.open(contractUrl, '_blank')}>
+              <Button size="sm" className="h-8 px-3" onClick={() => window.open(contractUrl, '_blank')}>
                 <FileText className="w-4 h-4 mr-1" /> View contract <ExternalLink className="w-3 h-3 ml-1" />
               </Button>
             ) : (
-              <Button size="sm" variant="ghost" className="h-8 px-3" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'tasks' } }))}>
-                Upload in checklist
+              <Button size="sm" className="h-8 px-3 bg-primary text-primary-foreground" onClick={() => window.dispatchEvent(new MessageEvent('message', { data: { type: 'navigate', page: 'tasks' } }))}>
+                <Upload className="w-4 h-4 mr-1" /> Upload Document
               </Button>
             )}
           </div>
