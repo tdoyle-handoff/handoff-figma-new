@@ -369,7 +369,7 @@ title={`${t.title}${t.description ? ' — ' + t.description : ''}`}
                 onDrop={(e) => onDrop(e, day)}
               >
                 <div className="flex items-center justify-between mb-1">
-                  <div className={`text-xs font-medium ${inMonth ? 'text-gray-700' : 'text-gray-400'}`}>{day.getDate()}</div>
+                  <button className={`text-xs font-medium ${inMonth ? 'text-gray-700' : 'text-gray-400'} hover:underline`} onClick={()=>{ setSheetDate(key); setSheetOpen(true); setSheetSelectedTask(null); }}>{day.getDate()}</button>
                   {/* Count badge */}
                   {dayTasks.length > 0 && (
                     <Badge variant="outline" className="text-[10px] px-1.5 py-0.5">{dayTasks.length}</Badge>
