@@ -2597,6 +2597,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
   const [openExportDialog, setOpenExportDialog] = useState(false);
   // Add Task dialog state
   const [openAddTaskDialog, setOpenAddTaskDialog] = useState(false);
+  const [quickToolsOpen, setQuickToolsOpen] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [newTaskPhaseId, setNewTaskPhaseId] = useState<string | undefined>(() => displayedTaskPhases[0]?.id);
 
