@@ -467,161 +467,82 @@ export default function DashboardLayout({
 
       {/* Main Content */}
       <div className="relative z-0 flex-1 flex flex-col min-h-0 min-w-0 bg-slate-50">
-        {/* Top Navigation Bar */}
-        <header>
-          <div className="bg-white border-b border-gray-200 px-4 md:px-6 h-14 flex items-center justify-between">
-            {/* Left: Logo */}
-            <div className="flex items-center gap-3">
-              <img
-                src={handoffLogo}
-                alt="HandoffIQ Logo"
-                className="h-7 w-auto object-contain"
-              />
-            </div>
-
-            {/* Center: Persistent Modules */}
-            <nav className="hidden md:flex items-center gap-2">
-              {[
-                { id: 'tasks', label: 'Checklist' },
-                { id: 'property', label: 'Property Tracker', onClick: () => { try { localStorage.setItem('handoff-propertysearch-selected-tab','find-home'); } catch {}; onPageChange('property'); } },
-                { id: 'overview', label: 'Budget' },
-              ].map((m) => {
-                const active = currentPage === (m.id as PageType);
-                const handle = () => {
-                  if (m.onClick) return m.onClick();
-                  onPageChange(m.id as PageType);
-                };
-                return (
-                  <button
-                    key={m.id}
-                    onClick={handle}
-                    className={cn(
-                      "px-3 py-1.5 rounded-full text-sm font-medium",
-                      active ? "bg-slate-900 text-white" : "text-slate-700 hover:bg-slate-100"
-                    )}
-                  >
-                    {m.label}
-                  </button>
-                );
-              })}
-
-              {/* More dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger className="px-3 py-1.5 rounded-full text-sm font-medium text-slate-700 hover:bg-slate-100">More</DropdownMenuTrigger>
-                <DropdownMenuContent align="center">
-                  <DropdownMenuItem onClick={() => onPageChange('resources')} className="cursor-pointer">Education</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => onPageChange('dashboard')} className="cursor-pointer">Analytics</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </nav>
-
-            {/* Right: Notifications + User */}
-            <div className="flex items-center gap-3">
-              <DropdownMenu>
-                <DropdownMenuTrigger className="relative inline-flex items-center justify-center rounded-full h-9 w-9 hover:bg-muted">
-                  <Bell className="h-5 w-5" />
-                  {totalNotifications > 0 && (
-                    <Badge className="absolute -top-1 -right-1 h-5 min-w-5 px-1 py-0 text-[11px] leading-5 rounded-full">{totalNotifications}</Badge>
-                  )}
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-96">
-                  <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+        {/* Floating Notifications Icon (top-right) */}
+        <div className="fixed top-4 right-6 z-50">
+          <DropdownMenu>
+            <DropdownMenuTrigger className="relative inline-flex items-center justify-center rounded-full h-9 w-9 hover:bg-muted">
+              <Bell className="h-5 w-5" />
+              {totalNotifications > 0 && (
+                <Badge className="absolute -top-1 -right-1 h-5 min-w-5 px-1 py-0 text-[11px] leading-5 rounded-full">{totalNotifications}</Badge>
+              )}
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-96">
+              <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {totalNotifications === 0 && (
+                <DropdownMenuItem className="text-sm text-muted-foreground">No new notifications</DropdownMenuItem>
+              )}
+              {overdue.length > 0 && (
+                <>
+                  <DropdownMenuLabel className="text-xs text-red-600">Overdue Tasks</DropdownMenuLabel>
+                  {overdue.map(t => (
+                    <DropdownMenuItem key={`ov-${t.id}`} onSelect={() => openTask(t.id)} className="flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-red-600" />
+                      <div className="min-w-0">
+                        <div className="text-sm font-medium truncate">{t.title}</div>
+                        {t.dueDate && <div className="text-xs text-muted-foreground">Due {new Date(t.dueDate).toLocaleDateString()}</div>}
+                      </div>
+                    </DropdownMenuItem>
+                  ))}
                   <DropdownMenuSeparator />
-                  {totalNotifications === 0 && (
-                    <DropdownMenuItem className="text-sm text-muted-foreground">No new notifications</DropdownMenuItem>
-                  )}
-                  {overdue.length > 0 && (
-                    <>
-                      <DropdownMenuLabel className="text-xs text-red-600">Overdue Tasks</DropdownMenuLabel>
-                      {overdue.map(t => (
-                        <DropdownMenuItem key={`ov-${t.id}`} onSelect={() => openTask(t.id)} className="flex items-center gap-2">
-                          <FileText className="h-4 w-4 text-red-600" />
-                          <div className="min-w-0">
-                            <div className="text-sm font-medium truncate">{t.title}</div>
-                            {t.dueDate && <div className="text-xs text-muted-foreground">Due {new Date(t.dueDate).toLocaleDateString()}</div>}
-                          </div>
-                        </DropdownMenuItem>
-                      ))}
-                      <DropdownMenuSeparator />
-                    </>
-                  )}
-                  {financing.length > 0 && (
-                    <>
-                      <DropdownMenuLabel className="text-xs text-blue-600">Financing Deadlines</DropdownMenuLabel>
-                      {financing.map(t => (
-                        <DropdownMenuItem key={`fin-${t.id}`} onSelect={() => openTask(t.id)} className="flex items-center gap-2">
-                          <CreditCard className="h-4 w-4 text-blue-600" />
-                          <div className="min-w-0">
-                            <div className="text-sm font-medium truncate">{t.title}</div>
-                            {t.dueDate && <div className="text-xs text-muted-foreground">Due {new Date(t.dueDate).toLocaleDateString()}</div>}
-                          </div>
-                        </DropdownMenuItem>
-                      ))}
-                      <DropdownMenuSeparator />
-                    </>
-                  )}
-                  {(contractDue.length > 0 || closingSoon.length > 0) && (
-                    <>
-                      <DropdownMenuLabel className="text-xs text-emerald-700">Contract Milestones</DropdownMenuLabel>
-                      {closingSoon.map((c, i) => (
-                        <DropdownMenuItem key={`close-${i}`} className="flex items-center gap-2">
-                          <CalendarIcon className="h-4 w-4 text-emerald-700" />
-                          <div className="min-w-0">
-                            <div className="text-sm font-medium truncate">{c.title}</div>
-                            <div className="text-xs text-muted-foreground">{new Date(c.dueDate!).toLocaleDateString()}</div>
-                          </div>
-                        </DropdownMenuItem>
-                      ))}
-                      {contractDue.map(t => (
-                        <DropdownMenuItem key={`con-${t.id}`} onSelect={() => openTask(t.id)} className="flex items-center gap-2">
-                          <FileText className="h-4 w-4 text-emerald-700" />
-                          <div className="min-w-0">
-                            <div className="text-sm font-medium truncate">{t.title}</div>
-                            {t.dueDate && <div className="text-xs text-muted-foreground">Due {new Date(t.dueDate).toLocaleDateString()}</div>}
-                          </div>
-                        </DropdownMenuItem>
-                      ))}
-                      <DropdownMenuSeparator />
-                    </>
-                  )}
-                  <DropdownMenuItem onSelect={() => onPageChange('settings')} className="flex items-center gap-2">
-                    <ExternalLink className="h-4 w-4" />
-                    Notification settings
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-3 focus:outline-none">
-                    <Avatar className="h-8 w-8 ring-1 ring-slate-200">
-                      <AvatarImage src="" />
-                      <AvatarFallback className="bg-slate-900 text-white">
-                        {getInitials(getUserDisplayName())}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="hidden md:block leading-tight text-left">
-                      <div className="text-sm font-medium text-slate-900">{getUserDisplayName()}</div>
-                      <div className="text-xs text-slate-500 truncate max-w-[220px]">{getUserDisplayEmail()}</div>
-                    </div>
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel>Account</DropdownMenuLabel>
+                </>
+              )}
+              {financing.length > 0 && (
+                <>
+                  <DropdownMenuLabel className="text-xs text-blue-600">Financing Deadlines</DropdownMenuLabel>
+                  {financing.map(t => (
+                    <DropdownMenuItem key={`fin-${t.id}`} onSelect={() => openTask(t.id)} className="flex items-center gap-2">
+                      <CreditCard className="h-4 w-4 text-blue-600" />
+                      <div className="min-w-0">
+                        <div className="text-sm font-medium truncate">{t.title}</div>
+                        {t.dueDate && <div className="text-xs text-muted-foreground">Due {new Date(t.dueDate).toLocaleDateString()}</div>}
+                      </div>
+                    </DropdownMenuItem>
+                  ))}
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => onPageChange('settings')} className="cursor-pointer">
-                    <Settings className="mr-2 h-4 w-4" />
-                    <span>Settings</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={onSignOut} className="cursor-pointer">
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Sign out</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
-        </header>
+                </>
+              )}
+              {(contractDue.length > 0 || closingSoon.length > 0) && (
+                <>
+                  <DropdownMenuLabel className="text-xs text-emerald-700">Contract Milestones</DropdownMenuLabel>
+                  {closingSoon.map((c, i) => (
+                    <DropdownMenuItem key={`close-${i}`} className="flex items-center gap-2">
+                      <CalendarIcon className="h-4 w-4 text-emerald-700" />
+                      <div className="min-w-0">
+                        <div className="text-sm font-medium truncate">{c.title}</div>
+                        <div className="text-xs text-muted-foreground">{new Date(c.dueDate!).toLocaleDateString()}</div>
+                      </div>
+                    </DropdownMenuItem>
+                  ))}
+                  {contractDue.map(t => (
+                    <DropdownMenuItem key={`con-${t.id}`} onSelect={() => openTask(t.id)} className="flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-emerald-700" />
+                      <div className="min-w-0">
+                        <div className="text-sm font-medium truncate">{t.title}</div>
+                        {t.dueDate && <div className="text-xs text-muted-foreground">Due {new Date(t.dueDate).toLocaleDateString()}</div>}
+                      </div>
+                    </DropdownMenuItem>
+                  ))}
+                  <DropdownMenuSeparator />
+                </>
+              )}
+              <DropdownMenuItem onSelect={() => onPageChange('settings')} className="flex items-center gap-2">
+                <ExternalLink className="h-4 w-4" />
+                Notification settings
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
 
         <main className="flex-1 overflow-auto p-8">
           {children}
