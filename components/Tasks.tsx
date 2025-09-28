@@ -2532,6 +2532,8 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
   const [viewMode, setViewMode] = useState<'list' | 'kanban'>('list');
   // When set, show only this phase as its own page
   const [phasePageId, setPhasePageId] = useState<string | null>(null);
+  // Track the currently selected phase tab for highlighting without filtering content
+  const [currentPhaseTabId, setCurrentPhaseTabId] = useState<string | undefined>(undefined);
 
   const availableTags = React.useMemo(() => {
     const set = new Set<string>();
@@ -2917,7 +2919,8 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
         if (id) {
           setActiveTab('checklist');
           setChecklistSubtab('todo');
-          setPhasePageId(id);
+          setCurrentPhaseTabId(id);
+          setPhasePageId(null);
           const el = document.getElementById(`phase-card-${id}`);
           if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
@@ -3034,10 +3037,11 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
               <div className="w-full md:w-auto overflow-x-auto">
                 <InlinePhaseStepper
                   phases={displayedTaskPhases}
-                  currentId={phasePageId || displayedTaskPhases.find(p => p.status === 'active')?.id}
+                  currentId={currentPhaseTabId || displayedTaskPhases.find(p => p.status === 'active')?.id}
                   onSelect={(id) => {
-                    setPhasePageId(id);
+                    setCurrentPhaseTabId(id);
                     setChecklistSubtab('todo');
+                    setPhasePageId(null);
                     setTimeout(() => {
                       const el = document.getElementById(`phase-card-${id}`);
                       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
