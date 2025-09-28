@@ -1,4 +1,5 @@
 import React from 'react';
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
@@ -100,6 +101,21 @@ export default function ChecklistDetail({ task, onAction, onUpdateTask }: Detail
     );
   }
 
+  // Local state to control collapsible sections (for "Read more")
+  const [openKeys, setOpenKeys] = React.useState<string[]>([]);
+
+  // Determine availability of sections for current task (for Read more)
+  const partsHeader = parseDescriptionParts(task.description);
+  const hasWhyHeader = !!(task.instructions?.why || partsHeader.why);
+  const hasStepsHeader = !!(task.instructions?.steps && task.instructions.steps.length > 0);
+  const hasHowTextHeader = !!(!hasStepsHeader && partsHeader.how);
+  const hasTipsHeader = !!(task.instructions?.tips && task.instructions.tips.length > 0);
+  const availableKeys = [
+    hasWhyHeader ? 'why' : null,
+    (hasStepsHeader || hasHowTextHeader) ? 'how' : null,
+    hasTipsHeader ? 'tips' : null,
+  ].filter(Boolean) as string[];
+
   return (
     <div className="space-y-4 h-full overflow-y-auto">
       {/* Main Task Header - minimal: Title + Status + Due Date */}
@@ -108,6 +124,22 @@ export default function ChecklistDetail({ task, onAction, onUpdateTask }: Detail
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
               <CardTitle className="text-xl leading-tight break-words">{task.longTitle || task.title}</CardTitle>
+              {/* One-line summary for Proof of Funds task */}
+              {task.id === 'task-proof-of-funds' && (
+                <div className="mt-1 text-sm text-gray-700 flex items-center gap-2">
+                  <span>Show official funds (for cash) or a lender pre-approval letter to prove you can afford the purchase.</span>
+                  {availableKeys.length > 0 && (
+                    <Button
+                      variant="link"
+                      size="sm"
+                      className="px-0 h-auto"
+                      onClick={() => setOpenKeys(Array.from(new Set([...(openKeys||[]), ...availableKeys])))}
+                    >
+                      Read more
+                    </Button>
+                  )}
+                </div>
+              )}
               <div className="flex items-center gap-2 mt-2">
                 <Badge className={`text-xs font-medium ${getStatusBadgeColor(task.status)}`}>{task.status.replace('-', ' ').toUpperCase()}</Badge>
                 {task.dueDate && (
@@ -153,7 +185,7 @@ export default function ChecklistDetail({ task, onAction, onUpdateTask }: Detail
         return (
           <Card className="shadow-sm">
             <CardContent className="pt-2">
-              <Accordion type="multiple" className="w-full">
+              <Accordion type="multiple" className="w-full" value={openKeys} onValueChange={(v)=>setOpenKeys(v as string[])}>
                 {why && (
                   <AccordionItem value="why">
                     <AccordionTrigger>Why it matters</AccordionTrigger>
