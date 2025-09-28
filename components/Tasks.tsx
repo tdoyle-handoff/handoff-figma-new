@@ -255,6 +255,13 @@ const sortTasksByDependencies = (tasks: Task[], tasksById: Record<string, Task> 
   return outIds.map(id => byId[id]).filter(Boolean);
 };
 
+// Reorder so overdue tasks are pinned to the top within a list, preserving relative order otherwise
+const overdueFirst = (arr: Task[]): Task[] => {
+  const overdue = arr.filter(t => t.status === 'overdue');
+  const rest = arr.filter(t => t.status !== 'overdue');
+  return [...overdue, ...rest];
+};
+
 const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields, onDeleteTask, tasksById, minimal, openInWindow, onOpenModal, forceOpen, row }: {
   task: Task;
   onNavigate: (page: string) => void;
@@ -768,10 +775,10 @@ const ExpandableTaskCard = ({ task, onNavigate, onUpdateTask, onUpdateTaskFields
                   ))}
                 </div>
               </div>
-              <div className="col-span-2 text-[12px] text-gray-700 text-right">
-                <div>{formatShortDate(task.dueDate)}</div>
+              <div className={`col-span-2 text-[12px] ${isOverdue ? 'text-red-700' : 'text-gray-700'} text-right`}>
+                <div className={`${isOverdue ? 'font-semibold' : ''}`}>{formatShortDate(task.dueDate)}</div>
                 {task.dueDate && (
-                  <div className="text-[11px] text-gray-500">{daysLeft(task.dueDate)}</div>
+                  <div className={`text-[11px] ${isOverdue ? 'text-red-600' : 'text-gray-500'}`}>{daysLeft(task.dueDate)}</div>
                 )}
               </div>
             </div>
@@ -1843,7 +1850,7 @@ const PhaseCard = ({ phase, onNavigate, onUpdateTask, onUpdateTaskFields, onDele
 
 // Table-style phase card matching the provided design
 const TaskTableCard = ({ title, tasks, onNavigate, onUpdateTask, onUpdateTaskFields, onDeleteTask, tasksById, selectedIds, onToggleSelect, onSelectAllInList }: { title: string; tasks: Task[]; onNavigate: (page: string) => void; onUpdateTask?: (taskId: string, status: Task['status']) => void; onUpdateTaskFields?: (taskId: string, updates: Partial<Task>) => void; onDeleteTask?: (taskId: string) => void; tasksById?: Record<string, Task>; selectedIds: Set<string>; onToggleSelect: (id: string, checked: boolean) => void; onSelectAllInList: (checked: boolean) => void; }) => {
-  const sortedTasks = sortTasksByDependencies(tasks, tasksById || {});
+  const sortedTasks = overdueFirst(sortTasksByDependencies(tasks, tasksById || {}));
   const allSelected = sortedTasks.length > 0 && sortedTasks.every(t => selectedIds.has(t.id));
   return (
     <Card className="shadow-sm bg-white">
@@ -1859,7 +1866,7 @@ const TaskTableCard = ({ title, tasks, onNavigate, onUpdateTask, onUpdateTaskFie
         </div>
         <div className="divide-y">
           {sortedTasks.map((task) => (
-            <div key={task.id} id={`task-row-${task.id}`} className="px-1">
+            <div key={task.id} id={`task-row-${task.id}`} className={`px-1 ${task.status === 'overdue' ? 'bg-red-50/60 border-l-4 border-red-500 rounded-sm' : ''}`}>
               <div className="grid grid-cols-12 items-center">
                 <div className="col-span-1 flex justify-center">
                   <Checkbox checked={selectedIds.has(task.id)} onCheckedChange={(v)=>onToggleSelect(task.id, !!v)} />
@@ -1895,12 +1902,12 @@ const TaskTableCardGrouped = ({ title, groups, onNavigate, onUpdateTask, onUpdat
         </div>
         <div className="divide-y">
           {present.map((g) => {
-            const sorted = sortTasksByDependencies(g.tasks, tasksById || {});
+            const sorted = overdueFirst(sortTasksByDependencies(g.tasks, tasksById || {}));
             return (
               <div key={g.label}>
                 <div className="bg-gray-50 px-2 py-1 text-[11px] font-medium text-gray-600">{g.label}</div>
                 {sorted.map((task) => (
-                  <div key={task.id} id={`task-row-${task.id}`} className="px-1">
+                  <div key={task.id} id={`task-row-${task.id}`} className={`px-1 ${task.status === 'overdue' ? 'bg-red-50/60 border-l-4 border-red-500 rounded-sm' : ''}`}>
                     <div className="grid grid-cols-12 items-center">
                       <div className="col-span-1 flex justify-center">
                         <Checkbox checked={selectedIds.has(task.id)} onCheckedChange={(v)=>onToggleSelect(task.id, !!v)} />
@@ -2976,6 +2983,37 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
               </button>
             </div>
           )}
+
+          {(() => {
+            const overdueCount = taskContext.getOverdueTasks().length;
+            if (overdueCount === 0) return null;
+            const overdueVisible = (checklistSubtab === 'todo') ? visibleTodoTasks.filter(t => t.status === 'overdue') : [];
+            return (
+              <Alert variant="destructive" className="border-red-300 bg-red-50 text-red-800">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <div className="font-medium">You have {overdueCount} overdue {overdueCount === 1 ? 'task' : 'tasks'}</div>
+                    <AlertDescription>Resolve overdue items to keep your transaction on track.</AlertDescription>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button size="sm" variant="destructive" onClick={() => selectMany(overdueVisible.map(t=>t.id), true)}>Select overdue</Button>
+                    <Button size="sm" variant="outline" onClick={() => {
+                      const first = overdueVisible[0] || taskContext.getOverdueTasks()[0];
+                      if (first) {
+                        const phaseId = getPhaseIdForTask(first.id);
+                        if (phaseId) setPhasePageId(phaseId);
+                        setTimeout(() => {
+                          const row = document.getElementById(`task-row-${first.id}`);
+                          if (row) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }, 0);
+                      }
+                    }}>Review now</Button>
+                  </div>
+                </div>
+              </Alert>
+            );
+          })()}
+
           <div className="px-1 space-y-4">
             {/* Milestone bar + scenarios selector */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
