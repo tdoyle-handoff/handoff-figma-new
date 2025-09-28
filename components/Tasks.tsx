@@ -2551,6 +2551,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
 
   const matchesTag = React.useCallback((t: Task) => {
     if (tagFilter === 'all') return true;
+    if (tagFilter === 'overdue') return t.status === 'overdue';
     const tags = (t.tags || []).map(s => s.toLowerCase());
     if (tags.includes(tagFilter)) return true;
     return (t.subcategory || '').toLowerCase() === tagFilter;
@@ -2961,25 +2962,47 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
             if (overdueCount === 0) return null;
             const overdueVisible = (checklistSubtab === 'todo') ? visibleTodoTasks.filter(t => t.status === 'overdue') : [];
             return (
-              <Alert variant="destructive" className="border-red-300 bg-red-50 text-red-800">
-                <div className="flex items-center justify-between gap-3">
-                  <div>
+              <Alert className="border-2 border-red-500 bg-red-50 text-red-800">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
                     <div className="font-medium">You have {overdueCount} overdue {overdueCount === 1 ? 'task' : 'tasks'}</div>
-                    <AlertDescription>Resolve overdue items to keep your transaction on track.</AlertDescription>
+                    <AlertDescription>
+                      <div className="text-sm">Resolve overdue items to keep your transaction on track.</div>
+                      {(() => {
+                        const overdue = taskContext.getOverdueTasks();
+                        const toLower = (arr: string[]) => arr.map(s => s.toLowerCase());
+                        const count = (pred: (t: Task) => boolean) => overdue.filter(pred).length;
+                        const financing = count(t => ((t.subcategory||'').toLowerCase()==='financing') || toLower(t.tags||[]).includes('financing'));
+                        const legal = count(t => ((t.subcategory||'').toLowerCase()==='legal') || toLower(t.tags||[]).includes('legal'));
+                        const inspections = count(t => ((t.subcategory||'').toLowerCase()==='inspections') || toLower(t.tags||[]).includes('inspections'));
+                        const chips = [
+                          { label: 'Financing', value: financing },
+                          { label: 'Legal', value: legal },
+                          { label: 'Inspection', value: inspections },
+                        ].filter(c => c.value > 0);
+                        if (chips.length === 0) return null;
+                        return (
+                          <div className="mt-2 flex items-center gap-2 flex-wrap">
+                            {chips.map(c => (
+                              <Badge key={c.label} variant="outline" className="bg-white/70 text-red-700 border-red-300 rounded-full text-xs">
+                                {c.label}: {c.value}
+                              </Badge>
+                            ))}
+                          </div>
+                        );
+                      })()}
+                    </AlertDescription>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Button size="sm" variant="destructive" onClick={() => selectMany(overdueVisible.map(t=>t.id), true)}>Select overdue</Button>
-                    <Button size="sm" variant="outline" onClick={() => {
-                      const first = overdueVisible[0] || taskContext.getOverdueTasks()[0];
-                      if (first) {
-                        const phaseId = getPhaseIdForTask(first.id);
-                        if (phaseId) setPhasePageId(phaseId);
-                        setTimeout(() => {
-                          const row = document.getElementById(`task-row-${first.id}`);
-                          if (row) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        }, 0);
-                      }
-                    }}>Review now</Button>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <Button size="sm" variant="outline" className="border-red-300 text-red-700 hover:bg-red-100" onClick={() => selectMany(overdueVisible.map(t=>t.id), true)}>Select overdue</Button>
+                    <Button size="sm" onClick={() => {
+                      setActiveTab('checklist');
+                      setChecklistSubtab('todo');
+                      setPhasePageId(null);
+                      setTagFilter('overdue');
+                      setSearchQuery('');
+                      setTimeout(() => { try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch {} }, 0);
+                    }}>See Overdue Tasks</Button>
                   </div>
                 </div>
               </Alert>
