@@ -84,7 +84,7 @@ export default function DashboardHome() {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+    <div className="grid grid-cols-12 gap-6 items-stretch">
       {/* Current tasks */}
       <Card className="modern-card h-full">
         <CardHeader>
