@@ -1,9 +1,12 @@
 import React, { useMemo, useState } from 'react';
-import { ChevronLeft, ChevronRight, CalendarDays, Circle, CheckCircle, AlertTriangle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, CalendarDays, Circle, CheckCircle, AlertTriangle, Flag } from 'lucide-react';
 import type { Task } from '../TaskContext';
+import { useTaskContext } from '../TaskContext';
+import { usePropertyContext } from '../PropertyContext';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '../ui/sheet';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
@@ -88,6 +91,7 @@ const catStyles: Record<ReturnType<typeof getTaskCategoryKey>, { dot: string; ba
 
 export default function ChecklistCalendar({ tasks, onUpdateTask }: ChecklistCalendarProps) {
   const [cursor, setCursor] = useState<Date>(new Date());
+  const [viewMode, setViewMode] = useState<'month'|'timeline'>('month');
   const [editOpen, setEditOpen] = useState(false);
   const [editTask, setEditTask] = useState<Task | null>(null);
   const [editDate, setEditDate] = useState<string>('');
@@ -98,6 +102,15 @@ export default function ChecklistCalendar({ tasks, onUpdateTask }: ChecklistCale
   // Inline task details modal state
   const [detailOpen, setDetailOpen] = useState(false);
   const [detailTask, setDetailTask] = useState<Task | null>(null);
+
+  // Bottom sheet for date listing
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [sheetDate, setSheetDate] = useState<string>('');
+  const [sheetSelectedTask, setSheetSelectedTask] = useState<Task | null>(null);
+
+  // Contexts
+  const taskCtx = useTaskContext();
+  const propertyCtx = usePropertyContext();
 
   const monthStart = useMemo(() => startOfMonth(cursor), [cursor]);
   const monthEnd = useMemo(() => endOfMonth(cursor), [cursor]);
@@ -221,6 +234,33 @@ export default function ChecklistCalendar({ tasks, onUpdateTask }: ChecklistCale
 
   const monthLabel = cursor.toLocaleString(undefined, { month: 'long', year: 'numeric' });
 
+  const sheetTasks = useMemo(() => {
+    if (!sheetDate) return [] as Task[];
+    return (tasksByDate.get(sheetDate) || []).slice().sort((a,b)=> (a.priority===b.priority?0: a.priority==='high'? -1 : 1));
+  }, [sheetDate, tasksByDate]);
+
+  // Timeline data
+  const timeline = propertyCtx.getTimelineStatus();
+  const anchorStart = (() => {
+    const first = timeline.milestones[0]?.date ? new Date(timeline.milestones[0].date) : null;
+    const today = new Date();
+    return new Date(Math.min(today.getTime(), first ? first.getTime() : today.getTime()));
+  })();
+  const anchorEnd = (() => {
+    const last = timeline.milestones[timeline.milestones.length - 1]?.date ? new Date(timeline.milestones[timeline.milestones.length - 1].date) : null;
+    const closing = taskCtx.scheduleAnchors.closingDate ? new Date(taskCtx.scheduleAnchors.closingDate) : null;
+    const base = last || closing || new Date();
+    return addDays(base, 14);
+  })();
+  const weeks = useMemo(() => {
+    const out: { start: Date; label: string }[] = [];
+    const start = startOfWeek(anchorStart);
+    for (let d = new Date(start); d <= anchorEnd; d = addDays(d, 7)) {
+      out.push({ start: new Date(d), label: `${d.toLocaleDateString(undefined,{ month:'short', day:'numeric'})}` });
+    }
+    return out;
+  }, [anchorStart, anchorEnd]);
+
   const weekdayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   return (
@@ -242,6 +282,10 @@ export default function ChecklistCalendar({ tasks, onUpdateTask }: ChecklistCale
             <button onClick={handleNextMonth} className="p-2 rounded hover:bg-gray-100" aria-label="Next month">
               <ChevronRight className="w-5 h-5" />
             </button>
+            <div className="ml-2 flex items-center gap-1 text-xs">
+              <Button variant={viewMode==='month'?'default':'outline'} size="sm" onClick={()=>setViewMode('month')}>Month</Button>
+              <Button variant={viewMode==='timeline'?'default':'outline'} size="sm" onClick={()=>setViewMode('timeline')}>Timeline</Button>
+            </div>
           </div>
         </div>
       </CardHeader>
@@ -478,4 +522,3 @@ title={`${t.title}${t.description ? ' — ' + t.description : ''}`}
     </>
   );
 }
-
