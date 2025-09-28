@@ -3304,7 +3304,7 @@ const [checklistSubtab, setChecklistSubtab] = useState<'todo' | 'done'>('todo');
               </div>
 
               {/* Right sidebar */}
-              <div className="lg:col-span-1 space-y-4">
+              <div className={`lg:col-span-1 space-y-4 ${quickToolsOpen ? '' : 'hidden'}`}>
                 {/* Quick Links card */}
                 <Card className="shadow-sm">
                   <CardHeader className="pb-2">
