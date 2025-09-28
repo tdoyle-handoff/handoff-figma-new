@@ -418,35 +418,51 @@ export default function DashboardLayout({
       {/* Main Content */}
       <div className="relative z-0 flex-1 flex flex-col min-h-0 min-w-0 bg-slate-50">
         {/* Top Navigation Bar */}
-        <header className="hidden">
-          <div className="bg-[#0B1F44] text-white rounded-2xl shadow-lg px-6 py-3 flex items-center justify-between">
+        <header>
+          <div className="bg-white border-b border-gray-200 px-4 md:px-6 h-14 flex items-center justify-between">
             {/* Left: Logo */}
             <div className="flex items-center gap-3">
               <img
                 src={handoffLogo}
-                alt="Handoff Logo"
-                className="h-8 w-auto object-contain invert brightness-0"
+                alt="HandoffIQ Logo"
+                className="h-7 w-auto object-contain"
               />
-              <span className="sr-only">{navigation.getPageTitle(currentPage)}</span>
             </div>
 
-            {/* Center: Horizontal Nav */}
-            <nav className="flex items-center gap-2">
-              {navigationItems.map((item) => {
-                const isActive = currentPage === item.id;
+            {/* Center: Persistent Modules */}
+            <nav className="hidden md:flex items-center gap-2">
+              {[
+                { id: 'tasks', label: 'Checklist' },
+                { id: 'property', label: 'Property Tracker', onClick: () => { try { localStorage.setItem('handoff-propertysearch-selected-tab','find-home'); } catch {}; onPageChange('property'); } },
+                { id: 'overview', label: 'Budget' },
+              ].map((m) => {
+                const active = currentPage === (m.id as PageType);
+                const handle = () => {
+                  if (m.onClick) return m.onClick();
+                  onPageChange(m.id as PageType);
+                };
                 return (
                   <button
-                    key={item.id}
-                    onClick={() => onPageChange(item.id)}
+                    key={m.id}
+                    onClick={handle}
                     className={cn(
-                      "px-5 py-2 rounded-xl text-sm font-medium transition-colors",
-                      isActive ? "bg-white/15 text-white" : "text-white/80 hover:text-white"
+                      "px-3 py-1.5 rounded-full text-sm font-medium",
+                      active ? "bg-slate-900 text-white" : "text-slate-700 hover:bg-slate-100"
                     )}
                   >
-                    {item.label}
+                    {m.label}
                   </button>
                 );
               })}
+
+              {/* More dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger className="px-3 py-1.5 rounded-full text-sm font-medium text-slate-700 hover:bg-slate-100">More</DropdownMenuTrigger>
+                <DropdownMenuContent align="center">
+                  <DropdownMenuItem onClick={() => onPageChange('resources')} className="cursor-pointer">Education</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onPageChange('dashboard')} className="cursor-pointer">Analytics</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </nav>
 
             {/* Right: User */}
@@ -454,19 +470,19 @@ export default function DashboardLayout({
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="flex items-center gap-3 focus:outline-none">
-                    <Avatar className="h-9 w-9 ring-2 ring-white/20">
+                    <Avatar className="h-8 w-8 ring-1 ring-slate-200">
                       <AvatarImage src="" />
-                      <AvatarFallback className="bg-blue-600 text-white">
+                      <AvatarFallback className="bg-slate-900 text-white">
                         {getInitials(getUserDisplayName())}
                       </AvatarFallback>
                     </Avatar>
                     <div className="hidden md:block leading-tight text-left">
-                      <div className="text-sm font-medium">{getUserDisplayName()}</div>
-                      <div className="text-xs text-white/70 truncate max-w-[220px]">{getUserDisplayEmail()}</div>
+                      <div className="text-sm font-medium text-slate-900">{getUserDisplayName()}</div>
+                      <div className="text-xs text-slate-500 truncate max-w-[220px]">{getUserDisplayEmail()}</div>
                     </div>
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 bg-white text-gray-900 border border-gray-200 shadow-lg backdrop-blur-0">
+                <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuLabel>Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => onPageChange('settings')} className="cursor-pointer">
