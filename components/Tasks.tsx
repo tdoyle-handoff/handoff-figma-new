@@ -27,6 +27,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { Tooltip, TooltipTrigger, TooltipContent } from './ui/tooltip';
 import { scenarioSchema } from '../utils/scenarioSchema';
 import { getSelectedScenarios as getScenarioKeys, setSelectedScenarios as saveScenarioSelection } from '../utils/scenarioEngine';
+import { useAuth } from '../hooks/useAuth';
 
 // Task interfaces are now imported from TaskContext
 
