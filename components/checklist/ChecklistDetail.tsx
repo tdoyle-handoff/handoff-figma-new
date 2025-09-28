@@ -1,10 +1,10 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
-import { Separator } from '../ui/separator';
 import type { Task } from '../TaskContext';
-import { ExternalLink, Clock, User, Calendar, AlertTriangle, Lightbulb, Target, ChevronRight } from 'lucide-react';
+import { ExternalLink, Calendar, AlertTriangle, Target } from 'lucide-react';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 
 interface DetailProps {
   task: Task | null;
@@ -102,22 +102,18 @@ export default function ChecklistDetail({ task, onAction, onUpdateTask }: Detail
 
   return (
     <div className="space-y-4 h-full overflow-y-auto">
-      {/* Main Task Header */}
+      {/* Main Task Header - minimal: Title + Status + Due Date */}
       <Card className="shadow-sm border-l-4 border-l-blue-500">
-        <CardHeader className="pb-4">
+        <CardHeader className="pb-2">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
-<CardTitle className="text-xl mb-3 leading-tight break-words">{task.longTitle || task.title}</CardTitle>
-              <div className="flex items-center gap-2 mb-3">
-                <Badge className={`text-xs font-medium ${getStatusBadgeColor(task.status)}`}>
-                  {task.status.replace('-', ' ').toUpperCase()}
-                </Badge>
-                <Badge className={`text-xs font-medium ${getPriorityBadgeColor(task.priority)}`}>
-                  {task.priority.toUpperCase()} PRIORITY
-                </Badge>
-                {task.subcategory && (
-                  <Badge variant="outline" className="text-xs capitalize">
-                    {task.subcategory}
+              <CardTitle className="text-xl leading-tight break-words">{task.longTitle || task.title}</CardTitle>
+              <div className="flex items-center gap-2 mt-2">
+                <Badge className={`text-xs font-medium ${getStatusBadgeColor(task.status)}`}>{task.status.replace('-', ' ').toUpperCase()}</Badge>
+                {task.dueDate && (
+                  <Badge variant="outline" className="text-xs">
+                    <Calendar className="w-3.5 h-3.5 mr-1 inline" />
+                    Due {new Date(task.dueDate).toLocaleDateString()}
                   </Badge>
                 )}
               </div>
@@ -144,130 +140,68 @@ export default function ChecklistDetail({ task, onAction, onUpdateTask }: Detail
               )}
             </div>
           </div>
-
-          {/* Task Meta Information */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t">
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <Clock className="w-4 h-4" />
-              <span>{task.estimatedTime || 'Time varies'}</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <User className="w-4 h-4" />
-              <span>{task.assignedTo || 'You'}</span>
-            </div>
-            {task.dueDate && (
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Calendar className="w-4 h-4" />
-                <span>Due: {new Date(task.dueDate).toLocaleDateString()}</span>
-              </div>
-            )}
-          </div>
         </CardHeader>
-
-<CardContent className="pt-4">
-          {/* Intentionally leaving description out here; detailed sections below */}
-        </CardContent>
       </Card>
 
-      {/* Task Instructions */}
-{(() => {
-        // Build three sections using instructions first, then fallbacks from description
+      {/* Task Instructions - collapsible sections */}
+      {(() => {
         const parts = parseDescriptionParts(task.description);
-        const what = task.instructions?.what || parts.what || task.instructions?.overview;
         const why = task.instructions?.why || parts.why;
         const hasSteps = !!(task.instructions?.steps && task.instructions.steps.length > 0);
         const howText = !hasSteps ? parts.how : undefined;
+        const tips = task.instructions?.tips || [];
         return (
           <Card className="shadow-sm">
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Lightbulb className="w-5 h-5 text-blue-500" />
-                Task Guidance
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-5 pt-4">
-              {what && (
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Overview</h4>
-                  <div className="text-gray-700 text-sm leading-relaxed">
-                    {renderBulletedText(what)}
-                  </div>
-                </div>
-              )}
-
-              {why && (
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Why It Matters</h4>
-                  <div className="text-gray-700 text-sm leading-relaxed">
-                    {renderBulletedText(why)}
-                  </div>
-                </div>
-              )}
-
-              {/* How to Complete */}
-              {(hasSteps || howText) && (
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-3">How to Complete</h4>
-                  {hasSteps ? (
-                    <ul className="space-y-2">
-                      {task.instructions!.steps.map((step, i) => (
-                        <li key={i} className="flex gap-2 text-sm">
-                          <span className="text-gray-400">•</span>
-                          <div className="text-gray-700">
-                            <span className="font-medium">{step.title}</span>
-                            {(step.action || step.description) && (
-                              <p className="text-gray-600 mt-1">{step.action || step.description}</p>
-                            )}
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <div>{renderBulletedText(howText)}</div>
-                  )}
-                </div>
-              )}
-
-              {task.instructions?.tips && task.instructions.tips.length > 0 && (
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
-                    <AlertTriangle className="w-4 h-4 text-amber-500" />
-                    Important Tips & Callouts
-                  </h4>
-                  <ul className="space-y-2">
-                    {task.instructions.tips.map((tip, i) => (
-                      <li key={i} className="flex gap-2 text-sm">
-                        <span className="text-gray-400">•</span>
-                        <span className="text-gray-700">{tip}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {task.instructions?.timeline && (
-                <div className="bg-blue-50 p-3 rounded-lg">
-                  <h4 className="font-medium text-blue-900 mb-1 text-sm inline-flex items-center gap-2">
-                    <Clock className="w-4 h-4" />
-                    <span>Timeline</span>
-                  </h4>
-                  <p className="text-blue-800 text-sm">{task.instructions.timeline}</p>
-                </div>
-              )}
-
-              {task.instructions?.nextSteps && task.instructions.nextSteps.length > 0 && (
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Next Steps</h4>
-                  <ul className="text-sm text-gray-700 space-y-1">
-                    {task.instructions.nextSteps.map((step, i) => (
-                      <li key={i} className="flex items-center gap-2">
-                        <ChevronRight className="w-3.5 h-3.5 text-green-600" aria-hidden="true" />
-                        <span>{step}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+            <CardContent className="pt-2">
+              <Accordion type="multiple" className="w-full">
+                {why && (
+                  <AccordionItem value="why">
+                    <AccordionTrigger>Why it matters</AccordionTrigger>
+                    <AccordionContent>
+                      <div className="text-gray-700 text-sm leading-relaxed">{renderBulletedText(why)}</div>
+                    </AccordionContent>
+                  </AccordionItem>
+                )}
+                {(hasSteps || howText) && (
+                  <AccordionItem value="how">
+                    <AccordionTrigger>How to complete</AccordionTrigger>
+                    <AccordionContent>
+                      {hasSteps ? (
+                        <ul className="space-y-2">
+                          {task.instructions!.steps.map((step, i) => (
+                            <li key={i} className="flex gap-2 text-sm">
+                              <span className="text-gray-400">•</span>
+                              <div className="text-gray-700">
+                                <span className="font-medium">{step.title}</span>
+                                {(step.action || step.description) && (
+                                  <p className="text-gray-600 mt-1">{step.action || step.description}</p>
+                                )}
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <div>{renderBulletedText(howText)}</div>
+                      )}
+                    </AccordionContent>
+                  </AccordionItem>
+                )}
+                {tips.length > 0 && (
+                  <AccordionItem value="tips">
+                    <AccordionTrigger>Pro tips</AccordionTrigger>
+                    <AccordionContent>
+                      <ul className="space-y-2">
+                        {tips.map((tip, i) => (
+                          <li key={i} className="flex gap-2 text-sm">
+                            <span className="text-gray-400">•</span>
+                            <span className="text-gray-700">{tip}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+                )}
+              </Accordion>
             </CardContent>
           </Card>
         );
