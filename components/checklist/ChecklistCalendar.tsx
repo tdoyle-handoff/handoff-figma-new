@@ -413,11 +413,9 @@ title={`${t.title}${t.description ? ' — ' + t.description : ''}`}
                             }}
                             onClick={() => {
                               const t = tasks.find(x => x.id === ev.taskId) || null;
-                              setDetailTask(t);
-                              setDetailOpen(true);
-                              try {
-                                if (t) window.dispatchEvent(new CustomEvent('openTaskDetails', { detail: { taskId: t.id } }));
-                              } catch {}
+                              setSheetDate(key);
+                              setSheetSelectedTask(t || null);
+                              setSheetOpen(true);
                             }}
                             className="cursor-move text-xs bg-amber-50 border border-amber-200 text-amber-800 rounded px-2 py-1 flex items-center justify-between gap-2 hover:bg-amber-100"
                             title={`${ev.title}${ev.provider ? ' — ' + ev.provider : ''}${ev.time ? ' at ' + ev.time : ''}`}
