@@ -115,11 +115,25 @@ export default function Settings({ onSignOut, setupData, onNavigate }: SettingsP
     }
   };
 
-  const handleSave = () => {
-    // Save logic would go here
-    setSavedMessage('Settings saved successfully!');
-    setTimeout(() => setSavedMessage(''), 3000);
-    setIsEditing(false);
+  const handleSave = async () => {
+    try {
+      try {
+        const raw = localStorage.getItem('handoff-user-profile');
+        const prev = raw ? JSON.parse(raw) : {};
+        const next = { ...prev, preferences: { ...(prev.preferences||{}), notifications } };
+        localStorage.setItem('handoff-user-profile', JSON.stringify(next));
+      } catch {}
+      if (userProfile && !isGuestMode && typeof updateUserProfile === 'function') {
+        await updateUserProfile({ preferences: { ...(userProfile as any).preferences, notifications } as any });
+      }
+      setSavedMessage('Settings saved successfully!');
+      setTimeout(() => setSavedMessage(''), 3000);
+      setIsEditing(false);
+    } catch (e) {
+      console.warn('Failed to save settings:', e);
+      setSavedMessage('Failed to save settings');
+      setTimeout(() => setSavedMessage(''), 3000);
+    }
   };
 
   const handleEditSetup = () => {
