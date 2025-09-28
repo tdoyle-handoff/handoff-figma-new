@@ -1520,10 +1520,23 @@ export default function OfferBuilder() {
         )}
 
         {step === 3 && (
-          <Card>
+          <Card className="relative">
             <CardHeader>
               <CardTitle className="text-lg sm:text-xl">Purchase Agreement Contingencies</CardTitle>
             </CardHeader>
+            {!dismissedHelps['help-contingencies-1'] && (
+              <aside className="hidden lg:block absolute -right-6 top-6 w-64 z-10">
+                <div className="rounded-md border bg-muted/40 text-xs p-3 shadow-sm">
+                  <div className="flex items-start gap-2">
+                    <Info className="w-3 h-3 mt-0.5 text-muted-foreground" />
+                    <div className="flex-1">
+                      Contingencies protect your deposit if the inspection fails or financing falls through. Adjust days to match your state’s norms.
+                    </div>
+                    <button aria-label="Dismiss" className="text-muted-foreground hover:text-foreground" onClick={()=>dismissHelp('help-contingencies-1')}>×</button>
+                  </div>
+                </div>
+              </aside>
+            )}
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex items-center gap-2">
                 <Checkbox id="insp" checked={inspection} onCheckedChange={(v)=> setInspection(Boolean(v))} />
