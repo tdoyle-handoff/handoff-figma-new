@@ -531,6 +531,9 @@ export default function HomeTracker() {
                             <h3 className="font-semibold text-lg text-slate-700 flex items-center gap-2">
                               <MapPin className="h-4 w-4 text-slate-500" />
                               {home.address}
+                              {(home as any).isSample && (
+                                <Badge variant="secondary" className="ml-2 text-xs">Sample</Badge>
+                              )}
                             </h3>
                             <div className="flex items-center gap-4 text-sm text-slate-600 mt-1">
                               {home.price && (
