@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
 import { usePropertyContext } from './PropertyContext';
 import { useNavigation } from '../hooks/useNavigation';
-const handoffLogo = 'https://cdn.builder.io/api/v1/image/assets%2Fd17493787dd14ef798478b15abccc651%2Fb382513b801044b9b63fee0d35fea0d6?format=webp&width=800';
+import { HANDOFF_LOGO_URL } from '../utils/branding';
 import { 
   Home, 
   FileText, 
@@ -201,13 +201,13 @@ export default function MobileLayout({
                   <Menu className="w-5 h-5" />
                 </Button>
               </SheetTrigger>
-              <img src={handoffLogo} alt="Handoff" className="ml-2 h-6 w-auto" />
+              <img src={HANDOFF_LOGO_URL} alt="Handoff" className="ml-2 h-6 w-auto" />
               <SheetContent side="left" className="w-80 p-0 bg-white/98 backdrop-blur-md">
                 <div className="flex flex-col h-full">
                   <SheetHeader className="p-6 border-b border-border text-left bg-white">
                     <div className="flex items-center gap-3">
                       <img
-                        src={handoffLogo}
+                        src={HANDOFF_LOGO_URL}
                         alt="Handoff"
                         className="h-10 w-auto"
                       />
