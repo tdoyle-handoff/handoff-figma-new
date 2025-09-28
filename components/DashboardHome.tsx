@@ -202,31 +202,33 @@ export default function DashboardHome() {
         </CardHeader>
         <CardContent>
           {!editing ? (
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <div className="text-muted-foreground flex items-center gap-2"><CalendarDays className="w-4 h-4" /> Offer accepted</div>
-                <div className="font-medium">{acceptance ? format(acceptance, 'EEE, MMM d') : '—'}</div>
-              </div>
-              <div>
-                <div className="text-muted-foreground flex items-center gap-2"><Clock className="w-4 h-4" /> Inspection deadline</div>
-                <div className="font-medium">{inspectionDeadline ? format(inspectionDeadline, 'EEE, MMM d') : '—'}</div>
-              </div>
-              <div>
-                <div className="text-muted-foreground flex items-center gap-2"><Clock className="w-4 h-4" /> Financing deadline</div>
-                <div className="font-medium">{financingDeadline ? format(financingDeadline, 'EEE, MMM d') : '—'}</div>
-              </div>
-              <div>
-                <div className="text-muted-foreground flex items-center gap-2"><CalendarDays className="w-4 h-4" /> Closing</div>
-                <div className="font-medium">{closing ? format(closing, 'EEE, MMM d') : '—'}</div>
-              </div>
-              <div>
-                <div className="text-muted-foreground flex items-center gap-2"><DollarSign className="w-4 h-4" /> Purchase price</div>
-                <div className="font-medium">{cd?.purchasePrice ? `$${Number(cd.purchasePrice).toLocaleString()}` : '—'}</div>
-              </div>
-              <div>
-                <div className="text-muted-foreground flex items-center gap-2"><DollarSign className="w-4 h-4" /> Earnest money</div>
-                <div className="font-medium">{cd?.earnestAmount ? `$${Number(cd.earnestAmount).toLocaleString()}` : '—'}</div>
-              </div>
+            <div>
+              {(() => {
+                const items = [
+                  { id: 'offer', label: 'Offer', date: acceptance },
+                  { id: 'financing', label: 'Financing', date: financingDeadline },
+                  { id: 'inspection', label: 'Inspection', date: inspectionDeadline },
+                  { id: 'closing', label: 'Closing', date: closing },
+                ].map(it => ({
+                  ...it,
+                  status: !it.date ? 'Not Set' : (it.date < today ? 'Completed' : 'Due')
+                }));
+                return (
+                  <div className="relative">
+                    <div className="absolute left-0 right-0 top-5 h-0.5 bg-gray-200" />
+                    <div className="relative grid grid-cols-4 gap-4">
+                      {items.map((it, idx) => (
+                        <div key={it.id} className="flex flex-col items-center">
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${it.status==='Completed' ? 'bg-green-600 text-white' : it.status==='Due' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}>{idx+1}</div>
+                          <div className="mt-2 text-sm font-medium">{it.label}</div>
+                          <div className="text-xs text-muted-foreground">{it.date ? format(it.date, 'MMM d') : '—'}</div>
+                          <div className={`mt-1 text-[10px] px-2 py-0.5 rounded-full border ${it.status==='Completed' ? 'bg-green-50 text-green-700 border-green-200' : it.status==='Due' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-gray-50 text-gray-600 border-gray-200'}`}>{it.status}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           ) : (
             <div className="space-y-3">
